@@ -1,0 +1,53 @@
+{
+  "typedocOptions": {
+    "entryPoints": [
+      "src/main.ts"
+    ],
+    "out": "docs/typedoc",
+    "plugin": "typedoc-plugin-markdown",
+    "entryDocument": "index.md",
+    "githubPages": false,
+    "readme": "none"
+  },
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./src",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "inlineSources": true,
+    "sourceMap": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "module": "ESNext",
+    "target": "es2020",
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "paths": {
+      "src": [
+        "src/*",
+        "tests/*"
+      ]
+    },
+    "types": [
+      "jest",
+      "node",
+    ],
+    "lib": [
+      "dom",
+      "es5",
+      "scripthost",
+      "es2015"
+    ]
+  },
+  "include": [
+    "src/**/*",
+    "tests/**/*"
+  ],
+  "exclude": [
+    "node_modules/*"
+  ]
+}
