@@ -1,0 +1,14 @@
+{
+    "recommendations": [
+        "dbaeumer.vscode-eslint",
+        "davidanson.vscode-markdownlint",
+        "editorconfig.editorconfig",
+        "esbenp.prettier-vscode",
+        "pkief.material-icon-theme",
+        "visualstudioexptteam.intellicode-api-usage-examples",
+        "ms-vscode.powershell",
+        "streetsidesoftware.code-spell-checker",
+        "henryhediff.obsidian-code",
+        "brpaz.vscode-obsidianmd"
+    ]
+}
