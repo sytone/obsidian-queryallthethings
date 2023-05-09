@@ -3,6 +3,7 @@ import { LayoutOptions } from 'LayoutOptions';
 import { isFeatureEnabled } from 'Settings/Settings';
 import alasql from 'alasql';
 import { logging } from 'lib/logging';
+import { parse } from 'yaml'
 
 
 export class QuerySql implements IQuery {
@@ -83,20 +84,22 @@ export class QuerySql implements IQuery {
 
         // Pending a future PR to enable Custom JS again.
         this._customJsClasses = [];
+        const queryConfiguration = parse(source);
 
         // Process the query to pull out directives and comments.
         this.processDirectivesAndComments(source);
 
         // Remove all the comments from the query.
-        this.source = source.replace(this._commentReplacementRegexp, '').trim();
+        this.source = queryConfiguration.query; //source.replace(this._commentReplacementRegexp, '').trim();
         this.logger.infoWithId(this._queryId, 'Source Query', this.source);
+        this.logger.infoWithId(this._queryId, 'queryConfiguration', queryConfiguration);
 
         // If this is multiline then only the last query should have the prefix.
         if (this._multilineQueryMode) {
             this.setPrefixForMultilineQuery();
         } else {
             if (!this.source.includes('SELECT')) {
-                this.source = `${this.defaultQueryPrefix} ${this.source}`;
+                // this.source = `${this.defaultQueryPrefix} ${this.source}`;
             }
         }
 
@@ -351,6 +354,7 @@ export class QuerySql implements IQuery {
      * @memberof QuerySql
      */
     private processDirectivesAndComments(source: string) {
+        let queryValue = '';
         source
             .split('\n')
             .map((line: string) => line.trim())
@@ -358,6 +362,9 @@ export class QuerySql implements IQuery {
                 this.logger.debugWithId(this._queryId, 'Line to process:', line);
                 switch (true) {
                     case line === '':
+                        break;
+                    case line.includes('query:'):
+                        queryValue += line.replace('query:', '');
                         break;
                     case this._commentRegexp.test(line):
                         this.processQueryDirectivesAndComments(line);
@@ -382,9 +389,8 @@ export class QuerySql implements IQuery {
         const lastQuery: string = multilineQuery[multilineQuery.length - 1];
         // Add the select prefix to the last query only.
         if (!lastQuery.includes('SELECT')) {
-            multilineQuery[multilineQuery.length - 1] = `${this.defaultQueryPrefix} ${
-                multilineQuery[multilineQuery.length - 1]
-            }`;
+            multilineQuery[multilineQuery.length - 1] = `${this.defaultQueryPrefix} ${multilineQuery[multilineQuery.length - 1]
+                }`;
         }
         this.source = multilineQuery.join(';');
     }

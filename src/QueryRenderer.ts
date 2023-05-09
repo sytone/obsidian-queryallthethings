@@ -1,7 +1,10 @@
+import handlebars  from 'handlebars';
 import { IQuery } from 'IQuery';
 import { QuerySql } from 'QuerySql';
 import { logging } from 'lib/logging';
 import { App, MarkdownPostProcessorContext, MarkdownRenderChild, Plugin } from 'obsidian';
+
+
 
 export class QueryRenderer {
     public addQuerySqlRenderChild = this._addQuerySqlRenderChild.bind(this);
@@ -9,9 +12,8 @@ export class QueryRenderer {
 
     private readonly app: App;
 
-    constructor({ plugin }: { plugin: Plugin;}) {
+    constructor({ plugin }: { plugin: Plugin; }) {
         this.app = plugin.app;
-
         plugin.registerMarkdownCodeBlockProcessor('qatt', this._addQuerySqlRenderChild.bind(this));
     }
 
@@ -51,12 +53,34 @@ class QueryRenderChild extends MarkdownRenderChild {
     }
 
     onload() {
+        // This allows tracing of unique query renders through the plugin.
+        const startTime = new Date(Date.now());
+        const content = this.containerEl.createEl('div');
+        content.setAttr('data-query-id', 'sss');
 
+        const results = this.queryEngine.applyQuery('sss');
+
+        var template = handlebars.compile("Handlebars {{result}}");
+        const html = template({result: results});
+        this._logger.info('queryConfiguration', results);
+
+
+        if (this.queryEngine.error === undefined) {
+            content.setText(html);
+        } else if (this.queryEngine.error !== undefined) {
+            this._logger.error(`Tasks query (${this.queryEngine.name}) error: ${this.queryEngine.error}`);
+            content.setText(`Tasks query error: ${this.queryEngine.error}`);
+        } else {
+            content.setText('Loading Tasks ...');
+        }
+
+        this.containerEl.firstChild?.replaceWith(content);
+        const endTime = new Date(Date.now());
+        this._logger.debugWithId('sss', `Render End: ${endTime.getTime() - startTime.getTime()}ms`);
         this.reloadQueryAtMidnight();
     }
 
     onunload() {
-
         if (this.queryReloadTimeout !== undefined) {
             clearTimeout(this.queryReloadTimeout);
         }
