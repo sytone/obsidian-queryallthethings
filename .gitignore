@@ -3,21 +3,18 @@ node_modules
 yarn-error.log
 
 # build
-/dist/main.js
 *.js.map
 .log
 
 # obsidian
+/dist/main.js
 /dist/data.json
+/dist/manifest.json
+# If the folder is symlinked make sure this is not checked in.
+/dist/.hotreload
 
 # osx
 .DS_Store
-
-# asdf
-.tool-versions
-
-# If the folder is symlinked make sure this is not checked in.
-/dist/.hotreload
 
 # Store the info about processed files in order to only operate on the changed ones.
 .eslintcache

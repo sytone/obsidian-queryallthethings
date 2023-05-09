@@ -45,6 +45,7 @@ const context = await esbuild.context({
             after: {
                 // copy after bundling
                 // './docs/CHANGELOG.md': './CHANGELOG.md',
+                './dist/manifest.json': './manifest.json',
             },
         }),
     ],

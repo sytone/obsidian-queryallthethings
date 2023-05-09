@@ -1,0 +1,96 @@
+[
+  {
+    "text": "Query All The Things",
+    "level": "h1",
+    "class": "",
+    "open": true,
+    "notice": {
+      "class": "",
+      "text": "A plugin that allows you to make queries against the internal data of obsidian and render it how you want.",
+      "html": ""
+    },
+    "settings": []
+  },
+  {
+    "text": "Settings",
+    "level": "h2",
+    "class": "",
+    "open": true,
+    "notice": {
+      "class": "qatt-setting-important",
+      "text": "Changing any settings requires a restart of obsidian.",
+      "html": null
+    },
+    "settings": [
+      {
+        "name": "Text setting",
+        "description": "Short description.",
+        "type": "text",
+        "initialValue": "initialValue",
+        "placeholder": "Placeholder",
+        "settingName": "testSetting",
+        "featureFlag": "",
+        "notice": {
+          "class": "setting-item-description",
+          "text": "Longer description of the item.",
+          "html": null
+        }
+      },
+      {
+        "name": "Checkbox",
+        "description": "Short description.",
+        "type": "checkbox",
+        "initialValue": false,
+        "placeholder": false,
+        "settingName": "checkboxSetting",
+        "featureFlag": "",
+        "notice": null
+      },
+      {
+        "name": "Text area",
+        "description": "Short description.",
+        "type": "textarea",
+        "initialValue": "initialValue",
+        "placeholder": "Placeholder",
+        "settingName": "textareaSetting",
+        "featureFlag": "ENABLE_TEXTAREA_SETTING",
+        "notice": null
+      }
+    ]
+  },
+  {
+    "text": "Optional or in development features",
+    "level": "h3",
+    "class": "",
+    "open": false,
+    "notice": {
+      "class": "",
+      "text": "The following features are in development or optional, stability is indicated next to the feature. While we try to make sure there is good test coverage and validation for every change there is always a chance of bugs.",
+      "html": ""
+    },
+    "settings": [
+      {
+        "name": "",
+        "description": "",
+        "type": "function",
+        "initialValue": "",
+        "placeholder": "",
+        "settingName": "insertFeatureFlags",
+        "featureFlag": "",
+        "notice": null
+      }
+    ]
+  },
+  {
+    "text": "Documentation and Support",
+    "level": "h3",
+    "class": "",
+    "open": true,
+    "notice": {
+      "class": "",
+      "text": "",
+      "html": "<p>If you need help with this plugin, please check out the <a href='https://github.com/sytone/obsidian-queryallthethings/'>Query All The Things documentation</a>. Click on issues below if you find something that the documentation does not explain or if you find something now working as expected.</p> <a href='https://github.com/sytone/obsidian-queryallthethings/issues'><img alt='GitHub issues' src='https://img.shields.io/github/issues/sytone/obsidian-queryallthethings?style=for-the-badge'></a> <img alt='GitHub package.json version' src='https://img.shields.io/github/package-json/v/sytone/obsidian-queryallthethings?style=for-the-badge'> <img alt='GitHub all releases' src='https://img.shields.io/github/downloads/sytone/obsidian-queryallthethings/total?style=for-the-badge'>"
+    },
+    "settings": []
+  }
+]

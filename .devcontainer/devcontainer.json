@@ -21,7 +21,8 @@
 			"ms-vscode.PowerShell",
 			"streetsidesoftware.code-spell-checker",
 			"HenryHeDiff.obsidian-code",
-			"brpaz.vscode-obsidianmd"
+			"brpaz.vscode-obsidianmd",
+			"nhoizey.gremlins"
 		]
 	}
 }

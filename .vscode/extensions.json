@@ -9,6 +9,8 @@
         "ms-vscode.powershell",
         "streetsidesoftware.code-spell-checker",
         "henryhediff.obsidian-code",
-        "brpaz.vscode-obsidianmd"
+        "brpaz.vscode-obsidianmd",
+        "nhoizey.gremlins",
+        "dotup.dotup-vscode-interface-generator"
     ]
 }
