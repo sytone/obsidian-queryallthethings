@@ -4,6 +4,10 @@ import { IQueryAllTheThingsPlugin } from 'IQueryAllTheThingsPlugin';
 import { getSettings, updateSettings } from './Settings/Settings';
 import { SettingsTab } from './Settings/SettingsTab';
 import { QueryRenderer } from 'QueryRenderer';
+import alasql from 'alasql';
+import {  getAPI } from "obsidian-dataview";
+import moment from 'moment';
+
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
     // public inlineRenderer: InlineRenderer | undefined;
@@ -30,6 +34,23 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
             // this.inlineRenderer = new InlineRenderer({ plugin: this });
             this.queryRenderer = new QueryRenderer({ plugin: this });
 
+            if (alasql('SHOW TABLES FROM alasql LIKE "pagedata"').length == 0) {
+                alasql('CREATE TABLE pagedata (name STRING, keyvalue STRING)');
+            }
+            if (alasql('SHOW TABLES FROM alasql LIKE "tasks"').length == 0) {
+                alasql('CREATE TABLE tasks (page STRING, task STRING, status STRING) ');
+            }
+            let start = moment();
+
+            // Todo force a update on page changes.
+            getAPI(this.app)?.index.pages.forEach(p => {
+                p.lists.forEach(l => {
+                    if(l.task) {
+                    alasql('INSERT INTO tasks VALUES ?', [{ page: p.path, task: l.text, status: l.task?.status }]);
+                    }
+                });
+            });
+            log('info', `Tasks refreshed in ${moment().diff(start, 'millisecond').toString()}ms`);
         });
 
         // This creates an icon in the left ribbon.

@@ -1,19 +1,21 @@
-import handlebars  from 'handlebars';
+import handlebars from 'handlebars';
+import { parse } from 'yaml'
 import { IQuery } from 'IQuery';
 import { QuerySql } from 'QuerySql';
 import { logging } from 'lib/logging';
-import { App, MarkdownPostProcessorContext, MarkdownRenderChild, Plugin } from 'obsidian';
-
-
+import { App, MarkdownPostProcessorContext, MarkdownRenderChild, MarkdownRenderer, Plugin } from 'obsidian';
+import { IQueryAllTheThingsPlugin } from 'IQueryAllTheThingsPlugin';
 
 export class QueryRenderer {
     public addQuerySqlRenderChild = this._addQuerySqlRenderChild.bind(this);
     _logger = logging.getLogger('qatt.QueryRenderer');
 
     private readonly app: App;
+    private readonly _plugin: IQueryAllTheThingsPlugin;
 
-    constructor({ plugin }: { plugin: Plugin; }) {
+    constructor({ plugin }: { plugin: IQueryAllTheThingsPlugin; }) {
         this.app = plugin.app;
+        this._plugin = plugin;
         plugin.registerMarkdownCodeBlockProcessor('qatt', this._addQuerySqlRenderChild.bind(this));
     }
 
@@ -23,7 +25,13 @@ export class QueryRenderer {
             new QueryRenderChild({
                 app: this.app,
                 container: element,
-                queryEngine: new QuerySql({ source, sourcePath: context.sourcePath, frontmatter: context.frontmatter }),
+                source: source,
+                queryEngine: new QuerySql({
+                    source,
+                    sourcePath: context.sourcePath,
+                    frontmatter: context.frontmatter,
+                    plugin: this._plugin
+                }),
             }),
         );
     }
@@ -32,41 +40,60 @@ export class QueryRenderer {
 class QueryRenderChild extends MarkdownRenderChild {
     private readonly queryEngine: IQuery;
     private readonly app: App;
+    private readonly source: string;
     _logger = logging.getLogger('qatt.QueryRenderChild');
     private queryReloadTimeout: NodeJS.Timeout | undefined;
 
     constructor({
         app,
         container,
+        source,
         queryEngine,
     }: {
         app: App;
         container: HTMLElement;
+        source: string;
         queryEngine: IQuery;
     }) {
         super(container);
 
         this.app = app;
         this.queryEngine = queryEngine;
+        this.source = source;
 
         this._logger.debug(`Query Render generated for class ${this.containerEl.className}`);
+
+        handlebars.registerHelper('stringify', function (value) {
+            return JSON.stringify(value, null, 2);
+        })
     }
 
     onload() {
         // This allows tracing of unique query renders through the plugin.
         const startTime = new Date(Date.now());
+
         const content = this.containerEl.createEl('div');
         content.setAttr('data-query-id', 'sss');
 
+        const renderConfiguration = parse(this.source);
+
         const results = this.queryEngine.applyQuery('sss');
 
-        var template = handlebars.compile("Handlebars {{result}}");
-        const html = template({result: results});
+        let template = handlebars.compile("{{stringify result}}");
+
+        if (renderConfiguration.template !== undefined) {
+            template = handlebars.compile(renderConfiguration.template);
+        }
+        const html = template({ result: results });
         this._logger.info('queryConfiguration', results);
 
 
         if (this.queryEngine.error === undefined) {
-            content.setText(html);
+            if (renderConfiguration.render == 'markdown') {
+                MarkdownRenderer.renderMarkdown(html, content, '', this);
+            } else {
+                content.innerHTML = html;
+            }
         } else if (this.queryEngine.error !== undefined) {
             this._logger.error(`Tasks query (${this.queryEngine.name}) error: ${this.queryEngine.error}`);
             content.setText(`Tasks query error: ${this.queryEngine.error}`);

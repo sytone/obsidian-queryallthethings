@@ -9,6 +9,22 @@ if you want to view the source visit the plugins github repository
 */
 `;
 
+// If OBSIDIAN_ROOT is set in the environment then copy the files ove to make debugging faster.
+let copyFilesConfig ={
+    before: {
+        // copy before bundling
+    },
+    after: {
+        './dist/manifest.json': './manifest.json',
+    },
+};
+
+if(process.env.OBSIDIAN_ROOT !== undefined) {
+    copyFilesConfig.after[`${process.env.OBSIDIAN_ROOT}/.obsidian/plugins/qatt/manifest.json`] = './manifest.json' 
+    copyFilesConfig.after[`${process.env.OBSIDIAN_ROOT}/.obsidian/plugins/qatt/main.js`] = './dist/main.js' 
+    copyFilesConfig.after[`${process.env.OBSIDIAN_ROOT}/.obsidian/plugins/qatt/styles.css`] = './dist/styles.css' 
+}
+
 const prod = process.argv[2] === 'production';
 
 const context = await esbuild.context({
@@ -38,16 +54,7 @@ const context = await esbuild.context({
     minify: prod,
     outfile: 'dist/main.js',
     plugins: [
-        copyFilePlugin({
-            before: {
-                // copy before bundling
-            },
-            after: {
-                // copy after bundling
-                // './docs/CHANGELOG.md': './CHANGELOG.md',
-                './dist/manifest.json': './manifest.json',
-            },
-        }),
+        copyFilePlugin(copyFilesConfig),
     ],
     sourcemap: prod ? false : 'inline',
     target: 'es2018',

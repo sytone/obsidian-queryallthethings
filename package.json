@@ -52,6 +52,7 @@
         "eventemitter2": "^6.4.5",
         "handlebars": "^4.7.7",
         "luxon": "^3.3.0",
+        "obsidian-dataview": "0.5.55",
         "yaml": "^2.2.2"
     },
     "standard-version": {
