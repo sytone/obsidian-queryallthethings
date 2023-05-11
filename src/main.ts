@@ -5,9 +5,10 @@ import { getSettings, updateSettings } from './Settings/Settings';
 import { SettingsTab } from './Settings/SettingsTab';
 import { QueryRenderer } from 'QueryRenderer';
 import alasql from 'alasql';
-import {  getAPI } from "obsidian-dataview";
+import { getAPI } from "obsidian-dataview";
 import moment from 'moment';
-
+import { DateTime } from "luxon";
+import { parseTask } from 'Parse/parsers';
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
     // public inlineRenderer: InlineRenderer | undefined;
@@ -34,29 +35,12 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
             // this.inlineRenderer = new InlineRenderer({ plugin: this });
             this.queryRenderer = new QueryRenderer({ plugin: this });
 
-            if (alasql('SHOW TABLES FROM alasql LIKE "pagedata"').length == 0) {
-                alasql('CREATE TABLE pagedata (name STRING, keyvalue STRING)');
-            }
-            if (alasql('SHOW TABLES FROM alasql LIKE "tasks"').length == 0) {
-                alasql('CREATE TABLE tasks (page STRING, task STRING, status STRING) ');
-            }
-            let start = moment();
-
-            // Todo force a update on page changes.
-            getAPI(this.app)?.index.pages.forEach(p => {
-                p.lists.forEach(l => {
-                    if(l.task) {
-                    alasql('INSERT INTO tasks VALUES ?', [{ page: p.path, task: l.text, status: l.task?.status }]);
-                    }
-                });
-            });
-            log('info', `Tasks refreshed in ${moment().diff(start, 'millisecond').toString()}ms`);
+            this.refreshTables()
         });
 
         // This creates an icon in the left ribbon.
-        const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
-            // Called when the user clicks the icon.
-            new Notice('This is a notice!');
+        const ribbonIconEl = this.addRibbonIcon('dice', 'Refresh QATT Tables', (evt: MouseEvent) => {
+            this.refreshTables()
         });
         // Perform additional things with the ribbon
         ribbonIconEl.addClass('my-plugin-ribbon-class');
@@ -107,12 +91,49 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
         // If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
         // Using this function will automatically remove the event listener when this plugin is disabled.
-        this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-            console.log('click', evt);
-        });
+        // this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
+        //     console.log('click', evt);
+        // });
 
         // When registering intervals, this function will automatically clear the interval when the plugin is disabled.
         this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
+    }
+
+    refreshTables() {
+        if (alasql('SHOW TABLES FROM alasql LIKE "pagedata"').length == 0) {
+            alasql('CREATE TABLE pagedata (name STRING, keyvalue STRING)');
+        }
+        if (alasql('SHOW TABLES FROM alasql LIKE "tasks"').length != 0) {
+            alasql('DROP TABLE tasks ');
+
+        }
+        alasql('CREATE TABLE tasks ');
+
+        let start = moment();
+        // Todo force a update on page changes.
+        //      tag: _ => parsimmon_umd_min.exports.seqMap(parsimmon_umd_min.exports.string("#"), parsimmon_umd_min.exports.alt(parsimmon_umd_min.exports.regexp(/[^\u2000-\u206F\u2E00-\u2E7F'!"#$%&()*+,.:;<=>?@^`{|}~\[\]\\\s]/).desc("text")).many(), (start, rest) => start + rest.join("")).desc("tag ('#hello/stuff')"),
+        // /[^\u2000-\u206F\u2E00-\u2E7F'!"#$%&()*+,.:;<=>?@^`{|}~\[\]\\\s]/
+        getAPI(this.app)?.index.pages.forEach(p => {
+            p.lists.forEach(l => {
+                if (l.task) {
+                    let parsedTask = parseTask(l.text);
+                    alasql('INSERT INTO tasks VALUES ?', [{
+                        page: p.path,
+                        task: l.text,
+                        status: l.task?.status,
+                        tags: parsedTask.tags,
+                        tagsNormalized: parsedTask.tagsNormalized,
+                        dueDate: parsedTask.dueDate,
+                        doneDate: parsedTask.doneDate,
+                        startDate: parsedTask.startDate,
+                        createDate: parsedTask.createDate,
+                        scheduledDate: parsedTask.scheduledDate,
+                        priority: parsedTask.priority
+                    }]);
+                }
+            });
+        });
+        log('info', `Tasks refreshed in ${moment().diff(start, 'millisecond').toString()}ms`);
     }
 
     onunload() {

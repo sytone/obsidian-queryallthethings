@@ -22,7 +22,8 @@
 			"streetsidesoftware.code-spell-checker",
 			"HenryHeDiff.obsidian-code",
 			"brpaz.vscode-obsidianmd",
-			"nhoizey.gremlins"
+			"nhoizey.gremlins",
+			"Orta.vscode-jest"
 		]
 	}
 }

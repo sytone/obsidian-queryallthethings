@@ -147,6 +147,7 @@
         "data.json"
     ],
     "jest": {
+      "globalSetup": "./.config/global-setup.js",
         "testEnvironment": "jsdom",
         "verbose": true,
         "preset": "ts-jest",

@@ -11,6 +11,7 @@
         "henryhediff.obsidian-code",
         "brpaz.vscode-obsidianmd",
         "nhoizey.gremlins",
-        "dotup.dotup-vscode-interface-generator"
+        "dotup.dotup-vscode-interface-generator",
+        "orta.vscode-jest"
     ]
 }
