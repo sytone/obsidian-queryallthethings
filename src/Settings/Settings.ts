@@ -1,8 +1,9 @@
+import { DayNumbers } from 'luxon';
 import { LogOptions, log } from './../lib/logging';
 import { Feature, FeatureFlag } from './Feature';
 
 interface SettingsMap {
-    [key: string]: string | boolean;
+    [key: string]: string | boolean | number;
 }
 
 type HeadingState = {
@@ -35,6 +36,7 @@ const defaultSettings: Settings = {
         appendGlobalFilter: false,
 
         defaultRenderTemplate: '',
+        refreshDebounce: 2500,
     },
     headingOpened: {}, //;  { 'Documentation and Support': true },
     loggingOptions: {
@@ -75,7 +77,7 @@ export const updateGeneralSetting = (name: string, value: string | boolean): Set
     return getSettings();
 };
 
-export const getGeneralSetting = (name: string): string | boolean => {
+export const getGeneralSetting = (name: string): string | boolean | number => {
     return settings.generalSettings[name];
 };
 

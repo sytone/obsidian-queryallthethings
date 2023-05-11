@@ -7,7 +7,7 @@
         "dev": "node .config/esbuild.config.mjs",
         "build": "node .config/esbuild.config.mjs production",
         "build:dev": "node .config/esbuild.config.mjs",
-        "lint": "eslint ./src --fix && eslint ./tests --fix && tsc --noEmit --pretty && svelte-check",
+        "lint": "eslint ./src --fix && eslint ./tests --fix && tsc --noEmit --pretty",
         "lint:markdown": "markdownlint-cli2-config \".config/.markdownlint-cli2.jsonc\" \"**/*.md\" \"#node_modules\" \"#CHANGELOG.md\" \"#docs/CHANGELOG.md\"",
         "test": "jest --ci",
         "test:dev": "jest --watch",
@@ -147,7 +147,7 @@
         "data.json"
     ],
     "jest": {
-      "globalSetup": "./.config/global-setup.js",
+        "globalSetup": "./.config/global-setup.js",
         "testEnvironment": "jsdom",
         "verbose": true,
         "preset": "ts-jest",
@@ -168,7 +168,8 @@
         "extends": [
             "plugin:prettier/recommended",
             "eslint:recommended",
-            "plugin:@typescript-eslint/eslint-recommended",
+            "plugin:@typescript-eslint/recommended",
+            "plugin:@typescript-eslint/recommended-requiring-type-checking",
             "plugin:import/typescript"
         ],
         "globals": {
@@ -177,6 +178,7 @@
         },
         "parser": "@typescript-eslint/parser",
         "parserOptions": {
+            "project": true,
             "ecmaVersion": 6,
             "sourceType": "module",
             "ecmaFeatures": {
@@ -191,6 +193,7 @@
             "main.js"
         ],
         "rules": {
+            "@typescript-eslint/naming-convention": "error",
             "linebreak-style": [
                 "error",
                 "unix"

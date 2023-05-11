@@ -244,7 +244,7 @@ export class QuerySql implements IQuery {
 
         try {
             this.source.split(';').forEach(v => {
-                if(v.trim() !== '') {
+                if (v.trim() !== '') {
                     let query = v;
                     let dataTable: any[] = [];
                     if (/\bobsidian_markdown_notes\b/ig.test(v)) {

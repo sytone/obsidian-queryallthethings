@@ -306,9 +306,9 @@
   resolved "https://registry.npmjs.org/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@codemirror/language@git+https://github.com/lishid/cm-language.git":
+"@codemirror/language@https://github.com/lishid/cm-language":
   version "6.6.0"
-  resolved "git+https://github.com/lishid/cm-language.git#1aadcc247f20ccfda76424a9f853dbb4ee203fdc"
+  resolved "https://github.com/lishid/cm-language#1aadcc247f20ccfda76424a9f853dbb4ee203fdc"
   dependencies:
     "@codemirror/state" "^6.0.0"
     "@codemirror/view" "^6.0.0"
@@ -3003,17 +3003,17 @@ obsidian-dataview@0.5.55:
     parsimmon "^1.18.0"
     preact "^10.6.5"
 
-"obsidian@github:obsidianmd/obsidian-api#master":
-  version "1.2.8"
-  resolved "https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/583ba39e3f6c0546de5e5e8742256a60e2d78ebc"
-  dependencies:
-    "@types/codemirror" "0.0.108"
-    moment "2.29.4"
-
 obsidian@latest:
   version "1.2.8"
   resolved "https://registry.npmjs.org/obsidian/-/obsidian-1.2.8.tgz"
   integrity sha512-HrC+feA8o0tXspj4lEAqxb1btwLwHD2oHXSwbbN+CdRHURqbCkuIDLld+nkuyJ1w1c9uvVDRVk8BoeOnWheOrQ==
+  dependencies:
+    "@types/codemirror" "0.0.108"
+    moment "2.29.4"
+
+obsidian@obsidianmd/obsidian-api#master:
+  version "1.2.8"
+  resolved "https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/583ba39e3f6c0546de5e5e8742256a60e2d78ebc"
   dependencies:
     "@types/codemirror" "0.0.108"
     moment "2.29.4"
