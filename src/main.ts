@@ -7,13 +7,14 @@ import { QueryRenderer } from 'QueryRenderer';
 import EventHandler from 'handlers/EventHandler';
 import { CommandHandler } from 'handlers/CommandHandler';
 import DataTables from 'DataTables';
+import { container } from 'container';
+import { TOKENS } from 'tokens';
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
     // public inlineRenderer: InlineRenderer | undefined;
     public queryRenderer: QueryRenderer | undefined;
     public event_handler: EventHandler | undefined;
     public command_handler: CommandHandler | undefined;
-
 
     async onload(): Promise<void> {
 
@@ -36,13 +37,19 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
             // this.inlineRenderer = new InlineRenderer({ plugin: this });
             this.queryRenderer = new QueryRenderer({ plugin: this });
 
-            DataTables.refreshTables()
+            DataTables.refreshTables("layout ready")
         });
+
+        // refresh tables when dataview index is ready.
+        this.registerEvent(this.app.metadataCache.on("dataview:index-ready", () => {
+            DataTables.refreshTables("dataview index ready")
+        }));
 
         // This creates an icon in the left ribbon.
         const ribbonIconEl = this.addRibbonIcon('dice', 'Refresh QATT Tables', (evt: MouseEvent) => {
-            DataTables.refreshTables()
+            DataTables.refreshTables("manual refresh")
         });
+
         // Perform additional things with the ribbon
         ribbonIconEl.addClass('my-plugin-ribbon-class');
 

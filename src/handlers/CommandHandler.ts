@@ -1,3 +1,5 @@
+import alasql from "alasql";
+import { log, logInfo } from "lib/logging";
 import QueryAllTheThingsPlugin from "main";
 
 export class CommandHandler {
@@ -9,6 +11,15 @@ export class CommandHandler {
             name: 'Force a refresh of all blocks for QATT',
             callback: () => {
                 this.plugin.app.workspace.trigger("qatt:refresh-codeblocks");
+            }
+        });
+
+        this.plugin.addCommand({
+            id: 'qatt-push-internal-events-to-console',
+            name: 'Will push all the internal events to the console for debugging.',
+            callback: () => {
+                var res = alasql('SELECT * FROM qatt.Events');
+                logInfo('Internal Events', res);
             }
         });
 

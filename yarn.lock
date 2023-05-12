@@ -1238,6 +1238,11 @@ braces@^3.0.2:
   dependencies:
     fill-range "^7.0.1"
 
+brandi@^5.0.0:
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/brandi/-/brandi-5.0.0.tgz#812a4fe7e10c631c98cd425bacba6dc18479cb89"
+  integrity sha512-oztvITQgvuFb2K+NWdHLx0mMH8TGO3ASrQ43FZzmfiq5rCj0DRlsuZ6Efi/yeu3hyGx/Y+Z1xLGp2qzDWpiNYA==
+
 browser-process-hrtime@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/browser-process-hrtime/-/browser-process-hrtime-1.0.0.tgz"

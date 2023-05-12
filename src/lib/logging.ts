@@ -49,6 +49,27 @@ export interface LogOptions {
 }
 
 /**
+ * Standard logging interface.
+ *
+ * @export
+ * @interface Logger
+ */
+export interface ILogger {
+    log(logLevel: string, message: string, objects?: any): void;
+    trace(message: string, objects?: any): void;
+    debug(message: string, objects?: any): void;
+    info(message: string, objects?: any): void;
+    warn(message: string, objects?: any): void;
+    error(message: string, objects?: any): void;
+    logWithId(logLevel: string, traceId: string, message: string, objects?: any): void;
+    traceWithId(traceId: string, message: string, objects?: any): void;
+    debugWithId(traceId: string, message: string, objects?: any): void;
+    infoWithId(traceId: string, message: string, objects?: any): void;
+    warnWithId(traceId: string, message: string, objects?: any): void;
+    errorWithId(traceId: string, message: string, objects?: any): void;
+}
+
+/**
  * Log level IDs (1 - 5)
  * @public
  */
@@ -97,7 +118,7 @@ export class LogManager extends EventEmitter2 {
      * @return {*}  {Logger}
      * @memberof LogManager
      */
-    public getLogger(module: string): Logger {
+    public getLogger(module: string): ILogger {
         let minLevel = 'none';
         let match = '';
 
@@ -107,7 +128,7 @@ export class LogManager extends EventEmitter2 {
                 match = key;
             }
         }
-        return new Logger(this, module, minLevel);
+        return new QattLogger(this, module, minLevel);
     }
 
     /**
@@ -135,9 +156,8 @@ export class LogManager extends EventEmitter2 {
         if (this.consoleLoggerRegistered) return this;
 
         this.onLogEntry((logEntry) => {
-            let msg = `[${DateTime.now().toISO()}][${
-                logEntry.level
-            }][${logEntry.module}]`;
+            let msg = `[${DateTime.now().toISO()}][${logEntry.level
+                }][${logEntry.module}]`;
 
             if (logEntry.traceId) {
                 msg += `[${logEntry.traceId}]`;
@@ -183,7 +203,7 @@ export const logging = new LogManager();
  * @export
  * @class Logger
  */
-export class Logger {
+export class QattLogger implements ILogger {
     private logManager: EventEmitter2;
     private minLevel: number;
     private module: string;
@@ -377,8 +397,7 @@ export function logCallDetails() {
             const elapsed = endTime.getTime() - startTime.getTime();
 
             logger.debug(
-                `${typeof target}:${propertyKey} called with ${
-                    args.length
+                `${typeof target}:${propertyKey} called with ${args.length
                 } arguments. Took: ${elapsed}ms ${JSON.stringify(args)}`,
             );
             return result;
@@ -388,30 +407,85 @@ export function logCallDetails() {
 }
 
 /**
+ * Provides a simple log function that can be used to log trace messages against default module.
+ *
+ * @export
+ * @param {string} message
+ * @param {*} [objects]
+ */
+export function logTrace(message: string, objects?: any) {
+    log('trace', message, objects);
+}
+
+/**
+ * Provides a simple log function that can be used to log debug messages against default module.
+ *
+ * @export
+ * @param {string} message
+ * @param {*} [objects]
+ */
+export function logDebug(message: string, objects?: any) {
+    log('debug', message, objects);
+}
+
+/**
+ * Provides a simple log function that can be used to log info messages against default module.
+ *
+ * @export
+ * @param {string} message
+ * @param {*} [objects]
+ */
+export function logInfo(message: string, objects?: any) {
+    log('info', message, objects);
+}
+
+/**
+ * Provides a simple log function that can be used to log warn messages against default module.
+ *
+ * @export
+ * @param {string} message
+ * @param {*} [objects]
+ */
+export function logWarn(message: string, objects?: any) {
+    log('warn', message, objects);
+}
+
+/**
+ * Provides a simple log function that can be used to log error messages against default module.
+ *
+ * @export
+ * @param {string} message
+ * @param {*} [objects]
+ */
+export function logError(message: string, objects?: any) {
+    log('error', message, objects);
+}
+
+/**
  * Provides a simple log function that can be used to log messages against default module.
  *
  * @export
  * @param {TLogLevelName} logLevel
  * @param {string} message
  */
-export function log(logLevel: TLogLevelName, message: string) {
+export function log(logLevel: TLogLevelName, message: string, objects?: any) {
     const logger = logging.getLogger('qatt');
 
     switch (logLevel) {
         case 'trace':
-            logger.trace(message);
+            logger.trace(message, objects);
             break;
         case 'debug':
-            logger.debug(message);
+            logger.debug(message, objects);
             break;
         case 'info':
-            logger.info(message);
+            logger.info(message, objects);
             break;
         case 'warn':
-            logger.warn(message);
+            logger.warn(message, objects);
             break;
         case 'error':
-            logger.error(message);
+            logger.error(message, objects);
             break;
         default:
             break;
@@ -436,13 +510,13 @@ export function monkeyPatchConsole(plugin: Plugin) {
     const logs: string[] = [];
     const logMessages =
         (prefix: string) =>
-        (...messages: unknown[]) => {
-            logs.push(`\n[${prefix}]`);
-            for (const message of messages) {
-                logs.push(String(message));
-            }
-            plugin.app.vault.adapter.write(logFile, logs.join(' '));
-        };
+            (...messages: unknown[]) => {
+                logs.push(`\n[${prefix}]`);
+                for (const message of messages) {
+                    logs.push(String(message));
+                }
+                plugin.app.vault.adapter.write(logFile, logs.join(' '));
+            };
 
     console.debug = logMessages('debug');
     console.error = logMessages('error');

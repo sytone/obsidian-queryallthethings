@@ -12,6 +12,7 @@
         "brpaz.vscode-obsidianmd",
         "nhoizey.gremlins",
         "dotup.dotup-vscode-interface-generator",
-        "orta.vscode-jest"
+        "orta.vscode-jest",
+        "oouo-diogo-perdigao.docthis"
     ]
 }
