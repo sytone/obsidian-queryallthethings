@@ -1,10 +1,10 @@
 import handlebars from 'handlebars';
 import { parse } from 'yaml'
-import { IQuery } from 'IQuery';
+import { IQuery } from 'Interfaces/IQuery';
 import { QuerySql } from 'QuerySql';
 import { logging } from 'lib/logging';
 import { App, MarkdownPostProcessorContext, MarkdownRenderChild, MarkdownRenderer } from 'obsidian';
-import { IQueryAllTheThingsPlugin } from 'IQueryAllTheThingsPlugin';
+import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
 
 export class QueryRenderer {
     public addQuerySqlRenderChild = this._addQuerySqlRenderChild.bind(this);
@@ -68,6 +68,8 @@ class QueryRenderChild extends MarkdownRenderChild {
         handlebars.registerHelper('stringify', function (value) {
             return JSON.stringify(value, null, 2);
         })
+
+
     }
 
     onload() {

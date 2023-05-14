@@ -1,9 +1,9 @@
 import { PluginSettingTab, Setting, debounce, Plugin } from 'obsidian';
 import { log } from './../lib/logging';
 import { Feature } from './Feature';
-import { getSettings, isFeatureEnabled, toggleFeature, updateGeneralSetting, updateSettings } from './Settings';
 import settingsJson from './settingsConfiguration.json';
-import { IQueryAllTheThingsPlugin } from 'IQueryAllTheThingsPlugin';
+import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
+import { ISettingsManager } from 'Interfaces/ISettingsManager';
 
 
 export class SettingsTab extends PluginSettingTab {
@@ -14,12 +14,16 @@ export class SettingsTab extends PluginSettingTab {
         insertFeatureFlags: this.insertFeatureFlags,
     };
 
-    private readonly plugin: IQueryAllTheThingsPlugin;
+    private plugin: IQueryAllTheThingsPlugin;
+    private settingsManager: ISettingsManager;
 
-    constructor({ plugin }: { plugin: IQueryAllTheThingsPlugin }) {
+    constructor(
+        plugin: IQueryAllTheThingsPlugin,
+        settingsManager: ISettingsManager
+    ) {
         super(plugin.app, plugin as unknown as Plugin);
-
         this.plugin = plugin;
+        this.settingsManager = settingsManager;
     }
 
     public async saveSettings(update?: boolean): Promise<void> {
@@ -34,7 +38,7 @@ export class SettingsTab extends PluginSettingTab {
 
     public display(): void {
         const { containerEl } = this;
-        const { headingOpened } = getSettings();
+        const { headingOpened } = this.settingsManager.getSettings();
 
         this.containerEl.empty();
         this.containerEl.addClass('qatt-settings');
@@ -48,7 +52,7 @@ export class SettingsTab extends PluginSettingTab {
             detailsContainer.empty();
             detailsContainer.ontoggle = () => {
                 headingOpened[heading.text] = detailsContainer.open;
-                updateSettings({ headingOpened: headingOpened });
+                this.settingsManager.updateSettings({ headingOpened: headingOpened });
                 this.plugin.saveSettings();
             };
             const summary = detailsContainer.createEl('summary');
@@ -71,7 +75,7 @@ export class SettingsTab extends PluginSettingTab {
             // them out reducing the duplication of the code in this file. This will become
             // more important as features are being added over time.
             heading.settings.forEach((setting) => {
-                if (setting.featureFlag !== '' && !isFeatureEnabled(setting.featureFlag)) {
+                if (setting.featureFlag !== '' && !this.settingsManager.isFeatureEnabled(setting.featureFlag)) {
                     // The settings configuration has a featureFlag set and the user has not
                     // enabled it. Skip adding the settings option.
                     return;
@@ -81,14 +85,14 @@ export class SettingsTab extends PluginSettingTab {
                         .setName(setting.name)
                         .setDesc(setting.description)
                         .addToggle((toggle) => {
-                            const settings = getSettings();
+                            const settings = this.settingsManager.getSettings();
                             if (!settings.generalSettings[setting.settingName]) {
-                                updateGeneralSetting(setting.settingName, setting.initialValue);
+                                this.settingsManager.setValue(setting.settingName, setting.initialValue);
                             }
                             toggle
                                 .setValue(<boolean>settings.generalSettings[setting.settingName])
                                 .onChange(async (value) => {
-                                    updateGeneralSetting(setting.settingName, value);
+                                    this.settingsManager.setValue(setting.settingName, value);
                                     await this.plugin.saveSettings();
                                 });
                         });
@@ -97,13 +101,13 @@ export class SettingsTab extends PluginSettingTab {
                         .setName(setting.name)
                         .setDesc(setting.description)
                         .addText((text) => {
-                            const settings = getSettings();
+                            const settings = this.settingsManager.getSettings();
                             if (!settings.generalSettings[setting.settingName]) {
-                                updateGeneralSetting(setting.settingName, setting.initialValue);
+                                this.settingsManager.setValue(setting.settingName, setting.initialValue);
                             }
 
                             const onChange = async (value: string) => {
-                                updateGeneralSetting(setting.settingName, value);
+                                this.settingsManager.setValue(setting.settingName, value);
                                 await this.plugin.saveSettings();
                             };
 
@@ -116,13 +120,13 @@ export class SettingsTab extends PluginSettingTab {
                         .setName(setting.name)
                         .setDesc(setting.description)
                         .addTextArea((text) => {
-                            const settings = getSettings();
+                            const settings = this.settingsManager.getSettings();
                             if (!settings.generalSettings[setting.settingName]) {
-                                updateGeneralSetting(setting.settingName, setting.initialValue);
+                                this.settingsManager.setValue(setting.settingName, setting.initialValue);
                             }
 
                             const onChange = async (value: string) => {
-                                updateGeneralSetting(setting.settingName, value);
+                                this.settingsManager.setValue(setting.settingName, value);
                                 await this.plugin.saveSettings();
                             };
 
@@ -164,9 +168,9 @@ export class SettingsTab extends PluginSettingTab {
                 .setName(feature.displayName)
                 .setDesc(feature.description + ' Is Stable? ' + feature.stable)
                 .addToggle((toggle) => {
-                    toggle.setValue(isFeatureEnabled(feature.internalName)).onChange(async (value) => {
-                        const updatedFeatures = toggleFeature(feature.internalName, value);
-                        updateSettings({ features: updatedFeatures });
+                    toggle.setValue(settings.settingsManager.isFeatureEnabled(feature.internalName)).onChange(async (value) => {
+                        const updatedFeatures = settings.settingsManager.toggleFeature(feature.internalName, value);
+                        settings.settingsManager.updateSettings({ features: updatedFeatures });
 
                         await settings.saveSettings(true);
                     });

@@ -1,15 +1,14 @@
-import { IQuery } from 'IQuery';
-import { LayoutOptions } from 'LayoutOptions';
-import { isFeatureEnabled } from 'Settings/Settings';
 import alasql from 'alasql';
-import { logging } from 'lib/logging';
+import { getAPI } from "obsidian-dataview";
 import { parse } from 'yaml'
-import { App } from 'obsidian';
-import { IQueryAllTheThingsPlugin } from 'IQueryAllTheThingsPlugin';
-
-import { DataArray, DataviewApi, getAPI, isPluginEnabled, STask } from "obsidian-dataview";
+import { IQuery } from 'Interfaces/IQuery';
+import { LayoutOptions } from 'LayoutOptions';
+import { logging } from 'lib/logging';
+import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
 
 export class QuerySql implements IQuery {
+    logger = logging.getLogger('Qatt.QuerySql');
+
     public source: string;
     public name: string;
 
@@ -22,15 +21,7 @@ export class QuerySql implements IQuery {
     private _layoutOptions: LayoutOptions = new LayoutOptions();
 
     private _error: string | undefined = undefined;
-    // private _groupingPossible: boolean = false;
-    // private _groupByFields: [string, string][] = [];
-    private _rawMode: boolean = false;
-    private _rawWithTasksMode: boolean = false;
-    private _multilineQueryMode: boolean = false;
     private _rawResults: any;
-    private _dataTable: any = undefined;
-
-    logger = logging.getLogger('tasks.QuerySql');
 
     // Pending a future PR to enable Custom JS again.
     private _customJsClasses: Array<[string, string]>;
@@ -195,6 +186,9 @@ export class QuerySql implements IQuery {
             return currentQuery._frontmatter[field];
         };
 
+        alasql.fn.getNoteName = function (path) {
+            return path.split('/').slice(-1)[0].split('.')[0];
+        };
 
         // Needs integration with customJS, will be readded in later revision.
         // this._customJsClasses.forEach((element) => {

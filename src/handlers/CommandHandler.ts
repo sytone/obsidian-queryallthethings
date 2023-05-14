@@ -1,9 +1,16 @@
 import alasql from "alasql";
-import { log, logInfo } from "lib/logging";
-import QueryAllTheThingsPlugin from "main";
+import { IQueryAllTheThingsPlugin } from "Interfaces/IQueryAllTheThingsPlugin";
+import { ISettingsManager } from "Interfaces/ISettingsManager";
+import { logging } from "lib/logging";
 
 export class CommandHandler {
-    constructor(private plugin: QueryAllTheThingsPlugin) { }
+    logger = logging.getLogger('Qatt.CommandHandler');
+
+    constructor(
+        private plugin: IQueryAllTheThingsPlugin,
+        private settingsManager: ISettingsManager) {
+
+    }
 
     setup(): void {
         this.plugin.addCommand({
@@ -18,8 +25,9 @@ export class CommandHandler {
             id: 'qatt-push-internal-events-to-console',
             name: 'Will push all the internal events to the console for debugging.',
             callback: () => {
-                var res = alasql('SELECT * FROM qatt.Events');
-                logInfo('Internal Events', res);
+                let limit = this.settingsManager.getValue("internallogging_eventstoconsolelimit") as number;
+                var res = alasql(`SELECT TOP ${limit} * FROM qatt.Events`);
+                this.logger.info('Internal Events', res);
             }
         });
 

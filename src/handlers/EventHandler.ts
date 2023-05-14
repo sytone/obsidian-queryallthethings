@@ -1,10 +1,10 @@
-import QueryAllTheThingsPlugin from "main";
+import { IQueryAllTheThingsPlugin } from "Interfaces/IQueryAllTheThingsPlugin";
+import { ISettingsManager } from "Interfaces/ISettingsManager";
 import {
     debounce,
     EventRef,
 } from "obsidian";
-import DataTables from "DataTables";
-import { getGeneralSetting } from "Settings/Settings";
+
 
 export default class EventHandler {
     private creation_event: EventRef | undefined;
@@ -13,7 +13,8 @@ export default class EventHandler {
     private rename_event: EventRef | undefined;
 
     constructor(
-        private plugin: QueryAllTheThingsPlugin) {
+        private plugin: IQueryAllTheThingsPlugin,
+        private settingsManager: ISettingsManager) {
     }
 
     setup(): void {
@@ -30,7 +31,7 @@ export default class EventHandler {
     private updateRefreshSettings() {
         this.debouncedRefresh = debounce(
             () => app.workspace.trigger("qatt:refresh-codeblocks"),
-            getGeneralSetting("refreshDebounce") as number,
+            this.settingsManager.getValue("refreshDebounce") as number,
             true
         );
     }

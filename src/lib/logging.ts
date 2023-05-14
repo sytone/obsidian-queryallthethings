@@ -10,6 +10,7 @@ import { Platform, Plugin } from 'obsidian';
  * https://www.npmjs.com/package/eventemitter2
  */
 import { EventEmitter2 } from 'eventemitter2';
+import { LogOptions } from "Interfaces/Settings";
 
 /**
  * All possible log levels
@@ -38,15 +39,7 @@ export interface LogEntry {
     objects: any;
 }
 
-/**
- * Logging options structure.
- *
- * @export
- * @interface LogOptions
- */
-export interface LogOptions {
-    minLevels: { [module: string]: string };
-}
+
 
 /**
  * Standard logging interface.

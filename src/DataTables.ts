@@ -2,19 +2,18 @@ import alasql from 'alasql';
 import { DateTime } from 'luxon';
 import { getAPI } from "obsidian-dataview";
 import { parseTask } from 'Parse/parsers';
-import { IQueryAllTheThingsPlugin } from 'IQueryAllTheThingsPlugin';
-import { ILogger } from 'lib/logging';
-import { injected } from 'brandi';
-import { TOKENS } from 'tokens';
+import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
+import { logging } from 'lib/logging';
+
 
 export interface IDataTables {
     refreshTables(reason: string): void;
 }
 
 export class DataTables {
+    logger = logging.getLogger('Qatt.DataTables');
 
     constructor(
-        private logger: ILogger,
         private plugin: IQueryAllTheThingsPlugin,
     ) {
     }
@@ -34,6 +33,7 @@ export class DataTables {
 
         // Temporary tables based on current state to make some queries faster.
         if (alasql('SHOW TABLES FROM alasql LIKE "tasks"').length != 0) {
+            this.logger.info('Dropping the tasks table to repopulate.')
             alasql('DROP TABLE tasks ');
 
         }
@@ -49,6 +49,7 @@ export class DataTables {
                         page: p.path,
                         task: l.text,
                         status: l.task?.status,
+                        line: l.line,
                         tags: parsedTask.tags,
                         tagsNormalized: parsedTask.tagsNormalized,
                         dueDate: parsedTask.dueDate,
@@ -61,10 +62,9 @@ export class DataTables {
                 }
             });
         });
-        this.logger.log('info', `Tasks refreshed in ${DateTime.now().diff(start, 'millisecond').toString()}ms`);
+        this.logger.log('info', `Tasks refreshed in ${DateTime.now().diff(start, 'millisecond').toString()}`);
     }
 
 
 }
 
-injected(DataTables, TOKENS.logger, TOKENS.plugin);

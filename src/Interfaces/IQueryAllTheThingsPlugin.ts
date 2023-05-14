@@ -1,4 +1,4 @@
-import { App } from "obsidian";
+import { App, Command, EventRef } from "obsidian";
 
 export interface IQueryAllTheThingsPlugin {
 
@@ -11,5 +11,6 @@ export interface IQueryAllTheThingsPlugin {
     saveSettings(): any;
 
     registerMarkdownCodeBlockProcessor(language: string, handler: (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => Promise<any> | void, sortOrder?: number): MarkdownPostProcessor;
-
+    addCommand(command: Command): Command;
+    registerEvent(eventRef: EventRef): void;
 }

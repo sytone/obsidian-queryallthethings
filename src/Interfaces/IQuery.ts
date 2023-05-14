@@ -1,4 +1,4 @@
-import type { LayoutOptions } from './LayoutOptions';
+import type { LayoutOptions } from '../LayoutOptions';
 
 /**
  * Standard interface for the query engine used by Tasks, multiple
