@@ -77,26 +77,21 @@ class QueryRenderChild extends MarkdownRenderChild {
     const results = this.queryEngine.applyQuery(this.queryId);
     this._logger.info('queryConfiguration', results);
 
-    let template = handlebars.compile('{{stringify result}}');
-    if (renderConfiguration.template !== undefined) {
-      template = handlebars.compile(renderConfiguration.template);
-    }
-    const html = template({ result: results });
+    let template = handlebars.compile(renderConfiguration.template ?? '{{stringify result}}');
 
     const content = this.containerEl.createEl('div');
     content.setAttr('data-query-id', this.queryId);
 
-    if (this.queryEngine.error === undefined) {
+    if (this.queryEngine.error) {
+      this._logger.error(`QATT query (${this.queryEngine.name}) error: ${this.queryEngine.error}`);
+      content.setText(`QATT query error: ${this.queryEngine.error}`);
+    } else {
+      const html = template({ result: results });
       if (renderConfiguration.render === 'markdown') {
         await MarkdownPreviewView.renderMarkdown(html, content, '', this.plugin);
       } else {
         content.innerHTML = html;
       }
-    } else if (this.queryEngine.error !== undefined) {
-      this._logger.error(`QATT query (${this.queryEngine.name}) error: ${this.queryEngine.error}`);
-      content.setText(`QATT query error: ${this.queryEngine.error}`);
-    } else {
-      content.setText('Loading...');
     }
 
     this.containerEl.firstChild?.replaceWith(content);

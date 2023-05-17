@@ -28,11 +28,11 @@ export class QuerySql implements IQuery {
    * @param {IQueryAllTheThingsPlugin} plugin
    * @memberof QuerySql
    */
-  constructor (
+  constructor(
     public source: string,
     private sourcePath: string,
     private frontmatter: any | null | undefined,
-    private plugin: IQueryAllTheThingsPlugin
+    private plugin: IQueryAllTheThingsPlugin,
   ) {
     this.name = 'QuerySql';
     this._queryId = this.generateQueryId(10);
@@ -64,7 +64,7 @@ export class QuerySql implements IQuery {
    * @type {(string | undefined)}
    * @memberof QuerySql
    */
-  public get error (): string | undefined {
+  public get error(): string | undefined {
     return this._error;
   }
 
@@ -75,7 +75,7 @@ export class QuerySql implements IQuery {
    * @type {(string | undefined)}
    * @memberof QuerySql
    */
-  public get queryId (): string | undefined {
+  public get queryId(): string | undefined {
     return this._queryId;
   }
 
@@ -86,7 +86,7 @@ export class QuerySql implements IQuery {
    * @type {(string | undefined)}
    * @memberof QuerySql
    */
-  public get template (): string | undefined {
+  public get template(): string | undefined {
     return this._customTemplate;
   }
 
@@ -97,7 +97,7 @@ export class QuerySql implements IQuery {
    * @type {*}
    * @memberof QuerySql
    */
-  public get rawResults (): any {
+  public get rawResults(): any {
     return this._rawResults;
   }
 
@@ -107,7 +107,7 @@ export class QuerySql implements IQuery {
    * @return {*}  {*}
    * @memberof QuerySql
    */
-  public query (): any {
+  public query(): any {
     this.logger.infoWithId(this._queryId, `Executing query: [${this.source}]`);
     const currentQuery = this;
 
@@ -160,16 +160,18 @@ export class QuerySql implements IQuery {
     // check each query statement for the table it wants to query and if a
     // internal table replace with the right data source to query for that instance.
     try {
-      this.source.split(';').forEach(v => {
+      this.source.split(';').forEach((v) => {
         if (v.trim() !== '') {
           let query = v;
           let dataTable: any[] = [];
-          if (/\bobsidian_markdown_notes\b/ig.test(v)) {
-            query = v.replace(/\bobsidian_markdown_notes\b/ig, '$0');
+          if (/\bobsidian_markdown_notes\b/gi.test(v)) {
+            query = v.replace(/\bobsidian_markdown_notes\b/gi, '$0');
             dataTable = this.plugin.app.vault.getMarkdownFiles();
-          } else if (/\bdataview_pages\b/ig.test(v)) {
-            query = v.replace(/\bdataview_pages\b/ig, '$0');
-            dataTable = Array.from(getAPI(this.plugin.app).index.pages.values());
+          } else if (/\bdataview_pages\b/gi.test(v)) {
+            query = v.replace(/\bdataview_pages\b/gi, '$0');
+            let dataViewApi = getAPI(this.plugin.app);
+            dataTable = dataViewApi ? Array.from(dataViewApi.index.pages.values()) : [];
+
             // } else if (/\bdataview_pages_map\b/ig.test(v)) {
             //     query = v.replace(/\bdataview_pages_map\b/ig, '?');
             //     dataTable = getAPI(this._plugin.app).index.pages;
@@ -199,7 +201,7 @@ export class QuerySql implements IQuery {
    * @return {*}  {*}
    * @memberof QuerySql
    */
-  public applyQuery (): any {
+  public applyQuery(): any {
     const queryResult: any = this.query();
 
     return queryResult;
@@ -213,7 +215,7 @@ export class QuerySql implements IQuery {
    * @return {*}  {string}
    * @memberof QuerySql
    */
-  private generateQueryId (length: number): string {
+  private generateQueryId(length: number): string {
     const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
     const randomArray = Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]);
 
