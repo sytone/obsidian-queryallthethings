@@ -1,4 +1,4 @@
-import { DateTime } from "luxon";
+import { DateTime } from 'luxon';
 import { Platform, Plugin } from 'obsidian';
 /*
  * EventEmitter2 is an implementation of the EventEmitter module found in Node.js.
@@ -10,18 +10,21 @@ import { Platform, Plugin } from 'obsidian';
  * https://www.npmjs.com/package/eventemitter2
  */
 import { EventEmitter2 } from 'eventemitter2';
-import { LogOptions } from "Interfaces/Settings";
+import { LogOptions } from 'Interfaces/Settings';
 
 /**
  * All possible log levels
  * @public
  */
 export interface ILogLevel {
-    1: 'trace';
-    2: 'debug';
-    3: 'info';
-    4: 'warn';
-    5: 'error';
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  1: 'trace';
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+
+  2: 'debug';
+  3: 'info';
+  4: 'warn';
+  5: 'error';
 }
 
 /**
@@ -31,15 +34,13 @@ export interface ILogLevel {
  * @interface LogEntry
  */
 export interface LogEntry {
-    traceId?: string;
-    level: string;
-    module: string;
-    location?: string;
-    message: string;
-    objects: any;
+  traceId?: string;
+  level: string;
+  module: string;
+  location?: string;
+  message: string;
+  objects: any;
 }
-
-
 
 /**
  * Standard logging interface.
@@ -48,18 +49,18 @@ export interface LogEntry {
  * @interface Logger
  */
 export interface ILogger {
-    log(logLevel: string, message: string, objects?: any): void;
-    trace(message: string, objects?: any): void;
-    debug(message: string, objects?: any): void;
-    info(message: string, objects?: any): void;
-    warn(message: string, objects?: any): void;
-    error(message: string, objects?: any): void;
-    logWithId(logLevel: string, traceId: string, message: string, objects?: any): void;
-    traceWithId(traceId: string, message: string, objects?: any): void;
-    debugWithId(traceId: string, message: string, objects?: any): void;
-    infoWithId(traceId: string, message: string, objects?: any): void;
-    warnWithId(traceId: string, message: string, objects?: any): void;
-    errorWithId(traceId: string, message: string, objects?: any): void;
+  log (logLevel: string, message: string, objects?: any): void;
+  trace (message: string, objects?: any): void;
+  debug (message: string, objects?: any): void;
+  info (message: string, objects?: any): void;
+  warn (message: string, objects?: any): void;
+  error (message: string, objects?: any): void;
+  logWithId (logLevel: string, traceId: string, message: string, objects?: any): void;
+  traceWithId (traceId: string, message: string, objects?: any): void;
+  debugWithId (traceId: string, message: string, objects?: any): void;
+  infoWithId (traceId: string, message: string, objects?: any): void;
+  warnWithId (traceId: string, message: string, objects?: any): void;
+  errorWithId (traceId: string, message: string, objects?: any): void;
 }
 
 /**
@@ -82,109 +83,111 @@ export type TLogLevelName = ILogLevel[TLogLevelId];
  * @extends {EventEmitter2}
  */
 export class LogManager extends EventEmitter2 {
-    private options: LogOptions = {
-        minLevels: {
-            '': 'info',
-            tasks: 'info',
-        },
-    };
+  private options: LogOptions = {
+    minLevels: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      '': 'info',
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      Qatt: 'info'
+    }
+  };
 
-    // Prevent the console logger from being added twice
-    private consoleLoggerRegistered: boolean = false;
+  // Prevent the console logger from being added twice
+  private consoleLoggerRegistered: boolean = false;
 
-    /**
+  /**
      * Set the minimum log levels for the module name or global.
      *
      * @param {LogOptions} options
      * @return {*}  {LogManager}
      * @memberof LogManager
      */
-    public configure(options: LogOptions): LogManager {
-        this.options = Object.assign({}, this.options, options);
-        return this;
-    }
+  public configure (options: LogOptions): LogManager {
+    this.options = Object.assign({}, this.options, options);
+    return this;
+  }
 
-    /**
+  /**
      * Returns a logger instance for the given module name.
      *
      * @param {string} module
      * @return {*}  {Logger}
      * @memberof LogManager
      */
-    public getLogger(module: string): ILogger {
-        let minLevel = 'none';
-        let match = '';
+  public getLogger (module: string): ILogger {
+    let minLevel = 'none';
+    let match = '';
 
-        for (const key in this.options.minLevels) {
-            if (module.startsWith(key) && key.length >= match.length) {
-                minLevel = this.options.minLevels[key];
-                match = key;
-            }
-        }
-        return new QattLogger(this, module, minLevel);
+    for (const key in this.options.minLevels) {
+      if (module.startsWith(key) && key.length >= match.length) {
+        minLevel = this.options.minLevels[key];
+        match = key;
+      }
     }
+    return new QattLogger(this, module, minLevel);
+  }
 
-    /**
+  /**
      *
      *
      * @param {(logEntry: LogEntry) => void} listener
      * @return {*}  {LogManager}
      * @memberof LogManager
      */
-    public onLogEntry(listener: (logEntry: LogEntry) => void): LogManager {
-        this.on('log', listener);
-        return this;
-    }
+  public onLogEntry (listener: (logEntry: LogEntry) => void): LogManager {
+    this.on('log', listener);
+    return this;
+  }
 
-    // private period: number = 0;
-    arrAvg = (arr: number[]) => arr.reduce((a, b) => a + b, 0) / arr.length;
+  // private period: number = 0;
+  arrAvg = (arr: number[]) => arr.reduce((a, b) => a + b, 0) / arr.length;
 
-    /**
+  /**
      * Registers a logger that write to the console.
      *
      * @return {*}  {LogManager}
      * @memberof LogManager
      */
-    public registerConsoleLogger(): LogManager {
-        if (this.consoleLoggerRegistered) return this;
+  public registerConsoleLogger (): LogManager {
+    if (this.consoleLoggerRegistered) return this;
 
-        this.onLogEntry((logEntry) => {
-            let msg = `[${DateTime.now().toISO()}][${logEntry.level
-                }][${logEntry.module}]`;
+    this.onLogEntry((logEntry) => {
+      let msg = `[${DateTime.now().toISO()}][${logEntry.level
+        }][${logEntry.module}]`;
 
-            if (logEntry.traceId) {
-                msg += `[${logEntry.traceId}]`;
-            }
+      if (logEntry.traceId) {
+        msg += `[${logEntry.traceId}]`;
+      }
 
-            msg += ` ${logEntry.message}`;
-            if (logEntry.objects === undefined) {
-                logEntry.objects = '';
-            }
+      msg += ` ${logEntry.message}`;
+      if (logEntry.objects === undefined) {
+        logEntry.objects = '';
+      }
 
-            switch (logEntry.level) {
-                case 'trace':
-                    console.trace(msg, logEntry.objects);
-                    break;
-                case 'debug':
-                    console.debug(msg, logEntry.objects);
-                    break;
-                case 'info':
-                    console.info(msg, logEntry.objects);
-                    break;
-                case 'warn':
-                    console.warn(msg, logEntry.objects);
-                    break;
-                case 'error':
-                    console.error(msg, logEntry.objects);
-                    break;
-                default:
-                    console.log(`{${logEntry.level}} ${msg}`, logEntry.objects);
-            }
-        });
+      switch (logEntry.level) {
+        case 'trace':
+          console.trace(msg, logEntry.objects);
+          break;
+        case 'debug':
+          console.debug(msg, logEntry.objects);
+          break;
+        case 'info':
+          console.info(msg, logEntry.objects);
+          break;
+        case 'warn':
+          console.warn(msg, logEntry.objects);
+          break;
+        case 'error':
+          console.error(msg, logEntry.objects);
+          break;
+        default:
+          console.log(`{${logEntry.level}} ${msg}`, logEntry.objects);
+      }
+    });
 
-        this.consoleLoggerRegistered = true;
-        return this;
-    }
+    this.consoleLoggerRegistered = true;
+    return this;
+  }
 }
 
 export const logging = new LogManager();
@@ -197,135 +200,141 @@ export const logging = new LogManager();
  * @class Logger
  */
 export class QattLogger implements ILogger {
-    private logManager: EventEmitter2;
-    private minLevel: number;
-    private module: string;
-    private readonly levels: { [key: string]: number } = {
-        trace: 1,
-        debug: 2,
-        info: 3,
-        warn: 4,
-        error: 5,
-    };
+  private logManager: EventEmitter2;
+  private minLevel: number;
+  private module: string;
+  private readonly levels: { [key: string]: number } = {
+    trace: 1,
+    debug: 2,
+    info: 3,
+    warn: 4,
+    error: 5
+  };
 
-    /**
+  /**
      * Creates an instance of Logger.
      * @param {EventEmitter2} logManager
      * @param {string} module
      * @param {string} minLevel
      * @memberof Logger
      */
-    constructor(logManager: EventEmitter2, module: string, minLevel: string) {
-        this.logManager = logManager;
-        this.module = module;
-        this.minLevel = this.levelToInt(minLevel);
-    }
+  constructor (logManager: EventEmitter2, module: string, minLevel: string) {
+    this.logManager = logManager;
+    this.module = module;
+    this.minLevel = this.levelToInt(minLevel);
+  }
 
-    /**
+  /**
      * Converts a string level (trace/debug/info/warn/error) into a number
      *
      * @param minLevel
      */
-    private levelToInt(minLevel: string): number {
-        if (minLevel.toLowerCase() in this.levels)
-            return this.levels[minLevel.toLowerCase()];
-        else return 99;
-    }
+  private levelToInt (minLevel: string): number {
+    if (minLevel.toLowerCase() in this.levels) { return this.levels[minLevel.toLowerCase()]; } else return 99;
+  }
 
-    /**
+  /**
      * Central logging method.
      * @param logLevel
      * @param message
      */
-    public log(logLevel: string, message: string, objects?: any): void {
-        const level = this.levelToInt(logLevel);
-        if (level < this.minLevel) return;
+  public log (logLevel: string, message: string, objects?: any): void {
+    const level = this.levelToInt(logLevel);
+    if (level < this.minLevel) return;
 
-        const logEntry: LogEntry = {
-            level: logLevel,
-            module: this.module,
-            message,
-            objects,
-            traceId: undefined,
-        };
+    const logEntry: LogEntry = {
+      level: logLevel,
+      module: this.module,
+      message,
+      objects,
+      traceId: undefined
+    };
 
-        // Obtain the line/file through a thoroughly hacky method
-        // This creates a new stack trace and pulls the caller from it.  If the caller
-        // if .trace()
-        // const error = new Error('');
-        // if (error.stack) {
-        //     const cla = error.stack.split('\n');
-        //     let idx = 1;
-        //     while (idx < cla.length && cla[idx].includes('at Logger.Object.')) idx++;
-        //     if (idx < cla.length) {
-        //         logEntry.location = cla[idx].slice(cla[idx].indexOf('at ') + 3, cla[idx].length);
-        //     }
-        // }
+    // Obtain the line/file through a thoroughly hacky method
+    // This creates a new stack trace and pulls the caller from it.  If the caller
+    // if .trace()
+    // const error = new Error('');
+    // if (error.stack) {
+    //     const cla = error.stack.split('\n');
+    //     let idx = 1;
+    //     while (idx < cla.length && cla[idx].includes('at Logger.Object.')) idx++;
+    //     if (idx < cla.length) {
+    //         logEntry.location = cla[idx].slice(cla[idx].indexOf('at ') + 3, cla[idx].length);
+    //     }
+    // }
 
-        this.logManager.emit('log', logEntry);
-    }
+    this.logManager.emit('log', logEntry);
+  }
 
-    public trace(message: string, objects?: any): void {
-        this.log('trace', message, objects);
-    }
-    public debug(message: string, objects?: any): void {
-        this.log('debug', message, objects);
-    }
-    public info(message: string, objects?: any): void {
-        this.log('info', message, objects);
-    }
-    public warn(message: string, objects?: any): void {
-        this.log('warn', message, objects);
-    }
-    public error(message: string, objects?: any): void {
-        this.log('error', message, objects);
-    }
+  public trace (message: string, objects?: any): void {
+    this.log('trace', message, objects);
+  }
 
-    /**
+  public debug (message: string, objects?: any): void {
+    this.log('debug', message, objects);
+  }
+
+  public info (message: string, objects?: any): void {
+    this.log('info', message, objects);
+  }
+
+  public warn (message: string, objects?: any): void {
+    this.log('warn', message, objects);
+  }
+
+  public error (message: string, objects?: any): void {
+    this.log('error', message, objects);
+  }
+
+  /**
      * Central logging method with a trace ID to track calls between modules/components.
      * @param logLevel
      * @param message
      */
-    public logWithId(
-        logLevel: string,
-        traceId: string,
-        message: string,
-        objects?: any,
-    ): void {
-        const level = this.levelToInt(logLevel);
-        if (level < this.minLevel) return;
+  public logWithId (
+    logLevel: string,
+    traceId: string,
+    message: string,
+    objects?: any
+  ): void {
+    const level = this.levelToInt(logLevel);
+    if (level < this.minLevel) return;
 
-        const logEntry: LogEntry = {
-            level: logLevel,
-            module: this.module,
-            message,
-            objects,
-            traceId,
-        };
+    const logEntry: LogEntry = {
+      level: logLevel,
+      module: this.module,
+      message,
+      objects,
+      traceId
+    };
 
-        this.logManager.emit('log', logEntry);
-    }
+    this.logManager.emit('log', logEntry);
+  }
 
-    public traceWithId(traceId: string, message: string, objects?: any): void {
-        this.logWithId('trace', traceId, message, objects);
-    }
-    public debugWithId(traceId: string, message: string, objects?: any): void {
-        this.logWithId('debug', traceId, message, objects);
-    }
-    public infoWithId(traceId: string, message: string, objects?: any): void {
-        this.logWithId('info', traceId, message, objects);
-    }
-    public warnWithId(traceId: string, message: string, objects?: any): void {
-        this.logWithId('warn', traceId, message, objects);
-    }
-    public errorWithId(traceId: string, message: string, objects?: any): void {
-        this.logWithId('error', traceId, message, objects);
-    }
+  public traceWithId (traceId: string, message: string, objects?: any): void {
+    this.logWithId('trace', traceId, message, objects);
+  }
+
+  public debugWithId (traceId: string, message: string, objects?: any): void {
+    this.logWithId('debug', traceId, message, objects);
+  }
+
+  public infoWithId (traceId: string, message: string, objects?: any): void {
+    this.logWithId('info', traceId, message, objects);
+  }
+
+  public warnWithId (traceId: string, message: string, objects?: any): void {
+    this.logWithId('warn', traceId, message, objects);
+  }
+
+  public errorWithId (traceId: string, message: string, objects?: any): void {
+    this.logWithId('error', traceId, message, objects);
+  }
 }
 
 type TimingMap = {
-    // count, avg, min, max
-    [id: string]: number[];
+  // count, avg, min, max
+  [id: string]: number[];
 };
 
 const timingMap: TimingMap = {};
@@ -338,65 +347,65 @@ const timingMap: TimingMap = {};
  * @return {*}
  */
 export const logCall = (
-    target: Object,
-    propertyKey: string,
-    descriptor: PropertyDescriptor,
+  target: Object,
+  propertyKey: string,
+  descriptor: PropertyDescriptor
 ) => {
-    const originalMethod = descriptor.value;
-    descriptor.value = function (...args: any[]) {
-        const startTime = new Date(Date.now());
-        const result = originalMethod.apply(this, args);
-        const endTime = new Date(Date.now());
-        const name = `${target?.constructor?.name}${propertyKey}`;
-        const time = endTime.getTime() - startTime.getTime();
-        if (timingMap[name] === undefined) {
-            timingMap[name] = [];
-        }
-        timingMap[name].push(time);
+  const originalMethod = descriptor.value;
+  descriptor.value = function (...args: any[]) {
+    const startTime = new Date(Date.now());
+    const result = originalMethod.apply(this, args);
+    const endTime = new Date(Date.now());
+    const name = `${target?.constructor?.name}${propertyKey}`;
+    const time = endTime.getTime() - startTime.getTime();
+    if (timingMap[name] === undefined) {
+      timingMap[name] = [];
+    }
+    timingMap[name].push(time);
 
-        //console.log(timingMap);
-        // if (endTime.getTime() - startTime.getTime() > 50) {
-        //     console.debug(
-        //         `[debug][qatt.perf] ${String(timingMap[name].avg).padEnd(4)}${String(
-        //             endTime.getTime() - startTime.getTime(),
-        //         ).padEnd(4)} ${target?.constructor?.name.padEnd(10)}${propertyKey.padEnd(20)}`,
-        //     );
+    // console.log(timingMap);
+    // if (endTime.getTime() - startTime.getTime() > 50) {
+    //     console.debug(
+    //         `[debug][qatt.perf] ${String(timingMap[name].avg).padEnd(4)}${String(
+    //             endTime.getTime() - startTime.getTime(),
+    //         ).padEnd(4)} ${target?.constructor?.name.padEnd(10)}${propertyKey.padEnd(20)}`,
+    //     );
 
-        //     // logger.debug(
-        //     //     `${target?.constructor?.name}:${propertyKey}:called with ${args.length} arguments. Took: ${
-        //     //         endTime.getTime() - startTime.getTime()
-        //     //     }ms`,
-        //     // );
-        // }
-        return result;
-    };
+    //     // logger.debug(
+    //     //     `${target?.constructor?.name}:${propertyKey}:called with ${args.length} arguments. Took: ${
+    //     //         endTime.getTime() - startTime.getTime()
+    //     //     }ms`,
+    //     // );
+    // }
+    return result;
+  };
 
-    return descriptor;
+  return descriptor;
 };
 
-export function logCallDetails() {
-    return function (
-        target: any,
-        propertyKey: string,
-        descriptor: PropertyDescriptor,
-    ) {
-        const originalMethod = descriptor.value;
-        const logger = logging.getLogger('qatt');
+export function logCallDetails () {
+  return function (
+    target: any,
+    propertyKey: string,
+    descriptor: PropertyDescriptor
+  ) {
+    const originalMethod = descriptor.value;
+    const logger = logging.getLogger('Qatt');
 
-        descriptor.value = async function (...args: any[]) {
-            const startTime = new Date(Date.now());
-            const result = await originalMethod.apply(this, args);
-            const endTime = new Date(Date.now());
-            const elapsed = endTime.getTime() - startTime.getTime();
+    descriptor.value = async function (...args: any[]) {
+      const startTime = new Date(Date.now());
+      const result = await originalMethod.apply(this, args);
+      const endTime = new Date(Date.now());
+      const elapsed = endTime.getTime() - startTime.getTime();
 
-            logger.debug(
-                `${typeof target}:${propertyKey} called with ${args.length
-                } arguments. Took: ${elapsed}ms ${JSON.stringify(args)}`,
-            );
-            return result;
-        };
-        return descriptor;
+      logger.debug(
+        `${typeof target}:${propertyKey} called with ${args.length
+        } arguments. Took: ${elapsed}ms ${JSON.stringify(args)}`
+      );
+      return result;
     };
+    return descriptor;
+  };
 }
 
 /**
@@ -406,8 +415,8 @@ export function logCallDetails() {
  * @param {string} message
  * @param {*} [objects]
  */
-export function logTrace(message: string, objects?: any) {
-    log('trace', message, objects);
+export function logTrace (message: string, objects?: any) {
+  log('trace', message, objects);
 }
 
 /**
@@ -417,8 +426,8 @@ export function logTrace(message: string, objects?: any) {
  * @param {string} message
  * @param {*} [objects]
  */
-export function logDebug(message: string, objects?: any) {
-    log('debug', message, objects);
+export function logDebug (message: string, objects?: any) {
+  log('debug', message, objects);
 }
 
 /**
@@ -428,8 +437,8 @@ export function logDebug(message: string, objects?: any) {
  * @param {string} message
  * @param {*} [objects]
  */
-export function logInfo(message: string, objects?: any) {
-    log('info', message, objects);
+export function logInfo (message: string, objects?: any) {
+  log('info', message, objects);
 }
 
 /**
@@ -439,8 +448,8 @@ export function logInfo(message: string, objects?: any) {
  * @param {string} message
  * @param {*} [objects]
  */
-export function logWarn(message: string, objects?: any) {
-    log('warn', message, objects);
+export function logWarn (message: string, objects?: any) {
+  log('warn', message, objects);
 }
 
 /**
@@ -450,8 +459,8 @@ export function logWarn(message: string, objects?: any) {
  * @param {string} message
  * @param {*} [objects]
  */
-export function logError(message: string, objects?: any) {
-    log('error', message, objects);
+export function logError (message: string, objects?: any) {
+  log('error', message, objects);
 }
 
 /**
@@ -461,28 +470,28 @@ export function logError(message: string, objects?: any) {
  * @param {TLogLevelName} logLevel
  * @param {string} message
  */
-export function log(logLevel: TLogLevelName, message: string, objects?: any) {
-    const logger = logging.getLogger('qatt');
+export function log (logLevel: TLogLevelName, message: string, objects?: any) {
+  const logger = logging.getLogger('Qatt');
 
-    switch (logLevel) {
-        case 'trace':
-            logger.trace(message, objects);
-            break;
-        case 'debug':
-            logger.debug(message, objects);
-            break;
-        case 'info':
-            logger.info(message, objects);
-            break;
-        case 'warn':
-            logger.warn(message, objects);
-            break;
-        case 'error':
-            logger.error(message, objects);
-            break;
-        default:
-            break;
-    }
+  switch (logLevel) {
+    case 'trace':
+      logger.trace(message, objects);
+      break;
+    case 'debug':
+      logger.debug(message, objects);
+      break;
+    case 'info':
+      logger.info(message, objects);
+      break;
+    case 'warn':
+      logger.warn(message, objects);
+      break;
+    case 'error':
+      logger.error(message, objects);
+      break;
+    default:
+      break;
+  }
 }
 
 /**
@@ -494,26 +503,26 @@ export function log(logLevel: TLogLevelName, message: string, objects?: any) {
  * @param {Plugin} plugin
  * @return {*}
  */
-export function monkeyPatchConsole(plugin: Plugin) {
-    if (!Platform.isMobile) {
-        return;
-    }
+export function monkeyPatchConsole (plugin: Plugin) {
+  if (!Platform.isMobile) {
+    return;
+  }
 
-    const logFile = `${plugin.manifest.dir}/qatt-logs.txt`;
-    const logs: string[] = [];
-    const logMessages =
-        (prefix: string) =>
-            (...messages: unknown[]) => {
-                logs.push(`\n[${prefix}]`);
-                for (const message of messages) {
-                    logs.push(String(message));
-                }
-                plugin.app.vault.adapter.write(logFile, logs.join(' '));
-            };
+  const logFile = `${plugin.manifest.dir}/qatt-logs.txt`;
+  const logs: string[] = [];
+  const logMessages =
+    (prefix: string) =>
+      (...messages: unknown[]) => {
+        logs.push(`\n[${prefix}]`);
+        for (const message of messages) {
+          logs.push(String(message));
+        }
+        plugin.app.vault.adapter.write(logFile, logs.join(' '));
+      };
 
-    console.debug = logMessages('debug');
-    console.error = logMessages('error');
-    console.info = logMessages('info');
-    console.log = logMessages('log');
-    console.warn = logMessages('warn');
+  console.debug = logMessages('debug');
+  console.error = logMessages('error');
+  console.info = logMessages('info');
+  console.log = logMessages('log');
+  console.warn = logMessages('warn');
 }

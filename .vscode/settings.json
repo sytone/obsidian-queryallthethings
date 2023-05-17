@@ -1,4 +1,15 @@
 {
     "material-icon-theme.folders.theme": "specific",
-    "cSpell.words": ["alasql", "luxon", "Qatt"]
+    "cSpell.words": [
+        "alasql",
+        "collab",
+        "collapser",
+        "DATETIME",
+        "lezer",
+        "luxon",
+        "nocount",
+        "outfile",
+        "pagedata",
+        "Qatt"
+    ]
 }

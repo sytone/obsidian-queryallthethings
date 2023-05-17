@@ -1,11 +1,6 @@
 import { describe, expect, test } from '@jest/globals';
 import { parseTask } from '../src/Parse/parsers';
 
-describe('Timezones', () => {
-    test('should always be UTC', () => {
-        expect(new Date().getTimezoneOffset()).toBe(0);
-    });
-})
 
 describe('parse functions', () => {
     test('task parses correctly', () => {

@@ -1,4 +1,4 @@
-import { FeatureFlag } from "Settings/Feature";
+import { FeatureFlag } from 'Settings/Feature';
 
 interface SettingsMap {
     [key: string]: string | boolean | number;

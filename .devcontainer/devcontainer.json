@@ -24,7 +24,9 @@
 			"brpaz.vscode-obsidianmd",
 			"nhoizey.gremlins",
 			"Orta.vscode-jest",
-			"oouo-diogo-perdigao.docthis"
+			"oouo-diogo-perdigao.docthis",
+			"stkb.rewrap",
+			"stackbreak.comment-divider"
 		]
 	}
 }

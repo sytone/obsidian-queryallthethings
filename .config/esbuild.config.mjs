@@ -10,7 +10,7 @@ if you want to view the source visit the plugins github repository
 `;
 
 // If OBSIDIAN_ROOT is set in the environment then copy the files ove to make debugging faster.
-let copyFilesConfig ={
+let copyFilesConfig = {
     before: {
         // copy before bundling
     },
@@ -19,10 +19,13 @@ let copyFilesConfig ={
     },
 };
 
-if(process.env.OBSIDIAN_ROOT !== undefined) {
-    copyFilesConfig.after[`${process.env.OBSIDIAN_ROOT}/.obsidian/plugins/qatt/manifest.json`] = './manifest.json' 
-    copyFilesConfig.after[`${process.env.OBSIDIAN_ROOT}/.obsidian/plugins/qatt/main.js`] = './dist/main.js' 
-    copyFilesConfig.after[`${process.env.OBSIDIAN_ROOT}/.obsidian/plugins/qatt/styles.css`] = './dist/styles.css' 
+if (process.env.OBSIDIAN_ROOT !== undefined) {
+    console.log(`OBSIDIAN_ROOT set to ${process.env.OBSIDIAN_ROOT}`);
+    copyFilesConfig.after[`${process.env.OBSIDIAN_ROOT}/.obsidian/plugins/qatt/manifest.json`] = './manifest.json';
+    copyFilesConfig.after[`${process.env.OBSIDIAN_ROOT}/.obsidian/plugins/qatt/main.js`] = './dist/main.js';
+    copyFilesConfig.after[`${process.env.OBSIDIAN_ROOT}/.obsidian/plugins/qatt/styles.css`] = './dist/styles.css';
+} else {
+    console.log(`OBSIDIAN_ROOT is not set`);
 }
 
 const prod = process.argv[2] === 'production';
@@ -53,9 +56,7 @@ const context = await esbuild.context({
     logLevel: 'info',
     minify: prod,
     outfile: 'dist/main.js',
-    plugins: [
-        copyFilePlugin(copyFilesConfig),
-    ],
+    plugins: [copyFilePlugin(copyFilesConfig)],
     sourcemap: prod ? false : 'inline',
     target: 'es2018',
     treeShaking: true,

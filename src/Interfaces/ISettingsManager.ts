@@ -1,4 +1,4 @@
-import { FeatureFlag } from "Settings/Feature";
+import { FeatureFlag } from 'Settings/Feature';
 import { Settings } from 'Interfaces/Settings';
 
 export interface ISettingsManager {

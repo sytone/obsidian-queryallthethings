@@ -13,6 +13,8 @@
         "nhoizey.gremlins",
         "dotup.dotup-vscode-interface-generator",
         "orta.vscode-jest",
-        "oouo-diogo-perdigao.docthis"
+        "oouo-diogo-perdigao.docthis",
+        "stkb.rewrap",
+        "stackbreak.comment-divider"
     ]
 }

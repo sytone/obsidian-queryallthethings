@@ -1,7 +1,8 @@
+import { logging } from 'lib/logging';
 import featuresJson from './featureConfiguration.json';
 
 export type FeatureFlag = {
-    [internalName: string]: boolean;
+  [internalName: string]: boolean;
 };
 
 /**
@@ -23,16 +24,20 @@ export type FeatureFlag = {
  * @since 2022-05-29
  */
 export class Feature {
-    private constructor(
-        public readonly internalName: string,
-        public readonly index: number,
-        public readonly description: string,
-        public readonly displayName: string,
-        public readonly enabledByDefault: boolean,
-        public readonly stable: boolean,
-    ) {}
+  _logger = logging.getLogger('Qatt.Feature');
 
-    /**
+  private constructor (
+    public readonly internalName: string,
+    public readonly index: number,
+    public readonly description: string,
+    public readonly displayName: string,
+    public readonly enabledByDefault: boolean,
+    public readonly stable: boolean
+  ) {
+    this._logger.debug(`Created feature ${this.internalName} -> ${this.displayName}`);
+  }
+
+  /**
      * Returns the list of all available features.
      *
      * @readonly
@@ -40,26 +45,26 @@ export class Feature {
      * @type {Feature[]}
      * @memberof Feature
      */
-    static get values(): Feature[] {
-        let availableFeatures: Feature[] = [];
+  static get values (): Feature[] {
+    let availableFeatures: Feature[] = [];
 
-        featuresJson.forEach((feature) => {
-            availableFeatures = [
-                ...availableFeatures,
-                new Feature(
-                    feature.internalName,
-                    feature.index,
-                    feature.description,
-                    feature.displayName,
-                    feature.enabledByDefault,
-                    feature.stable,
-                ),
-            ];
-        });
-        return availableFeatures;
-    }
+    featuresJson.forEach((feature) => {
+      availableFeatures = [
+        ...availableFeatures,
+        new Feature(
+          feature.internalName,
+          feature.index,
+          feature.description,
+          feature.displayName,
+          feature.enabledByDefault,
+          feature.stable
+        )
+      ];
+    });
+    return availableFeatures;
+  }
 
-    /**
+  /**
      * Returns the enabled state of the feature.
      *
      * @readonly
@@ -67,40 +72,39 @@ export class Feature {
      * @type {FeatureFlag}
      * @memberof Feature
      */
-    static get settingsFlags(): FeatureFlag {
-        const featureFlags: { [internalName: string]: boolean } = {};
+  static get settingsFlags (): FeatureFlag {
+    const featureFlags: { [internalName: string]: boolean } = {};
 
-        Feature.values.forEach((feature) => {
-            featureFlags[feature.internalName] = feature.enabledByDefault;
-        });
-        return featureFlags;
-    }
+    Feature.values.forEach((feature) => {
+      featureFlags[feature.internalName] = feature.enabledByDefault;
+    });
+    return featureFlags;
+  }
 
-    /**
+  /**
      * Converts a string to its corresponding default Feature instance.
      *
      * @param string the string to convert to Feature
      * @throws RangeError, if a string that has no corresponding Feature value was passed.
      * @returns the matching Feature
      */
-    static fromString(string: string): Feature {
-        const value = (this as any)[string];
-        if (value) {
-            return value;
-        }
-
-        throw new RangeError(
-            `Illegal argument passed to fromString(): ${string} does not correspond to any available Feature ${
-                (this as any).prototype.constructor.name
-            }`,
-        );
+  static fromString (string: string): Feature {
+    const value = (this as any)[string];
+    if (value) {
+      return value;
     }
 
-    /**
+    throw new RangeError(
+      `Illegal argument passed to fromString(): ${string} does not correspond to any available Feature ${(this as any).prototype.constructor.name
+      }`
+    );
+  }
+
+  /**
      * Called when converting the Feature value to a string using JSON.Stringify.
      * Compare to the fromString() method, which deserializes the object.
      */
-    public toJSON() {
-        return this.internalName;
-    }
+  public toJSON () {
+    return this.internalName;
+  }
 }

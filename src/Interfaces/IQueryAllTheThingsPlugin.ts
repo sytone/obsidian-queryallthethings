@@ -1,6 +1,6 @@
-import { App, Command, EventRef } from "obsidian";
+import { App, Command, EventRef, MarkdownPostProcessor, MarkdownPostProcessorContext, Plugin } from 'obsidian';
 
-export interface IQueryAllTheThingsPlugin {
+export interface IQueryAllTheThingsPlugin extends Plugin {
 
     app: App;
 
