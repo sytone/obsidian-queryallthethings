@@ -11,8 +11,8 @@ import { log, logging } from './lib/logging';
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
   // public inlineRenderer: InlineRenderer | undefined;
   public queryRenderer: QueryRenderer | undefined;
-  public event_handler: EventHandler | undefined;
-  public command_handler: CommandHandler | undefined;
+  public eventHandler: EventHandler | undefined;
+  public commandHandler: CommandHandler | undefined;
   public settingsManager: SettingsManager | undefined;
   public dataTables: DataTables | undefined;
 
@@ -60,11 +60,11 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
     const statusBarItemEl = this.addStatusBarItem();
     statusBarItemEl.setText('Status Bar Text');
 
-    this.command_handler = new CommandHandler(this, this.settingsManager);
-    this.command_handler.setup();
+    this.commandHandler = new CommandHandler(this, this.settingsManager);
+    this.commandHandler.setup();
 
-    this.event_handler = new EventHandler(this, this.settingsManager);
-    this.event_handler.setup();
+    this.eventHandler = new EventHandler(this, this.settingsManager);
+    this.eventHandler.setup();
   }
 
   onunload () {

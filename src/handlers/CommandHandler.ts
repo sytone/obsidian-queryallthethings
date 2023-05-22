@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-constructor */
 import alasql from 'alasql';
 import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
 import { ISettingsManager } from 'Interfaces/ISettingsManager';
@@ -7,9 +8,8 @@ export class CommandHandler {
   logger = logging.getLogger('Qatt.CommandHandler');
 
   constructor (
-        private plugin: IQueryAllTheThingsPlugin,
-        private settingsManager: ISettingsManager) {
-
+    private plugin: IQueryAllTheThingsPlugin,
+    private settingsManager: ISettingsManager) {
   }
 
   setup (): void {

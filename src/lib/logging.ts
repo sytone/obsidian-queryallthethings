@@ -1,3 +1,4 @@
+/* eslint indent: [2, 2, {"SwitchCase": 1}] */
 import { DateTime } from 'luxon';
 import { Platform, Plugin } from 'obsidian';
 /*
@@ -20,10 +21,12 @@ export interface ILogLevel {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   1: 'trace';
   // eslint-disable-next-line @typescript-eslint/naming-convention
-
   2: 'debug';
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   3: 'info';
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   4: 'warn';
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   5: 'error';
 }
 
@@ -96,24 +99,24 @@ export class LogManager extends EventEmitter2 {
   private consoleLoggerRegistered: boolean = false;
 
   /**
-     * Set the minimum log levels for the module name or global.
-     *
-     * @param {LogOptions} options
-     * @return {*}  {LogManager}
-     * @memberof LogManager
-     */
+   * Set the minimum log levels for the module name or global.
+   *
+   * @param {LogOptions} options
+   * @return {*}  {LogManager}
+   * @memberof LogManager
+   */
   public configure (options: LogOptions): LogManager {
     this.options = Object.assign({}, this.options, options);
     return this;
   }
 
   /**
-     * Returns a logger instance for the given module name.
-     *
-     * @param {string} module
-     * @return {*}  {Logger}
-     * @memberof LogManager
-     */
+   * Returns a logger instance for the given module name.
+   *
+   * @param {string} module
+   * @return {*}  {Logger}
+   * @memberof LogManager
+   */
   public getLogger (module: string): ILogger {
     let minLevel = 'none';
     let match = '';
@@ -128,12 +131,12 @@ export class LogManager extends EventEmitter2 {
   }
 
   /**
-     *
-     *
-     * @param {(logEntry: LogEntry) => void} listener
-     * @return {*}  {LogManager}
-     * @memberof LogManager
-     */
+   *
+   *
+   * @param {(logEntry: LogEntry) => void} listener
+   * @return {*}  {LogManager}
+   * @memberof LogManager
+   */
   public onLogEntry (listener: (logEntry: LogEntry) => void): LogManager {
     this.on('log', listener);
     return this;
@@ -143,17 +146,16 @@ export class LogManager extends EventEmitter2 {
   arrAvg = (arr: number[]) => arr.reduce((a, b) => a + b, 0) / arr.length;
 
   /**
-     * Registers a logger that write to the console.
-     *
-     * @return {*}  {LogManager}
-     * @memberof LogManager
-     */
+   * Registers a logger that write to the console.
+   *
+   * @return {*}  {LogManager}
+   * @memberof LogManager
+   */
   public registerConsoleLogger (): LogManager {
     if (this.consoleLoggerRegistered) return this;
 
     this.onLogEntry((logEntry) => {
-      let msg = `[${DateTime.now().toISO()}][${logEntry.level
-        }][${logEntry.module}]`;
+      let msg = `[${DateTime.now().toISO()}][${logEntry.level}][${logEntry.module}]`;
 
       if (logEntry.traceId) {
         msg += `[${logEntry.traceId}]`;
@@ -212,12 +214,12 @@ export class QattLogger implements ILogger {
   };
 
   /**
-     * Creates an instance of Logger.
-     * @param {EventEmitter2} logManager
-     * @param {string} module
-     * @param {string} minLevel
-     * @memberof Logger
-     */
+   * Creates an instance of Logger.
+   * @param {EventEmitter2} logManager
+   * @param {string} module
+   * @param {string} minLevel
+   * @memberof Logger
+   */
   constructor (logManager: EventEmitter2, module: string, minLevel: string) {
     this.logManager = logManager;
     this.module = module;
@@ -225,19 +227,19 @@ export class QattLogger implements ILogger {
   }
 
   /**
-     * Converts a string level (trace/debug/info/warn/error) into a number
-     *
-     * @param minLevel
-     */
+   * Converts a string level (trace/debug/info/warn/error) into a number
+   *
+   * @param minLevel
+   */
   private levelToInt (minLevel: string): number {
     if (minLevel.toLowerCase() in this.levels) { return this.levels[minLevel.toLowerCase()]; } else return 99;
   }
 
   /**
-     * Central logging method.
-     * @param logLevel
-     * @param message
-     */
+   * Central logging method.
+   * @param logLevel
+   * @param message
+   */
   public log (logLevel: string, message: string, objects?: any): void {
     const level = this.levelToInt(logLevel);
     if (level < this.minLevel) return;
@@ -287,10 +289,10 @@ export class QattLogger implements ILogger {
   }
 
   /**
-     * Central logging method with a trace ID to track calls between modules/components.
-     * @param logLevel
-     * @param message
-     */
+   * Central logging method with a trace ID to track calls between modules/components.
+   * @param logLevel
+   * @param message
+   */
   public logWithId (
     logLevel: string,
     traceId: string,

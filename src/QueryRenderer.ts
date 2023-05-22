@@ -77,7 +77,7 @@ class QueryRenderChild extends MarkdownRenderChild {
     const results = this.queryEngine.applyQuery(this.queryId);
     this._logger.info('queryConfiguration', results);
 
-    let template = handlebars.compile(renderConfiguration.template ?? '{{stringify result}}');
+    const template = handlebars.compile(renderConfiguration.template ?? '{{stringify result}}');
 
     const content = this.containerEl.createEl('div');
     content.setAttr('data-query-id', this.queryId);
