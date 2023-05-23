@@ -61,5 +61,6 @@ export class DataTables {
       });
     });
     this.logger.log('info', `Tasks refreshed in ${DateTime.now().diff(start, 'millisecond').toString()}`);
+    this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
   }
 }

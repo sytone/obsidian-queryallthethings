@@ -25,8 +25,8 @@ export class CommandHandler {
       id: 'qatt-push-internal-events-to-console',
       name: 'Will push all the internal events to the console for debugging.',
       callback: () => {
-        const limit = this.settingsManager.getValue('internallogging_eventstoconsolelimit') as number;
-        const res = alasql(`SELECT TOP ${limit} * FROM qatt.Events`);
+        const limit = this.settingsManager.getValue('internalLoggingConsoleLogLimit') as number;
+        const res = alasql(`SELECT TOP ${limit} * FROM qatt.Events ORDER BY date desc`);
         this.logger.info('Internal Events', res);
       }
     });

@@ -44,7 +44,13 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
     // refresh tables when dataview index is ready.
     this.registerEvent(this.app.metadataCache.on('dataview:index-ready', () => {
-      this.dataTables?.refreshTables('dataview index ready');
+      log('info', 'dataview:index-ready event detected.');
+      this.dataTables?.refreshTables('dataview:index-ready event detected');
+    }));
+
+    this.registerEvent(this.app.workspace.on('dataview:refresh-views', () => {
+      log('info', 'dataview:refresh-views event detected.');
+      this.dataTables?.refreshTables('dataview:refresh-views event detected');
     }));
 
     // This creates an icon in the left ribbon.
