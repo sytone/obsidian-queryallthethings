@@ -1,4 +1,4 @@
-import { Plugin } from 'obsidian';
+import { Notice, Plugin } from 'obsidian';
 import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
 import { QueryRenderer } from 'QueryRenderer';
 import EventHandler from 'handlers/EventHandler';
@@ -7,6 +7,9 @@ import { DataTables } from 'DataTables';
 import { SettingsTab } from './Settings/SettingsTab';
 import { SettingsManager } from './Settings/SettingsManager';
 import { log, logging } from './lib/logging';
+
+import { isPluginEnabled } from "obsidian-dataview";
+
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
   // public inlineRenderer: InlineRenderer | undefined;
@@ -31,6 +34,11 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
     // Setup the UI tab.
     this.addSettingTab(new SettingsTab(this, this.settingsManager));
     this.dataTables = new DataTables(this);
+
+    if (!isPluginEnabled(app)) {
+      new Notice(`Dataview plugin is not installed. Please install it to load Databases.`);
+      throw new Error('Dataview plugin is not installed');
+    }
 
     // When layout is ready we can refresh tables and register the query renderer.
     this.app.workspace.onLayoutReady(async () => {

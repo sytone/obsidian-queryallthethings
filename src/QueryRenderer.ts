@@ -68,6 +68,59 @@ class QueryRenderChild extends MarkdownRenderChild {
       },
       notelink: (value) => {
         return `[[${value}]]`;
+      },
+      group: function (list, options) {
+
+        var fn = options.fn,
+          inverse = options.inverse,
+          hash = options.hash,
+          prop = hash && hash.by,
+          keys: string[] = [],
+          groups = {};
+
+        if (!prop || !list || !list.length) {
+          return inverse(this);
+        }
+
+        function get (obj, prop) {
+          var parts = prop.split('.'),
+            last = parts.pop();
+
+          while ((prop = parts.shift())) {
+            obj = obj[prop];
+
+            if (obj == null) {
+              return;
+            }
+          }
+
+          return obj[last];
+        }
+
+        function groupKey (item) {
+          var key = get(item, prop);
+
+          if (keys.indexOf(key) === -1) {
+            keys.push(key);
+          }
+
+          if (!groups[key]) {
+            groups[key] = {
+              value: key,
+              items: []
+            };
+          }
+
+          groups[key].items.push(item);
+        }
+
+        function renderGroup (buffer, key) {
+          return buffer + fn(groups[key]);
+        }
+
+        list.forEach(groupKey);
+
+        return keys.reduce(renderGroup, '');
       }
     });
 

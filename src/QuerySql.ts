@@ -5,12 +5,19 @@ import { IQuery } from 'Interfaces/IQuery';
 import { logging } from 'lib/logging';
 import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
 
+declare global {
+  interface Window {
+    customJS?: any;
+  }
+}
+
 export class QuerySql implements IQuery {
   logger = logging.getLogger('Qatt.QuerySql');
 
   public name: string;
   private _error: string | undefined = undefined;
   private _rawResults: any;
+  private _customJsClasses: Array<[string, string]>;
 
   // Pending a future PR to enable Custom JS again.
   // private _customJsClasses: Array<[string, string]>;
@@ -40,11 +47,15 @@ export class QuerySql implements IQuery {
     this.logger.debugWithId(this._queryId, 'Source Path', this.sourcePath);
     this.logger.debugWithId(this._queryId, 'Source Front Matter', this.frontmatter);
 
-    // Pending a future PR to enable Custom JS again.
-    // this._customJsClasses = [];
+    this._customJsClasses = [];
 
     // Parse the source, it is a YAML block to make things simpler.
     const queryConfiguration = parse(source);
+    if (queryConfiguration.customJSForSql) {
+      queryConfiguration.customJSForSql.forEach((element: string) => {
+        alasql.fn[element.split(' ')[1]] = window.customJS[element.split(' ')[0]][element.split(' ')[1]];
+      });
+    }
 
     // Remove all the comments from the query.
     this.source = queryConfiguration.query;
@@ -137,9 +148,9 @@ export class QuerySql implements IQuery {
     };
 
     // Needs integration with customJS, will be added in later revision.
-    // this._customJsClasses.forEach((element) => {
-    //     alasql.fn[element[1]] = window.customJS[element[0]][element[1]];
-    // });
+    this._customJsClasses.forEach((element) => {
+      alasql.fn[element[1]] = window.customJS[element[0]][element[1]];
+    });
 
     // Allows user to add debugMe() to the query to break into the debugger.
     // Example: WHERE debugMe()
