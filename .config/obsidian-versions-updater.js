@@ -1,7 +1,4 @@
 const fs = require('fs');
-const stringifyPackage = require('stringify-package');
-const detectIndent = require('detect-indent');
-const detectNewline = require('detect-newline');
 
 module.exports.readVersion = function (contents) {
     const json = JSON.parse(contents);
@@ -29,8 +26,7 @@ module.exports.writeVersion = function (contents, version) {
     }
 
     const json = JSON.parse(contents);
-    let indent = detectIndent(contents).indent;
-    let newline = detectNewline(contents);
     json[version] = minAppVersion;
-    return stringifyPackage(json, indent, newline);
+    return JSON.stringify(versions, null, "\t");
+    ;
 };
