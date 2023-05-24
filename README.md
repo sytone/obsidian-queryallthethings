@@ -45,16 +45,3 @@ Query All the Things is a flexible way to query and render data in <a href="http
 
 ---
 
-## Development
-
-### Tools
-
-Development is done using VS Code, you are welcome to use any other editor just make sure the linting and format match.
-
-### Dev Container
-
-To make the process of developing simpler this repo has a dev container configuration. This means you can use a virtual container to work on changes and connect to that from any location in the browser or VSCode.
-
-### Using a symlink to help test changes
-
-New-Item -ItemType Junction -Target ".\dist" -Path "C:\obsidian\brainstore\.obsidian\plugins\qatt\"

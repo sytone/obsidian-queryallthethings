@@ -218,7 +218,7 @@ class QueryRenderChild extends MarkdownRenderChild {
         nextStatus = ' ';
       }
 
-      const checkBoxHtml = `<input class="${classList}" type="checkbox" ${checked} onclick="console.log(this.checked); qattUpdateOriginalTask('${value.page}',${value.line},'${currentStatus}','${nextStatus}');"></input>`;
+      const checkBoxHtml = `<input class="${classList}" type="checkbox" ${checked} data-task="${currentStatus}" onclick="console.log(this.checked); qattUpdateOriginalTask('${value.page}',${value.line},'${currentStatus}','${nextStatus}');"></input>`;
       return new Handlebars.SafeString(checkBoxHtml);
     });
 
