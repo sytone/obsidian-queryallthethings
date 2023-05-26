@@ -18,7 +18,7 @@ export class QueryRenderer {
     this._app = plugin.app;
     plugin.registerMarkdownCodeBlockProcessor('qatt', this._addQuerySqlRenderChild.bind(this));
   }
-
+  
   private async _addQuerySqlRenderChild (source: string, element: HTMLElement, context: MarkdownPostProcessorContext) {
     this._logger.debug(`Adding SQL Query Render for ${source} to context ${context.docId}`);
     context.addChild(

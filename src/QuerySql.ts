@@ -164,6 +164,15 @@ export class QuerySql implements IQuery {
       return currentQuery._queryId;
     };
 
+    // Allows the user to map a item to an array, for example a Map via mapname->values()
+    alasql.fn.arrayFrom = function (value) {
+      return Array.from(value);
+    };
+
+    alasql.fn.objectFromMap = function (value) {
+      return Object.fromEntries(value);
+    };
+
     alasql.options.nocount = true; // Disable row count for queries.
 
     let queryResult: any;
