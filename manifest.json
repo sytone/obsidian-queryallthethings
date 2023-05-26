@@ -1,7 +1,7 @@
 {
     "id": "obsidian-queryallthethings",
     "name": "Query all the things",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "minAppVersion": "1.2.8",
     "description": "A plugin that allows you to make queries against the internal data of obsidian and render it how you want.",
     "author": "Jon Bullen",
