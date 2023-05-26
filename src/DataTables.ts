@@ -28,9 +28,14 @@ export class DataTables {
     alasql('ATTACH localStorage DATABASE qatt');
     alasql('CREATE TABLE IF NOT EXISTS qatt.Events (date DATETIME, event STRING)');
 
-    alasql('SELECT * INTO qatt.Events FROM ?', [[{ date: DateTime.now(), event: `Tables refreshed: ${reason}` }]]);
+    this.refreshTasksTableFromDataview(reason);
+    this.refreshListsTableFromDataview(reason);
 
-    // Temporary tables based on current state to make some queries faster.
+    this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
+  }
+
+  public refreshTasksTableFromDataview (reason: string): void {
+    alasql('SELECT * INTO qatt.Events FROM ?', [[{ date: DateTime.now(), event: `Tasks Table refreshed: ${reason}` }]]);
     if (alasql('SHOW TABLES FROM alasql LIKE "tasks"').length !== 0) {
       this.logger.info('Dropping the tasks table to repopulate.');
       alasql('DROP TABLE tasks ');
@@ -61,6 +66,34 @@ export class DataTables {
       });
     });
     this.logger.log('info', `Tasks refreshed in ${DateTime.now().diff(start, 'millisecond').toString()}`);
-    this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
+  }
+
+  public refreshListsTableFromDataview (reason: string): void {
+    alasql('SELECT * INTO qatt.Events FROM ?', [[{ date: DateTime.now(), event: `Lists Table refreshed: ${reason}` }]]);
+
+    // Temporary tables based on current state to make some queries faster.
+    if (alasql('SHOW TABLES FROM alasql LIKE "lists"').length !== 0) {
+      this.logger.info('Dropping the tasks table to repopulate.');
+      alasql('DROP TABLE lists ');
+    }
+    alasql('CREATE TABLE lists ');
+
+    const start = DateTime.now();
+    // Todo force a update on page changes.
+    getAPI(this.plugin.app)?.index.pages.forEach(p => {
+      p.lists.forEach(l => {
+        alasql('INSERT INTO lists VALUES ?', [{
+          symbol: l.symbol,
+          page: p.path,
+          text: l.text,
+          line: l.line,
+          fields: l.fields,
+          lineCount: l.lineCount,
+          list: l.list,
+          section: l.section.subpath
+        }]);
+      });
+    });
+    this.logger.log('info', `Lists refreshed in ${DateTime.now().diff(start, 'millisecond').toString()}`);
   }
 }

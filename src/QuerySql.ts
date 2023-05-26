@@ -1,9 +1,9 @@
 import alasql from 'alasql';
 import { getAPI } from 'obsidian-dataview';
-import { parse } from 'yaml';
 import { IQuery } from 'Interfaces/IQuery';
 import { logging } from 'lib/logging';
 import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
+import { QattCodeBlock } from 'QattCodeBlock';
 
 declare global {
   interface Window {
@@ -12,60 +12,67 @@ declare global {
 }
 
 export class QuerySql implements IQuery {
-  logger = logging.getLogger('Qatt.QuerySql');
+  _logger = logging.getLogger('Qatt.QuerySql');
 
   public name: string;
   private _error: string | undefined = undefined;
-  private _rawResults: any;
   private _customJsClasses: Array<[string, string]>;
 
   // Pending a future PR to enable Custom JS again.
   // private _customJsClasses: Array<[string, string]>;
-  private _customTemplate: string = '';
 
   // Used internally to uniquely log each query execution in the console.
   private _queryId: string = '';
+  private _sqlQuery: string;
 
   /**
    * Creates an instance of QuerySql which parses the YAML source and
    * enables execution of the queries in it.
-   * @param {string} source
+   * @param {QattCodeBlock} queryConfiguration
    * @param {string} sourcePath
    * @param {(any | null | undefined)} frontmatter
    * @param {IQueryAllTheThingsPlugin} plugin
    * @memberof QuerySql
    */
   constructor (
-    public source: string,
+    public queryConfiguration: QattCodeBlock,
     private sourcePath: string,
     private frontmatter: any | null | undefined,
     private plugin: IQueryAllTheThingsPlugin
   ) {
     this.name = 'QuerySql';
+
+    if (this.queryConfiguration.query === undefined) {
+      throw new Error('Query is not defined in the code block, the query field is mandatory.');
+    }
+    if (this.queryConfiguration.logLevel) {
+      this._logger.setLogLevel(this.queryConfiguration.logLevel);
+    }
     this._queryId = this.generateQueryId(10);
-
-    this.logger.debugWithId(this._queryId, 'Source Path', this.sourcePath);
-    this.logger.debugWithId(this._queryId, 'Source Front Matter', this.frontmatter);
-
     this._customJsClasses = [];
 
     // Parse the source, it is a YAML block to make things simpler.
-    const queryConfiguration = parse(source);
     if (queryConfiguration.customJSForSql) {
       queryConfiguration.customJSForSql.forEach((element: string) => {
         alasql.fn[element.split(' ')[1]] = window.customJS[element.split(' ')[0]][element.split(' ')[1]];
       });
     }
 
-    // Remove all the comments from the query.
-    this.source = queryConfiguration.query;
+    this._logger.debugWithId(this._queryId, 'Source Path', this.sourcePath);
+    this._logger.debugWithId(this._queryId, 'Source Front Matter', this.frontmatter);
+    this._logger.debugWithId(this._queryId, 'Source Query', this.queryConfiguration.query);
+    this._logger.debugWithId(this._queryId, 'queryConfiguration', queryConfiguration);
 
-    this.logger.infoWithId(this._queryId, 'Source Query', this.source);
-    this.logger.infoWithId(this._queryId, 'queryConfiguration', queryConfiguration);
+    // Pre compile the query to find any errors.
+    try {
+      const preCompile = alasql.parse(this.queryConfiguration.query);
+      this._logger.debugWithId(this._queryId, 'Source Query', preCompile);
+    } catch (error) {
+      this._error = `Error with query: ${error}`;
+      this._logger.errorWithId(this._queryId, `Error with query on page [${sourcePath}]:`, error);
+    }
 
-    const preCompile = alasql.parse(this.source);
-    this.logger.infoWithId(this._queryId, 'Source Query', preCompile);
-    // this.logger.infoWithId(this._queryId, 'Data Table', this._dataTable);
+    this._sqlQuery = this.queryConfiguration.query;
   }
 
   /**
@@ -91,77 +98,26 @@ export class QuerySql implements IQuery {
   }
 
   /**
-   * The custom template. Pending future PR.
+   * Any generic Alasql functions should go in here so they are only called
+   * once.
    *
-   * @readonly
-   * @type {(string | undefined)}
+   * @static
+   * @param {IQueryAllTheThingsPlugin} plugin
    * @memberof QuerySql
    */
-  public get template (): string | undefined {
-    return this._customTemplate;
-  }
-
-  /**
-   * Contains the raw results of query if #raw empty is used.
-   *
-   * @readonly
-   * @type {*}
-   * @memberof QuerySql
-   */
-  public get rawResults (): any {
-    return this._rawResults;
-  }
-
-  /**
-   * This will run the SQL query
-   *
-   * @return {*}  {*}
-   * @memberof QuerySql
-   */
-  public query (): any {
-    this.logger.infoWithId(this._queryId, `Executing query: [${this.source}]`);
-    const currentQuery = this;
-
+  public static initialize (plugin: IQueryAllTheThingsPlugin) {
     // Set moment() function available to AlaSQL.
     alasql.fn.moment = window.moment;
-
-    // Return details about the note the query is running on.
-    alasql.fn.notePathWithFileExtension = function () {
-      return currentQuery.sourcePath;
-    };
-
-    alasql.fn.notePath = function () {
-      return currentQuery.sourcePath.split('/').slice(0, -1).join('/');
-    };
-
-    alasql.fn.noteFileName = function () {
-      return currentQuery.sourcePath.split('/').slice(-1)[0].split('.')[0];
-    };
-
-    // Return details about the note the query is running on.
-    alasql.fn.pageProperty = function (field: string) {
-      return currentQuery.frontmatter[field];
-    };
 
     alasql.fn.getNoteName = function (path) {
       return path.split('/').slice(-1)[0].split('.')[0];
     };
-
-    // Needs integration with customJS, will be added in later revision.
-    this._customJsClasses.forEach((element) => {
-      alasql.fn[element[1]] = window.customJS[element[0]][element[1]];
-    });
 
     // Allows user to add debugMe() to the query to break into the debugger.
     // Example: WHERE debugMe()
     alasql.fn.debugMe = function () {
       // eslint-disable-next-line no-debugger
       debugger;
-    };
-
-    // Return the ID of this query used for debugging as needed.
-    alasql.fn.queryId = function () {
-      return currentQuery._queryId;
     };
 
     // Allows the user to map a item to an array, for example a Map via mapname->values()
@@ -174,45 +130,88 @@ export class QuerySql implements IQuery {
     };
 
     alasql.options.nocount = true; // Disable row count for queries.
+  }
+
+  /**
+   * This will run the SQL query
+   *
+   * @return {*}  {*}
+   * @memberof QuerySql
+   */
+  public query (): any {
+    const currentQuery = this;
+
+    // Return the full path the query is running on.
+    alasql.fn.notePathWithFileExtension = function () {
+      return currentQuery.sourcePath;
+    };
+
+    // Return the path to the current page the query is running on.
+    alasql.fn.notePath = function () {
+      return currentQuery.sourcePath.split('/').slice(0, -1).join('/');
+    };
+
+    // Return the filename for the current page the query is running on.
+    alasql.fn.noteFileName = function () {
+      return currentQuery.sourcePath.split('/').slice(-1)[0].split('.')[0];
+    };
+
+    // Return the front matter field from the page the query is running on.
+    alasql.fn.pageProperty = function (field: string) {
+      return currentQuery.frontmatter[field];
+    };
+
+    // Return the ID of this query used for debugging as needed.
+    alasql.fn.queryId = function () {
+      return currentQuery._queryId;
+    };
+
+    // Needs integration with customJS, will be added in later revision.
+    this._customJsClasses.forEach((element) => {
+      alasql.fn[element[1]] = window.customJS[element[0]][element[1]];
+    });
 
     let queryResult: any;
-
-    // check each query statement for the table it wants to query and if a
-    // internal table replace with the right data source to query for that instance.
     try {
-      this.source.split(';').forEach((v) => {
+      this._sqlQuery.split(';').forEach((v) => {
         if (v.trim() !== '') {
-          let query = v;
-          let dataTable: any[] = [];
-          if (/\bobsidian_markdown_notes\b/gi.test(v)) {
-            query = v.replace(/\bobsidian_markdown_notes\b/gi, '$0');
-            dataTable = this.plugin.app.vault.getMarkdownFiles();
-          } else if (/\bdataview_pages\b/gi.test(v)) {
-            query = v.replace(/\bdataview_pages\b/gi, '$0');
-            const dataViewApi = getAPI(this.plugin.app);
-            dataTable = dataViewApi ? Array.from(dataViewApi.index.pages.values()) : [];
+          const query = this.getParsedQuery(v);
+          const dataTable: any[] = this.getDataTable(v);
 
-            // } else if (/\bdataview_pages_map\b/ig.test(v)) {
-            //     query = v.replace(/\bdataview_pages_map\b/ig, '?');
-            //     dataTable = getAPI(this._plugin.app).index.pages;
-          }
-          this.logger.logWithId(this._queryId, 'query:', query);
-
+          this._logger.debugWithId(this._queryId, 'Executing Query:', { originalQuery: this.queryConfiguration.query, parsedQuery: query });
           queryResult = alasql(query, [dataTable]);
         }
       });
-      // if (this._dataTable !== undefined) {
-      //     queryResult = alasql(this.source, [this._dataTable]);
-      // } else {
-      //     queryResult = alasql(this.source, []);
-      // }
     } catch (error) {
       this._error = `Error with query: ${error}`;
-      this.logger.errorWithId(this._queryId, 'Error with query', error);
+      this._logger.errorWithId(this._queryId, `Error with query on page [${this.sourcePath}]:`, error);
       queryResult = [];
     }
-    this.logger.debugWithId(this._queryId, `queryResult: ${queryResult.length}`, queryResult);
+    this._logger.debugWithId(this._queryId, `queryResult: ${queryResult.length}`, queryResult);
     return queryResult;
+  }
+
+  private getParsedQuery (query: string) {
+    let finalQuery = query;
+    if (/\bobsidian_markdown_notes\b/gi.test(query)) {
+      finalQuery = query.replace(/\bobsidian_markdown_notes\b/gi, '$0');
+    } else if (/\bdataview_pages\b/gi.test(query)) {
+      finalQuery = query.replace(/\bdataview_pages\b/gi, '$0');
+    }
+
+    return finalQuery;
+  }
+
+  private getDataTable (query: string): any[] {
+    let dataTable: any[] = [];
+    if (/\bobsidian_markdown_notes\b/gi.test(query)) {
+      dataTable = this.plugin.app.vault.getMarkdownFiles();
+    } else if (/\bdataview_pages\b/gi.test(query)) {
+      const dataViewApi = getAPI(this.plugin.app);
+      dataTable = dataViewApi ? Array.from(dataViewApi.index.pages.values()) : [];
+    }
+
+    return dataTable;
   }
 
   /**

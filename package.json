@@ -44,7 +44,7 @@
     "eslint-plugin-n": "^15.7.0",
     "eslint-plugin-promise": "^6.1.1",
     "jest": "^27.5.1",
-    "obsidian": "1.2.8",
+    "obsidian": "^1.2.8",
     "prettier": "2.4.1",
     "rollup": "^2.60.0",
     "ts-jest": "^27.0.7",

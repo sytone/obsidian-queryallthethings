@@ -4,12 +4,12 @@ import { QueryRenderer } from 'QueryRenderer';
 import EventHandler from 'handlers/EventHandler';
 import { CommandHandler } from 'handlers/CommandHandler';
 import { DataTables } from 'DataTables';
+import { isPluginEnabled } from 'obsidian-dataview';
+import { HandlebarsRenderer } from 'render/HandlebarsRenderer';
+import { QuerySql } from 'QuerySql';
 import { SettingsTab } from './Settings/SettingsTab';
 import { SettingsManager } from './Settings/SettingsManager';
 import { log, logging } from './lib/logging';
-
-import { isPluginEnabled } from "obsidian-dataview";
-
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
   // public inlineRenderer: InlineRenderer | undefined;
@@ -36,9 +36,12 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
     this.dataTables = new DataTables(this);
 
     if (!isPluginEnabled(app)) {
-      new Notice(`Dataview plugin is not installed. Please install it to load Databases.`);
+      new Notice('Dataview plugin is not installed. Please install it to load Databases.');
       throw new Error('Dataview plugin is not installed');
     }
+
+    HandlebarsRenderer.registerHandlebarsHelpers(this);
+    QuerySql.initialize(this);
 
     // When layout is ready we can refresh tables and register the query renderer.
     this.app.workspace.onLayoutReady(async () => {

@@ -52,6 +52,7 @@ export interface LogEntry {
  * @interface Logger
  */
 export interface ILogger {
+  setLogLevel (level: string): void;
   log (logLevel: string, message: string, objects?: any): void;
   trace (message: string, objects?: any): void;
   debug (message: string, objects?: any): void;
@@ -224,6 +225,10 @@ export class QattLogger implements ILogger {
     this.logManager = logManager;
     this.module = module;
     this.minLevel = this.levelToInt(minLevel);
+  }
+
+  public setLogLevel (level: string) {
+    if (level.toLowerCase() in this.levels) { this.minLevel = this.levels[level.toLowerCase()]; }
   }
 
   /**
