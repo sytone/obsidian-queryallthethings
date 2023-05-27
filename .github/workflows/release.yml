@@ -53,76 +53,22 @@ jobs:
           tag_name_ref_view: true
           changelog: CHANGELOG.md
 
-      # Create the release on github
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: ${{join(fromJson(steps.generate_notes.outputs.notes).notes, '')}}
+          # note you'll typically need to create a personal access token
+          # with permissions to create releases in the other repo
+          token: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+          prerelease: false
+          tag_name: ${{ github.ref }}
+          files: |
+            ./${{ github.event.repository.name }}.zip
+            ./${{ github.event.repository.name }}.vault.zip
+            ./dist/main.js
+            ./dist/manifest.json
+            ./dist/styles.css
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERSION: ${{ github.ref }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: false
-          prerelease: false
-          body: ${{join(fromJson(steps.generate_notes.outputs.notes).notes, '')}}
-
-      # Upload the packaged release file
-      - name: Upload zip file
-        id: upload-zip
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ github.event.repository.name }}.zip
-          asset_name: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.zip
-          asset_content_type: application/zip
-
-      # Upload the packaged vault file
-      - name: Upload vault zip file
-        id: upload-vault-zip
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ github.event.repository.name }}.vault.zip
-          asset_name: ${{ github.event.repository.name }}-${{ steps.version.outputs.tag }}.vault.zip
-          asset_content_type: application/zip
-
-      # Upload the main.js
-      - name: Upload main.js
-        id: upload-main
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/main.js
-          asset_name: main.js
-          asset_content_type: text/javascript
-
-      # Upload the manifest.json
-      - name: Upload manifest.json
-        id: upload-manifest
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/manifest.json
-          asset_name: manifest.json
-          asset_content_type: application/json
-
-      # Upload the style.css
-      - name: Upload styles.css
-        id: upload-css
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./dist/styles.css
-          asset_name: styles.css
-          asset_content_type: text/css
