@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.3.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.2.6...0.3.0) (2023-05-27)
+
 ### [0.2.6](https://github.com/sytone/obsidian-queryallthethings/compare/0.2.5...0.2.6) (2023-05-27)
 
 ### [0.2.5](https://github.com/sytone/obsidian-queryallthethings/compare/0.2.4...0.2.5) (2023-05-27)
