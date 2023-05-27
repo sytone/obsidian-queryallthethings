@@ -3,7 +3,7 @@ import { Component, MarkdownPreviewView } from 'obsidian';
 
 import { logging } from 'lib/logging';
 import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
-import { IRenderer } from 'Interfaces/IRenderer';
+import { IRenderer } from 'render/IRenderer';
 
 export class HandlebarsRenderer implements IRenderer {
   _logger = logging.getLogger('Qatt.HandlebarsRenderer');

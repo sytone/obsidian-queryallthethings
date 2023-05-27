@@ -35,7 +35,8 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
     this.addSettingTab(new SettingsTab(this, this.settingsManager));
     this.dataTables = new DataTables(this);
 
-    if (!isPluginEnabled(app)) {
+    if (!isPluginEnabled(this.app)) {
+      // eslint-disable-next-line no-new
       new Notice('Dataview plugin is not installed. Please install it to load Databases.');
       throw new Error('Dataview plugin is not installed');
     }

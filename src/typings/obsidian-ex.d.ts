@@ -1,5 +1,8 @@
 import 'obsidian';
+import { DataviewApi } from 'obsidian-dataview';
+export interface EventRef {
 
+}
 declare module 'obsidian' {
   interface MetadataCache {
     trigger (...args: Parameters<MetadataCache['on']>): void;
@@ -30,6 +33,7 @@ declare module 'obsidian' {
 
 declare global {
   interface Window {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     DataviewAPI?: DataviewApi;
   }
 }

@@ -4,6 +4,7 @@ export interface IQattCodeBlock {
   customJSForSql: Array<string>;
   customJSForHandlebars: Array<string>;
   query: string | undefined;
+  queryEngine: string | undefined;
   template: string | undefined;
   postRenderFormat: string | undefined;
   renderEngine: string | undefined;
@@ -15,6 +16,7 @@ export class QattCodeBlock implements IQattCodeBlock {
   customJSForSql: Array<string>;
   customJSForHandlebars: Array<string>;
   query: string | undefined;
+  queryEngine: string | undefined;
   template: string | undefined;
   postRenderFormat: string | undefined;
   renderEngine: string | undefined;
@@ -30,6 +32,7 @@ export class QattCodeBlock implements IQattCodeBlock {
     this.customJSForSql = parsedCodeBlock.customJSForSql;
     this.customJSForHandlebars = parsedCodeBlock.customJSForHandlebars;
     this.query = parsedCodeBlock.query;
+    this.queryEngine = parsedCodeBlock.queryEngine;
     this.template = parsedCodeBlock.template;
     this.postRenderFormat = parsedCodeBlock.postRenderFormat;
     this.renderEngine = parsedCodeBlock.renderEngine;

@@ -4,8 +4,9 @@ import { logging } from 'lib/logging';
 import { App, MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild } from 'obsidian';
 import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
 import { QattCodeBlock } from 'QattCodeBlock';
-import { IRenderer } from 'Interfaces/IRenderer';
+import { IRenderer } from 'render/IRenderer';
 import { RenderFactory } from 'render/RenderFactory';
+import { QueryFactory } from 'querier/QueryFactory';
 
 export class QueryRenderer {
   public addQuerySqlRenderChild = this._addQuerySqlRenderChild.bind(this);
@@ -26,16 +27,11 @@ export class QueryRenderer {
     const queryConfiguration = new QattCodeBlock(source);
     context.addChild(
       new QueryRenderChild(
-        this._app,
         this.plugin,
         element,
         queryConfiguration,
-        new QuerySql(
-          queryConfiguration,
-          context.sourcePath,
-          context.frontmatter,
-          this.plugin
-        )
+        context.sourcePath,
+        context.frontmatter
       )
     );
   }
@@ -47,11 +43,11 @@ class QueryRenderChild extends MarkdownRenderChild {
   private readonly queryId: string;
 
   constructor (
-    private app: App,
     private plugin: IQueryAllTheThingsPlugin,
     private container: HTMLElement,
     private queryConfiguration: QattCodeBlock,
-    private queryEngine: IQuery
+    private sourcePath: string,
+    private frontmatter: any
   ) {
     super(container);
     this.queryId = 'TBD';
@@ -63,7 +59,7 @@ class QueryRenderChild extends MarkdownRenderChild {
   }
 
   onload () {
-    this.registerEvent(this.app.workspace.on('qatt:refresh-codeblocks', this.render));
+    this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', this.render));
     this.render();
   }
 
@@ -74,15 +70,16 @@ class QueryRenderChild extends MarkdownRenderChild {
     const startTime = new Date(Date.now());
 
     // Run query and get results to be rendered
-    const results = this.queryEngine.applyQuery(this.queryId);
+    const queryEngine: IQuery = QueryFactory.getQuery(this.queryConfiguration, this.sourcePath, this.frontmatter, this.plugin);
+    const results = queryEngine.applyQuery(this.queryId);
 
     const renderEngine: IRenderer = RenderFactory.getRenderer(this.queryConfiguration);
 
     const content = this.containerEl.createEl('div');
     content.setAttr('data-query-id', this.queryId);
 
-    if (this.queryEngine.error) {
-      content.setText(`QATT query error: ${this.queryEngine.error}`);
+    if (queryEngine.error) {
+      content.setText(`QATT query error: ${queryEngine.error}`);
     } else {
       // Render Engine Execution
       const html = renderEngine?.renderTemplate(results) ?? 'Unknown error or exception has occurred.';

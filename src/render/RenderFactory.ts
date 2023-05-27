@@ -1,7 +1,7 @@
 /* eslint indent: [2, 2, {"SwitchCase": 1}] */
 import { logging } from 'lib/logging';
 import { QattCodeBlock } from 'QattCodeBlock';
-import { IRenderer } from 'Interfaces/IRenderer';
+import { IRenderer } from 'render/IRenderer';
 import { HandlebarsRenderer } from 'render/HandlebarsRenderer';
 import { TextRenderer } from 'render/TextRenderer';
 
