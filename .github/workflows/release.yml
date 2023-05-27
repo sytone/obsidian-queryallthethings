@@ -12,7 +12,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: write    
+      contents: write
     steps:
       - uses: actions/checkout@v3
         with:
@@ -24,10 +24,15 @@ jobs:
           node-version: 16
 
       # Get the version number and put it in a variable
+      # - name: Get Version
+      #   id: version
+      #   run: |
+      #     echo "::set-output name=tag::$(git describe --abbrev=0)"
+
       - name: Get Version
         id: version
         run: |
-          echo "::set-output name=tag::$(git describe --abbrev=0)"
+          echo "tag=$(git describe --abbrev=0)" >> $GITHUB_OUTPUT
 
       # Build the plugin
       - name: Build
@@ -61,12 +66,11 @@ jobs:
 
       - name: Release
         uses: ncipollo/release-action@v1
-        id: release_plugin        
+        id: release_plugin
         with:
-          artifacts: "./${{ github.event.repository.name }}.zip,./${{ github.event.repository.name }}.vault.zip,./dist/main.js,./dist/manifest.json,./dist/styles.css"
+          artifacts: './${{ github.event.repository.name }}.zip,./${{ github.event.repository.name }}.vault.zip,./dist/main.js,./dist/manifest.json,./dist/styles.css'
           body: ${{join(fromJson(steps.generate_notes.outputs.notes).notes, '')}}
           name: ${{ github.ref }}
-        
 #      - name: Release
 #        uses: softprops/action-gh-release@v1
 #        with:

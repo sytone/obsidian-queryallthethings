@@ -3987,7 +3987,7 @@ obsidian-dataview@0.5.55:
     parsimmon "^1.18.0"
     preact "^10.6.5"
 
-obsidian@^1.2.8, obsidian@obsidianmd/obsidian-api#master:
+obsidian@1.2.8, obsidian@obsidianmd/obsidian-api#master:
   version "1.2.8"
   resolved "https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/583ba39e3f6c0546de5e5e8742256a60e2d78ebc"
   dependencies:
