@@ -11,6 +11,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write    
     steps:
       - uses: actions/checkout@v3
         with:
@@ -58,21 +60,29 @@ jobs:
           changelog: CHANGELOG.md
 
       - name: Release
-        uses: softprops/action-gh-release@v1
+        uses: ncipollo/release-action@v1
+        id: release_plugin        
         with:
+          artifacts: "./${{ github.event.repository.name }}.zip,./${{ github.event.repository.name }}.vault.zip,./dist/main.js,./dist/manifest.json,./dist/styles.css"
           body: ${{join(fromJson(steps.generate_notes.outputs.notes).notes, '')}}
-          # note you'll typically need to create a personal access token
-          # with permissions to create releases in the other repo
-          token: ${{ secrets.GITHUB_TOKEN }}
-          draft: false
-          prerelease: false
-          tag_name: ${{ github.ref }}
-          files: |
-            ./${{ github.event.repository.name }}.zip
-            ./${{ github.event.repository.name }}.vault.zip
-            ./dist/main.js
-            ./dist/manifest.json
-            ./dist/styles.css
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERSION: ${{ github.ref }}
+          name: ${{ github.ref }}
+        
+#      - name: Release
+#        uses: softprops/action-gh-release@v1
+#        with:
+#          body: ${{join(fromJson(steps.generate_notes.outputs.notes).notes, '')}}
+#          # note you'll typically need to create a personal access token
+#          # with permissions to create releases in the other repo
+#          token: ${{ secrets.GITHUB_TOKEN }}
+#          draft: false
+#          prerelease: false
+#          tag_name: ${{ github.ref }}
+#          files: |
+#            ./${{ github.event.repository.name }}.zip
+#            ./${{ github.event.repository.name }}.vault.zip
+#            ./dist/main.js
+#            ./dist/manifest.json
+#            ./dist/styles.css
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#          VERSION: ${{ github.ref }}
