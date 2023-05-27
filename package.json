@@ -1,6 +1,6 @@
 {
   "name": "obsidian-queryallthethings",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "A plugin that allows you to make queries against the internal data of obsidian and render it how you want.",
   "main": "main.js",
   "scripts": {
