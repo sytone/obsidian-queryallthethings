@@ -1,29 +1,65 @@
 import alasql from 'alasql';
-import { getAPI } from 'obsidian-dataview';
-import { IQuery } from 'Interfaces/IQuery';
-import { logging } from 'lib/logging';
-import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
-import { QattCodeBlock } from 'QattCodeBlock';
+import {getAPI} from 'obsidian-dataview';
+import {logging} from 'lib/Logging';
+import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
+import {type QattCodeBlock} from 'QattCodeBlock';
+import {type IQuery} from 'Query/IQuery';
 
 declare global {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
   interface Window {
     customJS?: any;
   }
 }
 
-export class QuerySql implements IQuery {
-  _logger = logging.getLogger('Qatt.QuerySql');
+export class AlaSqlQuery implements IQuery {
+  /**
+   * Any generic Alasql functions should go in here so they are only called
+   * once.
+   *
+   * @static
+   * @param {IQueryAllTheThingsPlugin} plugin
+   * @memberof QuerySql
+   */
+  public static initialize(plugin: IQueryAllTheThingsPlugin) {
+    // Set moment() function available to AlaSQL.
+    alasql.fn.moment = window.moment;
 
-  public name: string;
+    alasql.fn.getNoteName = function (path: string): string {
+      return path.split('/').slice(-1)[0].split('.')[0];
+    };
+
+    // Allows user to add debugMe() to the query to break into the debugger.
+    // Example: WHERE debugMe()
+    alasql.fn.debugMe = function () {
+      // eslint-disable-next-line no-debugger
+      debugger;
+    };
+
+    // Allows the user to map a item to an array, for example a Map via mapname->values()
+    alasql.fn.arrayFrom = function (value) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      return Array.from(value);
+    };
+
+    alasql.fn.objectFromMap = function (value) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      return Object.fromEntries(value);
+    };
+
+    alasql.options.nocount = true; // Disable row count for queries.
+  }
+
+  private readonly _logger = logging.getLogger('Qatt.AlaSqlQuery');
+  private readonly _name: string;
+  private readonly _queryId: string;
   private _error: string | undefined = undefined;
-  private _customJsClasses: Array<[string, string]>;
+  private readonly _customJsClasses: Array<[string, string]>;
 
   // Pending a future PR to enable Custom JS again.
   // private _customJsClasses: Array<[string, string]>;
 
-  // Used internally to uniquely log each query execution in the console.
-  private _queryId: string = '';
-  private _sqlQuery: string;
+  private readonly _sqlQuery: string;
 
   /**
    * Creates an instance of QuerySql which parses the YAML source and
@@ -34,28 +70,34 @@ export class QuerySql implements IQuery {
    * @param {IQueryAllTheThingsPlugin} plugin
    * @memberof QuerySql
    */
-  constructor (
+  constructor(
     public queryConfiguration: QattCodeBlock,
-    private sourcePath: string,
-    private frontmatter: any | null | undefined,
-    private plugin: IQueryAllTheThingsPlugin
+    private readonly sourcePath: string,
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    private readonly frontmatter: any | undefined,
+    private readonly plugin: IQueryAllTheThingsPlugin,
   ) {
-    this.name = 'QuerySql';
+    this._name = 'QuerySql';
 
     if (this.queryConfiguration.query === undefined) {
       throw new Error('Query is not defined in the code block, the query field is mandatory.');
     }
+
     if (this.queryConfiguration.logLevel) {
       this._logger.setLogLevel(this.queryConfiguration.logLevel);
     }
+
     this._queryId = this.generateQueryId(10);
     this._customJsClasses = [];
 
     // Parse the source, it is a YAML block to make things simpler.
     if (queryConfiguration.customJSForSql) {
-      queryConfiguration.customJSForSql.forEach((element: string) => {
-        alasql.fn[element.split(' ')[1]] = window.customJS[element.split(' ')[0]][element.split(' ')[1]];
-      });
+      for (const element of queryConfiguration.customJSForSql) {
+        const className = element.split(' ')[0];
+        const functionName = element.split(' ')[1];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        alasql.fn[functionName] = window.customJS[className][functionName];
+      }
     }
 
     this._logger.debugWithId(this._queryId, 'Source Path', this.sourcePath);
@@ -68,7 +110,7 @@ export class QuerySql implements IQuery {
       const preCompile = alasql.parse(this.queryConfiguration.query);
       this._logger.debugWithId(this._queryId, 'Source Query', preCompile);
     } catch (error) {
-      this._error = `Error with query: ${error}`;
+      this._error = `Error with query: ${error as string}`;
       this._logger.errorWithId(this._queryId, `Error with query on page [${sourcePath}]:`, error);
     }
 
@@ -82,8 +124,19 @@ export class QuerySql implements IQuery {
    * @type {(string | undefined)}
    * @memberof QuerySql
    */
-  public get error (): string | undefined {
+  public get error(): string | undefined {
     return this._error;
+  }
+
+  /**
+   * Returns the error message if any errors occur. It is 'undefined' if no errors.
+   *
+   * @readonly
+   * @type {(string | undefined)}
+   * @memberof QuerySql
+   */
+  public get name(): string | undefined {
+    return this._name;
   }
 
   /**
@@ -93,43 +146,8 @@ export class QuerySql implements IQuery {
    * @type {(string | undefined)}
    * @memberof QuerySql
    */
-  public get queryId (): string | undefined {
+  public get queryId(): string | undefined {
     return this._queryId;
-  }
-
-  /**
-   * Any generic Alasql functions should go in here so they are only called
-   * once.
-   *
-   * @static
-   * @param {IQueryAllTheThingsPlugin} plugin
-   * @memberof QuerySql
-   */
-  public static initialize (plugin: IQueryAllTheThingsPlugin) {
-    // Set moment() function available to AlaSQL.
-    alasql.fn.moment = window.moment;
-
-    alasql.fn.getNoteName = function (path) {
-      return path.split('/').slice(-1)[0].split('.')[0];
-    };
-
-    // Allows user to add debugMe() to the query to break into the debugger.
-    // Example: WHERE debugMe()
-    alasql.fn.debugMe = function () {
-      // eslint-disable-next-line no-debugger
-      debugger;
-    };
-
-    // Allows the user to map a item to an array, for example a Map via mapname->values()
-    alasql.fn.arrayFrom = function (value) {
-      return Array.from(value);
-    };
-
-    alasql.fn.objectFromMap = function (value) {
-      return Object.fromEntries(value);
-    };
-
-    alasql.options.nocount = true; // Disable row count for queries.
   }
 
   /**
@@ -138,7 +156,8 @@ export class QuerySql implements IQuery {
    * @return {*}  {*}
    * @memberof QuerySql
    */
-  public query (): any {
+  public query(): any {
+    // eslint-disable-next-line @typescript-eslint/no-this-alias, unicorn/no-this-assignment
     const currentQuery = this;
 
     // Return the full path the query is running on.
@@ -158,6 +177,7 @@ export class QuerySql implements IQuery {
 
     // Return the front matter field from the page the query is running on.
     alasql.fn.pageProperty = function (field: string) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return currentQuery.frontmatter[field];
     };
 
@@ -167,31 +187,34 @@ export class QuerySql implements IQuery {
     };
 
     // Needs integration with customJS, will be added in later revision.
-    this._customJsClasses.forEach((element) => {
+    for (const element of this._customJsClasses) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       alasql.fn[element[1]] = window.customJS[element[0]][element[1]];
-    });
+    }
 
     let queryResult: any;
     try {
-      this._sqlQuery.split(';').forEach((v) => {
+      for (const v of this._sqlQuery.split(';')) {
         if (v.trim() !== '') {
           const query = this.getParsedQuery(v);
           const dataTable: any[] = this.getDataTable(v);
 
-          this._logger.debugWithId(this._queryId, 'Executing Query:', { originalQuery: this.queryConfiguration.query, parsedQuery: query });
+          this._logger.debugWithId(this._queryId, 'Executing Query:', {originalQuery: this.queryConfiguration.query, parsedQuery: query});
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           queryResult = alasql(query, [dataTable]);
         }
-      });
+      }
     } catch (error) {
-      this._error = `Error with query: ${error}`;
+      this._error = `Error with query: ${error as string}`;
       this._logger.errorWithId(this._queryId, `Error with query on page [${this.sourcePath}]:`, error);
       queryResult = [];
     }
-    this._logger.debugWithId(this._queryId, `queryResult: ${queryResult.length}`, queryResult);
+
+    this._logger.debugWithId(this._queryId, `queryResult: ${queryResult.length as number}`, queryResult);
     return queryResult;
   }
 
-  private getParsedQuery (query: string) {
+  private getParsedQuery(query: string) {
     let finalQuery = query;
     if (/\bobsidian_markdown_notes\b/gi.test(query)) {
       finalQuery = query.replace(/\bobsidian_markdown_notes\b/gi, '$0');
@@ -202,7 +225,7 @@ export class QuerySql implements IQuery {
     return finalQuery;
   }
 
-  private getDataTable (query: string): any[] {
+  private getDataTable(query: string): any[] {
     let dataTable: any[] = [];
     if (/\bobsidian_markdown_notes\b/gi.test(query)) {
       dataTable = this.plugin.app.vault.getMarkdownFiles();
@@ -220,7 +243,9 @@ export class QuerySql implements IQuery {
    * @return {*}  {*}
    * @memberof QuerySql
    */
-  public applyQuery (): any {
+  // eslint-disable-next-line @typescript-eslint/member-ordering
+  public applyQuery(): any {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const queryResult: any = this.query();
 
     return queryResult;
@@ -234,9 +259,9 @@ export class QuerySql implements IQuery {
    * @return {*}  {string}
    * @memberof QuerySql
    */
-  private generateQueryId (length: number): string {
+  private generateQueryId(length: number): string {
     const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    const randomArray = Array.from({ length }, () => chars[Math.floor(Math.random() * chars.length)]);
+    const randomArray = Array.from({length}, () => chars[Math.floor(Math.random() * chars.length)]);
 
     const randomString = randomArray.join('');
     return randomString;

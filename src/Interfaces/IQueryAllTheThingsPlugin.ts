@@ -1,16 +1,16 @@
-import { App, Command, EventRef, MarkdownPostProcessor, MarkdownPostProcessorContext, Plugin } from 'obsidian';
+import {type App, type Command, type EventRef, type MarkdownPostProcessor, type MarkdownPostProcessorContext, type Plugin} from 'obsidian';
 
 export interface IQueryAllTheThingsPlugin extends Plugin {
 
-    app: App;
+  app: App;
 
-    saveData(data: any): Promise<void>;
-    onload(): any;
-    onunload(): void;
-    loadSettings(): any;
-    saveSettings(): any;
+  saveData(data: any): Promise<void>;
+  onload(): any;
+  onunload(): void;
+  loadSettings(): any;
+  saveSettings(): any;
 
-    registerMarkdownCodeBlockProcessor(language: string, handler: (source: string, el: HTMLElement, ctx: MarkdownPostProcessorContext) => Promise<any> | void, sortOrder?: number): MarkdownPostProcessor;
-    addCommand(command: Command): Command;
-    registerEvent(eventRef: EventRef): void;
+  registerMarkdownCodeBlockProcessor(language: string, handler: (source: string, element: HTMLElement, ctx: MarkdownPostProcessorContext) => Promise<any> | void, sortOrder?: number): MarkdownPostProcessor;
+  addCommand(command: Command): Command;
+  registerEvent(eventRef: EventRef): void;
 }

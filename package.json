@@ -9,7 +9,7 @@
     "build:dev": "node .config/esbuild.config.mjs",
     "lint": "eslint ./src/**/*.ts --fix",
     "lint:markdown": "markdownlint-cli2-config \".config/.markdownlint-cli2.jsonc\" \"**/*.md\" \"#node_modules\" \"#CHANGELOG.md\" \"#docs/CHANGELOG.md\"",
-    "test": "jest --ci",
+    "test": "xo && jest --ci",
     "test:dev": "jest --watch",
     "release": "standard-version",
     "release:dry": "standard-version --dry-run",
@@ -50,15 +50,47 @@
     "standard-version": "^9.5.0",
     "ts-jest": "^27.0.7",
     "tslib": "2.4.0",
-    "typescript": "4.7.4"
+    "typescript": "4.7.4",
+    "xo": "^0.54.2"
   },
   "dependencies": {
+    "@jest/globals": "^29.5.0",
     "alasql": "^3.1.0",
     "eventemitter2": "^6.4.5",
     "handlebars": "^4.7.7",
     "luxon": "^3.3.0",
     "obsidian-dataview": "0.5.55",
     "yaml": "^2.2.2"
+  },
+  "xo": {
+    "space": true,
+    "rules": {
+      "@typescript-eslint/naming-convention": [
+        "error",
+        {
+          "selector": "interface",
+          "format": [
+            "PascalCase"
+          ],
+          "custom": {
+            "regex": "^I[A-Z]",
+            "match": true
+          }
+        }
+      ],
+      "@typescript-eslint/consistent-type-definitions": [
+        "error",
+        "interface"
+      ],
+      "unicorn/filename-case": [
+        "error",
+        {
+          "cases": {
+            "pascalCase": true
+          }
+        }
+      ]
+    }
   },
   "standard-version": {
     "tag-prefix": "",
@@ -138,19 +170,6 @@
       }
     ]
   },
-  "prettier": {
-    "trailingComma": "all",
-    "printWidth": 120,
-    "tabWidth": 2,
-    "useTabs": false,
-    "singleQuote": true,
-    "bracketSpacing": true
-  },
-  "prettierIgnore": [
-    "main.js",
-    "styles.css",
-    "data.json"
-  ],
   "jest": {
     "globalSetup": "./.config/global-setup.js",
     "testEnvironment": "jsdom",
@@ -163,59 +182,5 @@
       "js",
       "ts"
     ]
-  },
-  "eslintConfig": {
-    "env": {
-      "es6": true,
-      "node": true,
-      "browser": true,
-      "es2021": true
-    },
-    "extends": [
-      "standard"
-    ],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "ecmaVersion": 12,
-      "sourceType": "module"
-    },
-    "plugins": [
-      "@typescript-eslint",
-      "import"
-    ],
-    "ignorePatterns": [
-      "main.js"
-    ],
-    "rules": {
-      "indent": [
-        "error",
-        2
-      ],
-      "@typescript-eslint/naming-convention": "error",
-      "linebreak-style": [
-        "error",
-        "unix"
-      ],
-      "quotes": [
-        "error",
-        "single",
-        {
-          "avoidEscape": true
-        }
-      ],
-      "@typescript-eslint/no-unused-vars": 0,
-      "no-unused-vars": 0,
-      "semi": [
-        "error",
-        "always"
-      ],
-      "import/order": "error",
-      "sort-imports": [
-        "error",
-        {
-          "ignoreDeclarationSort": true
-        }
-      ]
-    }
   }
 }

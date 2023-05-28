@@ -1,9 +1,9 @@
-/* eslint-disable no-useless-constructor */
-import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
-import { ISettingsManager } from 'Interfaces/ISettingsManager';
+
+import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
+import {type ISettingsManager} from 'Interfaces/ISettingsManager';
 import {
-  EventRef,
-  debounce
+  type EventRef,
+  debounce,
 } from 'obsidian';
 
 export default class EventHandler {
@@ -12,12 +12,11 @@ export default class EventHandler {
   private modificationEvent: EventRef | undefined;
   private renameEvent: EventRef | undefined;
 
-  constructor (
-    private plugin: IQueryAllTheThingsPlugin,
-    private settingsManager: ISettingsManager) {
-  }
+  constructor(
+    private readonly plugin: IQueryAllTheThingsPlugin,
+    private readonly settingsManager: ISettingsManager) {}
 
-  setup (): void {
+  setup(): void {
     this.updateRefreshSettings();
     this.plugin.app.workspace.onLayoutReady(() => {
       this.updateCreationEvent();
@@ -27,16 +26,7 @@ export default class EventHandler {
     });
   }
 
-  private debouncedRefresh: () => void = () => null;
-  private updateRefreshSettings () {
-    this.debouncedRefresh = debounce(
-      () => this.plugin.app.workspace.trigger('qatt:refresh-codeblocks'),
-      this.settingsManager.getValue('refreshDebounce') as number,
-      true
-    );
-  }
-
-  updateCreationEvent (): void {
+  updateCreationEvent(): void {
     this.creationEvent = this.plugin.app.vault.on('create', () => {
       this.debouncedRefresh();
       this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
@@ -44,7 +34,7 @@ export default class EventHandler {
     this.plugin.registerEvent(this.creationEvent);
   }
 
-  updateDeletionEvent (): void {
+  updateDeletionEvent(): void {
     this.deletionEvent = this.plugin.app.vault.on('delete', () => {
       this.debouncedRefresh();
       this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
@@ -52,7 +42,7 @@ export default class EventHandler {
     this.plugin.registerEvent(this.deletionEvent);
   }
 
-  updateModificationEvent (): void {
+  updateModificationEvent(): void {
     this.modificationEvent = this.plugin.app.vault.on('modify', () => {
       this.debouncedRefresh();
       this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
@@ -60,11 +50,22 @@ export default class EventHandler {
     this.plugin.registerEvent(this.modificationEvent);
   }
 
-  updateRenameEvent (): void {
+  updateRenameEvent(): void {
     this.renameEvent = this.plugin.app.vault.on('rename', () => {
       this.debouncedRefresh();
       this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
     });
     this.plugin.registerEvent(this.renameEvent);
+  }
+
+  private debouncedRefresh: () => void = () => null;
+  private updateRefreshSettings() {
+    this.debouncedRefresh = debounce(
+      () => {
+        this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
+      },
+      this.settingsManager.getValue('refreshDebounce') as number,
+      true,
+    );
   }
 }

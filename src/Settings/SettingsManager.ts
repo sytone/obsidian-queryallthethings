@@ -1,11 +1,11 @@
-import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
-import { ISettingsManager } from 'Interfaces/ISettingsManager';
-import { Settings } from 'Interfaces/Settings';
-import { logging } from '../lib/logging';
-import { Feature, FeatureFlag } from './Feature';
+import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
+import {type ISettingsManager} from 'Interfaces/ISettingsManager';
+import {type ISettings} from 'Interfaces/Settings';
+import {logging} from 'lib/Logging';
+import {Feature, type FeatureFlag} from 'Settings/Feature';
 
 // Default data block that is stored in the data file.
-const defaultSettings: Settings = {
+const defaultSettings: ISettings = {
   features: Feature.settingsFlags,
   generalSettings: {
     globalFilter: '',
@@ -18,49 +18,49 @@ const defaultSettings: Settings = {
     defaultRenderTemplate: '',
     refreshDebounce: 2500,
     settingsVersion: 1,
-    internalLoggingConsoleLogLimit: 10
+    internalLoggingConsoleLogLimit: 10,
   },
   headingOpened: {}, // ;  { 'Documentation and Support': true },
   loggingOptions: {
     minLevels: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
+
       '': 'info',
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      Qatt: 'info'
-    }
-  }
+
+      Qatt: 'info',
+    },
+  },
 };
 
 export class SettingsManager implements ISettingsManager {
   logger = logging.getLogger('Qatt.SettingsManager');
 
-  settings: Settings;
+  settings: ISettings;
 
-  constructor (
-    private plugin: IQueryAllTheThingsPlugin
+  constructor(
+    private readonly plugin: IQueryAllTheThingsPlugin,
   ) {
     this.settings = defaultSettings;
 
     this.logger.info('Creating Settings Manager', this.settings);
     logging.configure({
       minLevels: {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
+
         '': 'debug',
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        Qatt: 'debug'
-      }
+
+        Qatt: 'debug',
+      },
     });
   }
 
-  public updateSettings (newSettings: Partial<Settings>): Settings {
+  public updateSettings(newSettings: Partial<ISettings>): ISettings {
     this.logger.debug('updateSettings', newSettings);
-    this.settings = { ...defaultSettings, ...newSettings };
+    this.settings = {...defaultSettings, ...newSettings};
     this.plugin.saveSettings();
     return this.getSettings();
   }
 
-  public getSettings (): Settings {
-    this.logger.debug('getSettings', { ...defaultSettings, ...this.settings });
+  public getSettings(): ISettings {
+    this.logger.debug('getSettings', {...defaultSettings, ...this.settings});
 
     // Check to see if there is a new flag and if so add it to the users settings.
     for (const flag in Feature.settingsFlags) {
@@ -69,25 +69,25 @@ export class SettingsManager implements ISettingsManager {
       }
     }
 
-    return { ...defaultSettings, ...this.settings };
+    return {...defaultSettings, ...this.settings};
   }
 
-  public getValue (name: string): string | number | boolean {
+  public getValue(name: string): string | number | boolean {
     this.logger.debug(`getValue ${name}`);
     return this.settings.generalSettings[name];
   }
 
-  public setValue (name: string, value: string | number | boolean): void {
-    this.logger.debug(`setValue ${name} ${value}`);
+  public setValue(name: string, value: string | number | boolean): void {
+    this.logger.debug(`setValue ${name} ${value as string}`);
     this.settings.generalSettings[name] = value;
     this.plugin.saveSettings();
   }
 
-  public isFeatureEnabled (name: string): boolean {
+  public isFeatureEnabled(name: string): boolean {
     return this.settings.features[name] ?? false;
   }
 
-  public toggleFeature (name: string, enabled: boolean): FeatureFlag {
+  public toggleFeature(name: string, enabled: boolean): FeatureFlag {
     this.settings.features[name] = enabled;
     this.plugin.saveSettings();
     return this.settings.features;

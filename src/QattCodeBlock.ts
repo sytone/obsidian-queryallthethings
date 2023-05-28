@@ -1,8 +1,9 @@
-import { parse } from 'yaml';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import {parse} from 'yaml';
 
 export interface IQattCodeBlock {
-  customJSForSql: Array<string>;
-  customJSForHandlebars: Array<string>;
+  customJSForSql: string[];
+  customJSForHandlebars: string[];
   query: string | undefined;
   queryEngine: string | undefined;
   template: string | undefined;
@@ -13,20 +14,18 @@ export interface IQattCodeBlock {
 }
 
 export class QattCodeBlock implements IQattCodeBlock {
-  customJSForSql: Array<string>;
-  customJSForHandlebars: Array<string>;
+  customJSForSql: string[];
+  customJSForHandlebars: string[];
   query: string | undefined;
   queryEngine: string | undefined;
   template: string | undefined;
   postRenderFormat: string | undefined;
   renderEngine: string | undefined;
   logLevel: string | undefined;
-  codeBlockContent: string;
 
-  constructor (
-    codeBlockContent: string
+  constructor(
+    public codeBlockContent: string,
   ) {
-    this.codeBlockContent = codeBlockContent;
     const parsedCodeBlock = parse(codeBlockContent);
 
     this.customJSForSql = parsedCodeBlock.customJSForSql;

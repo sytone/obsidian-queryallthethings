@@ -1,21 +1,26 @@
 /* eslint indent: [2, 2, {"SwitchCase": 1}] */
-import { logging } from 'lib/logging';
-import { QattCodeBlock } from 'QattCodeBlock';
-import { IRenderer } from 'render/IRenderer';
-import { HandlebarsRenderer } from 'render/HandlebarsRenderer';
-import { TextRenderer } from 'render/TextRenderer';
+import {logging} from 'lib/Logging';
+import {type QattCodeBlock} from 'QattCodeBlock';
+import {type IRenderer} from 'render/IRenderer';
+import {HandlebarsRenderer} from 'render/HandlebarsRenderer';
+import {TextRenderer} from 'render/TextRenderer';
 
 export class RenderFactory {
-  _logger = logging.getLogger('Qatt.QueryRenderer');
-
-  public static getRenderer (queryConfiguration: QattCodeBlock): IRenderer {
+  public static getRenderer(queryConfiguration: QattCodeBlock): IRenderer {
     switch (queryConfiguration.renderEngine) {
-      case 'handlebars':
+      case 'handlebars': {
         return new HandlebarsRenderer(queryConfiguration.template ?? '{{stringify result}}');
-      case 'text':
+      }
+
+      case 'text': {
         return new TextRenderer();
-      default:
+      }
+
+      default: {
         return new HandlebarsRenderer(queryConfiguration.template ?? '{{stringify result}}');
+      }
     }
   }
+
+  _logger = logging.getLogger('Qatt.QueryRenderer');
 }

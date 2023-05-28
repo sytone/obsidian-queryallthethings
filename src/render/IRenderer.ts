@@ -1,4 +1,4 @@
 
 export interface IRenderer {
-  renderTemplate: (result: any) => any;
-};
+  renderTemplate: (result: any) => string;
+}

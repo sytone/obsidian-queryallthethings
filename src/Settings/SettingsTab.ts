@@ -1,16 +1,17 @@
-import { Plugin, PluginSettingTab, Setting, debounce } from 'obsidian';
-import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
-import { ISettingsManager } from 'Interfaces/ISettingsManager';
-import { log } from './../lib/logging';
-import { Feature } from './Feature';
-import settingsJson from './settingsConfiguration.json';
+import {type Plugin, PluginSettingTab, Setting, debounce} from 'obsidian';
+import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
+import {type ISettingsManager} from 'Interfaces/ISettingsManager';
+import {log} from 'lib/Logging';
+import {Feature} from 'Settings/Feature';
+import settingsJson from 'Settings/settingsConfiguration.json';
 
 export class SettingsTab extends PluginSettingTab {
   // If the UI needs a more complex setting you can create a
   // custom function and specify it from the json file. It will
   // then be rendered instead of a normal checkbox or text box.
-  customFunctions: { [K: string]: Function } = {
-    insertFeatureFlags: this.insertFeatureFlags
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  customFunctions: Record<string, Function> = {
+    insertFeatureFlags: this.insertFeatureFlags,
   };
 
   /**
@@ -21,9 +22,9 @@ export class SettingsTab extends PluginSettingTab {
      * @param {ISettingsManager} settingsManager
      * @memberof SettingsTab
      */
-  constructor (
-        private plugin: IQueryAllTheThingsPlugin,
-        private settingsManager: ISettingsManager
+  constructor(
+    private readonly plugin: IQueryAllTheThingsPlugin,
+    private readonly settingsManager: ISettingsManager,
   ) {
     super(plugin.app, plugin as unknown as Plugin);
   }
@@ -35,8 +36,8 @@ export class SettingsTab extends PluginSettingTab {
      * @return {*}  {Promise<void>}
      * @memberof SettingsTab
      */
-  public async saveSettings (update?: boolean): Promise<void> {
-    log('debug', `Saving settings with update: ${update}`);
+  public async saveSettings(update = false): Promise<void> {
+    log('debug', `Saving settings with update: ${update ? 'true' : 'false'}`);
 
     await this.plugin.saveSettings();
 
@@ -50,36 +51,37 @@ export class SettingsTab extends PluginSettingTab {
      *
      * @memberof SettingsTab
      */
-  public display (): void {
-    const { containerEl } = this;
-    const { headingOpened } = this.settingsManager.getSettings();
+  public display(): void {
+    const {containerEl} = this;
+    const {headingOpened} = this.settingsManager.getSettings();
 
     this.containerEl.empty();
     this.containerEl.addClass('qatt-settings');
 
-    settingsJson.forEach((heading) => {
+    for (const heading of settingsJson) {
       const detailsContainer = containerEl.createEl('details', {
         cls: 'qatt-nested-settings',
         attr: {
-          ...(heading.open || headingOpened[heading.text] ? { open: true } : {})
-        }
+          ...(heading.open || headingOpened[heading.text] ? {open: true} : {}),
+        },
       });
       detailsContainer.empty();
-      detailsContainer.ontoggle = () => {
+      detailsContainer.addEventListener('toggle', () => {
         headingOpened[heading.text] = detailsContainer.open;
-        this.settingsManager.updateSettings({ headingOpened });
+        this.settingsManager.updateSettings({headingOpened});
         this.plugin.saveSettings();
-      };
+      });
+
       const summary = detailsContainer.createEl('summary');
       new Setting(summary).setHeading().setName(heading.text);
       summary.createDiv('collapser').createDiv('handle');
 
-      // detailsContainer.createEl(heading.level as keyof HTMLElementTagNameMap, { text: heading.text });
+      // DetailsContainer.createEl(heading.level as keyof HTMLElementTagNameMap, { text: heading.text });
 
       if (heading.notice !== null) {
         const notice = detailsContainer.createEl('div', {
           cls: heading.notice.class,
-          text: heading.notice.text
+          text: heading.notice.text,
         });
         if (heading.notice.html !== null) {
           notice.insertAdjacentHTML('beforeend', heading.notice.html);
@@ -89,97 +91,115 @@ export class SettingsTab extends PluginSettingTab {
       // This will process all the settings from settingsConfiguration.json and render
       // them out reducing the duplication of the code in this file. This will become
       // more important as features are being added over time.
-      heading.settings.forEach((setting) => {
+      for (const setting of heading.settings) {
         if (setting.featureFlag !== '' && !this.settingsManager.isFeatureEnabled(setting.featureFlag)) {
           // The settings configuration has a featureFlag set and the user has not
           // enabled it. Skip adding the settings option.
-          return;
+          continue;
         }
 
-        if (setting.type === 'checkbox') {
+        switch (setting.type) {
+          case 'checkbox': {
           /* -------------------------------------------------------------------------- */
           /*                 Render options that are Boolean in nature.                 */
           /* -------------------------------------------------------------------------- */
-          new Setting(detailsContainer)
-            .setName(setting.name)
-            .setDesc(setting.description)
-            .addToggle((toggle) => {
-              const settings = this.settingsManager.getSettings();
-              if (!settings.generalSettings[setting.settingName]) {
-                this.settingsManager.setValue(setting.settingName, setting.initialValue);
-              }
-              toggle
-                .setValue(<boolean>settings.generalSettings[setting.settingName])
-                .onChange(async (value) => {
-                  this.settingsManager.setValue(setting.settingName, value);
-                  await this.plugin.saveSettings();
-                });
-            });
-        } else if (setting.type === 'text') {
+            new Setting(detailsContainer)
+              .setName(setting.name)
+              .setDesc(setting.description)
+              .addToggle(toggle => {
+                const settings = this.settingsManager.getSettings();
+                if (!settings.generalSettings[setting.settingName]) {
+                  this.settingsManager.setValue(setting.settingName, setting.initialValue);
+                }
+
+                toggle
+                  .setValue(settings.generalSettings[setting.settingName] as boolean)
+                  .onChange(async value => {
+                    this.settingsManager.setValue(setting.settingName, value);
+                    await this.plugin.saveSettings();
+                  });
+              });
+
+            break;
+          }
+
+          case 'text': {
           /* -------------------------------------------------------------------------- */
           /*                Render options that are single lines of text.               */
           /* -------------------------------------------------------------------------- */
-          new Setting(detailsContainer)
-            .setName(setting.name)
-            .setDesc(setting.description)
-            .addText((text) => {
-              const settings = this.settingsManager.getSettings();
-              if (!settings.generalSettings[setting.settingName]) {
-                this.settingsManager.setValue(setting.settingName, setting.initialValue);
-              }
+            new Setting(detailsContainer)
+              .setName(setting.name)
+              .setDesc(setting.description)
+              .addText(text => {
+                const settings = this.settingsManager.getSettings();
+                if (!settings.generalSettings[setting.settingName]) {
+                  this.settingsManager.setValue(setting.settingName, setting.initialValue);
+                }
 
-              const onChange = async (value: string) => {
-                this.settingsManager.setValue(setting.settingName, value);
-                await this.plugin.saveSettings();
-              };
+                const onChange = async (value: string) => {
+                  this.settingsManager.setValue(setting.settingName, value);
+                  await this.plugin.saveSettings();
+                };
 
-              text.setPlaceholder(setting.placeholder.toString())
-                .setValue(settings.generalSettings[setting.settingName].toString())
-                .onChange(debounce(onChange, 500, true));
-            });
-        } else if (setting.type === 'textarea') {
+                text.setPlaceholder(setting.placeholder.toString())
+                  .setValue(settings.generalSettings[setting.settingName].toString())
+                  .onChange(debounce(onChange, 500, true));
+              });
+
+            break;
+          }
+
+          case 'textarea': {
           /* -------------------------------------------------------------------------- */
           /*               Render options that are multiple lines of text.              */
           /* -------------------------------------------------------------------------- */
-          new Setting(detailsContainer)
-            .setName(setting.name)
-            .setDesc(setting.description)
-            .addTextArea((text) => {
-              const settings = this.settingsManager.getSettings();
-              if (!settings.generalSettings[setting.settingName]) {
-                this.settingsManager.setValue(setting.settingName, setting.initialValue);
-              }
+            new Setting(detailsContainer)
+              .setName(setting.name)
+              .setDesc(setting.description)
+              .addTextArea(text => {
+                const settings = this.settingsManager.getSettings();
+                if (!settings.generalSettings[setting.settingName]) {
+                  this.settingsManager.setValue(setting.settingName, setting.initialValue);
+                }
 
-              const onChange = async (value: string) => {
-                this.settingsManager.setValue(setting.settingName, value);
-                await this.plugin.saveSettings();
-              };
+                const onChange = async (value: string) => {
+                  this.settingsManager.setValue(setting.settingName, value);
+                  await this.plugin.saveSettings();
+                };
 
-              text.setPlaceholder(setting.placeholder.toString())
-                .setValue(settings.generalSettings[setting.settingName].toString())
-                .onChange(debounce(onChange, 500, true));
+                text.setPlaceholder(setting.placeholder.toString())
+                  .setValue(settings.generalSettings[setting.settingName].toString())
+                  .onChange(debounce(onChange, 500, true));
 
-              text.inputEl.rows = 8;
-              text.inputEl.cols = 40;
-            });
-        } else if (setting.type === 'function') {
+                text.inputEl.rows = 8;
+                text.inputEl.cols = 40;
+              });
+
+            break;
+          }
+
+          case 'function': {
           /* -------------------------------------------------------------------------- */
           /*        If the UI is super custom then call the registered function.        */
           /* -------------------------------------------------------------------------- */
-          this.customFunctions[setting.settingName](detailsContainer, this);
+            this.customFunctions[setting.settingName](detailsContainer, this);
+
+            break;
+          }
+        // No default
         }
 
         if (setting.notice !== null) {
           const notice = detailsContainer.createEl('p', {
             cls: setting.notice.class,
-            text: setting.notice.text
+            text: setting.notice.text,
           });
           if (setting.notice.html !== null) {
             notice.insertAdjacentHTML('beforeend', setting.notice.html);
           }
         }
-      });
-    });
+      }
+    }
   }
 
   /* -------------------------------------------------------------------------- */
@@ -194,19 +214,19 @@ export class SettingsTab extends PluginSettingTab {
      * @param {SettingsTab} settings
      * @memberof SettingsTab
      */
-  insertFeatureFlags (containerEl: HTMLElement, settings: SettingsTab) {
-    Feature.values.forEach((feature) => {
-      new Setting(containerEl)
+  insertFeatureFlags(containerElement: HTMLElement, settings: SettingsTab) {
+    for (const feature of Feature.values) {
+      new Setting(containerElement)
         .setName(feature.displayName)
-        .setDesc(feature.description + ' Is Stable? ' + feature.stable)
-        .addToggle((toggle) => {
-          toggle.setValue(settings.settingsManager.isFeatureEnabled(feature.internalName)).onChange(async (value) => {
+        .setDesc(`${feature.description} Is Stable? ${feature.stable ? 'Yes' : 'No'}`)
+        .addToggle(toggle => {
+          toggle.setValue(settings.settingsManager.isFeatureEnabled(feature.internalName)).onChange(async value => {
             const updatedFeatures = settings.settingsManager.toggleFeature(feature.internalName, value);
-            settings.settingsManager.updateSettings({ features: updatedFeatures });
+            settings.settingsManager.updateSettings({features: updatedFeatures});
 
             await settings.saveSettings(true);
           });
         });
-    });
+    }
   }
 }

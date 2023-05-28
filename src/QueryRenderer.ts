@@ -1,12 +1,12 @@
-import { IQuery } from 'Interfaces/IQuery';
-import { QuerySql } from 'QuerySql';
-import { logging } from 'lib/logging';
-import { App, MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild } from 'obsidian';
-import { IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
-import { QattCodeBlock } from 'QattCodeBlock';
-import { IRenderer } from 'render/IRenderer';
-import { RenderFactory } from 'render/RenderFactory';
-import { QueryFactory } from 'querier/QueryFactory';
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import {logging} from 'lib/Logging';
+import {type App, type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild} from 'obsidian';
+import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
+import {QattCodeBlock} from 'QattCodeBlock';
+import {type IRenderer} from 'render/IRenderer';
+import {RenderFactory} from 'render/RenderFactory';
+import {QueryFactory} from 'Query/QueryFactory';
+import {type IQuery} from 'Query/IQuery';
 
 export class QueryRenderer {
   public addQuerySqlRenderChild = this._addQuerySqlRenderChild.bind(this);
@@ -14,14 +14,14 @@ export class QueryRenderer {
 
   private readonly _app: App;
 
-  constructor (
-    private plugin: IQueryAllTheThingsPlugin
+  constructor(
+    private readonly plugin: IQueryAllTheThingsPlugin,
   ) {
     this._app = plugin.app;
     plugin.registerMarkdownCodeBlockProcessor('qatt', this._addQuerySqlRenderChild.bind(this));
   }
 
-  private async _addQuerySqlRenderChild (source: string, element: HTMLElement, context: MarkdownPostProcessorContext) {
+  private async _addQuerySqlRenderChild(source: string, element: HTMLElement, context: MarkdownPostProcessorContext) {
     this._logger.debug(`Adding SQL Query Render for ${source} to context ${context.docId}`);
 
     const queryConfiguration = new QattCodeBlock(source);
@@ -31,8 +31,8 @@ export class QueryRenderer {
         element,
         queryConfiguration,
         context.sourcePath,
-        context.frontmatter
-      )
+        context.frontmatter,
+      ),
     );
   }
 }
@@ -42,12 +42,12 @@ class QueryRenderChild extends MarkdownRenderChild {
 
   private readonly queryId: string;
 
-  constructor (
-    private plugin: IQueryAllTheThingsPlugin,
-    private container: HTMLElement,
-    private queryConfiguration: QattCodeBlock,
-    private sourcePath: string,
-    private frontmatter: any
+  constructor(
+    private readonly plugin: IQueryAllTheThingsPlugin,
+    private readonly container: HTMLElement,
+    private readonly queryConfiguration: QattCodeBlock,
+    private readonly sourcePath: string,
+    private readonly frontmatter: any,
   ) {
     super(container);
     this.queryId = 'TBD';
@@ -55,15 +55,17 @@ class QueryRenderChild extends MarkdownRenderChild {
       this._logger.setLogLevel(this.queryConfiguration.logLevel);
     }
 
-    this._logger.debug(`Query Render generated for class ${this.containerEl.className} -> ${this.container}`);
+    this._logger.debug(`Query Render generated for class ${this.containerEl.className} -> ${this.container.className}`);
   }
 
-  onload () {
+  onload() {
     this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', this.render));
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.render();
   }
 
-  onunload () {
+  onunload() {
+    // Unload resources
   }
 
   render = async () => {

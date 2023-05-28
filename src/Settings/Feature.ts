@@ -1,9 +1,7 @@
-import { logging } from 'lib/logging';
+import {logging} from 'lib/Logging';
 import featuresJson from './featureConfiguration.json';
 
-export type FeatureFlag = {
-  [internalName: string]: boolean;
-};
+export type FeatureFlag = Record<string, boolean>;
 
 /**
  * The Feature class tracks all the possible features that users can enabled that are in development. This allows
@@ -24,15 +22,36 @@ export type FeatureFlag = {
  * @since 2022-05-29
  */
 export class Feature {
+  /**
+     * Converts a string to its corresponding default Feature instance.
+     *
+     * @param featureName the string to convert to Feature
+     * @throws RangeError, if a string that has no corresponding Feature value was passed.
+     * @returns the matching Feature
+     */
+  public static fromString(featureName: string): Feature {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    const value = (this as any)[featureName];
+    if (value) {
+      return value as Feature;
+    }
+
+    throw new RangeError(
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      `Illegal argument passed to fromString(): ${featureName} does not correspond to any available Feature ${(this as any).prototype.constructor.name
+      }`,
+    );
+  }
+
   _logger = logging.getLogger('Qatt.Feature');
 
-  private constructor (
+  private constructor(
     public readonly internalName: string,
     public readonly index: number,
     public readonly description: string,
     public readonly displayName: string,
     public readonly enabledByDefault: boolean,
-    public readonly stable: boolean
+    public readonly stable: boolean,
   ) {
     this._logger.debug(`Created feature ${this.internalName} -> ${this.displayName}`);
   }
@@ -45,10 +64,10 @@ export class Feature {
      * @type {Feature[]}
      * @memberof Feature
      */
-  static get values (): Feature[] {
+  static get values(): Feature[] {
     let availableFeatures: Feature[] = [];
 
-    featuresJson.forEach((feature) => {
+    for (const feature of featuresJson) {
       availableFeatures = [
         ...availableFeatures,
         new Feature(
@@ -57,10 +76,11 @@ export class Feature {
           feature.description,
           feature.displayName,
           feature.enabledByDefault,
-          feature.stable
-        )
+          feature.stable,
+        ),
       ];
-    });
+    }
+
     return availableFeatures;
   }
 
@@ -72,39 +92,21 @@ export class Feature {
      * @type {FeatureFlag}
      * @memberof Feature
      */
-  static get settingsFlags (): FeatureFlag {
-    const featureFlags: { [internalName: string]: boolean } = {};
+  static get settingsFlags(): FeatureFlag {
+    const featureFlags: Record<string, boolean> = {};
 
-    Feature.values.forEach((feature) => {
+    for (const feature of Feature.values) {
       featureFlags[feature.internalName] = feature.enabledByDefault;
-    });
-    return featureFlags;
-  }
-
-  /**
-     * Converts a string to its corresponding default Feature instance.
-     *
-     * @param string the string to convert to Feature
-     * @throws RangeError, if a string that has no corresponding Feature value was passed.
-     * @returns the matching Feature
-     */
-  static fromString (string: string): Feature {
-    const value = (this as any)[string];
-    if (value) {
-      return value;
     }
 
-    throw new RangeError(
-      `Illegal argument passed to fromString(): ${string} does not correspond to any available Feature ${(this as any).prototype.constructor.name
-      }`
-    );
+    return featureFlags;
   }
 
   /**
      * Called when converting the Feature value to a string using JSON.Stringify.
      * Compare to the fromString() method, which deserializes the object.
      */
-  public toJSON () {
+  public toJSON() {
     return this.internalName;
   }
 }
