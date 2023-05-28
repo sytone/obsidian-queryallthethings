@@ -1,4 +1,3 @@
-
 export const parseTask = (taskString: string) => {
   const tags: string[] = [];
   const tagsNormalized: string[] = [];
@@ -8,21 +7,25 @@ export const parseTask = (taskString: string) => {
   let startDate: string | undefined;
   let createDate: string | undefined;
   let scheduledDate: string | undefined;
-  let priority = 4;
+  let priority;
 
   for (let index = 0; index < tokens.length; index++) {
     parseTags(tokens, index, tags, tagsNormalized);
 
-    ({dueDate, doneDate, startDate, createDate, scheduledDate} = parseDates(tokens, index));
+    dueDate = dueDate ?? parseDate(tokens, index, ['📅', 'due::']);
+    doneDate = doneDate ?? parseDate(tokens, index, ['✅', 'completion::']);
+    startDate = startDate ?? parseDate(tokens, index, ['🛫', 'start::']);
+    createDate = createDate ?? parseDate(tokens, index, ['➕', 'created::']);
+    scheduledDate = scheduledDate ?? parseDate(tokens, index, ['⏳', 'scheduled::']);
 
-    priority = parsePriority(tokens, index);
+    priority = priority ?? parsePriority(tokens, index);
   }
 
   return {tags, tagsNormalized, dueDate, doneDate, startDate, createDate, scheduledDate, priority};
 };
 
 function parsePriority(tokens: string[], index: number) {
-  let priority = 4;
+  let priority;
   if (tokens[index].startsWith('⏫') || (tokens[index].startsWith('priority::') && tokens[index + 1].startsWith('high'))) {
     priority = 1;
   }
@@ -38,38 +41,15 @@ function parsePriority(tokens: string[], index: number) {
   return priority;
 }
 
-function parseDates(tokens: string[], index: number) {
-  let dueDate: string | undefined;
-  let doneDate: string | undefined;
-  let startDate: string | undefined;
-  let createDate: string | undefined;
-  let scheduledDate: string | undefined;
-  if (tokens[index].startsWith('📅') || tokens[index].startsWith('due::')) {
-    // DueDate = DateTime.fromISO(tokens[index + 1]).toISODate();
-    dueDate = tokens[index + 1];
+// Iterate through the prefixes and pull the following value and return.
+function parseDate(tokens: string[], index: number, prefixes: string[]) {
+  for (const prefix of prefixes) {
+    if (tokens[index].startsWith(prefix)) {
+      return tokens[index + 1];
+    }
   }
 
-  if (tokens[index].startsWith('✅') || tokens[index].startsWith('completion::')) {
-    // DoneDate = DateTime.fromISO(tokens[index + 1]).toISODate();
-    doneDate = tokens[index + 1];
-  }
-
-  if (tokens[index].startsWith('🛫') || tokens[index].startsWith('start::')) {
-    // StartDate = DateTime.fromISO(tokens[index + 1]).toISODate();
-    startDate = tokens[index + 1];
-  }
-
-  if (tokens[index].startsWith('➕') || tokens[index].startsWith('created::')) {
-    // CreateDate = DateTime.fromISO(tokens[index + 1]).toISODate();
-    createDate = tokens[index + 1];
-  }
-
-  if (tokens[index].startsWith('⏳') || tokens[index].startsWith('scheduled::')) {
-    // ScheduledDate = DateTime.fromISO(tokens[index + 1]).toISODate();
-    scheduledDate = tokens[index + 1];
-  }
-
-  return {dueDate, doneDate, startDate, createDate, scheduledDate};
+  return undefined;
 }
 
 function parseTags(tokens: string[], index: number, tags: string[], tagsNormalized: string[]) {
@@ -83,4 +63,3 @@ function parseTags(tokens: string[], index: number, tags: string[], tagsNormaliz
     }
   }
 }
-

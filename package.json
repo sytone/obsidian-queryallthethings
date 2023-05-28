@@ -181,6 +181,10 @@
     "moduleFileExtensions": [
       "js",
       "ts"
+    ],
+    "moduleDirectories": [
+      "node_modules",
+      "src"
     ]
   }
 }

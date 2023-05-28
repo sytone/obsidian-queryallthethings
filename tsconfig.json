@@ -1,38 +1,57 @@
 {
-    "typedocOptions": {
-        "entryPoints": ["src/main.ts"],
-        "out": "docs/typedoc",
-        "plugin": "typedoc-plugin-markdown",
-        "entryDocument": "index.md",
-        "githubPages": false,
-        "readme": "none"
+  "typedocOptions": {
+    "entryPoints": [
+      "src/main.ts"
+    ],
+    "out": "docs/typedoc",
+    "plugin": "typedoc-plugin-markdown",
+    "entryDocument": "index.md",
+    "githubPages": false,
+    "readme": "none"
+  },
+  "compilerOptions": {
+    "baseUrl": "./src",
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "module": "ESNext",
+    "target": "ES6",
+    "allowJs": true,
+    "noImplicitAny": true,
+    "moduleResolution": "node",
+    "importHelpers": true,
+    "isolatedModules": true,
+    "strictNullChecks": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "experimentalDecorators": true,
+    "paths": {
+      "src/*": [
+        "src/*"
+      ],
+      "tests/*": [
+        "__tests__/*"
+      ]
     },
-    "compilerOptions": {
-        "baseUrl": "./src",
-        "inlineSourceMap": true,
-        "inlineSources": true,
-        "module": "ESNext",
-        "target": "ES6",
-        "allowJs": true,
-        "noImplicitAny": true,
-        "moduleResolution": "node",
-        "importHelpers": true,
-        "isolatedModules": true,
-        "strictNullChecks": true,
-
-        "resolveJsonModule": true,
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "strict": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "experimentalDecorators": true,
-        "paths": {
-            "src": ["src/*", "tests/*"]
-        },
-        "types": ["jest", "node"],
-        "lib": ["DOM", "ES5", "ES6", "ES7"]
-    },
-    "include": ["src/**/*", "tests/**/*"],
-    "exclude": ["node_modules/*"]
+    "types": [
+      "jest",
+      "node"
+    ],
+    "lib": [
+      "DOM",
+      "ES5",
+      "ES6",
+      "ES7"
+    ]
+  },
+  "include": [
+    "src/**/*",
+    "__tests__/**/*"
+  ],
+  "exclude": [
+    "node_modules/*"
+  ]
 }

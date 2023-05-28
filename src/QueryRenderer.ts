@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {logging} from 'lib/Logging';
-import {type App, type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild} from 'obsidian';
+import {type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild} from 'obsidian';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
 import {QattCodeBlock} from 'QattCodeBlock';
 import {type IRenderer} from 'render/IRenderer';
@@ -12,12 +12,9 @@ export class QueryRenderer {
   public addQuerySqlRenderChild = this._addQuerySqlRenderChild.bind(this);
   _logger = logging.getLogger('Qatt.QueryRenderer');
 
-  private readonly _app: App;
-
   constructor(
     private readonly plugin: IQueryAllTheThingsPlugin,
   ) {
-    this._app = plugin.app;
     plugin.registerMarkdownCodeBlockProcessor('qatt', this._addQuerySqlRenderChild.bind(this));
   }
 
@@ -30,8 +27,7 @@ export class QueryRenderer {
         this.plugin,
         element,
         queryConfiguration,
-        context.sourcePath,
-        context.frontmatter,
+        context,
       ),
     );
   }
@@ -46,8 +42,7 @@ class QueryRenderChild extends MarkdownRenderChild {
     private readonly plugin: IQueryAllTheThingsPlugin,
     private readonly container: HTMLElement,
     private readonly queryConfiguration: QattCodeBlock,
-    private readonly sourcePath: string,
-    private readonly frontmatter: any,
+    private readonly context: MarkdownPostProcessorContext,
   ) {
     super(container);
     this.queryId = 'TBD';
@@ -72,7 +67,7 @@ class QueryRenderChild extends MarkdownRenderChild {
     const startTime = new Date(Date.now());
 
     // Run query and get results to be rendered
-    const queryEngine: IQuery = QueryFactory.getQuery(this.queryConfiguration, this.sourcePath, this.frontmatter, this.plugin);
+    const queryEngine: IQuery = QueryFactory.getQuery(this.queryConfiguration, this.context.sourcePath, this.context.frontmatter, this.plugin);
     const results = queryEngine.applyQuery(this.queryId);
 
     const renderEngine: IRenderer = RenderFactory.getRenderer(this.queryConfiguration);

@@ -45,6 +45,7 @@ export class Feature {
 
   _logger = logging.getLogger('Qatt.Feature');
 
+  // eslint-disable-next-line max-params
   private constructor(
     public readonly internalName: string,
     public readonly index: number,
