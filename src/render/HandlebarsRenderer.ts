@@ -9,6 +9,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Handlebars, {type HelperOptions} from 'handlebars';
 import {Component, MarkdownPreviewView} from 'obsidian';
+import {Md5} from 'ts-md5';
 import {logging} from 'lib/Logging';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
 import {type IRenderer} from 'render/IRenderer';
@@ -131,19 +132,8 @@ export class HandlebarsRenderer implements IRenderer {
 
     // This one is more complex, probably a bad design as well. Works
     // on my machine!
-    Handlebars.registerHelper('markdown2', function (this: string, options) {
-      let hash = 0;
-      let i;
-      let chr: number;
-      if (this.length === 0) {
-        return hash;
-      }
-
-      for (i = 0; i < this.length; i++) {
-        chr = this.codePointAt(i) ?? 0;
-        hash = ((hash << 5) - hash) + chr;
-        hash = Math.trunc(hash); // Convert to 32bit integer
-      }
+    Handlebars.registerHelper('markdown2', function (this: any, options) {
+      const hash: string = Md5.hashStr(JSON.stringify(this));
 
       const elementId = 'temp-prefix-' + hash;
       let itemHtml: boolean | string | undefined = false;
@@ -167,18 +157,7 @@ export class HandlebarsRenderer implements IRenderer {
     });
 
     Handlebars.registerHelper('markdown', value => {
-      let hash = 0;
-      let i;
-      let chr: number;
-      if (value.length === 0) {
-        return hash;
-      }
-
-      for (i = 0; i < value.length; i++) {
-        chr = value.codePointAt(i);
-        hash = ((hash << 5) - hash) + chr;
-        hash = Math.trunc(hash); // Convert to 32bit integer
-      }
+      const hash: string = Md5.hashStr(JSON.stringify(this));
 
       const elementId = 'temp-prefix-' + hash;
       let itemHtml: boolean | string | undefined = false;

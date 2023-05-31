@@ -8,29 +8,28 @@
     "ghcr.io/devcontainers/features/powershell:1": {
       "version": "latest"
     }
-},
-"customizations": {
-	"vscode": {
-		"extensions": [
-			"dbaeumer.vscode-eslint",
-			"DavidAnson.vscode-markdownlint",
-			"EditorConfig.EditorConfig",
-			"esbenp.prettier-vscode",
-			"PKief.material-icon-theme",
-			"VisualStudioExptTeam.intellicode-api-usage-examples",
-			"ms-vscode.PowerShell",
-			"streetsidesoftware.code-spell-checker",
-			"HenryHeDiff.obsidian-code",
-			"brpaz.vscode-obsidianmd",
-			"nhoizey.gremlins",
-			"Orta.vscode-jest",
-			"oouo-diogo-perdigao.docthis",
-			"stkb.rewrap",
-			"stackbreak.comment-divider",
-			"samverschueren.linter-xo"
-		]
-	}
-}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "DavidAnson.vscode-markdownlint",
+        "EditorConfig.EditorConfig",
+        "PKief.material-icon-theme",
+        "VisualStudioExptTeam.intellicode-api-usage-examples",
+        "ms-vscode.PowerShell",
+        "streetsidesoftware.code-spell-checker",
+        "HenryHeDiff.obsidian-code",
+        "brpaz.vscode-obsidianmd",
+        "nhoizey.gremlins",
+        "Orta.vscode-jest",
+        "oouo-diogo-perdigao.docthis",
+        "stkb.rewrap",
+        "stackbreak.comment-divider",
+        "samverschueren.linter-xo"
+      ]
+    }
+  }
   // Features to add to the dev container. More info: https://containers.dev/features.
   // "features": {},
   // Use 'forwardPorts' to make a list of ports inside the container available locally.

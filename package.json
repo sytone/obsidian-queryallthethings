@@ -60,6 +60,7 @@
     "handlebars": "^4.7.7",
     "luxon": "^3.3.0",
     "obsidian-dataview": "0.5.55",
+    "ts-md5": "^1.3.1",
     "yaml": "^2.2.2"
   },
   "xo": {
