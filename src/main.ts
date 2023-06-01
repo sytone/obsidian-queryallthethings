@@ -7,7 +7,7 @@ import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin
 import {QueryRenderer} from 'QueryRenderer';
 import EventHandler from 'handlers/EventHandler';
 import {CommandHandler} from 'handlers/CommandHandler';
-import {DataTables} from 'DataTables';
+import {DataTables} from 'Data/DataTables';
 import {isPluginEnabled} from 'obsidian-dataview';
 import {HandlebarsRenderer} from 'render/HandlebarsRenderer';
 import {SettingsTab} from 'Settings/SettingsTab';

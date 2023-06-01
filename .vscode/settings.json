@@ -12,5 +12,9 @@
     "pagedata",
     "Qatt",
     "taskcheckbox"
-  ]
+  ],
+  "[markdown]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnPaste": true
+  }
 }

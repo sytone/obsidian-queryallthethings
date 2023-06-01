@@ -15,6 +15,7 @@
     "oouo-diogo-perdigao.docthis",
     "stkb.rewrap",
     "stackbreak.comment-divider",
-    "samverschueren.linter-xo"
+    "samverschueren.linter-xo",
+    "yzhang.markdown-all-in-one"
   ]
 }

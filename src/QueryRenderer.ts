@@ -1,4 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import {micromark} from 'micromark';
+import type {Extension, HtmlExtension} from 'micromark-util-types';
+import {gfm, gfmHtml} from 'micromark-extension-gfm';
+import {html as wikiHtml, syntax as wiki} from 'micromark-extension-wiki-link';
+import {fromMarkdown} from 'mdast-util-from-markdown';
+import {toString} from 'mdast-util-to-string';
+import {fromMarkdown as fromWiki} from 'mdast-util-wiki-link';
 import {logging} from 'lib/Logging';
 import {type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild} from 'obsidian';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
@@ -81,9 +89,15 @@ class QueryRenderChild extends MarkdownRenderChild {
       // Render Engine Execution
       const html = renderEngine?.renderTemplate(results) ?? 'Unknown error or exception has occurred.';
       this._logger.debug('Render Results', html);
+      console.log(micromark('## Hello, *world*!'));
 
       if (this.queryConfiguration.postRenderFormat === 'markdown') {
         await MarkdownPreviewView.renderMarkdown(html, content, '', this.plugin);
+      } else if (this.queryConfiguration.postRenderFormat === 'micromark') {
+        this._logger.debug('micromark Render Results', this.md2html(html));
+        const options = {allowDangerousHtml: true, allowDangerousProtocol: true, extensions: [gfm()], htmlExtensions: [gfmHtml()]};
+
+        content.innerHTML = this.md2html(html);
       } else {
         content.innerHTML = html;
       }
@@ -93,4 +107,45 @@ class QueryRenderChild extends MarkdownRenderChild {
     const endTime = new Date(Date.now());
     this._logger.debugWithId(this.queryId, `Render End: ${endTime.getTime() - startTime.getTime()}ms`);
   };
+
+  md2html(md?: string, isInline = false): string {
+    if (md === null) {
+      return '';
+    }
+
+    const html = micromark(md, {
+      allowDangerousHtml: true,
+      extensions: [
+        wiki({aliasDivider: '|'}),
+        gfm(),
+      ],
+      htmlExtensions: [
+        wikiHtml({
+          permalinks: [],
+          wikiLinkClassName: 'internal-link data-link-icon data-link-icon-after data-link-text',
+          hrefTemplate: (permalink: string) => `${permalink}`,
+          pageResolver: (name: string) => [name],
+        }),
+        gfmHtml(),
+      ],
+    });
+
+    if (isInline && !md?.includes('\n\n')) {
+      return html.replace(/<p>|<\/p>/g, '');
+    }
+
+    return html;
+  }
+
+  md2text(md?: string): string {
+    if (md === null) {
+      return '';
+    }
+
+    const tree = fromMarkdown(md, {
+      extensions: [wiki()],
+      mdastExtensions: [fromWiki()],
+    });
+    return toString(tree);
+  }
 }
