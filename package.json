@@ -23,7 +23,7 @@
     "obsidian-plugin",
     "obsidian-query"
   ],
-  "author": "Jon Bullen",
+  "author": "Sytone",
   "license": "MIT",
   "devDependencies": {
     "@codemirror/state": "^6.0.0",
