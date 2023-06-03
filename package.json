@@ -1,7 +1,7 @@
 {
   "name": "obsidian-queryallthethings",
   "version": "0.3.0",
-  "description": "A plugin that allows you to make queries against the internal data of obsidian and render it how you want.",
+  "description": "A plugin that allows you to make SQL queries against the internal data of obsidian and render it how you want.",
   "main": "main.js",
   "scripts": {
     "dev": "node .config/esbuild.config.mjs",
