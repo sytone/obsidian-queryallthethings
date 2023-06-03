@@ -61,7 +61,7 @@ jobs:
         id: generate_notes
         uses: mckrava/standard-version-release-notes@v1.1.0
         with:
-          tag_name: ${{ github.ref_name }}
+          tag_name: ${{ github.ref }}
           tag_name_ref_view: true
           changelog: CHANGELOG.md
 
