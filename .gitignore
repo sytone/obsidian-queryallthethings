@@ -19,3 +19,4 @@ yarn-error.log
 # Store the info about processed files in order to only operate on the changed ones.
 .eslintcache
 
+docs/_site

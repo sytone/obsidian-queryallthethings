@@ -3,6 +3,7 @@
 # To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
 navigation_weight: 1
 layout: home
+date: 2010-01-01
 ---
 
 # Query All The Things
