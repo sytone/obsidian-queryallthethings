@@ -61,7 +61,7 @@ jobs:
         id: generate_notes
         uses: mckrava/standard-version-release-notes@v1.1.0
         with:
-          tag_name: ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
           tag_name_ref_view: true
           changelog: CHANGELOG.md
 
@@ -71,7 +71,7 @@ jobs:
         with:
           artifacts: './${{ github.event.repository.name }}.zip,./${{ github.event.repository.name }}.vault.zip,./dist/main.js,./dist/manifest.json,./dist/styles.css'
           body: ${{join(fromJson(steps.generate_notes.outputs.notes).notes, '')}}
-          name: ${{ github.ref }}
+          name: ${{ github.ref_name }}
 #      - name: Release
 #        uses: softprops/action-gh-release@v1
 #        with:

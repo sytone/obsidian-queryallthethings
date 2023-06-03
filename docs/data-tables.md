@@ -53,9 +53,6 @@ The reference calendar is used to help with date based management, you can direc
 
 
 %%snippet id='reference-calendar-table-snippet' options='nocodeblock'%%
-If a property is not found in the task body it will be set to undefined. This table
-is backed by dataview and will be refreshed when dataview is refreshed.
-
 | Column Name      | Type    | Description                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------------- |
 | date             | string  | date.toISODate()                                                          |
