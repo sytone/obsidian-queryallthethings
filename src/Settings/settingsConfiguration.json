@@ -23,6 +23,30 @@
     },
     "settings": [
       {
+        "name": "Default Post Render Format",
+        "description": "Once the query has executed and the template has been rendered you can choose how that is converted to HTML ad displayed in Obsidian if at all. This sets the default formatter to do this.",
+        "type": "dropdown",
+        "initialValue": "micromark",
+        "placeholder": {
+          "markdown": "Obsidian Markdown",
+          "micromark": "Micromark",
+          "none": "None"
+        },
+        "settingName": "postRenderFormat",
+        "featureFlag": "",
+        "notice": null
+      },
+      {
+        "name": "On Start SQL Queries",
+        "description": "If you want to create tables and set data so your queries can use it at a later time without having to duplicate the queries enter them here. These will be executed when the plugin is loaded after the data tables have been initialized.",
+        "type": "textarea",
+        "initialValue": "",
+        "placeholder": "",
+        "settingName": "onStartSqlQueries",
+        "featureFlag": "",
+        "notice": null
+      },
+      {
         "name": "Text setting",
         "description": "Short description.",
         "type": "text",
@@ -44,16 +68,6 @@
         "placeholder": false,
         "settingName": "checkboxSetting",
         "featureFlag": "",
-        "notice": null
-      },
-      {
-        "name": "Text area",
-        "description": "Short description.",
-        "type": "textarea",
-        "initialValue": "initialValue",
-        "placeholder": "Placeholder",
-        "settingName": "textareaSetting",
-        "featureFlag": "ENABLE_TEXTAREA_SETTING",
         "notice": null
       }
     ]

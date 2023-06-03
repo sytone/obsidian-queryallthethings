@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {micromark} from 'micromark';
-import type {Extension, HtmlExtension} from 'micromark-util-types';
 import {gfm, gfmHtml} from 'micromark-extension-gfm';
 import {html as wikiHtml, syntax as wiki} from 'micromark-extension-wiki-link';
 import {fromMarkdown} from 'mdast-util-from-markdown';
@@ -91,12 +90,12 @@ class QueryRenderChild extends MarkdownRenderChild {
       this._logger.debug('Render Results', html);
       console.log(micromark('## Hello, *world*!'));
 
-      if (this.queryConfiguration.postRenderFormat === 'markdown') {
-        await MarkdownPreviewView.renderMarkdown(html, content, '', this.plugin);
-      } else if (this.queryConfiguration.postRenderFormat === 'micromark') {
-        this._logger.debug('micromark Render Results', this.md2html(html));
-        const options = {allowDangerousHtml: true, allowDangerousProtocol: true, extensions: [gfm()], htmlExtensions: [gfmHtml()]};
+      const postRenderFormat = this.queryConfiguration.postRenderFormat ?? this.plugin.settingsManager?.getValue('postRenderFormat');
 
+      if (postRenderFormat === 'markdown') {
+        await MarkdownPreviewView.renderMarkdown(html, content, '', this.plugin);
+      } else if (postRenderFormat === 'micromark') {
+        this._logger.debug('micromark Render Results', this.md2html(html));
         content.innerHTML = this.md2html(html);
       } else {
         content.innerHTML = html;

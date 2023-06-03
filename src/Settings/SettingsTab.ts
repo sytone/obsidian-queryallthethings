@@ -1,3 +1,4 @@
+
 import {type Plugin, PluginSettingTab, Setting, debounce} from 'obsidian';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
 import {type ISettingsManager} from 'Interfaces/ISettingsManager';
@@ -173,6 +174,39 @@ export class SettingsTab extends PluginSettingTab {
 
                 text.inputEl.rows = 8;
                 text.inputEl.cols = 40;
+              });
+
+            break;
+          }
+
+          case 'dropdown': {
+            // -------------------------------------------------------------------------- //
+            //               Render options that are selectable from a drop down.         //
+            // -------------------------------------------------------------------------- //
+            /*
+              The setting.placeholder value is used to define the options for the dropdown. It is a record of key value pairs. The key is the value that is stored in the settings file and the value is the text that is displayed to the user. For example: { '1': 'One', '2': 'Two' } will display the options 'One' and 'Two' to the user and store the value '1' or '2' in the settings file. This is useful for when the value stored in the settings file is not the same as the value displayed to the user.
+            */
+
+            const options = setting.placeholder as Record<string, string>;
+
+            new Setting(detailsContainer)
+              .setName(setting.name)
+              .setDesc(setting.description)
+              .addDropdown(dropdown => {
+                const settings = this.settingsManager.getSettings();
+                if (!settings.generalSettings[setting.settingName]) {
+                  this.settingsManager.setValue(setting.settingName, setting.initialValue);
+                }
+
+                const onChange = async (value: string) => {
+                  this.settingsManager.setValue(setting.settingName, value);
+                  await this.plugin.saveSettings();
+                };
+
+                dropdown
+                  .addOptions(options)
+                  .setValue(settings.generalSettings[setting.settingName].toString())
+                  .onChange(debounce(onChange, 500, true));
               });
 
             break;

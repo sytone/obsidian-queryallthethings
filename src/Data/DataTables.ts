@@ -19,6 +19,10 @@ export class DataTables {
     this.logger.info('Created proxy table manager.');
   }
 
+  public runAdhocQuery(query: string): any {
+    alasql(query);
+  }
+
   public refreshTables(reason: string): void {
     if (alasql('SHOW TABLES FROM alasql LIKE "pagedata"').length === 0) {
       alasql('CREATE TABLE pagedata (name STRING, keyvalue STRING)');

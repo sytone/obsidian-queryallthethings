@@ -1,8 +1,10 @@
 import {type App, type Command, type EventRef, type MarkdownPostProcessor, type MarkdownPostProcessorContext, type Plugin} from 'obsidian';
+import {type SettingsManager} from 'Settings/SettingsManager';
 
 export interface IQueryAllTheThingsPlugin extends Plugin {
 
   app: App;
+  settingsManager: SettingsManager | undefined;
 
   saveData(data: any): Promise<void>;
   onload(): any;

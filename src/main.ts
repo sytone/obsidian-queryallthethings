@@ -56,6 +56,12 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.queryRenderer = new QueryRenderer(this);
 
       this.dataTables?.refreshTables('layout ready');
+
+      // Load any custom queries from configuration.
+      const onStartSqlQueries = this.settingsManager?.getValue('onStartSqlQueries') as string;
+      if (onStartSqlQueries) {
+        this.dataTables?.runAdhocQuery(onStartSqlQueries);
+      }
     });
 
     // Refresh tables when dataview index is ready.
