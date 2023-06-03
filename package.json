@@ -1,6 +1,6 @@
 {
   "name": "qatt",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "A plugin that allows you to make SQL queries against the internal data of obsidian and render it how you want.",
   "main": "main.js",
   "scripts": {
