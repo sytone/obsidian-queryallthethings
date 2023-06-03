@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import alasql from 'alasql';
 import {DateTime} from 'luxon';
 import {getAPI, isPluginEnabled, type PageMetadata} from 'obsidian-dataview';
@@ -27,11 +28,96 @@ export class DataTables {
     alasql('CREATE localStorage DATABASE IF NOT EXISTS qatt');
     alasql('ATTACH localStorage DATABASE qatt');
     alasql('CREATE TABLE IF NOT EXISTS qatt.Events (date DATETIME, event STRING)');
+    alasql('CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar');
 
     this.refreshTasksTableFromDataview(reason);
     this.refreshListsTableFromDataview(reason);
 
+    // UPDATE qatt.ReferenceCalendar SET date = '2000-01-01' WHERE isToday;
+    const start = DateTime.now();
+    const referenceCalendarTodayDate = alasql('SELECT date FROM qatt.ReferenceCalendar WHERE isToday');
+    if (referenceCalendarTodayDate.length === 0 || referenceCalendarTodayDate[0].date !== DateTime.now().toISODate()) {
+      this.refreshCalendarTable(reason);
+    }
+
+    this.logger.log('info', `qatt.ReferenceCalendar check took ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
+
     this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
+  }
+
+  /**
+   * This needs to be refreshed on a daily basis to be accurate.
+   *
+   * @param {string} reason
+   * @memberof DataTables
+   */
+  public refreshCalendarTable(reason: string): void {
+    alasql('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Lists Table refreshed: ${reason}`}]]);
+
+    alasql('DROP TABLE IF EXISTS qatt.ReferenceCalendar');
+    alasql('CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar');
+
+    const start = DateTime.now();
+
+    /*
+    Update the table below when new columns are added so documentation is updated.
+    // >> reference-calendar-table-snippet
+    | Column Name      | Type    | Description                                                               |
+    | ---------------- | ------- | ------------------------------------------------------------------------- |
+    | date             | string  | date.toISODate()                                                          |
+    | day              | number  | date.day                                                                  |
+    | month            | number  | date.month                                                                |
+    | year             | number  | date.year                                                                 |
+    | dayOfWeek        | number  | date.weekday                                                              |
+    | dayOfYear        | number  | date.ordinal                                                              |
+    | weekOfYear       | number  | date.weekNumber                                                           |
+    | weekOfMonth      | number  | date.weekNumber - DateTime.local(date.year, date.month, 1).weekNumber + 1 |
+    | quarter          | number  | Math.ceil(date.month / 3)                                                 |
+    | isLeapYear       | boolean | date.isInLeapYear                                                         |
+    | isToday          | boolean | date.hasSame(DateTime.now(), 'day')                                       |
+    | isWeekend        | boolean | date.weekday > 5                                                          |
+    | isFuture         | boolean | date > DateTime.now()                                                     |
+    | isPast           | boolean | date < DateTime.now()                                                     |
+    | isCurrentMonth   | boolean | date.month === DateTime.now().month                                       |
+    | isCurrentYear    | boolean | date.year === DateTime.now().year                                         |
+    | isCurrentQuarter | boolean | Math.ceil(date.month / 3) === Math.ceil(DateTime.now().month / 3)         |
+    | isCurrentWeek    | boolean | date.weekNumber === DateTime.now().weekNumber                             |
+    | isCurrentDay     | boolean | date.hasSame(DateTime.now(), 'day')                                       |
+    // << reference-calendar-table-snippet
+    */
+
+    // Get the days in each year for this year plus and minus 1 year.
+    const daysInPreviousYear = DateTime.local(DateTime.now().year - 1).daysInYear;
+    const daysInCurrentYear = DateTime.local(DateTime.now().year).daysInYear;
+    const daysInNextYear = DateTime.local(DateTime.now().year + 1).daysInYear;
+    const nowIso = DateTime.now().toISODate();
+
+    for (let i = 1; i <= (daysInPreviousYear + daysInCurrentYear + daysInNextYear); i++) {
+      const date = DateTime.local(DateTime.now().year - 1, 1, 1).plus({days: i - 1});
+      alasql('INSERT INTO qatt.ReferenceCalendar VALUES ?', [{
+        date: date.toISODate(),
+        day: date.day,
+        month: date.month,
+        year: date.year,
+        dayOfWeek: date.weekday,
+        dayOfYear: date.ordinal,
+        weekOfYear: date.weekNumber,
+        weekOfMonth: date.weekNumber - DateTime.local(date.year, date.month, 1).weekNumber + 1,
+        quarter: Math.ceil(date.month / 3),
+        isLeapYear: date.isInLeapYear,
+        isToday: nowIso === date.toISODate(),
+        isWeekend: date.weekday > 5,
+        isFuture: date > DateTime.now(),
+        isPast: date < DateTime.now(),
+        isCurrentMonth: date.month === DateTime.now().month && date.year === DateTime.now().year,
+        isCurrentYear: date.year === DateTime.now().year,
+        isCurrentQuarter: Math.ceil(date.month / 3) === Math.ceil(DateTime.now().month / 3) && date.year === DateTime.now().year,
+        isCurrentWeek: date.weekNumber === DateTime.now().weekNumber && date.year === DateTime.now().year,
+        isCurrentDay: date.hasSame(DateTime.now(), 'day'),
+      }]);
+    }
+
+    this.logger.log('info', `qatt.ReferenceCalendar refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
   }
 
   public refreshTasksTableFromDataview(reason: string): void {
