@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.1](https://github.com/sytone/obsidian-queryallthethings/compare/0.4.0...0.4.1) (2023-06-03)
+
+
+### Bug Fixes and Changes
+
+* casing ([06e2c54](https://github.com/sytone/obsidian-queryallthethings/commits/06e2c5443d34dd1db86bd8c3e9788bd480451c0a))
+
 ## [0.4.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.3.0...0.4.0) (2023-06-03)
 
 
