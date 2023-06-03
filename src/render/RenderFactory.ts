@@ -1,9 +1,9 @@
 /* eslint indent: [2, 2, {"SwitchCase": 1}] */
 import {logging} from 'lib/Logging';
 import {type QattCodeBlock} from 'QattCodeBlock';
-import {type IRenderer} from 'render/IRenderer';
-import {HandlebarsRenderer} from 'render/HandlebarsRenderer';
-import {TextRenderer} from 'render/TextRenderer';
+import {type IRenderer} from 'Render/IRenderer';
+import {HandlebarsRenderer} from 'Render/HandlebarsRenderer';
+import {TextRenderer} from 'Render/TextRenderer';
 
 export class RenderFactory {
   public static getRenderer(queryConfiguration: QattCodeBlock): IRenderer {

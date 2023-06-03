@@ -12,7 +12,7 @@ import {Component, MarkdownPreviewView} from 'obsidian';
 import {Md5} from 'ts-md5';
 import {logging} from 'lib/Logging';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
-import {type IRenderer} from 'render/IRenderer';
+import {type IRenderer} from 'Render/IRenderer';
 
 export class HandlebarsRenderer implements IRenderer {
   public static registerHandlebarsHelpers(plugin: IQueryAllTheThingsPlugin) {

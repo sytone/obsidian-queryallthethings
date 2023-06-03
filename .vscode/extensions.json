@@ -16,6 +16,7 @@
     "stkb.rewrap",
     "stackbreak.comment-divider",
     "samverschueren.linter-xo",
-    "yzhang.markdown-all-in-one"
+    "yzhang.markdown-all-in-one",
+    "github.vscode-github-actions"
   ]
 }

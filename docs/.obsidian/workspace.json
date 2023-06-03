@@ -13,13 +13,26 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "data-tables.md",
+                "file": "installation.md",
                 "mode": "preview",
                 "source": true
               }
             }
+          },
+          {
+            "id": "a5e2edb6943cf1a5",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "development.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -85,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "data-tables.md",
+                "file": "development.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "data-tables.md",
+                "file": "development.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "data-tables.md"
+                "file": "development.md"
               }
             }
           }
@@ -146,11 +159,16 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "3c2845abc6be9f7c",
+  "active": "a5e2edb6943cf1a5",
   "lastOpenFiles": [
-    "index.md",
+    "Examples/00-Index.md",
     "installation.md",
+    "Examples",
     "development.md",
+    "data-tables.md",
+    "custom-functions.md",
+    "about.md",
+    "00-index.md",
     "_site/assets/js/vendor/lunr.min.js",
     "_site/assets/js/vendor",
     "_site/assets/images/small-image.jpg",
@@ -164,9 +182,6 @@
     "_site/installation",
     "_site/development/index.html",
     "_site/development",
-    "_site/assets/js/search-data.json",
-    "getting-started.md",
-    "custom-functions.md",
-    "about.md"
+    "getting-started.md"
   ]
 }

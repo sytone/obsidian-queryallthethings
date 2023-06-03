@@ -9,7 +9,7 @@ import EventHandler from 'handlers/EventHandler';
 import {CommandHandler} from 'handlers/CommandHandler';
 import {DataTables} from 'Data/DataTables';
 import {isPluginEnabled} from 'obsidian-dataview';
-import {HandlebarsRenderer} from 'render/HandlebarsRenderer';
+import {HandlebarsRenderer} from 'Render/HandlebarsRenderer';
 import {SettingsTab} from 'Settings/SettingsTab';
 import {SettingsManager} from 'Settings/SettingsManager';
 import {log, logging} from 'lib/Logging';

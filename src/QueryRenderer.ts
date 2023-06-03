@@ -11,8 +11,8 @@ import {logging} from 'lib/Logging';
 import {type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild} from 'obsidian';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
 import {QattCodeBlock} from 'QattCodeBlock';
-import {type IRenderer} from 'render/IRenderer';
-import {RenderFactory} from 'render/RenderFactory';
+import {type IRenderer} from 'Render/IRenderer';
+import {RenderFactory} from 'Render/RenderFactory';
 import {QueryFactory} from 'Query/QueryFactory';
 import {type IQuery} from 'Query/IQuery';
 
