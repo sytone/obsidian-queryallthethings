@@ -37,7 +37,9 @@
     "@typescript-eslint/eslint-plugin": "^5.59.6",
     "@typescript-eslint/parser": "^5.59.6",
     "builtin-modules": "3.3.0",
+    "commitizen": "^4.3.0",
     "concurrently": "^7.2.2",
+    "cz-conventional-changelog": "^3.3.0",
     "esbuild": "0.17.3",
     "esbuild-plugin-copy-file": "^0.0.2",
     "eslint": "^8.40.0",
@@ -127,15 +129,15 @@
       },
       {
         "type": "build",
-        "hidden": true
+        "section": "Internal"
       },
       {
         "type": "chore",
-        "hidden": true
+        "section": "Internal"
       },
       {
         "type": "ci",
-        "hidden": true
+        "section": "Internal"
       },
       {
         "type": "docs",
@@ -143,7 +145,7 @@
       },
       {
         "type": "style",
-        "hidden": true
+        "section": "Internal"
       },
       {
         "type": "refactor",
@@ -151,7 +153,7 @@
       },
       {
         "type": "revert",
-        "hidden": true
+        "section": "Internal"
       },
       {
         "type": "security",
@@ -200,5 +202,10 @@
       "node_modules",
       "src"
     ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }
