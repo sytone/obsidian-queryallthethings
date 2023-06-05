@@ -7,6 +7,8 @@
     "DATETIME",
     "lezer",
     "luxon",
+    "mdast",
+    "micromark",
     "nocount",
     "outfile",
     "pagedata",

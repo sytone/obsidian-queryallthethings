@@ -88,15 +88,14 @@ class QueryRenderChild extends MarkdownRenderChild {
       // Render Engine Execution
       const html = renderEngine?.renderTemplate(results) ?? 'Unknown error or exception has occurred.';
       this._logger.debug('Render Results', html);
-      console.log(micromark('## Hello, *world*!'));
 
       const postRenderFormat = this.queryConfiguration.postRenderFormat ?? this.plugin.settingsManager?.getValue('postRenderFormat');
 
       if (postRenderFormat === 'markdown') {
         await MarkdownPreviewView.renderMarkdown(html, content, '', this.plugin);
       } else if (postRenderFormat === 'micromark') {
-        this._logger.debug('micromark Render Results', this.md2html(html));
-        content.innerHTML = this.md2html(html);
+        this._logger.debug('micromark Render Results', this.markdown2html(html));
+        content.innerHTML = this.markdown2html(html);
       } else {
         content.innerHTML = html;
       }
@@ -107,12 +106,12 @@ class QueryRenderChild extends MarkdownRenderChild {
     this._logger.debugWithId(this.queryId, `Render End: ${endTime.getTime() - startTime.getTime()}ms`);
   };
 
-  md2html(md?: string, isInline = false): string {
-    if (md === null) {
+  markdown2html(markdown?: string, isInline = false): string {
+    if (markdown === undefined || markdown === null) {
       return '';
     }
 
-    const html = micromark(md, {
+    const html = micromark(markdown, {
       allowDangerousHtml: true,
       extensions: [
         wiki({aliasDivider: '|'}),
@@ -129,19 +128,19 @@ class QueryRenderChild extends MarkdownRenderChild {
       ],
     });
 
-    if (isInline && !md?.includes('\n\n')) {
+    if (isInline && !markdown.includes('\n\n')) {
       return html.replace(/<p>|<\/p>/g, '');
     }
 
     return html;
   }
 
-  md2text(md?: string): string {
-    if (md === null) {
+  markdown2text(markdown?: string): string {
+    if (markdown === undefined || markdown === null) {
       return '';
     }
 
-    const tree = fromMarkdown(md, {
+    const tree = fromMarkdown(markdown, {
       extensions: [wiki()],
       mdastExtensions: [fromWiki()],
     });

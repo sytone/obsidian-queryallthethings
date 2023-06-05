@@ -142,8 +142,8 @@ export class SettingsTab extends PluginSettingTab {
                   await this.plugin.saveSettings();
                 };
 
-                text.setPlaceholder(setting.placeholder.toString())
-                  .setValue(settings.generalSettings[setting.settingName].toString())
+                text.setPlaceholder(setting.placeholder as string)
+                  .setValue(settings.generalSettings[setting.settingName] as string)
                   .onChange(debounce(onChange, 500, true));
               });
 
@@ -168,8 +168,8 @@ export class SettingsTab extends PluginSettingTab {
                   await this.plugin.saveSettings();
                 };
 
-                text.setPlaceholder(setting.placeholder.toString())
-                  .setValue(settings.generalSettings[setting.settingName].toString())
+                text.setPlaceholder(setting.placeholder as string)
+                  .setValue(settings.generalSettings[setting.settingName] as string)
                   .onChange(debounce(onChange, 500, true));
 
                 text.inputEl.rows = 8;
