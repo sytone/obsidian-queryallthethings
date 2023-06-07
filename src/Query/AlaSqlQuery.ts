@@ -218,6 +218,8 @@ export class AlaSqlQuery implements IQuery {
     let finalQuery = query;
     if (/\bobsidian_markdown_notes\b/gi.test(query)) {
       finalQuery = query.replace(/\bobsidian_markdown_notes\b/gi, '$0');
+    } else if (/\bobsidian_markdown_files\b/gi.test(query)) {
+      finalQuery = query.replace(/\bobsidian_markdown_files\b/gi, '$0');
     } else if (/\bdataview_pages\b/gi.test(query)) {
       finalQuery = query.replace(/\bdataview_pages\b/gi, '$0');
     }
@@ -225,9 +227,31 @@ export class AlaSqlQuery implements IQuery {
     return finalQuery;
   }
 
+  /*
+    Update the table below when new columns are added so documentation is updated.
+    // >> obsidian-markdown-files-table-snippet
+
+    If you need to reference a property of a object do not forget to use `->` and not `.`
+
+    | Column Name | Type   | Description                                     |
+    | ----------- | ------ | ----------------------------------------------- |
+    | path        | string | Full path to the markdown file.                 |
+    | name        | string | The name of the file including the extension.   |
+    | basename    | number | Just the name of the file.                      |
+    | extension   | number | The extension of the file. Usually `md`         |
+    | stat        | object | contains the time and size details of the file. |
+    | stat->ctime | number | Time the file was creates as a serial.          |
+    | stat->mtime | number | Time the file was last modified as a serial.    |
+    | stat->size  | number | Size of the file in bytes                       |
+
+    // << obsidian-markdown-files-table-snippet
+    */
+
   private getDataTable(query: string): any[] {
     let dataTable: any[] = [];
     if (/\bobsidian_markdown_notes\b/gi.test(query)) {
+      dataTable = this.plugin.app.vault.getMarkdownFiles();
+    } else if (/\bobsidian_markdown_files\b/gi.test(query)) {
       dataTable = this.plugin.app.vault.getMarkdownFiles();
     } else if (/\bdataview_pages\b/gi.test(query)) {
       const dataViewApi = getAPI(this.plugin.app);

@@ -1,10 +1,41 @@
-# Data Tables
+---
+nav_order: 4
+layout: default
+title: Data Tables
+---
 
 To make it simpler to quey data some in memory data tables have been created.
 
-## Tasks
+| Table Name              | Description                                                                                                                                 |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| obsidian_markdown_files | Uses in the inbuilt collection of markdown files, it calls `vault.getMarkdownFiles()` on every query to ensure the collection is up to date |
+| dataview_pages          | This is same as using pages as a data source in dataview                                                                                    |
+| tasks                   | This is a in memory collection of tasks based off DataView pages. Details below.                                                            |
+| lists                   | This is a in memory collection of all list items including list items that contain task markdown based off DataView pages. Details Below    |
+
+## Obsidian Markdown Files (obsidian_markdown_files)
+
+%%snippet id='obsidian-markdown-files-table-snippet' options='nocodeblock'%%
+
+If you need to reference a property of a object do not forget to use `->` and not `.`
+
+| Column Name | Type   | Description                                     |
+| ----------- | ------ | ----------------------------------------------- |
+| path        | string | Full path to the markdown file.                 |
+| name        | string | The name of the file including the extension.   |
+| basename    | number | Just the name of the file.                      |
+| extension   | number | The extension of the file. Usually `md`         |
+| stat        | object | contains the time and size details of the file. |
+| stat->ctime | number | Time the file was creates as a serial.          |
+| stat->mtime | number | Time the file was last modified as a serial.    |
+| stat->size  | number | Size of the file in bytes                       |
+
+%%/snippet%%
+
+## Tasks (tasks)
 
 %%snippet id='tasks-table-snippet' options='nocodeblock'%%
+
 If a property is not found in the task body it will be set to undefined. This table
 is backed by dataview and will be refreshed when dataview is refreshed.
 
@@ -22,11 +53,13 @@ is backed by dataview and will be refreshed when dataview is refreshed.
 | createDate     | string       | Create date of the task as string.                                                                      |
 | scheduledDate  | string       | Schedule date of the task as string.                                                                    |
 | priority       | number       | Priority of the task with 1 as highest and three as lowest                                              |
+
 %%/snippet%%
 
-## Lists
+## Lists (lists)
 
 %%snippet id='lists-table-snippet' options='nocodeblock'%%
+
 If a property is not found in the task body it will be set to undefined. This table
 is backed by dataview and will be refreshed when dataview is refreshed.
 
@@ -44,15 +77,15 @@ is backed by dataview and will be refreshed when dataview is refreshed.
 | links       | string       |             |
 | children    | string       |             |
 | parent      | number       |             |
+
 %%/snippet%%
 
-## qatt.ReferenceCalendar
+## Reference Calendar Table (qatt.ReferenceCalendar)
 
 The reference calendar is used to help with date based management, you can directly query the table or use it to join to other data sources.
 
-
-
 %%snippet id='reference-calendar-table-snippet' options='nocodeblock'%%
+
 | Column Name      | Type    | Description                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------------- |
 | date             | string  | date.toISODate()                                                          |
@@ -74,4 +107,5 @@ The reference calendar is used to help with date based management, you can direc
 | isCurrentQuarter | boolean | Math.ceil(date.month / 3) === Math.ceil(DateTime.now().month / 3)         |
 | isCurrentWeek    | boolean | date.weekNumber === DateTime.now().weekNumber                             |
 | isCurrentDay     | boolean | date.hasSame(DateTime.now(), 'day')                                       |
+
 %%/snippet%%

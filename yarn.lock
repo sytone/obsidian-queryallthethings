@@ -306,9 +306,9 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@codemirror/language@git+https://github.com/lishid/cm-language.git":
+"@codemirror/language@https://github.com/lishid/cm-language":
   version "6.6.0"
-  resolved "git+https://github.com/lishid/cm-language.git#1aadcc247f20ccfda76424a9f853dbb4ee203fdc"
+  resolved "https://github.com/lishid/cm-language#1aadcc247f20ccfda76424a9f853dbb4ee203fdc"
   dependencies:
     "@codemirror/state" "^6.0.0"
     "@codemirror/view" "^6.0.0"
@@ -1008,10 +1008,10 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@sytone/markdown-snippet-injector@^0.2.6":
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/@sytone/markdown-snippet-injector/-/markdown-snippet-injector-0.2.6.tgz#a43f7c26a08b3eee5517ea1c07d25bea014f65e3"
-  integrity sha512-AxUZLBs/w03m3+8n6TkI+2Vl36qvR4FNgHlyBscUAMLJ+11w9cnW5bzbrrASjD/Hu+Dj5/LojJ+XL7o+k7E/DQ==
+"@sytone/markdown-snippet-injector@^0.2.7":
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/@sytone/markdown-snippet-injector/-/markdown-snippet-injector-0.2.7.tgz#d1d78f1bca724b3eb6b6b076d92ace31b33f1aae"
+  integrity sha512-iyz3Yl7eqObX8ycRjVHF5NVS9g+euDgY/eUFaERYDyS1BCstWEjqFmURrRU9atCRY8AhqRLCmOE6K03ALZOV7g==
   dependencies:
     typescript "~3.1.0"
     yargs "^4.1.0"
@@ -5707,7 +5707,7 @@ obsidian-dataview@0.5.55:
     parsimmon "^1.18.0"
     preact "^10.6.5"
 
-obsidian@1.2.8, "obsidian@github:obsidianmd/obsidian-api#master":
+obsidian@1.2.8, obsidian@obsidianmd/obsidian-api#master:
   version "1.2.8"
   resolved "https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/583ba39e3f6c0546de5e5e8742256a60e2d78ebc"
   dependencies:

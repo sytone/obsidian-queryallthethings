@@ -90,6 +90,7 @@ class QueryRenderChild extends MarkdownRenderChild {
       this._logger.debug('Render Results', html);
 
       const postRenderFormat = this.queryConfiguration.postRenderFormat ?? this.plugin.settingsManager?.getValue('postRenderFormat');
+      this._logger.debug('postRenderFormat: ', postRenderFormat);
 
       if (postRenderFormat === 'markdown') {
         await MarkdownPreviewView.renderMarkdown(html, content, '', this.plugin);

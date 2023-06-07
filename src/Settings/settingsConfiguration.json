@@ -45,30 +45,6 @@
         "settingName": "onStartSqlQueries",
         "featureFlag": "",
         "notice": null
-      },
-      {
-        "name": "Text setting",
-        "description": "Short description.",
-        "type": "text",
-        "initialValue": "initialValue",
-        "placeholder": "Placeholder",
-        "settingName": "testSetting",
-        "featureFlag": "",
-        "notice": {
-          "class": "setting-item-description",
-          "text": "Longer description of the item.",
-          "html": null
-        }
-      },
-      {
-        "name": "Checkbox",
-        "description": "Short description.",
-        "type": "checkbox",
-        "initialValue": false,
-        "placeholder": false,
-        "settingName": "checkboxSetting",
-        "featureFlag": "",
-        "notice": null
       }
     ]
   },

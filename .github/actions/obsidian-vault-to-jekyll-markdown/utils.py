@@ -88,6 +88,12 @@ def replace_mermaid_blocks(text):
     result = re.sub(regex, subst, text, 0, re.MULTILINE)
     return result
 
+def replace_comment_blocks(text):
+    regex = r"%%.*?%%"
+    subst = ""
+    result = re.sub(regex, subst, text, 0, re.MULTILINE)
+    return result
+
 
 def replace_callouts(text):
     results = text
@@ -135,6 +141,7 @@ def replace_url(path, all_paths, docs_directory, url_base):
     full_text = get_file_full_text(path)
     replaced_text = replace_links(full_text, all_paths, docs_directory, url_base)
     replaced_text = replace_mermaid_blocks(replaced_text)
+    replaced_text = replace_comment_blocks(replaced_text)
     replaced_text = replace_callouts(replaced_text)
 
     os.remove(path)

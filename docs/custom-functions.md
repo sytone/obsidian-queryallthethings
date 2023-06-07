@@ -2,8 +2,7 @@
 layout: default
 title: Custom Functions
 nav_order: 7
-parent: Advanced
-has_toc: false
+nav_exclude: true
 ---
 
 # Custom Functions

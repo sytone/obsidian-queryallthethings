@@ -62,7 +62,7 @@ jobs:
         uses: mckrava/standard-version-release-notes@v1.1.0
         with:
           tag_name: ${{ github.ref }}
-          tag_name_ref_view: true
+          tag_name_ref_view: false
           changelog: CHANGELOG.md
 
       - name: Release
@@ -72,22 +72,3 @@ jobs:
           artifacts: './${{ github.event.repository.name }}.zip,./${{ github.event.repository.name }}.vault.zip,./dist/main.js,./dist/manifest.json,./dist/styles.css'
           body: ${{join(fromJson(steps.generate_notes.outputs.notes).notes, '')}}
           name: ${{ github.ref_name }}
-#      - name: Release
-#        uses: softprops/action-gh-release@v1
-#        with:
-#          body: ${{join(fromJson(steps.generate_notes.outputs.notes).notes, '')}}
-#          # note you'll typically need to create a personal access token
-#          # with permissions to create releases in the other repo
-#          token: ${{ secrets.GITHUB_TOKEN }}
-#          draft: false
-#          prerelease: false
-#          tag_name: ${{ github.ref }}
-#          files: |
-#            ./${{ github.event.repository.name }}.zip
-#            ./${{ github.event.repository.name }}.vault.zip
-#            ./dist/main.js
-#            ./dist/manifest.json
-#            ./dist/styles.css
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#          VERSION: ${{ github.ref }}

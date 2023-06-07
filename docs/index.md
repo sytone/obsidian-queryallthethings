@@ -1,9 +1,6 @@
 ---
-# Feel free to add content and custom Front Matter to this file.
-# To modify the layout, see https://jekyllrb.com/docs/themes/#overriding-theme-defaults
-navigation_weight: 1
+nav_order: 1
 layout: home
-date: 2010-01-01
 ---
 
 # Query All The Things
@@ -38,6 +35,7 @@ This stared as a fork of tasks focused on making queries against tasks more flex
 ### Getting started
 
 - 🚀 [Install the Plugin](installation.md)
+- 🐣 [Your First Query](first-query.md)
 
 ---
 

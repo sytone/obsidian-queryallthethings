@@ -8,24 +8,15 @@ import {Feature, type FeatureFlag} from 'Settings/Feature';
 const defaultSettings: ISettings = {
   features: Feature.settingsFlags,
   generalSettings: {
-    globalFilter: '',
-    removeGlobalFilter: false,
-    setDoneDate: true,
-
-    // Allows the filter to be pushed to the end of the tag. Available if APPEND_GLOBAL_FILTER feature enabled.
-    appendGlobalFilter: false,
-
-    defaultRenderTemplate: '',
     refreshDebounce: 2500,
     settingsVersion: 1,
     internalLoggingConsoleLogLimit: 10,
+    postRenderFormat: 'micromark',
   },
   headingOpened: {}, // ;  { 'Documentation and Support': true },
   loggingOptions: {
     minLevels: {
-
       '': 'info',
-
       Qatt: 'info',
     },
   },

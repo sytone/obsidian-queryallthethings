@@ -41,7 +41,35 @@ Query All the Things is a flexible way to query and render data in <a href="http
 
 ### Getting started
 
-- 🚀 [Install Query all the things](https://github.com/sytone/obsidian-queryallthethings/wiki/Install-Query-All-the-Things)
+Documentation on installing the plugin and using it can be found at (https://sytone.github.io/obsidian-queryallthethings/)[https://sytone.github.io/obsidian-queryallthethings/]
+
+
+## Getting Started - I don't need documentation
+
+Well, in short after you have installed the plugin make a code block like the following example, this will list all your tasks that are not done and group them by the month when they are due.
+
+If you want more details.... Read the documentation, or reverse engineer the code base. Your Choice!
+
+Note: This plugin currently has a hard dependency on DataView, make sure it is installed as well.
+
+````markdown
+```qatt
+# logLevel: debug
+query: |
+  SELECT moment(dueDate)->format("MMMM Do, YYYY") AS Month, page, task, status, line, tags, doneDate, priority
+  from tasks
+  where status != 'x'
+  ORDER BY dueDate asc
+template: |
+    {{#group result by="Month"}}
+      <h4>{{ value }}</h4>
+      <ul class='contains-task-list'>
+      {{#each items}}
+        <li class='task-list-item plugin-tasks-list-item'> {{ taskcheckbox this }} {{#markdown2}} {{task}} [[{{page}}|📝]] {{/markdown2}}</li>
+      {{/each}}
+      </ul>
+    {{/group}}
+```
+````
 
 ---
-

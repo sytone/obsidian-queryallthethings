@@ -87,6 +87,7 @@ export class DataTables {
     | isCurrentQuarter | boolean | Math.ceil(date.month / 3) === Math.ceil(DateTime.now().month / 3)         |
     | isCurrentWeek    | boolean | date.weekNumber === DateTime.now().weekNumber                             |
     | isCurrentDay     | boolean | date.hasSame(DateTime.now(), 'day')                                       |
+
     // << reference-calendar-table-snippet
     */
 
