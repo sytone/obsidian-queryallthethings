@@ -44,7 +44,11 @@
         "placeholder": "",
         "settingName": "onStartSqlQueries",
         "featureFlag": "",
-        "notice": null
+        "notice": {
+          "class": "setting-item-description",
+          "text": "This has not been heavily tested, be careful of any queries that may block the plugin from loading. Test them in a code block first.",
+          "html": null
+        }
       }
     ]
   },
