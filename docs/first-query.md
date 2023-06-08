@@ -10,7 +10,7 @@ To get started the plugin expects that you have a codeblock with `qatt` as the t
 
 In the example below you have the `query`, as noted this is based off SQL so sites like [SQL Tutorial (w3schools.com)](https://www.w3schools.com/sql/) will be helpful if you are not familiar with the language or its been a while. This query will select the first record found when ordered by the files created time where the date is in descending order so the most recent will be displayed first. The FROM like indicates it is from the internal markdown files collection stored by Obsidian natively.
 
-%% {% raw %} %%
+{% raw %}
 ````markdown
 ```qatt
 query: |
@@ -23,4 +23,4 @@ template: |
       {{/each}}
 ```
 ````
-%% {% endraw %} %%
+{% endraw %}

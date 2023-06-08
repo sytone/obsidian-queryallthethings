@@ -26,7 +26,7 @@ New-Item -ItemType Junction -Target ".\dist" -Path "C:\obsidian\brainstore\.obsi
 This site uses Jekyll, if you are making example markdown blocks with templates you need to make sure it is set to raw in the page, use this example as a basis for any other examples you are planning to make.
 
 `````markdown
-%% {% raw %} %%
+{% raw %}
 ````markdown
 ```qatt
 query: |
@@ -39,7 +39,7 @@ template: |
       {{/each}}
 ```
 ````
-%% {% endraw %} %%
+{% endraw %}
 `````
 
 ### Building documentation in a Docker container
