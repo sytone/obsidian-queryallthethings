@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.4.4](https://github.com/sytone/obsidian-queryallthethings/compare/0.4.3...0.4.4) (2023-06-08)
+
+
+### Internal
+
+* general code cleanup ([29c3f68](https://github.com/sytone/obsidian-queryallthethings/commits/29c3f68cfc37c60e5f7e1d23185968b00738577a))
+* updating the commit formatting ([bfda239](https://github.com/sytone/obsidian-queryallthethings/commits/bfda23969b4301636e4d6450ccc291254c684cf7))
+
+
+### Bug Fixes and Changes
+
+* add notice to startup sql option in settings ([5d151a7](https://github.com/sytone/obsidian-queryallthethings/commits/5d151a743d5d51c1fae2dc9660296c91c2cf1b35))
+
+
+### Documentation
+
+* add starter examples and cleanup ([e4d7e7b](https://github.com/sytone/obsidian-queryallthethings/commits/e4d7e7b9b4590d74e19ef6d42f589b4a6cadcb54))
+* fix about title ([9bf2877](https://github.com/sytone/obsidian-queryallthethings/commits/9bf28775fce22c36d90e00213bf97b8b15ad347f))
+* fix raw processing for jekyll ([5c041a7](https://github.com/sytone/obsidian-queryallthethings/commits/5c041a73621fc6cfc35d40c9d78f6302deca7690))
+
 ### [0.4.3](https://github.com/sytone/obsidian-queryallthethings/compare/0.4.2...0.4.3) (2023-06-03)
 
 ### [0.4.2](https://github.com/sytone/obsidian-queryallthethings/compare/0.4.1...0.4.2) (2023-06-03)
