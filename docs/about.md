@@ -3,7 +3,6 @@ layout: page
 title: About
 permalink: /about/
 layout: default
-title: Custom Functions
 ---
 
 This is a plugin for Obsidian that allows you to query internal data and render it anyway you want, it is designed to be extensible and flexible at the cost of increased complexity.
