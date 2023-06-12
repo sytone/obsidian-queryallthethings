@@ -1,7 +1,7 @@
 {
   "id": "qatt",
   "name": "Query all the things",
-  "version": "0.4.4",
+  "version": "0.5.0",
   "minAppVersion": "1.2.8",
   "description": "A plugin that allows you to make SQL queries against the internal data of obsidian and render it how you want.",
   "author": "Sytone",

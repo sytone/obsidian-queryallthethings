@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.5.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.4.4...0.5.0) (2023-06-12)
+
+
+### Features
+
+* updated template helpers for priority and markdown rendering ([539f6b9](https://github.com/sytone/obsidian-queryallthethings/commits/539f6b99242de5a685dce4bce325c5933d99c28d))
+
 ### [0.4.4](https://github.com/sytone/obsidian-queryallthethings/compare/0.4.3...0.4.4) (2023-06-08)
 
 
