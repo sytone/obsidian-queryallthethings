@@ -25,7 +25,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "development.md",
+                "file": "about.md",
                 "mode": "source",
                 "source": false
               }
@@ -98,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "development.md",
+                "file": "about.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -115,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "development.md",
+                "file": "about.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -138,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "development.md"
+                "file": "about.md"
               }
             }
           }
@@ -161,6 +161,7 @@
   },
   "active": "a5e2edb6943cf1a5",
   "lastOpenFiles": [
+    "development.md",
     "_site/assets/js/vendor/lunr.min.js",
     "_site/assets/js/vendor",
     "_site/assets/images/small-image.jpg",
@@ -177,10 +178,8 @@
     "_site/development/index.html",
     "_site/development",
     "_site/data-tables/index.html",
-    "_site/data-tables",
     "Examples/00-Index.md",
     "installation.md",
-    "development.md",
     "data-tables.md",
     "custom-functions.md",
     "about.md",

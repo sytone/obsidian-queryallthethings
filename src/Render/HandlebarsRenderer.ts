@@ -13,6 +13,7 @@ import {Md5} from 'ts-md5';
 import {logging} from 'lib/Logging';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
 import {type IRenderer} from 'Render/IRenderer';
+import {markdown2html} from 'Render/MicromarkRenderer';
 
 export class HandlebarsRenderer implements IRenderer {
   public static registerHandlebarsHelpers(plugin: IQueryAllTheThingsPlugin) {
@@ -32,6 +33,15 @@ export class HandlebarsRenderer implements IRenderer {
       notelink(value) {
         return `[[${value as string}]]`;
       },
+      isHighPriority(value) {
+        return value === 1;
+      },
+      isMediumPriority(value) {
+        return value === 2;
+      },
+      isLowPriority(value) {
+        return value === 3;
+      },
       group(list, options: HelperOptions) {
         const fn = options.fn;
         const inverse = options.inverse;
@@ -44,6 +54,8 @@ export class HandlebarsRenderer implements IRenderer {
           return inverse(this);
         }
 
+        // Gets the value of the property name specified by prop. This comes
+        // from the by part of the helper.
         function get(object: Record<string, any>, prop: string | undefined) {
           if (prop === undefined) {
             return undefined;
@@ -92,6 +104,46 @@ export class HandlebarsRenderer implements IRenderer {
 
         return keys.reduce(renderGroup, '');
       },
+    });
+
+    /*
+    // >> handlebars-helper-micromark-snippet
+
+    The `micromark`\-helper renders markdown as HTML using the micromark library. It has one setting
+    which will remove the wrapping `<p>` tag from the output if inline is set to true.
+
+    ```
+    {{#micromark inline="true"}} {{task}} [[{{page}}|📝]] {{/micromark}}
+    ```
+
+    when used with this context:
+
+    ```
+    {
+      task: "This is a **thing** to do",
+      page: "folder/SomePage.md"
+    }
+    ```
+
+    will result in:
+
+    ```
+    This is a <strong>thing</strong> to do
+    ```
+
+    If the inline property is not set, then the output will be wrapped in a `<p>` tag and result in:
+
+    ```
+    <p>This is a <strong>thing</strong> to do</p>
+    ```
+
+    // << handlebars-helper-micromark-snippet
+    */
+    Handlebars.registerHelper('micromark', function (this: any, options) {
+      const hash = options.hash;
+      const inline = hash?.inline === 'true';
+      const parsedChildTemplate = markdown2html(options.fn(this), inline);
+      return new Handlebars.SafeString(parsedChildTemplate);
     });
 
     Handlebars.registerHelper('tasklist', function (this: string, options) {

@@ -9,4 +9,5 @@ export interface ISettingsManager {
   toggleFeature(name: string, enabled: boolean): FeatureFlag;
   updateSettings(newSettings: Partial<ISettings>): ISettings;
   getSettings(): ISettings;
+  toggleDebug(): boolean;
 }

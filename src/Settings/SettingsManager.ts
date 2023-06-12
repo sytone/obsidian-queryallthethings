@@ -35,9 +35,7 @@ export class SettingsManager implements ISettingsManager {
     this.logger.info('Creating Settings Manager', this.settings);
     logging.configure({
       minLevels: {
-
         '': 'debug',
-
         Qatt: 'debug',
       },
     });
@@ -82,5 +80,11 @@ export class SettingsManager implements ISettingsManager {
     this.settings.features[name] = enabled;
     this.plugin.saveSettings();
     return this.settings.features;
+  }
+
+  public toggleDebug(): boolean {
+    this.settings.loggingOptions.minLevels.Qatt = this.settings.loggingOptions.minLevels.Qatt === 'debug' ? 'info' : 'debug';
+    this.plugin.saveSettings();
+    return this.settings.loggingOptions.minLevels.Qatt === 'debug';
   }
 }

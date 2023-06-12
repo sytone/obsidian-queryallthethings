@@ -52,7 +52,7 @@ is backed by dataview and will be refreshed when dataview is refreshed.
 | startDate      | string       | Start date of the task as string.                                                                       |
 | createDate     | string       | Create date of the task as string.                                                                      |
 | scheduledDate  | string       | Schedule date of the task as string.                                                                    |
-| priority       | number       | Priority of the task with 1 as highest and three as lowest                                              |
+| priority       | number       | Priority of the task with 1 as highest and 3 as lowest                                                  |
 
 %%/snippet%%
 

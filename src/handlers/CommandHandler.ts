@@ -30,5 +30,38 @@ export class CommandHandler {
         this.logger.info('Internal Events', result);
       },
     });
+
+    this.plugin.addCommand({
+      id: 'qatt-dump-tasks-to-console',
+      name: 'Will push all the internal tasks table to the console for debugging.',
+      callback: () => {
+        this.logger.info('tasks', alasql('SELECT * FROM tasks'));
+      },
+    });
+
+    this.plugin.addCommand({
+      id: 'qatt-dump-lists-to-console',
+      name: 'Will push all the internal lists table to the console for debugging.',
+      callback: () => {
+        this.logger.info('lists', alasql('SELECT * FROM lists'));
+      },
+    });
+
+    this.plugin.addCommand({
+      id: 'qatt-dump-reference=calendar-to-console',
+      name: 'Will push all the internal qatt.ReferenceCalendar table to the console for debugging.',
+      callback: () => {
+        this.logger.info('qatt.ReferenceCalendar', alasql('SELECT * FROM qatt.ReferenceCalendar'));
+      },
+    });
+
+    this.plugin.addCommand({
+      id: 'qatt-toggle-debug-logging',
+      name: 'Will toggle the debug logging level on and off.',
+      callback: () => {
+        const enabled = this.settingsManager.toggleDebug();
+        this.logger.info('Debugging enabled:', enabled);
+      },
+    });
   }
 }

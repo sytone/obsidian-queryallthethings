@@ -12,14 +12,6 @@
  <a href="https://github.com/sytone/obsidian-queryallthethings/issues">
   <img src="https://img.shields.io/github/issues/sytone/obsidian-queryallthethings">
  </a>
- <br>
- <img src="https://img.shields.io/tokei/lines/github/sytone/obsidian-queryallthethings">
- <a href="https://www.codefactor.io/repository/github/sytone/obsidian-queryallthethings/stats">
-  <img src="https://img.shields.io/codefactor/grade/github/sytone/obsidian-queryallthethings">
- </a>
- <a href="https://sytone.github.io/obsidian-queryallthethings/lcov-report/">
-  <img src="https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/sytone/a2879612aa47b6364392d94cae882c50/raw/obsidian-queryallthethings_coverage.json">
- </a>
 </p>
 
 <div align="center">
@@ -41,7 +33,7 @@ Query All the Things is a flexible way to query and render data in <a href="http
 
 ### Getting started
 
-Documentation on installing the plugin and using it can be found at (https://sytone.github.io/obsidian-queryallthethings/)[https://sytone.github.io/obsidian-queryallthethings/]
+Documentation on installing the plugin and using it can be found at [https://sytone.github.io/obsidian-queryallthethings/](https://sytone.github.io/obsidian-queryallthethings/)
 
 
 ## Getting Started - I don't need documentation

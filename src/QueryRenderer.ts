@@ -107,7 +107,7 @@ class QueryRenderChild extends MarkdownRenderChild {
     this._logger.debugWithId(this.queryId, `Render End: ${endTime.getTime() - startTime.getTime()}ms`);
   };
 
-  markdown2html(markdown?: string, isInline = false): string {
+  markdown2html(markdown?: string): string {
     if (markdown === undefined || markdown === null) {
       return '';
     }
@@ -128,10 +128,6 @@ class QueryRenderChild extends MarkdownRenderChild {
         gfmHtml(),
       ],
     });
-
-    if (isInline && !markdown.includes('\n\n')) {
-      return html.replace(/<p>|<\/p>/g, '');
-    }
 
     return html;
   }

@@ -31,7 +31,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
     // Load up the settings manager.
     this.settingsManager = new SettingsManager(this);
     await this.loadSettings();
-    const {loggingOptions} = this.settingsManager.getSettings();
+    const {generalSettings, loggingOptions} = this.settingsManager.getSettings();
     // Configure logging.
     logging.configure(loggingOptions);
 
@@ -51,6 +51,12 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
     // When layout is ready we can refresh tables and register the query renderer.
     this.app.workspace.onLayoutReady(async () => {
       log('info', `Layout is ready for workspace: ${this.app.vault.getName()}`);
+      log('info', '-- General Settings --');
+
+      for (const key of Object.keys(generalSettings)) {
+        const value = generalSettings[key] as string;
+        log('info', `${key}: ${value}`);
+      }
 
       // This.inlineRenderer = new InlineRenderer({ plugin: this });
       this.queryRenderer = new QueryRenderer(this);

@@ -25,20 +25,17 @@ export const parseTask = (taskString: string) => {
 };
 
 function parsePriority(tokens: string[], index: number) {
-  let priority;
   if (tokens[index].startsWith('⏫') || (tokens[index].startsWith('priority::') && tokens[index + 1].startsWith('high'))) {
-    priority = 1;
+    return 1;
   }
 
   if (tokens[index].startsWith('🔼') || (tokens[index].startsWith('priority::') && tokens[index + 1].startsWith('medium'))) {
-    priority = 2;
+    return 2;
   }
 
   if (tokens[index].startsWith('🔽') || (tokens[index].startsWith('priority::') && tokens[index + 1].startsWith('low'))) {
-    priority = 3;
+    return 3;
   }
-
-  return priority;
 }
 
 // Iterate through the prefixes and pull the following value and return.
