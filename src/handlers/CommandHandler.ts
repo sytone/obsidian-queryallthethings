@@ -13,7 +13,7 @@ export class CommandHandler {
 
   setup(): void {
     this.plugin.addCommand({
-      id: 'qatt-force-codeblock-refresh',
+      id: 'force-codeblock-refresh',
       name: 'Force a refresh of all blocks for QATT',
       callback: () => {
         this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
@@ -21,7 +21,7 @@ export class CommandHandler {
     });
 
     this.plugin.addCommand({
-      id: 'qatt-push-internal-events-to-console',
+      id: 'push-internal-events-to-console',
       name: 'Will push all the internal events to the console for debugging.',
       callback: () => {
         const limit = this.settingsManager.getValue('internalLoggingConsoleLogLimit') as number;
@@ -32,7 +32,7 @@ export class CommandHandler {
     });
 
     this.plugin.addCommand({
-      id: 'qatt-dump-tasks-to-console',
+      id: 'dump-tasks-to-console',
       name: 'Will push all the internal tasks table to the console for debugging.',
       callback: () => {
         this.logger.info('tasks', alasql('SELECT * FROM tasks'));
@@ -40,7 +40,7 @@ export class CommandHandler {
     });
 
     this.plugin.addCommand({
-      id: 'qatt-dump-lists-to-console',
+      id: 'dump-lists-to-console',
       name: 'Will push all the internal lists table to the console for debugging.',
       callback: () => {
         this.logger.info('lists', alasql('SELECT * FROM lists'));
@@ -48,7 +48,7 @@ export class CommandHandler {
     });
 
     this.plugin.addCommand({
-      id: 'qatt-dump-reference=calendar-to-console',
+      id: 'dump-reference=calendar-to-console',
       name: 'Will push all the internal qatt.ReferenceCalendar table to the console for debugging.',
       callback: () => {
         this.logger.info('qatt.ReferenceCalendar', alasql('SELECT * FROM qatt.ReferenceCalendar'));
@@ -56,7 +56,7 @@ export class CommandHandler {
     });
 
     this.plugin.addCommand({
-      id: 'qatt-toggle-debug-logging',
+      id: 'toggle-debug-logging',
       name: 'Will toggle the debug logging level on and off.',
       callback: () => {
         const enabled = this.settingsManager.toggleDebug();

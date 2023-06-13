@@ -81,18 +81,16 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.dataTables?.refreshTables('dataview:refresh-views event detected');
     }));
 
-    // This creates an icon in the left ribbon.
-    const ribbonIconElement = this.addRibbonIcon('dice', 'Refresh QATT Tables', (evt: MouseEvent) => {
+    // Allow user to refresh the tables manually.
+    this.addRibbonIcon('refresh-cw', 'Refresh QATT Tables', (evt: MouseEvent) => {
       log('info', `Refresh QATT Tables: ${evt.button}`);
       this.dataTables?.refreshTables('manual refresh');
     });
 
-    // Perform additional things with the ribbon
-    ribbonIconElement.addClass('my-plugin-ribbon-class');
-
-    // This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-    const statusBarItemElement = this.addStatusBarItem();
-    statusBarItemElement.setText('Status Bar Text');
+    // Update with render data if debug mode is enable
+    // future planned work. Does not work on mobile apps.
+    // const statusBarItemElement = this.addStatusBarItem();
+    // statusBarItemElement.setText('Status Bar Text');
 
     this.commandHandler = new CommandHandler(this, this.settingsManager);
     this.commandHandler.setup();

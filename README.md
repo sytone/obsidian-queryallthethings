@@ -14,14 +14,11 @@
  </a>
 </p>
 
-<div align="center">
-
-Query All the Things is a flexible way to query and render data in <a href="https://obsidian.md">Obsidian</a> and from other Obsidian plugins
-</div>
+***Execute flexible SQL base queries against your data in [Obsidian](https://obsidian.md) and render it how you want using Handlebars templates.***
 
 ---
 
-### Features
+## Features
 
 - Use SQL based queries that are extensible and handle JSON and objects.
 - Query any data collection found in the Obsidian API.
@@ -31,7 +28,7 @@ Query All the Things is a flexible way to query and render data in <a href="http
 
 ---
 
-### Getting started
+## Getting started
 
 Documentation on installing the plugin and using it can be found at [https://sytone.github.io/obsidian-queryallthethings/](https://sytone.github.io/obsidian-queryallthethings/)
 

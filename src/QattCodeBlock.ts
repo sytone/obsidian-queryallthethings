@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {parse} from 'yaml';
+import {parseYaml} from 'obsidian';
 
 export interface IQattCodeBlock {
   customJSForSql: string[];
@@ -26,7 +26,7 @@ export class QattCodeBlock implements IQattCodeBlock {
   constructor(
     public codeBlockContent: string,
   ) {
-    const parsedCodeBlock = parse(codeBlockContent);
+    const parsedCodeBlock = parseYaml(codeBlockContent);
 
     this.customJSForSql = parsedCodeBlock.customJSForSql;
     this.customJSForHandlebars = parsedCodeBlock.customJSForHandlebars;
