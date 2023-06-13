@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.1](https://github.com/sytone/obsidian-queryallthethings/compare/0.5.0...0.5.1) (2023-06-13)
+
+
+### Internal
+
+* resolve points raised on submission to community plugin list ([6ffff69](https://github.com/sytone/obsidian-queryallthethings/commits/6ffff69bdef63e5a9d97dc45257ae592c146dbd1))
+
 ## [0.5.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.4.4...0.5.0) (2023-06-12)
 
 
