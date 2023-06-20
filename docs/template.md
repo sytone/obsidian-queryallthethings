@@ -21,9 +21,13 @@ which will remove the wrapping `<p>` tag from the output if inline is set to tru
 
 {% raw %}
 ```
-{{#micromark inline="true"}} {{task}} [[{{page}}|📝]] {{/micromark}}
+{{{#micromark inline="true"}}} {{{task}}} [[{{{page}}}|📝]] {{{/micromark}}}
 ```
 {% endraw %}
+
+```
+{{{#micromark inline="true"}}} {{{task}}} [[{{{page}}}|📝]] {{{/micromark}}}
+```
 
 when used with this context:
 
