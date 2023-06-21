@@ -19,15 +19,12 @@ The following Block level helpers are avaliable to be used in rendering your out
 The `micromark`\-helper renders markdown as HTML using the micromark library. It has one setting
 which will remove the wrapping `<p>` tag from the output if inline is set to true.
 
-
-```
-{{{#micromark inline="true"}}} {{{task}}} [[{{{page}}}|📝]] {{{/micromark}}}
-```
-
 {% raw %}
+
 ```handlebars
   {{{#micromark inline="true"}}} {{{task}}} [[{{{page}}}|📝]] {{{/micromark}}}
 ```
+
 {% endraw %}
 
 when used with this context:

@@ -3,7 +3,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint indent: [2, 2, {"SwitchCase": 1}] */
 import {DateTime} from 'luxon';
-import {Platform, type Plugin} from 'obsidian';
 /*
  * EventEmitter2 is an implementation of the EventEmitter module found in Node.js.
  * In addition to having a better benchmark performance than EventEmitter and being
@@ -538,27 +537,27 @@ export function log(logLevel: TLogLevelName, message: string, objects?: any) {
  * @param {Plugin} plugin
  * @return {*}
  */
-export function monkeyPatchConsole(plugin: Plugin) {
-  if (!Platform.isMobile) {
-    return;
-  }
+// export function monkeyPatchConsole(plugin: Plugin) {
+//   if (!Platform.isMobile) {
+//     return;
+//   }
 
-  const logFile = `${plugin.manifest.dir ?? '.'}/qatt-logs.txt`;
-  const logs: string[] = [];
-  const logMessages
-    = (prefix: string) =>
-      async (...messages: unknown[]) => {
-        logs.push(`\n[${prefix}]`);
-        for (const message of messages) {
-          logs.push(String(message));
-        }
+//   const logFile = `${plugin.manifest.dir ?? '.'}/qatt-logs.txt`;
+//   const logs: string[] = [];
+//   const logMessages
+//     = (prefix: string) =>
+//       async (...messages: unknown[]) => {
+//         logs.push(`\n[${prefix}]`);
+//         for (const message of messages) {
+//           logs.push(String(message));
+//         }
 
-        await plugin.app.vault.adapter.write(logFile, logs.join(' '));
-      };
+//         await plugin.app.vault.adapter.write(logFile, logs.join(' '));
+//       };
 
-  console.debug = logMessages('debug');
-  console.error = logMessages('error');
-  console.info = logMessages('info');
-  console.log = logMessages('log');
-  console.warn = logMessages('warn');
-}
+//   console.debug = logMessages('debug');
+//   console.error = logMessages('error');
+//   console.info = logMessages('info');
+//   console.log = logMessages('log');
+//   console.warn = logMessages('warn');
+// }

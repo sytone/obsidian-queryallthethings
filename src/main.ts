@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/filename-case */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import {Notice, Plugin} from 'obsidian';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
 import {QueryRenderer} from 'QueryRenderer';
@@ -14,6 +14,7 @@ import {SettingsTab} from 'Settings/SettingsTab';
 import {SettingsManager} from 'Settings/SettingsManager';
 import {log, logging} from 'lib/Logging';
 import {AlaSqlQuery} from 'Query/AlaSqlQuery';
+import {HandlebarsRendererObsidian} from 'Render/HandlebarsRendererObsidian';
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
   // Public inlineRenderer: InlineRenderer | undefined;
@@ -28,15 +29,25 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
     logging.registerConsoleLogger();
     log('info', `loading plugin "${this.manifest.name}" v${this.manifest.version}`);
 
+    // --- Settings
     // Load up the settings manager.
-    this.settingsManager = new SettingsManager(this);
+    this.settingsManager = new SettingsManager();
+
+    // Wire up events from the settings.
+    this.settingsManager.on('settings-updated', async () => {
+      await this.saveSettings();
+    });
+
     await this.loadSettings();
     const {generalSettings, loggingOptions} = this.settingsManager.getSettings();
-    // Configure logging.
-    logging.configure(loggingOptions);
 
     // Setup the UI tab.
     this.addSettingTab(new SettingsTab(this, this.settingsManager));
+
+    // -- Logging
+    // Set logging levels from configuration.
+    logging.configure(loggingOptions);
+
     this.dataTables = new DataTables(this);
 
     if (!isPluginEnabled(this.app)) {
@@ -45,7 +56,8 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       throw new Error('Dataview plugin is not installed');
     }
 
-    HandlebarsRenderer.registerHandlebarsHelpers(this);
+    HandlebarsRenderer.registerHandlebarsHelpers();
+    HandlebarsRendererObsidian.registerHandlebarsHelpers();
     AlaSqlQuery.initialize(this);
 
     // When layout is ready we can refresh tables and register the query renderer.
@@ -68,6 +80,24 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       if (onStartSqlQueries) {
         this.dataTables?.runAdhocQuery(onStartSqlQueries);
       }
+
+      (window as any).qattUpdateOriginalTask = async function (page: string, line: number, currentStatus: string, nextStatus: string) {
+        nextStatus = nextStatus === '' ? ' ' : nextStatus;
+
+        const rawFileText = await this.app.vault.adapter.read(page);
+        const hasRN = rawFileText.contains('\r');
+        const fileText = rawFileText.split(/\r?\n/u);
+
+        if (fileText.length < line) {
+          return;
+        }
+
+        fileText[line] = fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`);
+
+        const newText = fileText.join(hasRN ? '\r\n' : '\n');
+        await this.app.vault.adapter.write(page, newText);
+        app.workspace.trigger('dataview:refresh-views');
+      };
     });
 
     // Refresh tables when dataview index is ready.

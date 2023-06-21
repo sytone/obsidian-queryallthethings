@@ -1,4 +1,4 @@
-/* eslint-disable no-bitwise */
+
 /* eslint-disable unicorn/no-array-reduce */
 /* eslint-disable unicorn/no-array-callback-reference */
 /* eslint-disable unicorn/no-array-for-each */
@@ -8,16 +8,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Handlebars, {type HelperOptions} from 'handlebars';
-import {Component, MarkdownPreviewView} from 'obsidian';
-import {Md5} from 'ts-md5';
 import {logging} from 'lib/Logging';
-import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
 import {type IRenderer} from 'Render/IRenderer';
 import {markdown2html} from 'Render/MicromarkRenderer';
 
 export class HandlebarsRenderer implements IRenderer {
-  public static registerHandlebarsHelpers(plugin: IQueryAllTheThingsPlugin) {
-    const app = plugin.app;
+  public static registerHandlebarsHelpers() {
     type IMap = Record<string, {value: string; items: Array<Record<string, any>>}>;
     // Just add the simple helpers here.
     Handlebars.registerHelper({
@@ -112,9 +108,13 @@ export class HandlebarsRenderer implements IRenderer {
     The `micromark`\-helper renders markdown as HTML using the micromark library. It has one setting
     which will remove the wrapping `<p>` tag from the output if inline is set to true.
 
+    {% raw %}
+
+    ```handlebars
+      {{{#micromark inline="true"}}} {{{task}}} [[{{{page}}}|📝]] {{{/micromark}}}
     ```
-    {{#micromark inline="true"}} {{task}} [[{{page}}|📝]] {{/micromark}}
-    ```
+
+    {% endraw %}
 
     when used with this context:
 
@@ -146,91 +146,6 @@ export class HandlebarsRenderer implements IRenderer {
       return new Handlebars.SafeString(parsedChildTemplate);
     });
 
-    Handlebars.registerHelper('tasklist', function (this: string, options) {
-      let hash = 0;
-      let i;
-      let chr: number;
-      if (this.length === 0) {
-        return hash;
-      }
-
-      for (i = 0; i < this.length; i++) {
-        chr = this.codePointAt(i) ?? 0;
-        hash = ((hash << 5) - hash) + chr;
-        hash = Math.trunc(hash); // Convert to 32bit integer
-      }
-
-      const elementId = 'temp-prefix-' + hash;
-      let itemHtml: boolean | string | undefined = false;
-
-      const content = document.createElement('div');
-      const parsedChildTemplate = options.fn(this);
-      MarkdownPreviewView.renderMarkdown(parsedChildTemplate, content, '', new Component()).then(() => {
-        itemHtml = content.firstElementChild?.innerHTML;
-        const element = document.querySelector(`#${elementId}`);
-        if (element) {
-          element.outerHTML = itemHtml ?? '';
-        }
-      }).catch(error => {
-        console.error(error);
-      });
-
-      if (itemHtml) {
-        return new Handlebars.SafeString(itemHtml);
-      }
-
-      return new Handlebars.SafeString('<span id="' + elementId + '">Loading..</span>');
-    });
-
-    // This one is more complex, probably a bad design as well. Works
-    // on my machine!
-    Handlebars.registerHelper('markdown2', function (this: any, options) {
-      const hash: string = Md5.hashStr(JSON.stringify(this));
-
-      const elementId = 'temp-prefix-' + hash;
-      let itemHtml: boolean | string | undefined = false;
-
-      const content = document.createElement('div');
-      const parsedChildTemplate = options.fn(this);
-      MarkdownPreviewView.renderMarkdown(parsedChildTemplate, content, '', new Component()).then(() => {
-        itemHtml = content.firstElementChild?.innerHTML;
-        const element = document.querySelector(`#${elementId}`);
-        if (element) {
-          element.outerHTML = itemHtml ?? '';
-        }
-      }).catch(error => {
-        console.error(error);
-      });
-      if (itemHtml) {
-        return new Handlebars.SafeString(itemHtml);
-      }
-
-      return new Handlebars.SafeString('<span id="' + elementId + '">Loading..</span>');
-    });
-
-    Handlebars.registerHelper('markdown', value => {
-      const hash: string = Md5.hashStr(JSON.stringify(this));
-
-      const elementId = 'temp-prefix-' + hash;
-      let itemHtml: boolean | string | undefined = false;
-
-      const content = document.createElement('div');
-      MarkdownPreviewView.renderMarkdown(value, content, '', new Component()).then(() => {
-        itemHtml = content.firstElementChild?.innerHTML;
-        const element = document.querySelector(`#${elementId}`);
-        if (element) {
-          element.outerHTML = itemHtml ?? '';
-        }
-      }).catch(error => {
-        console.error(error);
-      });
-      if (itemHtml) {
-        return new Handlebars.SafeString(itemHtml);
-      }
-
-      return new Handlebars.SafeString('<span id="' + elementId + '">Loading..</span>');
-    });
-
     Handlebars.registerHelper('taskcheckbox', value => {
       let checked = '';
       let classList = 'task-list-item-checkbox';
@@ -246,24 +161,6 @@ export class HandlebarsRenderer implements IRenderer {
       const checkBoxHtml = `<input class="${classList}" type="checkbox" ${checked} data-task="${currentStatus}" onclick="console.log(this.checked); qattUpdateOriginalTask('${value.page as string}',${value.line as string},'${currentStatus}','${nextStatus}');"></input>`;
       return new Handlebars.SafeString(checkBoxHtml);
     });
-
-    (window as any).qattUpdateOriginalTask = async function (page: string, line: number, currentStatus: string, nextStatus: string) {
-      nextStatus = nextStatus === '' ? ' ' : nextStatus;
-
-      const rawFileText = await plugin.app.vault.adapter.read(page);
-      const hasRN = rawFileText.contains('\r');
-      const fileText = rawFileText.split(/\r?\n/u);
-
-      if (fileText.length < line) {
-        return;
-      }
-
-      fileText[line] = fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`);
-
-      const newText = fileText.join(hasRN ? '\r\n' : '\n');
-      await plugin.app.vault.adapter.write(page, newText);
-      app.workspace.trigger('dataview:refresh-views');
-    };
   }
 
   _logger = logging.getLogger('Qatt.HandlebarsRenderer');

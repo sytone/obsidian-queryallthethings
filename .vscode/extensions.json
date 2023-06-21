@@ -18,6 +18,7 @@
     "samverschueren.linter-xo",
     "yzhang.markdown-all-in-one",
     "github.vscode-github-actions",
-    "vivaxy.vscode-conventional-commits"
+    "vivaxy.vscode-conventional-commits",
+    "hbenl.vscode-test-explorer"
   ]
 }
