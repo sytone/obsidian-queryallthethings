@@ -20,7 +20,7 @@ jobs:
       - name: Run TypeScript compiler ESLint
         run: yarn run lint
 
-      - name: Run Jest
+      - name: Run mocha
         run: yarn run test
 
       - name: Archive verified build

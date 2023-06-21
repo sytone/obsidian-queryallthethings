@@ -11,7 +11,6 @@
     "brpaz.vscode-obsidianmd",
     "nhoizey.gremlins",
     "dotup.dotup-vscode-interface-generator",
-    "orta.vscode-jest",
     "oouo-diogo-perdigao.docthis",
     "stkb.rewrap",
     "stackbreak.comment-divider",
@@ -19,6 +18,7 @@
     "yzhang.markdown-all-in-one",
     "github.vscode-github-actions",
     "vivaxy.vscode-conventional-commits",
-    "hbenl.vscode-test-explorer"
+    "hbenl.vscode-test-explorer",
+    "maty.vscode-mocha-sidebar"
   ]
 }

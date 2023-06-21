@@ -12,24 +12,23 @@
   "customizations": {
     "vscode": {
       "extensions": [
-		"dbaeumer.vscode-eslint",
-		"DavidAnson.vscode-markdownlint",
-		"EditorConfig.EditorConfig",
-		"PKief.material-icon-theme",
-		"VisualStudioExptTeam.intellicode-api-usage-examples",
-		"ms-vscode.PowerShell",
-		"streetsidesoftware.code-spell-checker",
-		"HenryHeDiff.obsidian-code",
-		"brpaz.vscode-obsidianmd",
-		"nhoizey.gremlins",
-		"Orta.vscode-jest",
-		"oouo-diogo-perdigao.docthis",
-		"stkb.rewrap",
-		"stackbreak.comment-divider",
-		"samverschueren.linter-xo",
-		"yzhang.markdown-all-in-one",
-		"github.vscode-github-actions"
-	]
+        "dbaeumer.vscode-eslint",
+        "DavidAnson.vscode-markdownlint",
+        "EditorConfig.EditorConfig",
+        "PKief.material-icon-theme",
+        "VisualStudioExptTeam.intellicode-api-usage-examples",
+        "ms-vscode.PowerShell",
+        "streetsidesoftware.code-spell-checker",
+        "HenryHeDiff.obsidian-code",
+        "brpaz.vscode-obsidianmd",
+        "nhoizey.gremlins",
+        "oouo-diogo-perdigao.docthis",
+        "stkb.rewrap",
+        "stackbreak.comment-divider",
+        "samverschueren.linter-xo",
+        "yzhang.markdown-all-in-one",
+        "github.vscode-github-actions"
+      ]
     }
   }
   // Features to add to the dev container. More info: https://containers.dev/features.

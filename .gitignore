@@ -20,3 +20,6 @@ yarn-error.log
 .eslintcache
 
 docs/_site
+coverage
+.nyc_output
+
