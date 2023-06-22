@@ -11,8 +11,10 @@ import {DateTime} from 'luxon';
  *
  * This has been added as EventEmitter in Node.JS is not available in the browser.
  * https://www.npmjs.com/package/eventemitter2
+ * Also thanks to https://learnshareit.com/how-to-solve-the-requested-module-does-not-provide-an-export-named-in-javascript/
+ * this now works in jest testing with ESM modules.
  */
-import {EventEmitter2} from 'eventemitter2';
+import EventEmitter2 from 'eventemitter2';
 import {type ILogOptions} from 'Interfaces/Settings';
 
 /**

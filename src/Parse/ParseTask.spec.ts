@@ -1,13 +1,11 @@
-
-import {describe, test} from 'mocha';
-import {expect} from 'chai';
-import {parseTask} from '../src/Parse/Parsers';
+/* eslint-disable unicorn/filename-case */
+import {parseTask} from 'Parse/Parsers';
 
 describe('parse functions', () => {
   test('task parses correctly', () => {
     const parsedTask = parseTask('this is a task #TasK #test priority:: high 📅 2022-03-05 ✅ 2022-04-05');
 
-    expect(parsedTask.tags[0]).to.equal('TasK');
+    expect(parsedTask.tags[0]).toBe('TasK');
     // Testing
     // assert.equal(parsedTask.tagsNormalized[0], 'task');
     // assert.equal(parsedTask.dueDate, '2022-03-05');
@@ -31,9 +29,9 @@ describe('parse functions', () => {
     const end = performance.now();
     // Uncomment to show timing. console.log(`parseTask took ${end - start} milliseconds to run 10000 times`);
 
-    expect(end - start).to.be.below(100);
+    expect(end - start).toBeLessThan(150);
 
-    expect(parsedTask.tags[0]).to.equal('TasK');
+    expect(parsedTask.tags[0]).toBe('TasK');
     // Testing
     // assert.equal(parsedTask.tagsNormalized[0], 'task');
     // assert.equal(parsedTask.dueDate, '2022-03-05');

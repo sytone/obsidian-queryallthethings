@@ -21,7 +21,7 @@ export class AlaSqlQuery implements IQuery {
    * @param {IQueryAllTheThingsPlugin} plugin
    * @memberof QuerySql
    */
-  public static initialize(plugin: IQueryAllTheThingsPlugin) {
+  public static initialize() {
     // Set moment() function available to AlaSQL.
     alasql.fn.moment = window.moment;
 
@@ -40,6 +40,34 @@ export class AlaSqlQuery implements IQuery {
     alasql.fn.arrayFrom = function (value) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       return Array.from(value);
+    };
+
+    /*
+    // >> alasql-function-stringify-snippet
+    ### stringify(value)
+
+    The `stringify` function will convert the provided value to a JSON string.
+
+    {% raw %}
+
+    ```qatt
+    query: SELECT TOP 1 stringify(stat) AS statPropertyAsJsonString FROM obsidian_markdown_notes
+    template: |
+      {{#each result}}{{statPropertyAsJsonString}}{{/each}}
+    ```
+
+    {% endraw %}
+
+    will result in:
+
+    ```text
+    {"ctime":1670345758620,"mtime":1670345758620,"size":316}
+    ```
+
+    // << alasql-function-stringify-snippet
+    */
+    alasql.fn.stringify = function (value) {
+      return JSON.stringify(value);
     };
 
     alasql.fn.objectFromMap = function (value) {

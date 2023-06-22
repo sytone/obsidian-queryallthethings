@@ -19,6 +19,6 @@
     "github.vscode-github-actions",
     "vivaxy.vscode-conventional-commits",
     "hbenl.vscode-test-explorer",
-    "maty.vscode-mocha-sidebar"
+    "orta.vscode-jest"
   ]
 }

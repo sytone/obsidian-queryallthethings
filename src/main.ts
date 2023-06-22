@@ -58,7 +58,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
     HandlebarsRenderer.registerHandlebarsHelpers();
     HandlebarsRendererObsidian.registerHandlebarsHelpers();
-    AlaSqlQuery.initialize(this);
+    AlaSqlQuery.initialize();
 
     // When layout is ready we can refresh tables and register the query renderer.
     this.app.workspace.onLayoutReady(async () => {

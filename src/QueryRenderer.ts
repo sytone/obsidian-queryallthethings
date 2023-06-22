@@ -22,6 +22,7 @@ export class QueryRenderer {
   constructor(
     private readonly plugin: IQueryAllTheThingsPlugin,
   ) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     plugin.registerMarkdownCodeBlockProcessor('qatt', this._addQuerySqlRenderChild.bind(this));
   }
 
