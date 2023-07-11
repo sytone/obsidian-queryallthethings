@@ -4,6 +4,6 @@ layout: default
 title: Codeblock Configuration
 ---
 
-%%snippet id=‘docs-codeblock-configuration’ options=‘nocodeblock’%%
+%%snippet id='docs-codeblock-configuration' options='nocodeblock'%%
 
 %%/snippet%%
