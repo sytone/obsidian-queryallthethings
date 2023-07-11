@@ -20,3 +20,8 @@ yarn-error.log
 .eslintcache
 
 docs/_site
+coverage
+.nyc_output
+
+src/**/*.js
+ts-jest.log

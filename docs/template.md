@@ -20,9 +20,11 @@ The `micromark`\-helper renders markdown as HTML using the micromark library. It
 which will remove the wrapping `<p>` tag from the output if inline is set to true.
 
 {% raw %}
+
+```handlebars
+  {{{#micromark inline="true"}}} {{{task}}} [[{{{page}}}|📝]] {{{/micromark}}}
 ```
-{{#micromark inline="true"}} {{task}} [[{{page}}|📝]] {{/micromark}}
-```
+
 {% endraw %}
 
 when used with this context:

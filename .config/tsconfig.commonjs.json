@@ -1,0 +1,12 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "types": [
+      "node",
+      "mocha"
+    ]
+  }
+}

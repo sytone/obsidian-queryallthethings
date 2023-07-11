@@ -9,11 +9,17 @@
     "githubPages": false,
     "readme": "none"
   },
+  "ts-node": {
+    "esm": true,
+    "experimentalSpecifierResolution": "node"
+  },
   "compilerOptions": {
+    "outDir": "./dist", // target for compiled files
     "baseUrl": "./src",
+    "rootDir": "./src",
     "inlineSourceMap": true,
     "inlineSources": true,
-    "module": "ESNext",
+    "module": "ES2022",
     "target": "ES6",
     "allowJs": true,
     "noImplicitAny": true,
@@ -24,10 +30,6 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "experimentalDecorators": true,
     "paths": {
       "src/*": [
         "src/*"
@@ -36,20 +38,21 @@
         "__tests__/*"
       ]
     },
-    "types": [
-      "jest",
-      "node"
+    "typeRoots": [
+      "./node_modules/@types",
+      "./typings"
     ],
     "lib": [
       "DOM",
-      "ES5",
-      "ES6",
-      "ES7"
+      "ES2022"
+    ],
+    "types": [
+      "node",
+      "jest"
     ]
   },
   "include": [
-    "src/**/*",
-    "__tests__/**/*"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules/*"

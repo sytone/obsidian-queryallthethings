@@ -98,7 +98,10 @@ def replace_comment_blocks(text):
 def replace_callouts(text):
     results = text
 
-    regex = r"(^> \[!(NOTE|INFO)\].*?\n{2})"
+    
+    # regex = r"(^> \[!(NOTE|INFO)\].*?\n{2})"
+    # Only supports one line notes and infos.
+    regex = r"(^> \[!(NOTE|INFO)\].*?\n.*?\n)"
     for match in re.finditer(regex, results, re.MULTILINE | re.DOTALL):
         print(match.group(1))
         clean_match = (
@@ -115,7 +118,7 @@ def replace_callouts(text):
         )
         results = results.replace(match.group(1), jekyll_format)
 
-    regex = r"(^> \[!(WARNING|WARN)\].*?\n{2})"
+    regex = r"(^> \[!(WARNING|WARN)\].*?\n.*?\n)"
     for match in re.finditer(regex, results, re.MULTILINE | re.DOTALL):
         print(match.group(1))
         clean_match = (

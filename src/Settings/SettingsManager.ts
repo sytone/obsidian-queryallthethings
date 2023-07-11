@@ -1,4 +1,4 @@
-import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
+import EventEmitter2 from 'eventemitter2';
 import {type ISettingsManager} from 'Interfaces/ISettingsManager';
 import {type ISettings} from 'Interfaces/Settings';
 import {logging} from 'lib/Logging';
@@ -22,14 +22,14 @@ const defaultSettings: ISettings = {
   },
 };
 
-export class SettingsManager implements ISettingsManager {
+export class SettingsManager extends EventEmitter2 implements ISettingsManager {
   logger = logging.getLogger('Qatt.SettingsManager');
 
   settings: ISettings;
 
   constructor(
-    private readonly plugin: IQueryAllTheThingsPlugin,
   ) {
+    super();
     this.settings = defaultSettings;
 
     this.logger.info('Creating Settings Manager', this.settings);
@@ -44,7 +44,7 @@ export class SettingsManager implements ISettingsManager {
   public updateSettings(newSettings: Partial<ISettings>): ISettings {
     this.logger.debug('updateSettings', newSettings);
     this.settings = {...defaultSettings, ...newSettings};
-    this.plugin.saveSettings();
+    this.emit('settings-updated', this.settings);
     return this.getSettings();
   }
 
@@ -69,7 +69,7 @@ export class SettingsManager implements ISettingsManager {
   public setValue(name: string, value: string | number | boolean): void {
     this.logger.debug(`setValue ${name} ${value as string}`);
     this.settings.generalSettings[name] = value;
-    this.plugin.saveSettings();
+    this.emit('settings-updated', this.settings);
   }
 
   public isFeatureEnabled(name: string): boolean {
@@ -78,13 +78,13 @@ export class SettingsManager implements ISettingsManager {
 
   public toggleFeature(name: string, enabled: boolean): FeatureFlag {
     this.settings.features[name] = enabled;
-    this.plugin.saveSettings();
+    this.emit('settings-updated', this.settings);
     return this.settings.features;
   }
 
   public toggleDebug(): boolean {
     this.settings.loggingOptions.minLevels.Qatt = this.settings.loggingOptions.minLevels.Qatt === 'debug' ? 'info' : 'debug';
-    this.plugin.saveSettings();
+    this.emit('settings-updated', this.settings);
     return this.settings.loggingOptions.minLevels.Qatt === 'debug';
   }
 }
