@@ -17,6 +17,7 @@ describe('handlebars helpers', () => {
       postRenderFormat: '',
       logLevel: '',
       codeBlockContent: '',
+      replaceCodeBlock: '',
     };
 
     const renderEngine: IRenderer = RenderFactory.getRenderer(testCodeBlock);

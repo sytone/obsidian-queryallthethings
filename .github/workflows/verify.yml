@@ -12,16 +12,16 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Install modules
-        run: yarn
+        run: pnpm install
 
       - name: Run build
-        run: yarn run build
+        run: pnpm run build
 
       - name: Run TypeScript compiler ESLint
-        run: yarn run lint
+        run: pnpm run lint
 
       - name: Run mocha
-        run: yarn run test
+        run: pnpm run test
 
       - name: Archive verified build
         uses: actions/upload-artifact@v3

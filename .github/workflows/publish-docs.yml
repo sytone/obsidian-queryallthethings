@@ -32,12 +32,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: 'pnpm'
       # Build the documentation and run injections
       - name: Build
         id: build
         run: |
-          yarn
-          yarn run build:docs
+          pnpm install
+          pnpm run build:docs
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Transform Links 🚀

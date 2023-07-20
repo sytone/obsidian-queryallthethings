@@ -1,4 +1,4 @@
-import EventEmitter2 from 'eventemitter2';
+import {EventEmitter2} from 'eventemitter2';
 import {type ISettingsManager} from 'Interfaces/ISettingsManager';
 import {type ISettings} from 'Interfaces/Settings';
 import {logging} from 'lib/Logging';

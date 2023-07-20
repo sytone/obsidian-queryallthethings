@@ -1,6 +1,5 @@
 # npm
 node_modules
-yarn-error.log
 
 # build
 *.js.map

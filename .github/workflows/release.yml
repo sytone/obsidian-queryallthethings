@@ -39,8 +39,8 @@ jobs:
       - name: Build
         id: build
         run: |
-          yarn
-          yarn run build
+          pnpm install
+          pnpm run build
 
       # Package the required files into a zip
       - name: Package Plugin 📦

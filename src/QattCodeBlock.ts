@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {parseYaml} from 'obsidian';
 
-
 /*
 
 // >> docs-codeblock-configuration
@@ -12,15 +11,14 @@ The configuration is YAML based and support the following properties. As it is Y
 
 customJSForSql
 
-If you have the CustomJS plugin installed this field allows you to refernce any CustomeJS classes and methods and they will be loaded in the AlaSQL engine so you can call them in a query to extend the capabilities of the query for personal needs. 
+If you have the CustomJS plugin installed this field allows you to refernce any CustomeJS classes and methods and they will be loaded in the AlaSQL engine so you can call them in a query to extend the capabilities of the query for personal needs.
 
 It expects an array of string with a space betwrrn the class name and the method name
 
 So for example if you have a class called MyCoolClass with a method in it called ConvertWordsToEmoji you would set the value like this:
 
-
-```  
-customJSForSql: ['MyCoolClass ConvertWordsToEmoji'] 
+```
+customJSForSql: ['MyCoolClass ConvertWordsToEmoji']
 ```
 
 Then in the query field you can reference this function just like the other inbuilt functions already available.
@@ -35,19 +33,19 @@ This is the query to pass to the choosen query engine, currently only the AlaSQL
 
 queryEngine
 
-This defines the query engine to use to execute the query entered for the query field. 
+This defines the query engine to use to execute the query entered for the query field.
 
 By default it will use alasql so you do not have to set this. The only supported value is `alasql` currently.
 
 template
 
-This value is used to render the results of the query. 
+This value is used to render the results of the query.
 
 postRenderFormat
 
 Once the render engine is completed the output will be written to the page in Obsidian. As Obsidian uses HTML to display information to the user the rendered output will be treated as HTML. If you use a template that output markdown it would not be rendered correctly.
 
-To make this simpler there are three options. The default is `micromark` which uses the micromark engine to convert markdown to HTML. It has all the GitHub extensions enabled  by default so should handle most markdown as you would expect Obsidian to handle it. 
+To make this simpler there are three options. The default is `micromark` which uses the micromark engine to convert markdown to HTML. It has all the GitHub extensions enabled  by default so should handle most markdown as you would expect Obsidian to handle it.
 
 You can also choose `markdown` which uses the internal Obsdian markdown engine, this may cause some display issues as it need to render the markdown in an asyncoronus way so a page refresh may be needed if you are rendering more complex markdown blocks.
 
@@ -65,7 +63,7 @@ replaceCodeBlock
 
 **Pending**
 
-As the results of the query and render are only shown in Obsidan if tou look at the markdown file in a text editor you will only see the query and template details. For most situations this would be fine but if you want the results and rendered output to be more permanant you can use this option to write the output to the page directly. 
+As the results of the query and render are only shown in Obsidan if tou look at the markdown file in a text editor you will only see the query and template details. For most situations this would be fine but if you want the results and rendered output to be more permanant you can use this option to write the output to the page directly.
 
 By default the value will be `never` so each time the page is shown in Obsidian it is dynamically rendered.
 
@@ -85,7 +83,7 @@ export interface IQattCodeBlock {
   renderEngine: string | undefined;
   logLevel: string | undefined;
   codeBlockContent: string;
-  replaceCodeBlock: string;
+  replaceCodeBlock: string | undefined;
 }
 
 export class QattCodeBlock implements IQattCodeBlock {
@@ -111,26 +109,26 @@ export class QattCodeBlock implements IQattCodeBlock {
     this.template = parsedCodeBlock.template;
     this.postRenderFormat = parsedCodeBlock.postRenderFormat;
     this.renderEngine = parsedCodeBlock.renderEngine;
-    
-    // Set to info by sefault.
-    if(
-      parsedCodeBlock.logLevel !== 'trace' && 
-      parsedCodeBlock.logLevel !== 'debug' && 
-      parsedCodeBlock.logLevel !== 'info' && 
-      parsedCodeBlock.logLevel !== 'warn' && 
-      parsedCodeBlock.logLevel !== 'error') {
-      this.logLevel = 'info'
+
+    // Set to info by default.
+    if (
+      parsedCodeBlock.logLevel !== 'trace'
+      && parsedCodeBlock.logLevel !== 'debug'
+      && parsedCodeBlock.logLevel !== 'info'
+      && parsedCodeBlock.logLevel !== 'warn'
+      && parsedCodeBlock.logLevel !== 'error') {
+      this.logLevel = 'info';
     } else {
       this.logLevel = parsedCodeBlock.logLevel;
     }
-    
-    if(
-      parsedCodeBlock.replaceCodeBlock !== 'never' && 
-      parsedCodeBlock.replaceCodeBlock !== 'once' && 
-      parsedCodeBlock.replaceCodeBlock !== 'always' && 
-      parsedCodeBlock.replaceCodeBlock !== 'alwaysappend' && 
-      parsedCodeBlock .replaceCodeBlock !== 'alwaysprepend') {
-      this.replaceCodeBlock = 'never'
+
+    if (
+      parsedCodeBlock.replaceCodeBlock !== 'never'
+      && parsedCodeBlock.replaceCodeBlock !== 'once'
+      && parsedCodeBlock.replaceCodeBlock !== 'always'
+      && parsedCodeBlock.replaceCodeBlock !== 'alwaysappend'
+      && parsedCodeBlock.replaceCodeBlock !== 'alwaysprepend') {
+      this.replaceCodeBlock = 'never';
     } else {
       this.replaceCodeBlock = parsedCodeBlock.replaceCodeBlock;
     }
