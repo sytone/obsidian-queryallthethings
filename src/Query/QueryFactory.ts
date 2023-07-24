@@ -1,22 +1,27 @@
 /* eslint indent: [2, 2, {"SwitchCase": 1}] */
-import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
-import {logging} from 'lib/Logging';
 import {type QattCodeBlock} from 'QattCodeBlock';
 import {AlaSqlQuery} from 'Query/AlaSqlQuery';
 import {type IQuery} from 'Query/IQuery';
+import {Service} from '@ophidian/core';
+import {LoggingService} from 'lib/LoggingService';
 
-export class QueryFactory {
-  public static getQuery(queryConfiguration: QattCodeBlock, sourcePath: string, frontmatter: any, plugin: IQueryAllTheThingsPlugin): IQuery {
+export class QueryFactory extends Service {
+  public getQuery(queryConfiguration: QattCodeBlock, sourcePath: string, frontmatter: any): IQuery {
     switch (queryConfiguration.queryEngine) {
       case 'alasql': {
-        return new AlaSqlQuery(queryConfiguration, sourcePath, frontmatter, plugin);
+        const query = this.use.fork().use(AlaSqlQuery);
+        query.setupQuery(queryConfiguration, sourcePath, frontmatter);
+        return query;
       }
 
       default: {
-        return new AlaSqlQuery(queryConfiguration, sourcePath, frontmatter, plugin);
-      }
+        const query = this.use.fork().use(AlaSqlQuery);
+        query.setupQuery(queryConfiguration, sourcePath, frontmatter);
+        return query; }
     }
   }
 
-  _logger = logging.getLogger('Qatt.QueryFactory');
+  public ping() {
+    this.use(LoggingService).info('QueryFactory.ping()');
+  }
 }
