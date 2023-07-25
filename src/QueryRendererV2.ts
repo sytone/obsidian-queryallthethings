@@ -68,6 +68,9 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     this.context = context;
     this.service = service;
 
+    // If I use 'use' at the top of this class then it throws
+    // an error that there is no context available. This class
+    // cannot extend Service.
     this.plugin = service.use(Plugin);
     this.logger = service.use(LoggingService);
     this.queryFactory = service.use(QueryFactory);
