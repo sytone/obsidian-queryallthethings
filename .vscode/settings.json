@@ -18,5 +18,8 @@
   "[markdown]": {
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true
-  }
+  },
+  "conventionalCommits.scopes": [
+    "logging"
+  ]
 }

@@ -15,7 +15,7 @@ export interface IDataTables {
 
 export class DataTables extends Service {
   plugin = this.use(Plugin);
-  logger = this.use(LoggingService);
+  logger = this.use(LoggingService).getLogger('Qatt.DataTables');
 
   public runAdhocQuery(query: string): any {
     alasql(query);

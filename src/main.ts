@@ -23,17 +23,18 @@ import {QueryRendererV2Service} from 'QueryRendererV2';
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
   use = use.plugin(this);
-  logger = this.use(LoggingService);
+  logger = this.use(LoggingService).getLogger('Qatt');
   dataTables = this.use(DataTables);
 
-  settings = useSettings(
-    this, // Plugin or other owner
-    DefaultSettings, // Default settings
-    (settings: typeof DefaultSettings) => {
-      // Code to init or update plugin state from settings
-      this.logger.configure(settings.loggingOptions);
-    },
-  );
+  // Settings, TBD is I use this or not.
+  // settings = useSettings(
+  //   this, // Plugin or other owner
+  //   DefaultSettings, // Default settings
+  //   (settings: typeof DefaultSettings) => {
+  //     // Code to init or update plugin state from settings
+  //     this.logger.configure(settings.loggingOptions);
+  //   },
+  // );
 
   // Public inlineRenderer: InlineRenderer | undefined;
   public queryRendererService: QueryRendererV2Service | undefined;

@@ -55,10 +55,8 @@ export class LoggingService extends Service {
     error: 5,
   };
 
-  private minLevel: number;
-
-  private get defaultModuleName() {
-    return 'Qatt';
+  public getLogger(loggerName: string): Logger {
+    return new Logger(loggerName, this.getLoggingLevel(loggerName));
   }
 
   /**
@@ -68,16 +66,9 @@ export class LoggingService extends Service {
    * @return {*}  {LogManager}
    * @memberof LoggingService
    */
-  public configure(options: ILogOptions): this {
+  public configure(options: ILogOptions) {
     this.options = Object.assign({}, this.options, options);
-    this.minLevel = this.getLoggingLevel(this.defaultModuleName);
     return this;
-  }
-
-  public setLogLevel(level: string) {
-    if (level.toLowerCase() in this.levels) {
-      this.minLevel = this.levels[level.toLowerCase()];
-    }
   }
 
   /**
@@ -103,6 +94,34 @@ export class LoggingService extends Service {
     }
 
     return 99;
+  }
+}
+
+export class Logger {
+  private readonly options: ILogOptions = {
+    minLevels: {
+      '': 'info',
+      Qatt: 'info',
+    },
+  };
+
+  private minLevel: number;
+  private readonly levels: Record<string, number> = {
+    trace: 1,
+    debug: 2,
+    info: 3,
+    warn: 4,
+    error: 5,
+  };
+
+  constructor(private readonly loggerName: string, private readonly defaultLevel: number = 3) {
+    this.minLevel = defaultLevel;
+  }
+
+  public setLogLevel(level: string) {
+    if (level.toLowerCase() in this.levels) {
+      this.minLevel = this.levels[level.toLowerCase()];
+    }
   }
 
   public trace(message: string, objects?: any): void {
@@ -161,7 +180,7 @@ export class LoggingService extends Service {
 
     let displayMessage = `[${DateTime.now().toISO() ?? ''}][${logEntry.level}]`;
 
-    displayMessage += logEntry.module === undefined ? `[${this.defaultModuleName}]` : `[${logEntry.module}]`;
+    displayMessage += logEntry.module === undefined ? `[${this.loggerName}]` : `[${logEntry.module}]`;
 
     if (logEntry.traceId !== '' && logEntry.traceId !== undefined) {
       displayMessage += `[${logEntry.traceId ?? ''}]`;

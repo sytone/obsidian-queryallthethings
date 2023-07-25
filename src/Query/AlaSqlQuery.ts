@@ -79,7 +79,7 @@ export class AlaSqlQuery extends Service implements IQuery {
   }
 
   plugin = this.use(Plugin);
-  logger = this.use(LoggingService);
+  logger = this.use(LoggingService).getLogger('Qatt.AlaSqlQuery');
   public queryConfiguration: QattCodeBlock;
   private sourcePath: string;
   // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents

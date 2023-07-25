@@ -13,15 +13,15 @@ import {RenderFactory} from 'Render/RenderFactory';
 import {QueryFactory} from 'Query/QueryFactory';
 import {type IQuery} from 'Query/IQuery';
 import {Service, use} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
+import {LoggingService, type Logger} from 'lib/LoggingService';
 
 export class QueryRendererV2Service extends Service {
   plugin = this.use(Plugin);
-  logger = this.use(LoggingService);
+  logger = this.use(LoggingService).getLogger('Qatt.QueryRendererV2Service');
 
   async onload() {
     this.plugin.registerMarkdownCodeBlockProcessor('qatt', (source: string, element: HTMLElement, context: MarkdownPostProcessorContext) => {
-      this.logger.info(`Adding SQL Query Render for ${source} to context ${context.docId}`);
+      this.logger.debug(`Adding QATT Render for ${source} to context ${context.docId}`);
 
       // Need to move back to this.
       // const render = this.use.fork().use(QueryRenderChild);
@@ -51,7 +51,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   public service: QueryRendererV2Service;
 
   plugin: Plugin;
-  logger: LoggingService;
+  logger: Logger;
   queryFactory: QueryFactory;
   renderFactory: RenderFactory;
 
@@ -72,7 +72,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     // an error that there is no context available. This class
     // cannot extend Service.
     this.plugin = service.use(Plugin);
-    this.logger = service.use(LoggingService);
+    this.logger = service.use(LoggingService).getLogger('Qatt.QueryRenderChildV2');
     this.queryFactory = service.use(QueryFactory);
     this.renderFactory = service.use(RenderFactory);
   }

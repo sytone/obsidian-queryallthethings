@@ -17,7 +17,7 @@ import {LoggingService} from 'lib/LoggingService';
 
 export class QueryRendererService extends Service {
   plugin = this.use(Plugin);
-  logger = this.use(LoggingService);
+  logger = this.use(LoggingService).getLogger('Qatt.QueryRendererService');
 
   public addQuerySqlRenderChild = this._addQuerySqlRenderChild.bind(this);
 
@@ -54,7 +54,7 @@ export class QueryRenderChild extends Service {
   public context: MarkdownPostProcessorContext;
 
   plugin = this.use(Plugin);
-  logger = this.use(LoggingService);
+  logger = this.use(LoggingService).getLogger('Qatt.QueryRenderChild');
   queryFactory = this.use(QueryFactory);
   renderFactory = this.use(RenderFactory);
 
