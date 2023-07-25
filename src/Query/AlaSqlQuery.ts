@@ -160,6 +160,7 @@ export class AlaSqlQuery extends Service implements IQuery {
     sourcePath: string,
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     frontmatter: any | undefined,
+    renderId: string | undefined,
   ): void {
     this._name = 'QuerySql';
     this.queryConfiguration = queryConfiguration;
@@ -175,7 +176,7 @@ export class AlaSqlQuery extends Service implements IQuery {
       this.logger.setLogLevel(this.queryConfiguration.logLevel);
     }
 
-    this._queryId = this.generateQueryId(10);
+    this._queryId = renderId ?? this.generateQueryId(10);
     this.logger.groupId(this._queryId);
     this._customJsClasses = [];
 

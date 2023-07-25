@@ -6,22 +6,18 @@ import {Service} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
 
 export class QueryFactory extends Service {
-  public getQuery(queryConfiguration: QattCodeBlock, sourcePath: string, frontmatter: any): IQuery {
+  public getQuery(queryConfiguration: QattCodeBlock, sourcePath: string, frontmatter: any, renderId?: string): IQuery {
     switch (queryConfiguration.queryEngine) {
       case 'alasql': {
         const query = this.use.fork().use(AlaSqlQuery);
-        query.setupQuery(queryConfiguration, sourcePath, frontmatter);
+        query.setupQuery(queryConfiguration, sourcePath, frontmatter, renderId);
         return query;
       }
 
       default: {
         const query = this.use.fork().use(AlaSqlQuery);
-        query.setupQuery(queryConfiguration, sourcePath, frontmatter);
+        query.setupQuery(queryConfiguration, sourcePath, frontmatter, renderId);
         return query; }
     }
-  }
-
-  public ping() {
-    this.use(LoggingService).info('QueryFactory.ping()');
   }
 }

@@ -4,20 +4,18 @@ import {DateTime} from 'luxon';
 import {getAPI, isPluginEnabled, type PageMetadata} from 'obsidian-dataview';
 import {parseTask} from 'Parse/Parsers';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
+import {type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild, Plugin} from 'obsidian';
 import {logging} from 'lib/Logging';
+import {Service} from '@ophidian/core';
+import {LoggingService} from 'lib/LoggingService';
 
 export interface IDataTables {
   refreshTables (reason: string): void;
 }
 
-export class DataTables {
-  logger = logging.getLogger('Qatt.DataTables');
-
-  constructor(
-    private readonly plugin: IQueryAllTheThingsPlugin,
-  ) {
-    this.logger.info('Created proxy table manager.');
-  }
+export class DataTables extends Service {
+  plugin = this.use(Plugin);
+  logger = this.use(LoggingService);
 
   public runAdhocQuery(query: string): any {
     alasql(query);
@@ -44,7 +42,7 @@ export class DataTables {
       this.refreshCalendarTable(reason);
     }
 
-    this.logger.log('info', `qatt.ReferenceCalendar check took ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
+    this.logger.info(`qatt.ReferenceCalendar check took ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
 
     this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
   }
@@ -122,7 +120,7 @@ export class DataTables {
       }]);
     }
 
-    this.logger.log('info', `qatt.ReferenceCalendar refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
+    this.logger.info(`qatt.ReferenceCalendar refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
   }
 
   public refreshTasksTableFromDataview(reason: string): void {
@@ -184,7 +182,7 @@ export class DataTables {
       }
     }
 
-    this.logger.log('info', `Tasks refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
+    this.logger.info(`Tasks refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
   }
 
   public refreshListsTableFromDataview(reason: string): void {
@@ -251,7 +249,7 @@ export class DataTables {
       }
     }
 
-    this.logger.log('info', `Lists refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
+    this.logger.info(`Lists refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
   }
 
   private getDataviewPages(): Map<string, PageMetadata> | undefined {

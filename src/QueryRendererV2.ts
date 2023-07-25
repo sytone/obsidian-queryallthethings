@@ -15,63 +15,72 @@ import {type IQuery} from 'Query/IQuery';
 import {Service, use} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
 
-export class QueryRendererService extends Service {
+export class QueryRendererV2Service extends Service {
   plugin = this.use(Plugin);
   logger = this.use(LoggingService);
 
-  public addQuerySqlRenderChild = this._addQuerySqlRenderChild.bind(this);
+  async onload() {
+    this.plugin.registerMarkdownCodeBlockProcessor('qatt', (source: string, element: HTMLElement, context: MarkdownPostProcessorContext) => {
+      this.logger.info(`Adding SQL Query Render for ${source} to context ${context.docId}`);
 
-  constructor(
-  ) {
-    super();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    this.plugin.registerMarkdownCodeBlockProcessor('qatt', this._addQuerySqlRenderChild.bind(this));
-  }
+      // Need to move back to this.
+      // const render = this.use.fork().use(QueryRenderChild);
+      // render.container = element;
+      // render.queryConfiguration = new QattCodeBlock(source);
+      // render.context = context;
+      // render.load();
 
-  private async _addQuerySqlRenderChild(source: string, element: HTMLElement, context: MarkdownPostProcessorContext) {
-    this.logger.debug(`Adding SQL Query Render for ${source} to context ${context.docId}`);
-
-    const render = this.use.fork().use(QueryRenderChild);
-    render.container = element;
-    render.queryConfiguration = new QattCodeBlock(source);
-    render.context = context;
-    render.load();
-
-    // Need to move back to this.
-    // context.addChild(
-    //   new QueryRenderChild(
-    //     element,
-    //     queryConfiguration,
-    //     context,
-    //   ),
-    // );
+      // Need to move back to this.
+      const queryConfiguration = new QattCodeBlock(source);
+      context.addChild(
+        new QueryRenderChildV2(
+          element,
+          queryConfiguration,
+          context,
+          this,
+        ),
+      );
+    });
   }
 }
 
-export class QueryRenderChild extends Service {
+export class QueryRenderChildV2 extends MarkdownRenderChild {
   public container: HTMLElement;
   public queryConfiguration: QattCodeBlock;
   public context: MarkdownPostProcessorContext;
+  public service: QueryRendererV2Service;
 
-  plugin = this.use(Plugin);
-  logger = this.use(LoggingService);
-  queryFactory = this.use(QueryFactory);
-  renderFactory = this.use(RenderFactory);
+  plugin: Plugin;
+  logger: LoggingService;
+  queryFactory: QueryFactory;
+  renderFactory: RenderFactory;
 
-  private readonly queryId: string;
+  private renderId: string;
 
-  constructor(
-  ) {
-    super();
-    this.queryId = 'TBD';
+  public constructor(
+    container: HTMLElement,
+    queryConfiguration: QattCodeBlock,
+    context: MarkdownPostProcessorContext,
+    service: QueryRendererV2Service) {
+    super(container);
+    this.container = container;
+    this.queryConfiguration = queryConfiguration;
+    this.context = context;
+    this.service = service;
+
+    this.plugin = service.use(Plugin);
+    this.logger = service.use(LoggingService);
+    this.queryFactory = service.use(QueryFactory);
+    this.renderFactory = service.use(RenderFactory);
   }
 
   onload() {
+    this.renderId = this.generateRenderId(10);
     if (this.queryConfiguration.logLevel) {
       this.logger.setLogLevel(this.queryConfiguration.logLevel);
     }
 
-    this.logger.debug(`Query Render generated for class ${this.container.className} -> ${this.container.className}`);
+    this.logger.infoWithId(this.renderId, `Query Render generated for class ${this.container.className} -> ${this.container.className}`);
 
     this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', this.render));
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
@@ -80,19 +89,24 @@ export class QueryRenderChild extends Service {
 
   onunload() {
     // Unload resources
+    this.logger.infoWithId(this.renderId, `QueryRenderChild unloaded for ${this.renderId}`);
   }
 
   render = async () => {
+    this.logger.groupId(this.renderId);
     const startTime = new Date(Date.now());
 
     // Run query and get results to be rendered
-    const queryEngine: IQuery = this.queryFactory.getQuery(this.queryConfiguration, this.context.sourcePath, this.context.frontmatter);
-    const results = queryEngine.applyQuery(this.queryId);
+    const queryEngine: IQuery = this.queryFactory.getQuery(this.queryConfiguration, this.context.sourcePath, this.context.frontmatter, this.renderId);
+    const results = queryEngine.applyQuery(this.renderId);
 
     const renderEngine: IRenderer = this.renderFactory.getRenderer(this.queryConfiguration);
 
+    const testWrapper = this.container.createEl('div');
+    testWrapper.innerHTML = `RenderID: ${this.renderId}`;
+
     const content = this.container.createEl('div');
-    content.setAttr('data-query-id', this.queryId);
+    content.setAttr('data-query-id', this.renderId);
 
     if (queryEngine.error) {
       content.setText(`QATT query error: ${queryEngine.error}`);
@@ -115,8 +129,10 @@ export class QueryRenderChild extends Service {
     }
 
     this.container.firstChild?.replaceWith(content);
+    this.container.prepend(testWrapper);
     const endTime = new Date(Date.now());
-    this.logger.debug(this.queryId, `Render End: ${endTime.getTime() - startTime.getTime()}ms`);
+    this.logger.infoWithId(this.renderId, `Render End: ${endTime.getTime() - startTime.getTime()}ms`);
+    this.logger.groupEndId();
   };
 
   markdown2html(markdown?: string): string {
@@ -154,5 +170,21 @@ export class QueryRenderChild extends Service {
       mdastExtensions: [fromWiki()],
     });
     return toString(tree);
+  }
+
+  /**
+   * Creates a unique ID for correlation of console logging.
+   *
+   * @private
+   * @param {number} length
+   * @return {*}  {string}
+   * @memberof QuerySql
+   */
+  private generateRenderId(length: number): string {
+    const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    const randomArray = Array.from({length}, () => chars[Math.floor(Math.random() * chars.length)]);
+
+    const randomString = randomArray.join('');
+    return randomString;
   }
 }

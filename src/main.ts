@@ -5,7 +5,7 @@
 import {Notice, Plugin} from 'obsidian';
 import {use, useSettings} from '@ophidian/core';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
-import {QueryRendererService} from 'QueryRenderer';
+import {type QueryRendererService} from 'QueryRenderer';
 import EventHandler from 'handlers/EventHandler';
 import {CommandHandler} from 'handlers/CommandHandler';
 import {DataTables} from 'Data/DataTables';
@@ -18,10 +18,13 @@ import {HandlebarsRendererObsidian} from 'Render/HandlebarsRendererObsidian';
 import {DefaultSettings} from 'Settings/DefaultSettings';
 import {LoggingService} from 'lib/LoggingService';
 import {QueryFactory} from 'Query/QueryFactory';
+import {RenderFactory} from 'Render/RenderFactory';
+import {QueryRendererV2Service} from 'QueryRendererV2';
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
   use = use.plugin(this);
   logger = this.use(LoggingService);
+  dataTables = this.use(DataTables);
 
   settings = useSettings(
     this, // Plugin or other owner
@@ -33,18 +36,19 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   );
 
   // Public inlineRenderer: InlineRenderer | undefined;
-  public queryRendererService: QueryRendererService | undefined;
+  public queryRendererService: QueryRendererV2Service | undefined;
   public eventHandler: EventHandler | undefined;
   public commandHandler: CommandHandler | undefined;
   public settingsManager: SettingsManager | undefined;
-  public dataTables: DataTables | undefined;
 
   onload() {
-    // This.use.set(QueryFactory, new QueryFactory());
+    this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
+
+    // Load the query factory in the main context for all services to use.
     this.use(QueryFactory).load();
 
-    // Setup logging and settings.
-    this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
+    // Load the Render factory in the main context for all services to use.
+    this.use(RenderFactory).load();
 
     // --- Settings
     // Load up the settings manager.
@@ -60,8 +64,6 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
     // Setup the UI tab.
     this.addSettingTab(new SettingsTab(this, this.settingsManager));
-
-    this.dataTables = new DataTables(this);
 
     if (!isPluginEnabled(this.app)) {
       // eslint-disable-next-line no-new
@@ -109,7 +111,8 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
         app.workspace.trigger('dataview:refresh-views');
       };
 
-      this.queryRendererService = this.use(QueryRendererService);
+      // D this.queryRendererService = this.use(QueryRendererService);
+      this.queryRendererService = this.use(QueryRendererV2Service);
     });
 
     // Refresh tables when dataview index is ready.
