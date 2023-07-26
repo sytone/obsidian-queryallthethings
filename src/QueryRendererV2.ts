@@ -14,23 +14,44 @@ import {QueryFactory} from 'Query/QueryFactory';
 import {type IQuery} from 'Query/IQuery';
 import {Service, use} from '@ophidian/core';
 import {LoggingService, type Logger} from 'lib/LoggingService';
+import {DateTime} from 'luxon';
 
+// eslint-disable-next-line @typescript-eslint/ban-types
+const debounce = (fn: Function, ms = 5000) => {
+  let timeoutId: ReturnType<typeof setTimeout>;
+  return function (this: any, ...args: any[]) {
+    clearTimeout(timeoutId);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    timeoutId = setTimeout(() => fn.apply(this, args), ms);
+    console.log(timeoutId);
+  };
+};
+
+/**
+ * This service handles the registration of the code block processor for QATT. So
+ * when the block is processed Obsidian will call the code block processor registered
+ * here and a new render child will be created and registered. When the block
+ * is changed or navigated away from the render child will be unloaded.
+ *
+ * @export
+ * @class QueryRendererV2Service
+ * @extends {Service}
+ */
 export class QueryRendererV2Service extends Service {
   plugin = this.use(Plugin);
   logger = this.use(LoggingService).getLogger('Qatt.QueryRendererV2Service');
+  lastCreation: DateTime;
+
+  constructor() {
+    super();
+    this.lastCreation = DateTime.now();
+  }
 
   async onload() {
     this.plugin.registerMarkdownCodeBlockProcessor('qatt', (source: string, element: HTMLElement, context: MarkdownPostProcessorContext) => {
+      this.logger.info(`lastCreation ${this.lastCreation.toISO() ?? ''}`);
       this.logger.debug(`Adding QATT Render for ${source} to context ${context.docId}`);
 
-      // Need to move back to this.
-      // const render = this.use.fork().use(QueryRenderChild);
-      // render.container = element;
-      // render.queryConfiguration = new QattCodeBlock(source);
-      // render.context = context;
-      // render.load();
-
-      // Need to move back to this.
       const queryConfiguration = new QattCodeBlock(source);
       context.addChild(
         new QueryRenderChildV2(
@@ -44,6 +65,14 @@ export class QueryRendererV2Service extends Service {
   }
 }
 
+/**
+ * All the rendering logic is handled here. It uses ths configuration to
+ * determine the rendering engine and the query engine.
+ *
+ * @export
+ * @class QueryRenderChildV2
+ * @extends {MarkdownRenderChild}
+ */
 export class QueryRenderChildV2 extends MarkdownRenderChild {
   public container: HTMLElement;
   public queryConfiguration: QattCodeBlock;
@@ -103,10 +132,8 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     const queryEngine: IQuery = this.queryFactory.getQuery(this.queryConfiguration, this.context.sourcePath, this.context.frontmatter, this.renderId);
     const results = queryEngine.applyQuery(this.renderId);
 
+    // Get the engine to render the results to HTML.
     const renderEngine: IRenderer = this.renderFactory.getRenderer(this.queryConfiguration);
-
-    const testWrapper = this.container.createEl('div');
-    testWrapper.innerHTML = `RenderID: ${this.renderId}`;
 
     const content = this.container.createEl('div');
     content.setAttr('data-query-id', this.renderId);
@@ -131,8 +158,17 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       }
     }
 
+    // Replace the content of the container with the new content.
     this.container.firstChild?.replaceWith(content);
-    this.container.prepend(testWrapper);
+
+    // If we are debugging ad the render ID to the top of the div to make
+    // tracing simpler.
+    if (this.queryConfiguration.logLevel === 'debug') {
+      const testWrapper = this.container.createEl('div');
+      testWrapper.innerHTML = `RenderID: ${this.renderId}`;
+      this.container.prepend(testWrapper);
+    }
+
     const endTime = new Date(Date.now());
     this.logger.infoWithId(this.renderId, `Render End: ${endTime.getTime() - startTime.getTime()}ms`);
     this.logger.groupEndId();

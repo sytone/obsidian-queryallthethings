@@ -1,11 +1,9 @@
 /* eslint-disable unicorn/filename-case */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {Notice, Plugin} from 'obsidian';
 import {use, useSettings} from '@ophidian/core';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
-import {type QueryRendererService} from 'QueryRenderer';
 import EventHandler from 'handlers/EventHandler';
 import {CommandHandler} from 'handlers/CommandHandler';
 import {DataTables} from 'Data/DataTables';
@@ -97,7 +95,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       (window as any).qattUpdateOriginalTask = async function (page: string, line: number, currentStatus: string, nextStatus: string) {
         nextStatus = nextStatus === '' ? ' ' : nextStatus;
 
-        const rawFileText = await this.app.vault.adapter.read(page);
+        const rawFileText = await app.vault.adapter.read(page);
         const hasRN = rawFileText.contains('\r');
         const fileText = rawFileText.split(/\r?\n/u);
 
@@ -108,7 +106,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
         fileText[line] = fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`);
 
         const newText = fileText.join(hasRN ? '\r\n' : '\n');
-        await this.app.vault.adapter.write(page, newText);
+        await app.vault.adapter.write(page, newText);
         app.workspace.trigger('dataview:refresh-views');
       };
 
