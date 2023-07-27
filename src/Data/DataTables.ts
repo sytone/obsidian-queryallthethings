@@ -44,7 +44,7 @@ export class DataTables extends Service {
 
     this.logger.info(`qatt.ReferenceCalendar check took ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
 
-    this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
+    this.plugin.app.workspace.trigger('qatt:dataview-store-update');
   }
 
   /**

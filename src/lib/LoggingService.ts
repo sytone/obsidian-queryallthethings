@@ -145,7 +145,7 @@ export class Logger {
   }
 
   public groupId(traceId: string): void {
-    console.groupCollapsed(`QATT Query Execution: ${traceId}`);
+    console.groupCollapsed(`${traceId}`);
   }
 
   public groupEndId(): void {
@@ -178,7 +178,7 @@ export class Logger {
       return;
     }
 
-    let displayMessage = `[${DateTime.now().toISO() ?? ''}][${logEntry.level}]`;
+    let displayMessage = `[${DateTime.now().toFormat('yyyyLLddHHmmss') ?? ''}][${logEntry.level}]`;
 
     displayMessage += logEntry.module === undefined ? `[${this.loggerName}]` : `[${logEntry.module}]`;
 

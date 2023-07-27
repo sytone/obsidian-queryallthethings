@@ -84,6 +84,7 @@ export interface IQattCodeBlock {
   logLevel: string | undefined;
   codeBlockContent: string;
   replaceCodeBlock: string | undefined;
+  queryDataSource: string;
 }
 
 export class QattCodeBlock implements IQattCodeBlock {
@@ -96,6 +97,7 @@ export class QattCodeBlock implements IQattCodeBlock {
   renderEngine: string | undefined;
   logLevel: string | undefined;
   replaceCodeBlock: string | undefined;
+  queryDataSource: string;
 
   constructor(
     public codeBlockContent: string,
@@ -132,5 +134,23 @@ export class QattCodeBlock implements IQattCodeBlock {
     } else {
       this.replaceCodeBlock = parsedCodeBlock.replaceCodeBlock;
     }
+
+    this.queryDataSource = this.getParsedQuerySource(this.query ?? '');
+  }
+
+  private getParsedQuerySource(query: string) {
+    if (/\bobsidian_markdown_notes\b/gi.test(query)) {
+      return 'qatt';
+    }
+
+    if (/\bobsidian_markdown_files\b/gi.test(query)) {
+      return 'obsidian';
+    }
+
+    if (/\bdataview_pages\b/gi.test(query)) {
+      return 'dataview';
+    }
+
+    return '';
   }
 }

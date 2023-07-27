@@ -5,6 +5,7 @@ import {type QattCodeBlock} from 'QattCodeBlock';
 import {type IQuery} from 'Query/IQuery';
 import {Service} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
+import {NotesCacheService} from 'NotesCacheService';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -80,6 +81,8 @@ export class AlaSqlQuery extends Service implements IQuery {
 
   plugin = this.use(Plugin);
   logger = this.use(LoggingService).getLogger('Qatt.AlaSqlQuery');
+  notesCache = this.use(NotesCacheService);
+
   public queryConfiguration: QattCodeBlock;
   private sourcePath: string;
   // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
@@ -347,7 +350,11 @@ export class AlaSqlQuery extends Service implements IQuery {
   private getDataTable(query: string): any[] {
     let dataTable: any[] = [];
     if (/\bobsidian_markdown_notes\b/gi.test(query)) {
-      dataTable = this.plugin.app.vault.getMarkdownFiles();
+      dataTable = this.notesCache.notes;
+      this.logger.debugWithId(this._queryId, `notesCache.notes: ${this.notesCache.notes.length}`, this.notesCache.notes);
+
+      // Old direct query for the data every time.
+      // dataTable = this.plugin.app.vault.getMarkdownFiles();
     } else if (/\bobsidian_markdown_files\b/gi.test(query)) {
       dataTable = this.plugin.app.vault.getMarkdownFiles();
     } else if (/\bdataview_pages\b/gi.test(query)) {

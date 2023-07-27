@@ -107,14 +107,24 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   }
 
   onload() {
-    this.renderId = this.generateRenderId(10);
+    this.renderId = `${this.generateRenderId(10)}:${this.context.sourcePath}`;
     if (this.queryConfiguration.logLevel) {
       this.logger.setLogLevel(this.queryConfiguration.logLevel);
     }
 
     this.logger.infoWithId(this.renderId, `Query Render generated for class ${this.container.className} -> ${this.container.className}`);
 
-    this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', this.render));
+    if (this.queryConfiguration.queryDataSource === 'qatt') {
+      this.registerEvent(this.plugin.app.workspace.on('qatt:notes-store-update', this.render));
+    }
+
+    if (this.queryConfiguration.queryDataSource === 'dataview') {
+      this.registerEvent(this.plugin.app.workspace.on('qatt:dataview-store-update', this.render));
+    }
+
+    // Old event
+    // this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', this.render));
+
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.render();
   }
@@ -166,7 +176,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     if (this.queryConfiguration.logLevel === 'debug') {
       const testWrapper = this.container.createEl('div');
       testWrapper.innerHTML = `RenderID: ${this.renderId}`;
-      this.container.prepend(testWrapper);
+      content.prepend(testWrapper);
     }
 
     const endTime = new Date(Date.now());

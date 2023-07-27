@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/filename-case */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {Notice, Plugin} from 'obsidian';
+import {type CachedMetadata, Notice, Plugin, type TFile} from 'obsidian';
 import {use, useSettings} from '@ophidian/core';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
 import EventHandler from 'handlers/EventHandler';
@@ -18,7 +18,11 @@ import {LoggingService} from 'lib/LoggingService';
 import {QueryFactory} from 'Query/QueryFactory';
 import {RenderFactory} from 'Render/RenderFactory';
 import {QueryRendererV2Service} from 'QueryRendererV2';
+import {NotesCacheService} from 'NotesCacheService';
 
+export class Note {
+  constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
+}
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
   use = use.plugin(this);
   logger = this.use(LoggingService).getLogger('Qatt');
@@ -39,6 +43,9 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   public eventHandler: EventHandler | undefined;
   public commandHandler: CommandHandler | undefined;
   public settingsManager: SettingsManager | undefined;
+  public notesCacheService: NotesCacheService | undefined;
+
+  public notes: Note[] = [];
 
   onload() {
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
@@ -112,6 +119,8 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
       // D this.queryRendererService = this.use(QueryRendererService);
       this.queryRendererService = this.use(QueryRendererV2Service);
+
+      this.notesCacheService = this.use(NotesCacheService);
     });
 
     // Refresh tables when dataview index is ready.
