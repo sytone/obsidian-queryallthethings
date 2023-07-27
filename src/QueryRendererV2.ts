@@ -112,7 +112,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       this.logger.setLogLevel(this.queryConfiguration.logLevel);
     }
 
-    this.logger.infoWithId(this.renderId, `Query Render generated for class ${this.container.className} -> ${this.container.className}`);
+    this.logger.infoWithId(this.renderId, `Query Render generated for class ${this.container.className} -> ${this.queryConfiguration.queryDataSource}`);
 
     if (this.queryConfiguration.queryDataSource === 'qatt') {
       this.registerEvent(this.plugin.app.workspace.on('qatt:notes-store-update', this.render));

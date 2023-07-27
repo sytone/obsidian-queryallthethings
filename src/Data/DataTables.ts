@@ -125,12 +125,12 @@ export class DataTables extends Service {
 
   public refreshTasksTableFromDataview(reason: string): void {
     alasql('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Tasks Table refreshed: ${reason}`}]]);
-    if (alasql('SHOW TABLES FROM alasql LIKE "tasks"').length > 0) {
-      this.logger.info('Dropping the tasks table to repopulate.');
-      alasql('DROP TABLE tasks ');
+    if (alasql('SHOW TABLES FROM alasql LIKE "dataview_tasks"').length > 0) {
+      this.logger.info('Dropping the dataview_tasks table to repopulate.');
+      alasql('DROP TABLE dataview_tasks ');
     }
 
-    alasql('CREATE TABLE tasks ');
+    alasql('CREATE TABLE dataview_tasks ');
 
     const start = DateTime.now();
     const dataviewPages = this.getDataviewPages() ?? new Map<string, PageMetadata>();
@@ -164,7 +164,7 @@ export class DataTables extends Service {
 
           // << tasks-table-snippet
           */
-          alasql('INSERT INTO tasks VALUES ?', [{
+          alasql('INSERT INTO dataview_tasks VALUES ?', [{
             page: p[1].path,
             task: l.text,
             status: l.task?.status,
@@ -189,12 +189,12 @@ export class DataTables extends Service {
     alasql('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Lists Table refreshed: ${reason}`}]]);
 
     // Temporary tables based on current state to make some queries faster.
-    if (alasql('SHOW TABLES FROM alasql LIKE "lists"').length > 0) {
+    if (alasql('SHOW TABLES FROM alasql LIKE "dataview_lists"').length > 0) {
       this.logger.info('Dropping the tasks table to repopulate.');
-      alasql('DROP TABLE lists ');
+      alasql('DROP TABLE dataview_lists ');
     }
 
-    alasql('CREATE TABLE lists ');
+    alasql('CREATE TABLE dataview_lists ');
 
     const start = DateTime.now();
     const dataviewPages = this.getDataviewPages() ?? new Map<string, PageMetadata>();
@@ -232,7 +232,7 @@ export class DataTables extends Service {
 
         // << lists-table-snippet
         */
-        alasql('INSERT INTO lists VALUES ?', [{
+        alasql('INSERT INTO dataview_lists VALUES ?', [{
           symbol: l.symbol,
           path: p[1].path,
           pageName: this.parsePathFilenameNoExt(p[1].path),

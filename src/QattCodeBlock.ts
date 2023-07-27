@@ -151,6 +151,14 @@ export class QattCodeBlock implements IQattCodeBlock {
       return 'dataview';
     }
 
+    if (/\bdataview_tasks\b/gi.test(query)) {
+      return 'dataview';
+    }
+
+    if (/\bdataview_lists\b/gi.test(query)) {
+      return 'dataview';
+    }
+
     return '';
   }
 }
