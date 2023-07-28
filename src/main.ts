@@ -1,7 +1,8 @@
-/* eslint-disable unicorn/filename-case */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {type CachedMetadata, Notice, Plugin, type TFile} from 'obsidian';
+import {type CachedMetadata, Notice, Plugin, type TFile, debounce} from 'obsidian';
 import {use, useSettings} from '@ophidian/core';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
 import EventHandler from 'handlers/EventHandler';
@@ -19,24 +20,36 @@ import {QueryFactory} from 'Query/QueryFactory';
 import {RenderFactory} from 'Render/RenderFactory';
 import {QueryRendererV2Service} from 'QueryRendererV2';
 import {NotesCacheService} from 'NotesCacheService';
+import {useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
 
 export class Note {
   constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
 }
+
+export interface IPluginSettings {
+  onStartSqlQueries: string;
+}
+
+export const PluginSettingsDefaults: IPluginSettings = {
+  onStartSqlQueries: '',
+};
+
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
   use = use.plugin(this);
   logger = this.use(LoggingService).getLogger('Qatt');
   dataTables = this.use(DataTables);
 
   // Settings, TBD is I use this or not.
-  // settings = useSettings(
-  //   this, // Plugin or other owner
-  //   DefaultSettings, // Default settings
-  //   (settings: typeof DefaultSettings) => {
-  //     // Code to init or update plugin state from settings
-  //     this.logger.configure(settings.loggingOptions);
-  //   },
-  // );
+  settingsTab = useSettingsTab(this);
+  settings = useSettings(
+    this, // Plugin or other owner
+    PluginSettingsDefaults, // Default settings
+    (settings: IPluginSettings) => {
+      // Code to init or update plugin state from settings
+      this.logger.info('Settings Update', settings);
+      this.onStartSqlQueries = settings.onStartSqlQueries;
+    },
+  );
 
   // Public inlineRenderer: InlineRenderer | undefined;
   public queryRendererService: QueryRendererV2Service | undefined;
@@ -46,6 +59,29 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   public notesCacheService: NotesCacheService | undefined;
 
   public notes: Note[] = [];
+
+  onStartSqlQueries = PluginSettingsDefaults.onStartSqlQueries;
+
+  showSettings() {
+    const tab = this.settingsTab;
+    const {settings} = this;
+    tab.field().setName('Plugin Settings').setHeading();
+    const addNew = tab.field()
+      .setName('On Start SQL Queries')
+      .addText(text => {
+        const onChange = async (value: string) => {
+          await settings.update(PluginSettings => {
+            PluginSettings.onStartSqlQueries = value;
+          });
+        };
+
+        text.setPlaceholder(PluginSettingsDefaults.onStartSqlQueries)
+          .setValue(this.onStartSqlQueries)
+          .onChange(debounce(onChange, 500, true));
+      });
+
+    tab.field();
+  }
 
   onload() {
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);

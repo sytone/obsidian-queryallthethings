@@ -163,7 +163,7 @@ export class AlaSqlQuery extends Service implements IQuery {
     sourcePath: string,
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     frontmatter: any | undefined,
-    renderId: string | undefined,
+    renderId: string,
   ): void {
     this._name = 'QuerySql';
     this.queryConfiguration = queryConfiguration;
@@ -179,7 +179,7 @@ export class AlaSqlQuery extends Service implements IQuery {
       this.logger.setLogLevel(this.queryConfiguration.logLevel);
     }
 
-    this._queryId = renderId ?? this.generateQueryId(10);
+    this._queryId = renderId;
     this.logger.groupId(this._queryId);
     this._customJsClasses = [];
 
@@ -377,21 +377,5 @@ export class AlaSqlQuery extends Service implements IQuery {
     const queryResult: any = this.query();
 
     return queryResult;
-  }
-
-  /**
-   * Creates a unique ID for correlation of console logging.
-   *
-   * @private
-   * @param {number} length
-   * @return {*}  {string}
-   * @memberof QuerySql
-   */
-  private generateQueryId(length: number): string {
-    const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    const randomArray = Array.from({length}, () => chars[Math.floor(Math.random() * chars.length)]);
-
-    const randomString = randomArray.join('');
-    return randomString;
   }
 }

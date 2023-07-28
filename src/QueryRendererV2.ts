@@ -6,25 +6,25 @@ import {html as wikiHtml, syntax as wiki} from 'micromark-extension-wiki-link';
 import {fromMarkdown} from 'mdast-util-from-markdown';
 import {toString} from 'mdast-util-to-string';
 import {fromMarkdown as fromWiki} from 'mdast-util-wiki-link';
-import {type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild, Plugin} from 'obsidian';
+import {type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild, Plugin, debounce} from 'obsidian';
 import {QattCodeBlock} from 'QattCodeBlock';
 import {type IRenderer} from 'Render/IRenderer';
 import {RenderFactory} from 'Render/RenderFactory';
 import {QueryFactory} from 'Query/QueryFactory';
 import {type IQuery} from 'Query/IQuery';
-import {Service, use} from '@ophidian/core';
+import {Service, useSettings} from '@ophidian/core';
 import {LoggingService, type Logger} from 'lib/LoggingService';
 import {DateTime} from 'luxon';
+import {useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
 
-// eslint-disable-next-line @typescript-eslint/ban-types
-const debounce = (fn: Function, ms = 5000) => {
-  let timeoutId: ReturnType<typeof setTimeout>;
-  return function (this: any, ...args: any[]) {
-    clearTimeout(timeoutId);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    timeoutId = setTimeout(() => fn.apply(this, args), ms);
-    console.log(timeoutId);
-  };
+export interface IRenderingSettings {
+  postRenderFormat: string;
+  enableExperimentalRender: boolean;
+}
+
+export const RenderingSettingsDefaults: IRenderingSettings = {
+  postRenderFormat: 'micromark',
+  enableExperimentalRender: false,
 };
 
 /**
@@ -41,10 +41,42 @@ export class QueryRendererV2Service extends Service {
   plugin = this.use(Plugin);
   logger = this.use(LoggingService).getLogger('Qatt.QueryRendererV2Service');
   lastCreation: DateTime;
+  settingsTab = useSettingsTab(this);
+  settings = useSettings(
+    this,
+    RenderingSettingsDefaults,
+    (settings: IRenderingSettings) => {
+      this.logger.info('QueryRendererV2Service Settings Update - postRenderFormat', settings);
+      this.postRenderFormat = settings.postRenderFormat;
+    },
+  );
+
+  postRenderFormat = RenderingSettingsDefaults.postRenderFormat;
 
   constructor() {
     super();
     this.lastCreation = DateTime.now();
+  }
+
+  showSettings() {
+    const tab = this.settingsTab;
+    const {settings} = this;
+    tab.field().setName('Rendering Settings').setHeading();
+    const addNew = tab.field()
+      .setName('Default Post Render Format')
+      .addText(text => {
+        const onChange = async (value: string) => {
+          await settings.update(RenderingSettings => {
+            RenderingSettings.postRenderFormat = value;
+          });
+        };
+
+        text.setPlaceholder('micromark')
+          .setValue(this.postRenderFormat)
+          .onChange(debounce(onChange, 500, true));
+      });
+
+    tab.field();
   }
 
   async onload() {
@@ -107,7 +139,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   }
 
   onload() {
-    this.renderId = `${this.generateRenderId(10)}:${this.context.sourcePath}`;
+    this.renderId = `${this.queryConfiguration.id}:${this.context.sourcePath}`;
     if (this.queryConfiguration.logLevel) {
       this.logger.setLogLevel(this.queryConfiguration.logLevel);
     }
@@ -171,12 +203,13 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     // Replace the content of the container with the new content.
     this.container.firstChild?.replaceWith(content);
 
-    // If we are debugging ad the render ID to the top of the div to make
+    // If we are debugging add the render ID to the top of the div to make
     // tracing simpler.
     if (this.queryConfiguration.logLevel === 'debug') {
-      const testWrapper = this.container.createEl('div');
-      testWrapper.innerHTML = `RenderID: ${this.renderId}`;
-      content.prepend(testWrapper);
+      const debugWrapper = this.container.createEl('sub');
+      debugWrapper.className = 'qatt-render-debugWrapper';
+      debugWrapper.innerHTML = `RenderID: ${this.renderId}`;
+      content.prepend(debugWrapper);
     }
 
     const endTime = new Date(Date.now());
@@ -219,21 +252,5 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       mdastExtensions: [fromWiki()],
     });
     return toString(tree);
-  }
-
-  /**
-   * Creates a unique ID for correlation of console logging.
-   *
-   * @private
-   * @param {number} length
-   * @return {*}  {string}
-   * @memberof QuerySql
-   */
-  private generateRenderId(length: number): string {
-    const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    const randomArray = Array.from({length}, () => chars[Math.floor(Math.random() * chars.length)]);
-
-    const randomString = randomArray.join('');
-    return randomString;
   }
 }
