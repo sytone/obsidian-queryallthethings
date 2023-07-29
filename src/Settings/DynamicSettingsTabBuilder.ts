@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+ 
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import {SettingsService, useSettings, type Useful, getContext, onLoad, use} from '@ophidian/core';
 import {type CachedMetadata, Notice, Plugin, type TFile, PluginSettingTab, type Component, Setting, htmlToMarkdown, debounce} from 'obsidian';
@@ -132,7 +134,7 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Usefu
   }
 
   addTextInput(input: SettingsTabField, onChange: (value: string) => void, parentElement = this.containerEl) {
-    this.field(parentElement)
+    return this.field(parentElement)
       .setName(input.name)
       .setDesc(input.description)
       .addText(text => {
@@ -154,12 +156,12 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Usefu
 
   // break;
   addTextAreaInput(input: SettingsTabField, onChange: (value: string) => void, parentElement = this.containerEl) {
-    this.field(parentElement)
+    return this.field(parentElement)
       .setName(input.name)
       .setDesc(input.description)
       .addTextArea(text => {
         text.setPlaceholder(input.placeholder)
-          .setValue(this.onStartSqlQueries)
+          .setValue(input.value)
           .onChange(debounce(onChange, 500, true));
         text.inputEl.rows = input.textAreaRows;
         text.inputEl.cols = input.textAreaCols;

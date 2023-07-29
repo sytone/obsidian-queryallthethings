@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-confusing-void-expression */
 
 import alasql from 'alasql';
 import {Plugin} from 'obsidian';
@@ -8,8 +7,8 @@ import {type IQuery} from 'Query/IQuery';
 import {Service, useSettings} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
 import {NotesCacheService} from 'NotesCacheService';
-import {type IPluginSettings, PluginSettingsDefaults} from 'Settings/DefaultSettings';
 import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
+import {type ISqlSettings, SqlSettingsDefaults} from 'Settings/DefaultSettings';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -87,20 +86,6 @@ export class AlaSqlQuery extends Service implements IQuery {
   logger = this.use(LoggingService).getLogger('Qatt.AlaSqlQuery');
   notesCache = this.use(NotesCacheService);
 
-  // Settings, TBD is I use this or not.
-  settingsTab = useSettingsTab(this);
-  settings = useSettings(
-    this, // Plugin or other owner
-    PluginSettingsDefaults, // Default settings
-    (settings: IPluginSettings) => {
-      // Code to init or update plugin state from settings
-      this.logger.info('Settings Update', settings);
-      this.onStartSqlQueries = settings.onStartSqlQueries;
-    },
-  );
-
-  onStartSqlQueries: string;
-
   public queryConfiguration: QattCodeBlock;
   private sourcePath: string;
   // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
@@ -115,35 +100,6 @@ export class AlaSqlQuery extends Service implements IQuery {
   // private _customJsClasses: Array<[string, string]>;
 
   private _sqlQuery: string;
-
-  // Settings are rendered in the settings via this. Need to
-  // refactor this to use the SettingsTab approach I had.
-  showSettings() {
-    const tab = this.settingsTab;
-    const {settings} = this;
-
-    tab.initializeTab();
-    tab.addHeading(new SettingsTabHeading({text: 'Query All The Things', level: 'h1', noticeText: 'A plugin that allows you to make queries against the internal data of obsidian and render it how you want.'}));
-
-    const generalSettingsSection = tab.addHeading(new SettingsTabHeading({text: 'General Settings', level: 'h2', class: 'settings-heading'}));
-
-    const onChange = async (value: string) => {
-      await settings.update(PluginSettings => {
-        PluginSettings.onStartSqlQueries = value;
-      });
-    };
-
-    const startSQLQueries = tab.addTextAreaInput(
-      new SettingsTabField({
-        name: 'On Start SQL Queries',
-        description: 'If you want to create tables and set data so your queries can use it at a later time without having to duplicate the queries enter them here. These will be executed when the plugin is loaded after the data tables have been initialized.',
-        placeholder: PluginSettingsDefaults.onStartSqlQueries,
-        value: this.onStartSqlQueries,
-      }),
-      onChange,
-      generalSettingsSection,
-    );
-  }
 
   /**
    * Creates an instance of QuerySql which parses the YAML source and
