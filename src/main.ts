@@ -14,25 +14,17 @@ import {SettingsTab} from 'Settings/SettingsTab';
 import {SettingsManager} from 'Settings/SettingsManager';
 import {AlaSqlQuery} from 'Query/AlaSqlQuery';
 import {HandlebarsRendererObsidian} from 'Render/HandlebarsRendererObsidian';
-import {DefaultSettings} from 'Settings/DefaultSettings';
+import {DefaultSettings, type IPluginSettings, PluginSettingsDefaults} from 'Settings/DefaultSettings';
 import {LoggingService} from 'lib/LoggingService';
 import {QueryFactory} from 'Query/QueryFactory';
 import {RenderFactory} from 'Render/RenderFactory';
 import {QueryRendererV2Service} from 'QueryRendererV2';
 import {NotesCacheService} from 'NotesCacheService';
-import {useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
+import {SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
 
 export class Note {
   constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
 }
-
-export interface IPluginSettings {
-  onStartSqlQueries: string;
-}
-
-export const PluginSettingsDefaults: IPluginSettings = {
-  onStartSqlQueries: '',
-};
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
   use = use.plugin(this);
@@ -60,11 +52,16 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
   public notes: Note[] = [];
 
+  // Settings used by the plugin, mostly when loading.
   onStartSqlQueries = PluginSettingsDefaults.onStartSqlQueries;
 
+  // Settings are rendered in the settings via this. Need to
+  // refactor this to use the SettingsTab approach I had.
   showSettings() {
     const tab = this.settingsTab;
     const {settings} = this;
+
+    tab.addHeading(new SettingsTabHeading({text: 'General Settings', level: 'h2', class: 'settings-heading'}));
     tab.field().setName('Plugin Settings').setHeading();
     const addNew = tab.field()
       .setName('On Start SQL Queries')

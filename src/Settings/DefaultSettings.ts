@@ -18,3 +18,11 @@ export const DefaultSettings: ISettings = {
     },
   },
 };
+
+export interface IPluginSettings {
+  onStartSqlQueries: string;
+}
+
+export const PluginSettingsDefaults: IPluginSettings = {
+  onStartSqlQueries: '',
+};

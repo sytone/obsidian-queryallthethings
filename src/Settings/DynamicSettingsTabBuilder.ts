@@ -1,5 +1,5 @@
 import {type Useful, getContext, onLoad, use} from '@ophidian/core';
-import {type CachedMetadata, Notice, Plugin, type TFile, PluginSettingTab, type Component, Setting} from 'obsidian';
+import {type CachedMetadata, Notice, Plugin, type TFile, PluginSettingTab, type Component, Setting, htmlToMarkdown} from 'obsidian';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export interface SettingsProvider extends Component {
@@ -11,7 +11,52 @@ export function useSettingsTab(owner: SettingsProvider & Partial<Useful>) {
   return getContext(owner)(DynamicSettingsTabBuilder).addProvider(owner);
 }
 
+export class SettingsTabHeading {
+  text: string;
+  level: string;
+  class: string;
+  open: boolean;
+  noticeClass: string;
+  noticeText: string;
+  noticeHtml: string;
+
+  constructor(payload: Partial<SettingsTabHeading>) {
+    this.text = payload.text ?? '';
+    this.level = payload.level ?? '';
+    this.class = payload.class ?? '';
+    this.open = payload.open ?? true;
+    this.noticeClass = payload.noticeClass ?? '';
+    this.noticeText = payload.noticeText ?? '';
+    this.noticeHtml = payload.noticeHtml ?? '';
+  }
+}
+
+export class SettingsTabField {
+  name: string;
+  description: string;
+  type: string;
+  initialValue: string | Record<string, string> | boolean | number;
+  placeholder: string;
+  settingName: string;
+  featureFlag: string;
+  noticeClass: string;
+  noticeText: string;
+  noticeHtml: string;
+
+  constructor(payload: Partial<SettingsTabField>) {
+    this.name = payload.name ?? '';
+    this.description = payload.description ?? '';
+    this.type = payload.type ?? '';
+    this.initialValue = payload.initialValue ?? true;
+    this.noticeClass = payload.noticeClass ?? '';
+    this.noticeText = payload.noticeText ?? '';
+    this.noticeHtml = payload.noticeHtml ?? '';
+  }
+}
+
 export class DynamicSettingsTabBuilder extends PluginSettingTab implements FieldParent {
+  public cssClassPrefix = 'qatt';
+
   protected onDisplayCallback: (s: DynamicSettingsTabBuilder) => any;
   protected onHideCallback: (s: DynamicSettingsTabBuilder) => any;
 
@@ -32,6 +77,165 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Field
     return new FieldBuilder(this, parentElement);
   }
 
+  addHeading(heading: SettingsTabHeading) {
+    const detailsContainer = this.containerEl.createEl('details', {
+      cls: `${this.cssClassPrefix}-nested-settings`,
+      attr: {
+        ...(heading.open ? {open: true} : {}),
+      },
+    });
+    detailsContainer.empty();
+    detailsContainer.addEventListener('toggle', () => {
+      // Save heading state.
+      // headingOpened[heading.text] = detailsContainer.open;
+      // this.settingsManager.updateSettings({headingOpened});
+      // this.plugin.saveSettings();
+    });
+
+    const summary = detailsContainer.createEl('summary');
+    new Setting(summary).setHeading().setName(heading.text);
+    summary.createDiv('collapser').createDiv('handle');
+
+    // DetailsContainer.createEl(heading.level as keyof HTMLElementTagNameMap, { text: heading.text });
+
+    if (heading.noticeText !== null) {
+      const notice = detailsContainer.createEl('div', {
+        cls: heading.noticeClass,
+        text: heading.noticeText,
+      });
+      if (heading.noticeHtml) {
+        notice.insertAdjacentHTML('beforeend', heading.noticeHtml);
+      }
+    }
+
+    return detailsContainer;
+  }
+
+  /*
+  AddField(field: SettingsTabField, parentContainer: HTMLElement) {
+    switch (field.type) {
+      case 'checkbox': {
+      // --------------------------------------------------------------------------
+      //                 Render options that are Boolean in nature.
+      // --------------------------------------------------------------------------
+        new Setting(parentContainer)
+          .setName(field.name)
+          .setDesc(field.description)
+          .addToggle(toggle => {
+            const settings = this.settingsManager.getSettings();
+            if (!settings.generalSettings[setting.settingName]) {
+              this.settingsManager.setValue(setting.settingName, setting.initialValue);
+            }
+
+            toggle
+              .setValue(settings.generalSettings[setting.settingName] as boolean)
+              .onChange(async value => {
+                this.settingsManager.setValue(setting.settingName, value);
+                await this.plugin.saveSettings();
+              });
+          });
+
+        break;
+      }
+
+      case 'text': {
+      // --------------------------------------------------------------------------
+      //                Render options that are single lines of text.
+      // --------------------------------------------------------------------------
+        new Setting(detailsContainer)
+          .setName(setting.name)
+          .setDesc(setting.description)
+          .addText(text => {
+            const settings = this.settingsManager.getSettings();
+            if (!settings.generalSettings[setting.settingName]) {
+              this.settingsManager.setValue(setting.settingName, setting.initialValue);
+            }
+
+            const onChange = async (value: string) => {
+              this.settingsManager.setValue(setting.settingName, value);
+              await this.plugin.saveSettings();
+            };
+
+            text.setPlaceholder(setting.placeholder as string)
+              .setValue(settings.generalSettings[setting.settingName] as string)
+              .onChange(debounce(onChange, 500, true));
+          });
+
+        break;
+      }
+
+      case 'textarea': {
+      // --------------------------------------------------------------------------
+      //               Render options that are multiple lines of text.
+      // --------------------------------------------------------------------------
+        new Setting(detailsContainer)
+          .setName(setting.name)
+          .setDesc(setting.description)
+          .addTextArea(text => {
+            const settings = this.settingsManager.getSettings();
+            if (!settings.generalSettings[setting.settingName]) {
+              this.settingsManager.setValue(setting.settingName, setting.initialValue);
+            }
+
+            const onChange = async (value: string) => {
+              this.settingsManager.setValue(setting.settingName, value);
+              await this.plugin.saveSettings();
+            };
+
+            text.setPlaceholder(setting.placeholder as string)
+              .setValue(settings.generalSettings[setting.settingName] as string)
+              .onChange(debounce(onChange, 500, true));
+
+            text.inputEl.rows = 8;
+            text.inputEl.cols = 40;
+          });
+
+        break;
+      }
+
+      case 'dropdown': {
+        // -------------------------------------------------------------------------- //
+        //               Render options that are selectable from a drop down.         //
+        // -------------------------------------------------------------------------- //
+        // The setting.placeholder value is used to define the options for the dropdown. It is a record of key value pairs. The key is the value that is stored in the settings file and the value is the text that is displayed to the user. For example: { '1': 'One', '2': 'Two' } will display the options 'One' and 'Two' to the user and store the value '1' or '2' in the settings file. This is useful for when the value stored in the settings file is not the same as the value displayed to the user.
+
+        const options = setting.placeholder as Record<string, string>;
+
+        new Setting(detailsContainer)
+          .setName(setting.name)
+          .setDesc(setting.description)
+          .addDropdown(dropdown => {
+            const settings = this.settingsManager.getSettings();
+            if (!settings.generalSettings[setting.settingName]) {
+              this.settingsManager.setValue(setting.settingName, setting.initialValue);
+            }
+
+            const onChange = async (value: string) => {
+              this.settingsManager.setValue(setting.settingName, value);
+              await this.plugin.saveSettings();
+            };
+
+            dropdown
+              .addOptions(options)
+              .setValue(settings.generalSettings[setting.settingName].toString())
+              .onChange(debounce(onChange, 500, true));
+          });
+
+        break;
+      }
+
+      case 'function': {
+      // --------------------------------------------------------------------------
+      //        If the UI is super custom then call the registered function.
+      // --------------------------------------------------------------------------
+        this.customFunctions[setting.settingName](detailsContainer, this);
+
+        break;
+      }
+    // No default
+    }
+  }
+*/
   // eslint-disable-next-line unicorn/no-thenable
   then(cb: (s: this) => any): this {
     cb(this);
