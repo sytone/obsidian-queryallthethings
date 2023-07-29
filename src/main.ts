@@ -1,26 +1,21 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable unicorn/filename-case */
 
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {type CachedMetadata, Notice, Plugin, type TFile, debounce} from 'obsidian';
-import {use, useSettings} from '@ophidian/core';
+import {type CachedMetadata, Notice, Plugin, type TFile} from 'obsidian';
+import {use} from '@ophidian/core';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
-import EventHandler from 'handlers/EventHandler';
-import {CommandHandler} from 'handlers/CommandHandler';
+import type EventHandler from 'handlers/EventHandler';
+import {type CommandHandler} from 'handlers/CommandHandler';
 import {DataTables} from 'Data/DataTables';
 import {isPluginEnabled} from 'obsidian-dataview';
 import {HandlebarsRenderer} from 'Render/HandlebarsRenderer';
-import {SettingsTab} from 'Settings/SettingsTab';
-import {SettingsManager} from 'Settings/SettingsManager';
+import {type SettingsManager} from 'Settings/SettingsManager';
 import {AlaSqlQuery} from 'Query/AlaSqlQuery';
 import {HandlebarsRendererObsidian} from 'Render/HandlebarsRendererObsidian';
-import {DefaultSettings, type IPluginSettings, PluginSettingsDefaults} from 'Settings/DefaultSettings';
 import {LoggingService} from 'lib/LoggingService';
 import {QueryFactory} from 'Query/QueryFactory';
 import {RenderFactory} from 'Render/RenderFactory';
 import {QueryRendererV2Service} from 'QueryRendererV2';
 import {NotesCacheService} from 'NotesCacheService';
-import {SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
 
 export class Note {
   constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
@@ -31,54 +26,12 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   logger = this.use(LoggingService).getLogger('Qatt');
   dataTables = this.use(DataTables);
 
-  // Settings, TBD is I use this or not.
-  settingsTab = useSettingsTab(this);
-  settings = useSettings(
-    this, // Plugin or other owner
-    PluginSettingsDefaults, // Default settings
-    (settings: IPluginSettings) => {
-      // Code to init or update plugin state from settings
-      this.logger.info('Settings Update', settings);
-      this.onStartSqlQueries = settings.onStartSqlQueries;
-    },
-  );
-
   // Public inlineRenderer: InlineRenderer | undefined;
   public queryRendererService: QueryRendererV2Service | undefined;
   public eventHandler: EventHandler | undefined;
   public commandHandler: CommandHandler | undefined;
   public settingsManager: SettingsManager | undefined;
   public notesCacheService: NotesCacheService | undefined;
-
-  public notes: Note[] = [];
-
-  // Settings used by the plugin, mostly when loading.
-  onStartSqlQueries = PluginSettingsDefaults.onStartSqlQueries;
-
-  // Settings are rendered in the settings via this. Need to
-  // refactor this to use the SettingsTab approach I had.
-  showSettings() {
-    const tab = this.settingsTab;
-    const {settings} = this;
-
-    tab.addHeading(new SettingsTabHeading({text: 'General Settings', level: 'h2', class: 'settings-heading'}));
-    tab.field().setName('Plugin Settings').setHeading();
-    const addNew = tab.field()
-      .setName('On Start SQL Queries')
-      .addText(text => {
-        const onChange = async (value: string) => {
-          await settings.update(PluginSettings => {
-            PluginSettings.onStartSqlQueries = value;
-          });
-        };
-
-        text.setPlaceholder(PluginSettingsDefaults.onStartSqlQueries)
-          .setValue(this.onStartSqlQueries)
-          .onChange(debounce(onChange, 500, true));
-      });
-
-    tab.field();
-  }
 
   onload() {
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
@@ -88,21 +41,22 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
     // Load the Render factory in the main context for all services to use.
     this.use(RenderFactory).load();
+    this.use(AlaSqlQuery).load();
 
     // --- Settings
     // Load up the settings manager.
-    this.settingsManager = new SettingsManager();
+    // this.settingsManager = new SettingsManager();
 
     // Wire up events from the settings.
-    this.settingsManager.on('settings-updated', async () => {
-      await this.saveSettings();
-    });
+    // this.settingsManager.on('settings-updated', async () => {
+    //   await this.saveSettings();
+    // });
 
     // Await this.loadSettings();
-    const {generalSettings, loggingOptions} = this.settingsManager.getSettings();
+    // const {generalSettings, loggingOptions} = this.settingsManager.getSettings();
 
     // Setup the UI tab.
-    this.addSettingTab(new SettingsTab(this, this.settingsManager));
+    // this.addSettingTab(new SettingsTab(this, this.settingsManager));
 
     if (!isPluginEnabled(this.app)) {
       // eslint-disable-next-line no-new
@@ -117,20 +71,14 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
     // When layout is ready we can refresh tables and register the query renderer.
     this.app.workspace.onLayoutReady(async () => {
       this.logger.info(`Layout is ready for workspace: ${this.app.vault.getName()}`);
-      this.logger.info('-- General Settings --');
-
-      for (const key of Object.keys(generalSettings)) {
-        const value = generalSettings[key] as string;
-        this.logger.info(`${key}: ${value}`);
-      }
 
       this.dataTables?.refreshTables('layout ready');
 
       // Load any custom queries from configuration.
-      const onStartSqlQueries = this.settingsManager?.getValue('onStartSqlQueries') as string;
-      if (onStartSqlQueries) {
-        this.dataTables?.runAdhocQuery(onStartSqlQueries);
-      }
+      // const onStartSqlQueries = this.settingsManager?.getValue('onStartSqlQueries') as string;
+      // if (onStartSqlQueries) {
+      //   this.dataTables?.runAdhocQuery(onStartSqlQueries);
+      // }
 
       (window as any).qattUpdateOriginalTask = async function (page: string, line: number, currentStatus: string, nextStatus: string) {
         nextStatus = nextStatus === '' ? ' ' : nextStatus;
@@ -178,23 +126,24 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
     // const statusBarItemElement = this.addStatusBarItem();
     // statusBarItemElement.setText('Status Bar Text');
 
-    this.commandHandler = new CommandHandler(this, this.settingsManager);
-    this.commandHandler.setup();
+    // this.commandHandler = new CommandHandler(this, this.settingsManager);
+    // this.commandHandler.setup();
 
-    this.eventHandler = new EventHandler(this, this.settingsManager);
-    this.eventHandler.setup();
+    // this.eventHandler = new EventHandler(this, this.settingsManager);
+    // this.eventHandler.setup();
   }
 
   onunload() {
     this.logger.info(`unloading plugin "${this.manifest.name}" v${this.manifest.version}`);
   }
 
-  async loadSettings() {
-    const newSettings = await this.loadData();
-    this.settingsManager?.updateSettings(newSettings);
-  }
+  // Old settings
+  // async loadSettings() {
+  //   const newSettings = await this.loadData();
+  //   this.settingsManager?.updateSettings(newSettings);
+  // }
 
-  async saveSettings() {
-    await this.saveData(this.settingsManager?.getSettings());
-  }
+  // async saveSettings() {
+  //   await this.saveData(this.settingsManager?.getSettings());
+  // }
 }

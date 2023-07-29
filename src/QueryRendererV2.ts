@@ -15,7 +15,7 @@ import {type IQuery} from 'Query/IQuery';
 import {Service, useSettings} from '@ophidian/core';
 import {LoggingService, type Logger} from 'lib/LoggingService';
 import {DateTime} from 'luxon';
-import {useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
+import {SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
 
 export interface IRenderingSettings {
   postRenderFormat: string;
@@ -61,8 +61,10 @@ export class QueryRendererV2Service extends Service {
   showSettings() {
     const tab = this.settingsTab;
     const {settings} = this;
-    tab.field().setName('Rendering Settings').setHeading();
-    const addNew = tab.field()
+
+    const settingsSection = tab.addHeading(new SettingsTabHeading({text: 'Rendering Settings', level: 'h2', class: 'settings-heading'}));
+
+    const addNew = tab.field(settingsSection)
       .setName('Default Post Render Format')
       .addText(text => {
         const onChange = async (value: string) => {
@@ -75,8 +77,6 @@ export class QueryRendererV2Service extends Service {
           .setValue(this.postRenderFormat)
           .onChange(debounce(onChange, 500, true));
       });
-
-    tab.field();
   }
 
   async onload() {

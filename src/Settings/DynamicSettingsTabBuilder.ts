@@ -1,5 +1,6 @@
-import {type Useful, getContext, onLoad, use} from '@ophidian/core';
-import {type CachedMetadata, Notice, Plugin, type TFile, PluginSettingTab, type Component, Setting, htmlToMarkdown} from 'obsidian';
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+import {SettingsService, useSettings, type Useful, getContext, onLoad, use} from '@ophidian/core';
+import {type CachedMetadata, Notice, Plugin, type TFile, PluginSettingTab, type Component, Setting, htmlToMarkdown, debounce} from 'obsidian';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export interface SettingsProvider extends Component {
@@ -7,7 +8,7 @@ export interface SettingsProvider extends Component {
   hideSettings?(builder: DynamicSettingsTabBuilder): void;
 }
 
-export function useSettingsTab(owner: SettingsProvider & Partial<Useful>) {
+export function useSettingsTab<T>(owner: SettingsProvider & Partial<Useful>) {
   return getContext(owner)(DynamicSettingsTabBuilder).addProvider(owner);
 }
 
@@ -35,37 +36,51 @@ export class SettingsTabField {
   name: string;
   description: string;
   type: string;
-  initialValue: string | Record<string, string> | boolean | number;
+  value: string | Record<string, string> | boolean | number;
   placeholder: string;
   settingName: string;
   featureFlag: string;
   noticeClass: string;
   noticeText: string;
   noticeHtml: string;
+  textAreaRows: number;
+  textAreaCols: number;
 
   constructor(payload: Partial<SettingsTabField>) {
     this.name = payload.name ?? '';
     this.description = payload.description ?? '';
     this.type = payload.type ?? '';
-    this.initialValue = payload.initialValue ?? true;
+    this.value = payload.value ?? '';
+    this.placeholder = payload.placeholder ?? '';
+    this.settingName = payload.settingName ?? '';
+    this.featureFlag = payload.featureFlag ?? '';
+
     this.noticeClass = payload.noticeClass ?? '';
     this.noticeText = payload.noticeText ?? '';
     this.noticeHtml = payload.noticeHtml ?? '';
+    this.textAreaRows = payload.textAreaRows ?? 8;
+    this.textAreaCols = payload.textAreaCols ?? 40;
   }
 }
 
-export class DynamicSettingsTabBuilder extends PluginSettingTab implements FieldParent {
+export class DynamicSettingsTabBuilder extends PluginSettingTab implements Useful, FieldParent {
+  plugin = use(Plugin);
+  use = use.this;
+
   public cssClassPrefix = 'qatt';
 
   protected onDisplayCallback: (s: DynamicSettingsTabBuilder) => any;
   protected onHideCallback: (s: DynamicSettingsTabBuilder) => any;
 
   constructor() {
-    const plugin = use(Plugin);
-    super(app, plugin);
-    onLoad(plugin, () => {
-      plugin.addSettingTab(this);
+    super(app, use(Plugin));
+    const done = useSettings(this.plugin).onChange(() => {
+      onLoad(this.plugin, () => {
+        this.plugin.addSettingTab(this);
+      });
+      done();
     });
+    this.plugin.register(done);
   }
 
   clear() {
@@ -75,6 +90,11 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Field
 
   field(parentElement = this.containerEl): any {
     return new FieldBuilder(this, parentElement);
+  }
+
+  initializeTab() {
+    this.containerEl.empty();
+    this.containerEl.addClass('qatt-settings');
   }
 
   addHeading(heading: SettingsTabHeading) {
@@ -109,6 +129,41 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Field
     }
 
     return detailsContainer;
+  }
+
+  addTextInput(input: SettingsTabField, onChange: (value: string) => void, parentElement = this.containerEl) {
+    this.field(parentElement)
+      .setName(input.name)
+      .setDesc(input.description)
+      .addText(text => {
+        text.setPlaceholder(input.placeholder)
+          .setValue(input.value)
+          .onChange(debounce(onChange, 500, true));
+      });
+  }
+
+  //   .setName(setting.name)
+  //   .setDesc(setting.description)
+  //   .addTextArea(text => {
+  //     text.setPlaceholder(setting.placeholder as string)
+  //       .setValue(settings.generalSettings[setting.settingName] as string)
+  //       .onChange(debounce(onChange, 500, true));
+  //     text.inputEl.rows = 8;
+  //     text.inputEl.cols = 40;
+  //   });
+
+  // break;
+  addTextAreaInput(input: SettingsTabField, onChange: (value: string) => void, parentElement = this.containerEl) {
+    this.field(parentElement)
+      .setName(input.name)
+      .setDesc(input.description)
+      .addTextArea(text => {
+        text.setPlaceholder(input.placeholder)
+          .setValue(this.onStartSqlQueries)
+          .onChange(debounce(onChange, 500, true));
+        text.inputEl.rows = input.textAreaRows;
+        text.inputEl.cols = input.textAreaCols;
+      });
   }
 
   /*
