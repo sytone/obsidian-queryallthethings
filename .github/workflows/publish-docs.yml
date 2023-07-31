@@ -32,7 +32,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-          cache: 'pnpm'
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
       # Build the documentation and run injections
       - name: Build
         id: build
