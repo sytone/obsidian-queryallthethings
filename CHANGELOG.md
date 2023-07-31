@@ -2,6 +2,29 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.2](https://github.com/sytone/obsidian-queryallthethings/compare/0.5.1...0.5.2) (2023-07-31)
+
+
+### Bug Fixes and Changes
+
+* update Jekyll preprocessing callout regex ([6e1c282](https://github.com/sytone/obsidian-queryallthethings/commits/6e1c282ebe567c203b65d80980a516838836b7ed))
+
+
+### Internal
+
+* cleanup obsidian references ([d6329b1](https://github.com/sytone/obsidian-queryallthethings/commits/d6329b1b4aa1b7a82ada77b97b7df4753d0b2e63))
+* move to mocha ([6ced0ad](https://github.com/sytone/obsidian-queryallthethings/commits/6ced0ad1f7de86f203748f1d85fa5f6c1e168f50))
+* moved to jest with it actually working ([5885f30](https://github.com/sytone/obsidian-queryallthethings/commits/5885f30c51800af4a49e9b34ce635ac102fd0b95))
+
+
+### Documentation
+
+* added codeblock configuration ([042f5f8](https://github.com/sytone/obsidian-queryallthethings/commits/042f5f89fb5e3346c5ebcc4a11e2940c0d96adb0))
+* fix codeblock yaml header ([1621a72](https://github.com/sytone/obsidian-queryallthethings/commits/1621a7200b7876b005a0fcb6d54ec90de3d27a68))
+* fix rendering of handlebars example ([54add08](https://github.com/sytone/obsidian-queryallthethings/commits/54add08567b91d11ed9afe488d27342364c88dd4))
+* try to update template excaping ([bbdb707](https://github.com/sytone/obsidian-queryallthethings/commits/bbdb70761036515432515cb324fd0dc0e0ba8790))
+* update snippet insertion ([2bc6052](https://github.com/sytone/obsidian-queryallthethings/commits/2bc60529e0b508e2faf1ae36a4e2d0d275bff38c))
+
 ### [0.5.1](https://github.com/sytone/obsidian-queryallthethings/compare/0.5.0...0.5.1) (2023-06-13)
 
 
