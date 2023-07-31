@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.3](https://github.com/sytone/obsidian-queryallthethings/compare/0.5.2...0.5.3) (2023-07-31)
+
+
+### Internal
+
+* add pnpm install ([2ba888d](https://github.com/sytone/obsidian-queryallthethings/commits/2ba888daee93709671eb16d96f649588fa9c3492))
+
 ### [0.5.2](https://github.com/sytone/obsidian-queryallthethings/compare/0.5.1...0.5.2) (2023-07-31)
 
 
