@@ -1,10 +1,9 @@
 ---
 nav_order: 3
 layout: default
+parent: Contributing
 title: Development
 ---
-
-# Development
 
 ## Tools
 

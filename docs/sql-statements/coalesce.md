@@ -1,5 +1,6 @@
 ---
 layout: default
+parent: SQL Statements
 title: COALESCE
 ---
 
