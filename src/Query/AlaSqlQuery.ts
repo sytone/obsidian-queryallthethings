@@ -46,7 +46,6 @@ export class AlaSqlQuery extends Service implements IQuery {
 
     /*
     // >> alasql-function-stringify-snippet
-    ### stringify(value)
 
     The `stringify` function will convert the provided value to a JSON string.
 
