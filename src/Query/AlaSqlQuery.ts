@@ -7,8 +7,6 @@ import {type IQuery} from 'Query/IQuery';
 import {Service, useSettings} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
 import {NotesCacheService} from 'NotesCacheService';
-import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
-import {type ISqlSettings, SqlSettingsDefaults} from 'Settings/DefaultSettings';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention

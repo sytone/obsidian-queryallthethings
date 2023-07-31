@@ -1,4 +1,6 @@
 /* eslint-disable unicorn/filename-case */
+// eslint-disable-next-line import/no-unassigned-import
+import 'jest';
 import {parseTask} from 'Parse/Parsers';
 
 describe('parse functions', () => {

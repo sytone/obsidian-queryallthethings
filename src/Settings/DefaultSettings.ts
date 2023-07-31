@@ -4,7 +4,7 @@ export interface ISqlSettings {
 }
 
 export const SqlSettingsDefaults: ISqlSettings = {
-  onStartSqlQueries: 'SELECT * FROM sqlite_master;',
+  onStartSqlQueries: 'CREATE TABLE my_lookup(name,birthday);\nINSERT INTO my_lookup VALUES ("fred", 2000-02-03);',
 };
 
 export interface IGeneralSettings {
@@ -12,6 +12,6 @@ export interface IGeneralSettings {
 }
 
 export const GeneralSettingsDefaults: IGeneralSettings = {
-  onStartSqlQueries: 'SELECT * FROM sqlite_master;',
+  onStartSqlQueries: 'CREATE TABLE my_lookup(name,birthday);\nINSERT INTO my_lookup VALUES ("fred", 2000-02-03);',
 };
 

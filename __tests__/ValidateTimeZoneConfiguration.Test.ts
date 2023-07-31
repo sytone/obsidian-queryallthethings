@@ -1,4 +1,5 @@
-import {describe, expect, test} from '@jest/globals';
+// eslint-disable-next-line import/no-unassigned-import
+import 'jest';
 
 describe('Timezones', () => {
   test('should always be UTC', () => {

@@ -1,5 +1,5 @@
+/* eslint-disable unicorn/filename-case */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import {type CachedMetadata, Notice, Plugin, type TFile} from 'obsidian';
 import {use, useSettings} from '@ophidian/core';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
@@ -34,21 +34,22 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
     this, // Plugin or other owner
     GeneralSettingsDefaults, // Default settings
     (settings: IGeneralSettings) => {
-      // Code to init or update plugin state from settings
-      this.logger.info('Settings Update', settings);
+      // This will run every time the settings are updated.
+      this.logger.info('Settings Updated', settings);
+    },
+    (settings: IGeneralSettings) => {
+      // This will run when the settings are first loaded.
+      this.logger.info('Settings Initialize', settings);
       this.onStartSqlQueries = settings.onStartSqlQueries;
-      // Load any custom queries from configuration.
-      // const onStartSqlQueries = this.settingsManager?.getValue('onStartSqlQueries') as string;
-      if (this.onStartSqlQueries && !this.onStartSqlQueriesExecuted) {
+      if (this.onStartSqlQueries) {
         this.logger.info('Running on start SQL queries', this.onStartSqlQueries);
-        this.dataTables?.runAdhocQuery(this.onStartSqlQueries);
-        this.onStartSqlQueriesExecuted = true;
+        const onStartResult = this.dataTables?.runAdhocQuery(this.onStartSqlQueries);
+        this.logger.info('On start SQL queries result', onStartResult);
       }
     },
   );
 
   onStartSqlQueries: string;
-  onStartSqlQueriesExecuted = false;
 
   // Public inlineRenderer: InlineRenderer | undefined;
   public queryRendererService: QueryRendererV2Service | undefined;
@@ -56,6 +57,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   public commandHandler: CommandHandler | undefined;
   public settingsManager: SettingsManager | undefined;
   public notesCacheService: NotesCacheService | undefined;
+  public handlebarsRenderer: HandlebarsRenderer | undefined;
 
   // Settings are rendered in the settings via this. Need to
   // refactor this to use the SettingsTab approach I had.
@@ -65,12 +67,11 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
     tab.initializeTab();
     tab.addHeading(new SettingsTabHeading({text: 'Query All The Things', level: 'h1', noticeText: 'A plugin that allows you to make queries against the internal data of obsidian and render it how you want.'}));
-
     const generalSettingsSection = tab.addHeading(new SettingsTabHeading({text: 'General Settings', level: 'h2', class: 'settings-heading'}));
 
     const onChange = async (value: string) => {
-      await settings.update(PluginSettings => {
-        PluginSettings.onStartSqlQueries = value;
+      await settings.update(settings => {
+        settings.onStartSqlQueries = value;
       });
     };
 
@@ -91,7 +92,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
     this.use(QueryFactory).load();
     this.use(RenderFactory).load();
-    this.use(AlaSqlQuery).load();
+    this.use(HandlebarsRenderer).load();
 
     if (!isPluginEnabled(this.app)) {
       // eslint-disable-next-line no-new
@@ -99,7 +100,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       throw new Error('Dataview plugin is not installed');
     }
 
-    HandlebarsRenderer.registerHandlebarsHelpers();
+    // HandlebarsRenderer.registerHandlebarsHelpers();
     HandlebarsRendererObsidian.registerHandlebarsHelpers();
     AlaSqlQuery.initialize();
 

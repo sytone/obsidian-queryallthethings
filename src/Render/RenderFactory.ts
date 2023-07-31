@@ -9,15 +9,15 @@ export class RenderFactory extends Service {
   public getRenderer(queryConfiguration: IQattCodeBlock): IRenderer {
     switch (queryConfiguration.renderEngine) {
       case 'handlebars': {
-        return new HandlebarsRenderer(queryConfiguration.template ?? '{{stringify result}}');
+        return this.use(HandlebarsRenderer);
       }
 
       case 'text': {
-        return new TextRenderer();
+        return this.use(TextRenderer);
       }
 
       default: {
-        return new HandlebarsRenderer(queryConfiguration.template ?? '{{stringify result}}');
+        return this.use(HandlebarsRenderer);
       }
     }
   }

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
- 
+
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import {SettingsService, useSettings, type Useful, getContext, onLoad, use} from '@ophidian/core';
 import {type CachedMetadata, Notice, Plugin, type TFile, PluginSettingTab, type Component, Setting, htmlToMarkdown, debounce} from 'obsidian';
@@ -39,7 +39,7 @@ export class SettingsTabField {
   description: string;
   type: string;
   value: string | Record<string, string> | boolean | number;
-  placeholder: string;
+  placeholder: string | Record<string, string> | boolean | number;
   settingName: string;
   featureFlag: string;
   noticeClass: string;
@@ -76,13 +76,11 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Usefu
 
   constructor() {
     super(app, use(Plugin));
-    const done = useSettings(this.plugin).onChange(() => {
+    useSettings(this.plugin, null, undefined, () => {
       onLoad(this.plugin, () => {
         this.plugin.addSettingTab(this);
       });
-      done();
     });
-    this.plugin.register(done);
   }
 
   clear() {
@@ -144,17 +142,6 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Usefu
       });
   }
 
-  //   .setName(setting.name)
-  //   .setDesc(setting.description)
-  //   .addTextArea(text => {
-  //     text.setPlaceholder(setting.placeholder as string)
-  //       .setValue(settings.generalSettings[setting.settingName] as string)
-  //       .onChange(debounce(onChange, 500, true));
-  //     text.inputEl.rows = 8;
-  //     text.inputEl.cols = 40;
-  //   });
-
-  // break;
   addTextAreaInput(input: SettingsTabField, onChange: (value: string) => void, parentElement = this.containerEl) {
     return this.field(parentElement)
       .setName(input.name)
@@ -165,6 +152,20 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Usefu
           .onChange(debounce(onChange, 500, true));
         text.inputEl.rows = input.textAreaRows;
         text.inputEl.cols = input.textAreaCols;
+      });
+  }
+
+  addDropdownInput(input: SettingsTabField, onChange: (value: string) => void, parentElement = this.containerEl) {
+    const options = input.placeholder as Record<string, string>;
+
+    return this.field(parentElement)
+      .setName(input.name)
+      .setDesc(input.description)
+      .addDropdown(dropdown => {
+        dropdown
+          .addOptions(options)
+          .setValue(input.value)
+          .onChange(debounce(onChange, 500, true));
       });
   }
 
@@ -190,92 +191,6 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Usefu
                 this.settingsManager.setValue(setting.settingName, value);
                 await this.plugin.saveSettings();
               });
-          });
-
-        break;
-      }
-
-      case 'text': {
-      // --------------------------------------------------------------------------
-      //                Render options that are single lines of text.
-      // --------------------------------------------------------------------------
-        new Setting(detailsContainer)
-          .setName(setting.name)
-          .setDesc(setting.description)
-          .addText(text => {
-            const settings = this.settingsManager.getSettings();
-            if (!settings.generalSettings[setting.settingName]) {
-              this.settingsManager.setValue(setting.settingName, setting.initialValue);
-            }
-
-            const onChange = async (value: string) => {
-              this.settingsManager.setValue(setting.settingName, value);
-              await this.plugin.saveSettings();
-            };
-
-            text.setPlaceholder(setting.placeholder as string)
-              .setValue(settings.generalSettings[setting.settingName] as string)
-              .onChange(debounce(onChange, 500, true));
-          });
-
-        break;
-      }
-
-      case 'textarea': {
-      // --------------------------------------------------------------------------
-      //               Render options that are multiple lines of text.
-      // --------------------------------------------------------------------------
-        new Setting(detailsContainer)
-          .setName(setting.name)
-          .setDesc(setting.description)
-          .addTextArea(text => {
-            const settings = this.settingsManager.getSettings();
-            if (!settings.generalSettings[setting.settingName]) {
-              this.settingsManager.setValue(setting.settingName, setting.initialValue);
-            }
-
-            const onChange = async (value: string) => {
-              this.settingsManager.setValue(setting.settingName, value);
-              await this.plugin.saveSettings();
-            };
-
-            text.setPlaceholder(setting.placeholder as string)
-              .setValue(settings.generalSettings[setting.settingName] as string)
-              .onChange(debounce(onChange, 500, true));
-
-            text.inputEl.rows = 8;
-            text.inputEl.cols = 40;
-          });
-
-        break;
-      }
-
-      case 'dropdown': {
-        // -------------------------------------------------------------------------- //
-        //               Render options that are selectable from a drop down.         //
-        // -------------------------------------------------------------------------- //
-        // The setting.placeholder value is used to define the options for the dropdown. It is a record of key value pairs. The key is the value that is stored in the settings file and the value is the text that is displayed to the user. For example: { '1': 'One', '2': 'Two' } will display the options 'One' and 'Two' to the user and store the value '1' or '2' in the settings file. This is useful for when the value stored in the settings file is not the same as the value displayed to the user.
-
-        const options = setting.placeholder as Record<string, string>;
-
-        new Setting(detailsContainer)
-          .setName(setting.name)
-          .setDesc(setting.description)
-          .addDropdown(dropdown => {
-            const settings = this.settingsManager.getSettings();
-            if (!settings.generalSettings[setting.settingName]) {
-              this.settingsManager.setValue(setting.settingName, setting.initialValue);
-            }
-
-            const onChange = async (value: string) => {
-              this.settingsManager.setValue(setting.settingName, value);
-              await this.plugin.saveSettings();
-            };
-
-            dropdown
-              .addOptions(options)
-              .setValue(settings.generalSettings[setting.settingName].toString())
-              .onChange(debounce(onChange, 500, true));
           });
 
         break;

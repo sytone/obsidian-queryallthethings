@@ -18,7 +18,7 @@ export class DataTables extends Service {
   logger = this.use(LoggingService).getLogger('Qatt.DataTables');
 
   public runAdhocQuery(query: string): any {
-    alasql(query);
+    return alasql(query);
   }
 
   public refreshTables(reason: string): void {

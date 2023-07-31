@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {micromark} from 'micromark';
 import {gfm, gfmHtml} from 'micromark-extension-gfm';
@@ -15,7 +15,8 @@ import {type IQuery} from 'Query/IQuery';
 import {Service, useSettings} from '@ophidian/core';
 import {LoggingService, type Logger} from 'lib/LoggingService';
 import {DateTime} from 'luxon';
-import {SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
+import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
+import {markdown2html} from 'Render/MicromarkRenderer';
 
 export interface IRenderingSettings {
   postRenderFormat: string;
@@ -46,12 +47,16 @@ export class QueryRendererV2Service extends Service {
     this,
     RenderingSettingsDefaults,
     (settings: IRenderingSettings) => {
-      this.logger.info('QueryRendererV2Service Settings Update - postRenderFormat', settings);
+      this.logger.info('QueryRendererV2Service Updated Settings');
+      this.postRenderFormat = settings.postRenderFormat;
+    },
+    (settings: IRenderingSettings) => {
+      this.logger.info('QueryRendererV2Service Initialize Settings');
       this.postRenderFormat = settings.postRenderFormat;
     },
   );
 
-  postRenderFormat = RenderingSettingsDefaults.postRenderFormat;
+  postRenderFormat: string;
 
   constructor() {
     super();
@@ -64,19 +69,26 @@ export class QueryRendererV2Service extends Service {
 
     const settingsSection = tab.addHeading(new SettingsTabHeading({text: 'Rendering Settings', level: 'h2', class: 'settings-heading'}));
 
-    const addNew = tab.field(settingsSection)
-      .setName('Default Post Render Format')
-      .addText(text => {
-        const onChange = async (value: string) => {
-          await settings.update(RenderingSettings => {
-            RenderingSettings.postRenderFormat = value;
-          });
-        };
-
-        text.setPlaceholder('micromark')
-          .setValue(this.postRenderFormat)
-          .onChange(debounce(onChange, 500, true));
+    const onChange = async (value: string) => {
+      await settings.update(settings => {
+        settings.postRenderFormat = value;
       });
+    };
+
+    const postRenderSetting = tab.addDropdownInput(
+      new SettingsTabField({
+        name: 'Default Post Render Format',
+        description: 'Once the template has finished rendering the final output needs to be HTML. If the template returns markdown then it needs to be converted, this settings allows you to select the default processor so you do not have to set it in each codeblock.',
+        placeholder: {
+          markdown: 'Obsidian Markdown',
+          micromark: 'Micromark',
+          none: 'None',
+        },
+        value: this.postRenderFormat,
+      }),
+      onChange,
+      settingsSection,
+    );
   }
 
   async onload() {
@@ -170,10 +182,12 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     this.logger.groupId(this.renderId);
     const startTime = new Date(Date.now());
 
+    // Query
     // Run query and get results to be rendered
     const queryEngine: IQuery = this.queryFactory.getQuery(this.queryConfiguration, this.context.sourcePath, this.context.frontmatter, this.renderId);
     const results = queryEngine.applyQuery(this.renderId);
 
+    // Render
     // Get the engine to render the results to HTML.
     const renderEngine: IRenderer = this.renderFactory.getRenderer(this.queryConfiguration);
 
@@ -184,17 +198,21 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       content.setText(`QATT query error: ${queryEngine.error}`);
     } else {
       // Render Engine Execution
-      const html = renderEngine?.renderTemplate(results) ?? 'Unknown error or exception has occurred.';
+      const html = renderEngine?.renderTemplate(this.queryConfiguration.template ?? renderEngine.defaultTemplate, results) ?? 'Unknown error or exception has occurred.';
       this.logger.debug('Render Results', html);
 
-      const postRenderFormat = this.queryConfiguration.postRenderFormat ?? this.plugin.settingsManager?.getValue('postRenderFormat');
+      // Post Render handling as the output has to be HTML at the end so if the template return markdown then we need to convert it.
+      // currently:
+      // markdown - Obsidian internal callback.
+      // micromark - parsing use micromark and extensions.
+      const postRenderFormat = this.queryConfiguration.postRenderFormat ?? this.service.postRenderFormat;
       this.logger.debug('postRenderFormat: ', postRenderFormat);
 
       if (postRenderFormat === 'markdown') {
         await MarkdownPreviewView.renderMarkdown(html, content, '', this.plugin);
       } else if (postRenderFormat === 'micromark') {
-        this.logger.debug('micromark Render Results', this.markdown2html(html));
-        content.innerHTML = this.markdown2html(html);
+        this.logger.debug('micromark Render Results', markdown2html(html));
+        content.innerHTML = markdown2html(html);
       } else {
         content.innerHTML = html;
       }
@@ -216,41 +234,5 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     this.logger.infoWithId(this.renderId, `Render End: ${endTime.getTime() - startTime.getTime()}ms`);
     this.logger.groupEndId();
   };
-
-  markdown2html(markdown?: string): string {
-    if (markdown === undefined || markdown === null) {
-      return '';
-    }
-
-    const html = micromark(markdown, {
-      allowDangerousHtml: true,
-      extensions: [
-        wiki({aliasDivider: '|'}),
-        gfm(),
-      ],
-      htmlExtensions: [
-        wikiHtml({
-          permalinks: [],
-          wikiLinkClassName: 'internal-link data-link-icon data-link-icon-after data-link-text',
-          hrefTemplate: (permalink: string) => `${permalink}`,
-          pageResolver: (name: string) => [name],
-        }),
-        gfmHtml(),
-      ],
-    });
-
-    return html;
-  }
-
-  markdown2text(markdown?: string): string {
-    if (markdown === undefined || markdown === null) {
-      return '';
-    }
-
-    const tree = fromMarkdown(markdown, {
-      extensions: [wiki()],
-      mdastExtensions: [fromWiki()],
-    });
-    return toString(tree);
-  }
 }
+

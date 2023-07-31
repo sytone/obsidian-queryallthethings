@@ -38,7 +38,7 @@
     "@rollup/plugin-typescript": "11.1.1",
     "@sytone/markdown-snippet-injector": "^0.2.7",
     "@types/codemirror": "^5.60.8",
-    "@types/jest": "^29.5.2",
+    "@types/jest": "^29.5.3",
     "@types/luxon": "^3.3.0",
     "@types/node": "^20.3.1",
     "@types/parsimmon": "^1.10.6",
@@ -57,7 +57,8 @@
     "eslint-plugin-import": "^2.27.5",
     "eslint-plugin-n": "^16.0.0",
     "eslint-plugin-promise": "^6.1.1",
-    "jest": "^29.5.0",
+    "jest": "^29.6.0",
+    "jest-environment-jsdom": "^29.6.2",
     "nyc": "^15.1.0",
     "obsidian": "1.2.8",
     "prettier": "2.8.8",
@@ -193,34 +194,6 @@
         "filename": "versions.json",
         "updater": ".config/obsidian-versions-updater.js"
       }
-    ]
-  },
-  "jest": {
-    "globalSetup": "./.config/global-setup.js",
-    "testEnvironment": "node",
-    "verbose": true,
-    "preset": "ts-jest/presets/default-esm",
-    "clearMocks": true,
-    "collectCoverage": true,
-    "coverageDirectory": "coverage",
-    "coverageProvider": "v8",
-    "extensionsToTreatAsEsm": [
-      ".ts"
-    ],
-    "transform": {
-      "^.+\\.ts$": [
-        "ts-jest",
-        {
-          "useESM": true
-        }
-      ]
-    },
-    "transformIgnorePatterns": [
-      "node_modules/(?!(eventemitter2|another-module))"
-    ],
-    "moduleDirectories": [
-      "node_modules",
-      "src"
     ]
   },
   "config": {
