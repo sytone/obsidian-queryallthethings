@@ -1,5 +1,6 @@
 ---
 layout: default
+parent: SQL Statements
 title: IF ... THEN ... ELSE
 ---
 
