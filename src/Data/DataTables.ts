@@ -4,23 +4,21 @@ import {DateTime} from 'luxon';
 import {getAPI, isPluginEnabled, type PageMetadata} from 'obsidian-dataview';
 import {parseTask} from 'Parse/Parsers';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
+import {type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild, Plugin} from 'obsidian';
 import {logging} from 'lib/Logging';
+import {Service} from '@ophidian/core';
+import {LoggingService} from 'lib/LoggingService';
 
 export interface IDataTables {
   refreshTables (reason: string): void;
 }
 
-export class DataTables {
-  logger = logging.getLogger('Qatt.DataTables');
-
-  constructor(
-    private readonly plugin: IQueryAllTheThingsPlugin,
-  ) {
-    this.logger.info('Created proxy table manager.');
-  }
+export class DataTables extends Service {
+  plugin = this.use(Plugin);
+  logger = this.use(LoggingService).getLogger('Qatt.DataTables');
 
   public runAdhocQuery(query: string): any {
-    alasql(query);
+    return alasql(query);
   }
 
   public refreshTables(reason: string): void {
@@ -44,9 +42,9 @@ export class DataTables {
       this.refreshCalendarTable(reason);
     }
 
-    this.logger.log('info', `qatt.ReferenceCalendar check took ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
+    this.logger.info(`qatt.ReferenceCalendar check took ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
 
-    this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
+    this.plugin.app.workspace.trigger('qatt:dataview-store-update');
   }
 
   /**
@@ -122,17 +120,17 @@ export class DataTables {
       }]);
     }
 
-    this.logger.log('info', `qatt.ReferenceCalendar refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
+    this.logger.info(`qatt.ReferenceCalendar refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
   }
 
   public refreshTasksTableFromDataview(reason: string): void {
     alasql('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Tasks Table refreshed: ${reason}`}]]);
-    if (alasql('SHOW TABLES FROM alasql LIKE "tasks"').length > 0) {
-      this.logger.info('Dropping the tasks table to repopulate.');
-      alasql('DROP TABLE tasks ');
+    if (alasql('SHOW TABLES FROM alasql LIKE "dataview_tasks"').length > 0) {
+      this.logger.info('Dropping the dataview_tasks table to repopulate.');
+      alasql('DROP TABLE dataview_tasks ');
     }
 
-    alasql('CREATE TABLE tasks ');
+    alasql('CREATE TABLE dataview_tasks ');
 
     const start = DateTime.now();
     const dataviewPages = this.getDataviewPages() ?? new Map<string, PageMetadata>();
@@ -166,7 +164,7 @@ export class DataTables {
 
           // << tasks-table-snippet
           */
-          alasql('INSERT INTO tasks VALUES ?', [{
+          alasql('INSERT INTO dataview_tasks VALUES ?', [{
             page: p[1].path,
             task: l.text,
             status: l.task?.status,
@@ -184,19 +182,19 @@ export class DataTables {
       }
     }
 
-    this.logger.log('info', `Tasks refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
+    this.logger.info(`Tasks refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
   }
 
   public refreshListsTableFromDataview(reason: string): void {
     alasql('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Lists Table refreshed: ${reason}`}]]);
 
     // Temporary tables based on current state to make some queries faster.
-    if (alasql('SHOW TABLES FROM alasql LIKE "lists"').length > 0) {
+    if (alasql('SHOW TABLES FROM alasql LIKE "dataview_lists"').length > 0) {
       this.logger.info('Dropping the tasks table to repopulate.');
-      alasql('DROP TABLE lists ');
+      alasql('DROP TABLE dataview_lists ');
     }
 
-    alasql('CREATE TABLE lists ');
+    alasql('CREATE TABLE dataview_lists ');
 
     const start = DateTime.now();
     const dataviewPages = this.getDataviewPages() ?? new Map<string, PageMetadata>();
@@ -234,7 +232,7 @@ export class DataTables {
 
         // << lists-table-snippet
         */
-        alasql('INSERT INTO lists VALUES ?', [{
+        alasql('INSERT INTO dataview_lists VALUES ?', [{
           symbol: l.symbol,
           path: p[1].path,
           pageName: this.parsePathFilenameNoExt(p[1].path),
@@ -251,7 +249,7 @@ export class DataTables {
       }
     }
 
-    this.logger.log('info', `Lists refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
+    this.logger.info(`Lists refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
   }
 
   private getDataviewPages(): Map<string, PageMetadata> | undefined {

@@ -1,9 +1,12 @@
+
 import alasql from 'alasql';
+import {Plugin} from 'obsidian';
 import {getAPI} from 'obsidian-dataview';
-import {logging} from 'lib/Logging';
-import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
 import {type QattCodeBlock} from 'QattCodeBlock';
 import {type IQuery} from 'Query/IQuery';
+import {Service, useSettings} from '@ophidian/core';
+import {LoggingService} from 'lib/LoggingService';
+import {NotesCacheService} from 'NotesCacheService';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -12,13 +15,12 @@ declare global {
   }
 }
 
-export class AlaSqlQuery implements IQuery {
+export class AlaSqlQuery extends Service implements IQuery {
   /**
    * Any generic Alasql functions should go in here so they are only called
    * once.
    *
    * @static
-   * @param {IQueryAllTheThingsPlugin} plugin
    * @memberof QuerySql
    */
   public static initialize() {
@@ -78,16 +80,24 @@ export class AlaSqlQuery implements IQuery {
     alasql.options.nocount = true; // Disable row count for queries.
   }
 
-  private readonly _logger = logging.getLogger('Qatt.AlaSqlQuery');
-  private readonly _name: string;
-  private readonly _queryId: string;
+  plugin = this.use(Plugin);
+  logger = this.use(LoggingService).getLogger('Qatt.AlaSqlQuery');
+  notesCache = this.use(NotesCacheService);
+
+  public queryConfiguration: QattCodeBlock;
+  private sourcePath: string;
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  private frontmatter: any | undefined;
+
+  private _name: string;
+  private _queryId: string;
   private _error: string | undefined = undefined;
-  private readonly _customJsClasses: Array<[string, string]>;
+  private _customJsClasses: Array<[string, string]>;
 
   // Pending a future PR to enable Custom JS again.
   // private _customJsClasses: Array<[string, string]>;
 
-  private readonly _sqlQuery: string;
+  private _sqlQuery: string;
 
   /**
    * Creates an instance of QuerySql which parses the YAML source and
@@ -95,16 +105,17 @@ export class AlaSqlQuery implements IQuery {
    * @param {QattCodeBlock} queryConfiguration
    * @param {string} sourcePath
    * @param {(any | null | undefined)} frontmatter
-   * @param {IQueryAllTheThingsPlugin} plugin
    * @memberof QuerySql
    */
+  /*
   constructor(
+
     public queryConfiguration: QattCodeBlock,
     private readonly sourcePath: string,
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     private readonly frontmatter: any | undefined,
-    private readonly plugin: IQueryAllTheThingsPlugin,
   ) {
+    super();
     this._name = 'QuerySql';
 
     if (this.queryConfiguration.query === undefined) {
@@ -112,10 +123,11 @@ export class AlaSqlQuery implements IQuery {
     }
 
     if (this.queryConfiguration.logLevel) {
-      this._logger.setLogLevel(this.queryConfiguration.logLevel);
+      this.logger.setLogLevel(this.queryConfiguration.logLevel);
     }
 
     this._queryId = this.generateQueryId(10);
+    this.logger.groupId(this._queryId);
     this._customJsClasses = [];
 
     // Parse the source, it is a YAML block to make things simpler.
@@ -128,21 +140,78 @@ export class AlaSqlQuery implements IQuery {
       }
     }
 
-    this._logger.debugWithId(this._queryId, 'Source Path', this.sourcePath);
-    this._logger.debugWithId(this._queryId, 'Source Front Matter', this.frontmatter);
-    this._logger.debugWithId(this._queryId, 'Source Query', this.queryConfiguration.query);
-    this._logger.debugWithId(this._queryId, 'queryConfiguration', queryConfiguration);
+    this.logger.debugWithId(this._queryId, 'Source Path', this.sourcePath);
+    this.logger.debugWithId(this._queryId, 'Source Front Matter', this.frontmatter);
+    this.logger.debugWithId(this._queryId, 'Source Query', this.queryConfiguration.query);
+    this.logger.debugWithId(this._queryId, 'queryConfiguration', queryConfiguration);
 
     // Pre compile the query to find any errors.
     try {
       const preCompile = alasql.parse(this.queryConfiguration.query);
-      this._logger.debugWithId(this._queryId, 'Source Query', preCompile);
+      this.logger.debugWithId(this._queryId, 'Source Query', preCompile);
     } catch (error) {
       this._error = `Error with query: ${error as string}`;
-      this._logger.errorWithId(this._queryId, `Error with query on page [${sourcePath}]:`, error);
+      this.logger.errorWithId(this._queryId, `Error with query on page [${sourcePath}]:`, error);
     }
 
     this._sqlQuery = this.queryConfiguration.query;
+    this.logger.groupEndId();
+  }
+  */
+
+  public setupQuery(
+    queryConfiguration: QattCodeBlock,
+    sourcePath: string,
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    frontmatter: any | undefined,
+    renderId: string,
+  ): void {
+    this._name = 'QuerySql';
+    this.queryConfiguration = queryConfiguration;
+    this.sourcePath = sourcePath;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    this.frontmatter = frontmatter;
+
+    if (this.queryConfiguration.query === undefined) {
+      throw new Error('Query is not defined in the code block, the query field is mandatory.');
+    }
+
+    if (this.queryConfiguration.logLevel) {
+      this.logger.setLogLevel(this.queryConfiguration.logLevel);
+    }
+
+    this._queryId = renderId;
+    this.logger.groupId(this._queryId);
+    this._customJsClasses = [];
+
+    // Parse the source, it is a YAML block to make things simpler.
+    if (queryConfiguration.customJSForSql) {
+      for (const element of queryConfiguration.customJSForSql) {
+        const className = element.split(' ')[0];
+        const functionName = element.split(' ')[1];
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        alasql.fn[functionName] = window.customJS[className][functionName];
+      }
+    }
+
+    this.logger.infoWithId(this._queryId, `Setting up query on:${this.sourcePath}`);
+
+    this.logger.debugWithId(this._queryId, 'Source Path', this.sourcePath);
+    this.logger.debugWithId(this._queryId, 'Source Front Matter', this.frontmatter);
+    this.logger.debugWithId(this._queryId, 'Source Query', this.queryConfiguration.query);
+    this.logger.debugWithId(this._queryId, 'queryConfiguration', queryConfiguration);
+
+    // Pre compile the query to find any errors.
+    try {
+      const preCompile = alasql.parse(this.queryConfiguration.query);
+      this.logger.debugWithId(this._queryId, 'Source Query', preCompile);
+    } catch (error) {
+      this._error = `Error with query: ${error as string}`;
+      this.logger.errorWithId(this._queryId, `Error with query on page [${sourcePath}]:`, error);
+    }
+
+    this._sqlQuery = this.queryConfiguration.query;
+    this.logger.groupEndId();
   }
 
   /**
@@ -187,6 +256,8 @@ export class AlaSqlQuery implements IQuery {
   public query(): any {
     // eslint-disable-next-line @typescript-eslint/no-this-alias, unicorn/no-this-assignment
     const currentQuery = this;
+    this.logger.groupId(this._queryId);
+    this.logger.infoWithId(this._queryId, `Running query on:${this.sourcePath}`);
 
     // Return the full path the query is running on.
     alasql.fn.notePathWithFileExtension = function () {
@@ -227,18 +298,20 @@ export class AlaSqlQuery implements IQuery {
           const query = this.getParsedQuery(v);
           const dataTable: any[] = this.getDataTable(v);
 
-          this._logger.debugWithId(this._queryId, 'Executing Query:', {originalQuery: this.queryConfiguration.query, parsedQuery: query});
+          this.logger.debugWithId(this._queryId, 'Executing Query:', {originalQuery: this.queryConfiguration.query, parsedQuery: query});
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           queryResult = alasql(query, [dataTable]);
         }
       }
     } catch (error) {
       this._error = `Error with query: ${error as string}`;
-      this._logger.errorWithId(this._queryId, `Error with query on page [${this.sourcePath}]:`, error);
+      this.logger.errorWithId(this._queryId, `Error with query on page [${this.sourcePath}]:`, error);
       queryResult = [];
     }
 
-    this._logger.debugWithId(this._queryId, `queryResult: ${queryResult.length as number}`, queryResult);
+    this.logger.debugWithId(this._queryId, `queryResult: ${queryResult.length as number}`, queryResult);
+    this.logger.groupEndId();
+
     return queryResult;
   }
 
@@ -278,7 +351,11 @@ export class AlaSqlQuery implements IQuery {
   private getDataTable(query: string): any[] {
     let dataTable: any[] = [];
     if (/\bobsidian_markdown_notes\b/gi.test(query)) {
-      dataTable = this.plugin.app.vault.getMarkdownFiles();
+      dataTable = this.notesCache.notes;
+      this.logger.debugWithId(this._queryId, `notesCache.notes: ${this.notesCache.notes.length}`, this.notesCache.notes);
+
+      // Old direct query for the data every time.
+      // dataTable = this.plugin.app.vault.getMarkdownFiles();
     } else if (/\bobsidian_markdown_files\b/gi.test(query)) {
       dataTable = this.plugin.app.vault.getMarkdownFiles();
     } else if (/\bdataview_pages\b/gi.test(query)) {
@@ -301,21 +378,5 @@ export class AlaSqlQuery implements IQuery {
     const queryResult: any = this.query();
 
     return queryResult;
-  }
-
-  /**
-   * Creates a unique ID for correlation of console logging.
-   *
-   * @private
-   * @param {number} length
-   * @return {*}  {string}
-   * @memberof QuerySql
-   */
-  private generateQueryId(length: number): string {
-    const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    const randomArray = Array.from({length}, () => chars[Math.floor(Math.random() * chars.length)]);
-
-    const randomString = randomArray.join('');
-    return randomString;
   }
 }

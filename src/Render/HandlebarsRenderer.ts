@@ -7,22 +7,133 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import {Service} from '@ophidian/core';
 import Handlebars, {type HelperOptions} from 'handlebars';
-import {logging} from 'lib/Logging';
+import {LoggingService} from 'lib/LoggingService';
 import {type IRenderer} from 'Render/IRenderer';
 import {markdown2html} from 'Render/MicromarkRenderer';
 
-export class HandlebarsRenderer implements IRenderer {
-  public static registerHandlebarsHelpers() {
+export class HandlebarsRenderer extends Service implements IRenderer {
+  defaultTemplate = '{{stringify result}}';
+  logger = this.use(LoggingService).getLogger('Qatt.HandlebarsRenderer');
+
+  /**
+   * This will register all the default handlebars helpers that make working
+   * with the templates easier in Obsidian.
+   *
+   * @return {*}  {void}
+   * @memberof HandlebarsRenderer
+   */
+  onload(): void {
+    this.logger.info('Setting up inbuilt Handlebars helpers');
+
+    // This map is just a simple way to hold the helper functions that are to be registered.
     type IMap = Record<string, {value: string; items: Array<Record<string, any>>}>;
+
     // Just add the simple helpers here.
     Handlebars.registerHelper({
+      /*
+      // >> docs-handlebars-helper-capitalize
+
+      The `capitalize`\-helper will capitalize the first letter of the string.
+
+      {% raw %}
+
+      ```handlebars
+        {{{capitalize sentence}}}
+      ```
+
+      {% endraw %}
+
+      when used with this context:
+
+      ```
+      {
+        sentence: "this is some sentence"
+      }
+      ```
+
+      will result in:
+
+      ```
+      This is some sentence
+      ```
+
+      // << docs-handlebars-helper-capitalize
+      */
       capitalize(word: string) {
         return word.charAt(0).toUpperCase() + word.slice(1);
       },
+
+      /*
+      // >> docs-handlebars-helper-lowercase
+
+      The `lowercase`\-helper will convert the entire string to lowercase.
+
+      {% raw %}
+
+      ```handlebars
+        {{{lowercase sentence}}}
+      ```
+
+      {% endraw %}
+
+      when used with this context:
+
+      ```
+      {
+        sentence: "This Is Some SENtence"
+      }
+      ```
+
+      will result in:
+
+      ```
+      this is some sentence
+      ```
+
+      // << docs-handlebars-helper-lowercase
+      */
       lowercase(word: string) {
         return word.toLowerCase();
       },
+
+      /*
+      // >> docs-handlebars-helper-stringify
+
+      The `lowercase`\-helper will convert the entire string to lowercase.
+
+      {% raw %}
+
+      ```handlebars
+        {{{stringify complexObject}}}
+      ```
+
+      {% endraw %}
+
+      when used with this context:
+
+      ```
+      {
+        complexObject: {
+          "this": "is",
+          "a": "complex",
+          "object": "with",
+          "lots": "of",
+          "things": "in",
+          "it": "!"
+        }
+      }
+      ```
+
+      will result in:
+
+      ```
+      this is some sentence
+      ```
+
+      // << docs-handlebars-helper-stringify
+      */
       stringify(value) {
         return JSON.stringify(value, null, 2);
       },
@@ -163,18 +274,10 @@ export class HandlebarsRenderer implements IRenderer {
     });
   }
 
-  _logger = logging.getLogger('Qatt.HandlebarsRenderer');
+  public renderTemplate(template: string, result: any) {
+    this.logger.debug('rendering compiled template', template);
+    const compliedTemplate = Handlebars.compile(template ?? '{{stringify result}}');
 
-  private readonly compliedTemplate;
-
-  constructor(
-    private readonly template: string,
-  ) {
-    this.compliedTemplate = Handlebars.compile(template ?? '{{stringify result}}');
-  }
-
-  public renderTemplate(result: any) {
-    this._logger.debug('rendering compiled template', this.template);
-    return this.compliedTemplate({result});
+    return compliedTemplate({result});
   }
 }

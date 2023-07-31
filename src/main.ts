@@ -1,54 +1,98 @@
 /* eslint-disable unicorn/filename-case */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {Notice, Plugin} from 'obsidian';
+import {type CachedMetadata, Notice, Plugin, type TFile} from 'obsidian';
+import {use, useSettings} from '@ophidian/core';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
-import {QueryRenderer} from 'QueryRenderer';
-import EventHandler from 'handlers/EventHandler';
-import {CommandHandler} from 'handlers/CommandHandler';
+import type EventHandler from 'handlers/EventHandler';
+import {type CommandHandler} from 'handlers/CommandHandler';
 import {DataTables} from 'Data/DataTables';
 import {isPluginEnabled} from 'obsidian-dataview';
 import {HandlebarsRenderer} from 'Render/HandlebarsRenderer';
-import {SettingsTab} from 'Settings/SettingsTab';
-import {SettingsManager} from 'Settings/SettingsManager';
-import {log, logging} from 'lib/Logging';
+import {type SettingsManager} from 'Settings/SettingsManager';
 import {AlaSqlQuery} from 'Query/AlaSqlQuery';
 import {HandlebarsRendererObsidian} from 'Render/HandlebarsRendererObsidian';
+import {LoggingService} from 'lib/LoggingService';
+import {QueryFactory} from 'Query/QueryFactory';
+import {RenderFactory} from 'Render/RenderFactory';
+import {QueryRendererV2Service} from 'QueryRendererV2';
+import {NotesCacheService} from 'NotesCacheService';
+import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
+import {GeneralSettingsDefaults, type IGeneralSettings} from 'Settings/DefaultSettings';
+
+export class Note {
+  constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
+}
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
+  use = use.plugin(this);
+  logger = this.use(LoggingService).getLogger('Qatt');
+  dataTables = this.use(DataTables);
+
+  // Settings, TBD is I use this or not.
+  settingsTab = useSettingsTab(this);
+  settings = useSettings(
+    this, // Plugin or other owner
+    GeneralSettingsDefaults, // Default settings
+    (settings: IGeneralSettings) => {
+      // This will run every time the settings are updated.
+      this.logger.info('Settings Updated', settings);
+    },
+    (settings: IGeneralSettings) => {
+      // This will run when the settings are first loaded.
+      this.logger.info('Settings Initialize', settings);
+      this.onStartSqlQueries = settings.onStartSqlQueries;
+      if (this.onStartSqlQueries) {
+        this.logger.info('Running on start SQL queries', this.onStartSqlQueries);
+        const onStartResult = this.dataTables?.runAdhocQuery(this.onStartSqlQueries);
+        this.logger.info('On start SQL queries result', onStartResult);
+      }
+    },
+  );
+
+  onStartSqlQueries: string;
+
   // Public inlineRenderer: InlineRenderer | undefined;
-  public queryRenderer: QueryRenderer | undefined;
+  public queryRendererService: QueryRendererV2Service | undefined;
   public eventHandler: EventHandler | undefined;
   public commandHandler: CommandHandler | undefined;
   public settingsManager: SettingsManager | undefined;
-  public dataTables: DataTables | undefined;
+  public notesCacheService: NotesCacheService | undefined;
+  public handlebarsRenderer: HandlebarsRenderer | undefined;
 
-  async onload(): Promise<void> {
-    // Setup logging and settings.
-    logging.registerConsoleLogger();
-    log('info', `loading plugin "${this.manifest.name}" v${this.manifest.version}`);
+  // Settings are rendered in the settings via this. Need to
+  // refactor this to use the SettingsTab approach I had.
+  showSettings() {
+    const tab = this.settingsTab;
+    const {settings} = this;
 
-    // --- Settings
-    // Load up the settings manager.
-    this.settingsManager = new SettingsManager();
+    tab.initializeTab();
+    tab.addHeading(new SettingsTabHeading({text: 'Query All The Things', level: 'h1', noticeText: 'A plugin that allows you to make queries against the internal data of obsidian and render it how you want.'}));
+    const generalSettingsSection = tab.addHeading(new SettingsTabHeading({text: 'General Settings', level: 'h2', class: 'settings-heading'}));
 
-    // Wire up events from the settings.
-    this.settingsManager.on('settings-updated', async () => {
-      await this.saveSettings();
-    });
+    const onChange = async (value: string) => {
+      await settings.update(settings => {
+        settings.onStartSqlQueries = value;
+      });
+    };
 
-    await this.loadSettings();
-    const {generalSettings, loggingOptions} = this.settingsManager.getSettings();
+    const startSQLQueries = tab.addTextAreaInput(
+      new SettingsTabField({
+        name: 'On Start SQL Queries',
+        description: 'If you want to create tables and set data so your queries can use it at a later time without having to duplicate the queries enter them here. These will be executed when the plugin is loaded after the data tables have been initialized.',
+        placeholder: GeneralSettingsDefaults.onStartSqlQueries,
+        value: this.onStartSqlQueries,
+      }),
+      onChange,
+      generalSettingsSection,
+    );
+  }
 
-    // Setup the UI tab.
-    this.addSettingTab(new SettingsTab(this, this.settingsManager));
+  onload() {
+    this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
 
-    // -- Logging
-    // Set logging levels from configuration.
-    logging.configure(loggingOptions);
-
-    this.dataTables = new DataTables(this);
+    this.use(QueryFactory).load();
+    this.use(RenderFactory).load();
+    this.use(HandlebarsRenderer).load();
 
     if (!isPluginEnabled(this.app)) {
       // eslint-disable-next-line no-new
@@ -56,35 +100,20 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       throw new Error('Dataview plugin is not installed');
     }
 
-    HandlebarsRenderer.registerHandlebarsHelpers();
+    // HandlebarsRenderer.registerHandlebarsHelpers();
     HandlebarsRendererObsidian.registerHandlebarsHelpers();
     AlaSqlQuery.initialize();
 
     // When layout is ready we can refresh tables and register the query renderer.
     this.app.workspace.onLayoutReady(async () => {
-      log('info', `Layout is ready for workspace: ${this.app.vault.getName()}`);
-      log('info', '-- General Settings --');
-
-      for (const key of Object.keys(generalSettings)) {
-        const value = generalSettings[key] as string;
-        log('info', `${key}: ${value}`);
-      }
-
-      // This.inlineRenderer = new InlineRenderer({ plugin: this });
-      this.queryRenderer = new QueryRenderer(this);
+      this.logger.info(`Layout is ready for workspace: ${this.app.vault.getName()}`);
 
       this.dataTables?.refreshTables('layout ready');
-
-      // Load any custom queries from configuration.
-      const onStartSqlQueries = this.settingsManager?.getValue('onStartSqlQueries') as string;
-      if (onStartSqlQueries) {
-        this.dataTables?.runAdhocQuery(onStartSqlQueries);
-      }
 
       (window as any).qattUpdateOriginalTask = async function (page: string, line: number, currentStatus: string, nextStatus: string) {
         nextStatus = nextStatus === '' ? ' ' : nextStatus;
 
-        const rawFileText = await this.app.vault.adapter.read(page);
+        const rawFileText = await app.vault.adapter.read(page);
         const hasRN = rawFileText.contains('\r');
         const fileText = rawFileText.split(/\r?\n/u);
 
@@ -95,50 +124,35 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
         fileText[line] = fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`);
 
         const newText = fileText.join(hasRN ? '\r\n' : '\n');
-        await this.app.vault.adapter.write(page, newText);
+        await app.vault.adapter.write(page, newText);
         app.workspace.trigger('dataview:refresh-views');
       };
+
+      // D this.queryRendererService = this.use(QueryRendererService);
+      this.queryRendererService = this.use(QueryRendererV2Service);
+
+      this.notesCacheService = this.use(NotesCacheService);
     });
 
     // Refresh tables when dataview index is ready.
     this.registerEvent(this.app.metadataCache.on('dataview:index-ready', () => {
-      log('info', 'dataview:index-ready event detected.');
+      this.logger.info('dataview:index-ready event detected.');
       this.dataTables?.refreshTables('dataview:index-ready event detected');
     }));
 
     this.registerEvent(this.app.workspace.on('dataview:refresh-views', () => {
-      log('info', 'dataview:refresh-views event detected.');
+      this.logger.info('dataview:refresh-views event detected.');
       this.dataTables?.refreshTables('dataview:refresh-views event detected');
     }));
 
     // Allow user to refresh the tables manually.
     this.addRibbonIcon('refresh-cw', 'Refresh QATT Tables', (evt: MouseEvent) => {
-      log('info', `Refresh QATT Tables: ${evt.button}`);
+      this.logger.info(`Refresh QATT Tables: ${evt.button}`);
       this.dataTables?.refreshTables('manual refresh');
     });
-
-    // Update with render data if debug mode is enable
-    // future planned work. Does not work on mobile apps.
-    // const statusBarItemElement = this.addStatusBarItem();
-    // statusBarItemElement.setText('Status Bar Text');
-
-    this.commandHandler = new CommandHandler(this, this.settingsManager);
-    this.commandHandler.setup();
-
-    this.eventHandler = new EventHandler(this, this.settingsManager);
-    this.eventHandler.setup();
   }
 
   onunload() {
-    log('info', `unloading plugin "${this.manifest.name}" v${this.manifest.version}`);
-  }
-
-  async loadSettings() {
-    const newSettings = await this.loadData();
-    this.settingsManager?.updateSettings(newSettings);
-  }
-
-  async saveSettings() {
-    await this.saveData(this.settingsManager?.getSettings());
+    this.logger.info(`unloading plugin "${this.manifest.name}" v${this.manifest.version}`);
   }
 }

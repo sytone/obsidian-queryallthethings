@@ -22,10 +22,21 @@ Run `pnpm install` to ensure dependencies are installed and then `pnpm run build
 
 To make the process of developing simpler this repo has a dev container configuration. This means you can use a virtual container to work on changes and connect to that from any location in the browser or VSCode.
 
-## Using a symlink to help test changes
+## Testing changes
 
+You can set the `OBSIDIAN_TEST_VAULT` enviroment variable to the vault you want to test with or use a symlink.
+
+Environment Variable Example:
+
+```powershell
+$env:OBSIDIAN_TEST_VAULT = "C:\obsidian\brainstore"
+```
+
+Symlink Example:
+
+```powershell
 New-Item -ItemType Junction -Target ".\dist" -Path "C:\obsidian\brainstore\.obsidian\plugins\qatt\"
-
+```
 
 ## Documentation
 

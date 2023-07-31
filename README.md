@@ -28,6 +28,12 @@
 
 ---
 
+## Roadmap and Issues
+
+Look at the [Qatt Project](https://github.com/users/sytone/projects/4) to see what is in progress or planned. Please make a issue if you have a problem or want to add/request a new feature. Open to PRs at any point.
+
+---
+
 ## Getting started
 
 Documentation on installing the plugin and using it can be found at [https://sytone.github.io/obsidian-queryallthethings/](https://sytone.github.io/obsidian-queryallthethings/)

@@ -84,6 +84,8 @@ export interface IQattCodeBlock {
   logLevel: string | undefined;
   codeBlockContent: string;
   replaceCodeBlock: string | undefined;
+  queryDataSource: string;
+  id: string;
 }
 
 export class QattCodeBlock implements IQattCodeBlock {
@@ -96,6 +98,8 @@ export class QattCodeBlock implements IQattCodeBlock {
   renderEngine: string | undefined;
   logLevel: string | undefined;
   replaceCodeBlock: string | undefined;
+  queryDataSource: string;
+  id: string;
 
   constructor(
     public codeBlockContent: string,
@@ -109,6 +113,7 @@ export class QattCodeBlock implements IQattCodeBlock {
     this.template = parsedCodeBlock.template;
     this.postRenderFormat = parsedCodeBlock.postRenderFormat;
     this.renderEngine = parsedCodeBlock.renderEngine;
+    this.id = parsedCodeBlock.id ?? this.generateCodeblockId(10);
 
     // Set to info by default.
     if (
@@ -132,5 +137,47 @@ export class QattCodeBlock implements IQattCodeBlock {
     } else {
       this.replaceCodeBlock = parsedCodeBlock.replaceCodeBlock;
     }
+
+    this.queryDataSource = this.getParsedQuerySource(this.query ?? '');
+  }
+
+  private getParsedQuerySource(query: string) {
+    if (/\bobsidian_markdown_notes\b/gi.test(query)) {
+      return 'qatt';
+    }
+
+    if (/\bobsidian_markdown_files\b/gi.test(query)) {
+      return 'obsidian';
+    }
+
+    if (/\bdataview_pages\b/gi.test(query)) {
+      return 'dataview';
+    }
+
+    if (/\bdataview_tasks\b/gi.test(query)) {
+      return 'dataview';
+    }
+
+    if (/\bdataview_lists\b/gi.test(query)) {
+      return 'dataview';
+    }
+
+    return '';
+  }
+
+  /**
+   * Creates a unique ID for correlation of console logging.
+   *
+   * @private
+   * @param {number} length
+   * @return {*}  {string}
+   * @memberof QuerySql
+   */
+  private generateCodeblockId(length: number): string {
+    const chars = 'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+    const randomArray = Array.from({length}, () => chars[Math.floor(Math.random() * chars.length)]);
+
+    const randomString = randomArray.join('');
+    return randomString;
   }
 }

@@ -6,62 +6,73 @@ import {html as wikiHtml, syntax as wiki} from 'micromark-extension-wiki-link';
 import {fromMarkdown} from 'mdast-util-from-markdown';
 import {toString} from 'mdast-util-to-string';
 import {fromMarkdown as fromWiki} from 'mdast-util-wiki-link';
-import {logging} from 'lib/Logging';
-import {type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild} from 'obsidian';
-import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
+import {type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild, Plugin} from 'obsidian';
 import {QattCodeBlock} from 'QattCodeBlock';
 import {type IRenderer} from 'Render/IRenderer';
 import {RenderFactory} from 'Render/RenderFactory';
 import {QueryFactory} from 'Query/QueryFactory';
 import {type IQuery} from 'Query/IQuery';
+import {Service, use} from '@ophidian/core';
+import {LoggingService} from 'lib/LoggingService';
 
-export class QueryRenderer {
+export class QueryRendererService extends Service {
+  plugin = this.use(Plugin);
+  logger = this.use(LoggingService).getLogger('Qatt.QueryRendererService');
+
   public addQuerySqlRenderChild = this._addQuerySqlRenderChild.bind(this);
-  _logger = logging.getLogger('Qatt.QueryRenderer');
 
   constructor(
-    private readonly plugin: IQueryAllTheThingsPlugin,
   ) {
+    super();
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    plugin.registerMarkdownCodeBlockProcessor('qatt', this._addQuerySqlRenderChild.bind(this));
+    this.plugin.registerMarkdownCodeBlockProcessor('qatt', this._addQuerySqlRenderChild.bind(this));
   }
 
   private async _addQuerySqlRenderChild(source: string, element: HTMLElement, context: MarkdownPostProcessorContext) {
-    this._logger.debug(`Adding SQL Query Render for ${source} to context ${context.docId}`);
+    this.logger.debug(`Adding SQL Query Render for ${source} to context ${context.docId}`);
 
-    const queryConfiguration = new QattCodeBlock(source);
-    context.addChild(
-      new QueryRenderChild(
-        this.plugin,
-        element,
-        queryConfiguration,
-        context,
-      ),
-    );
+    const render = this.use.fork().use(QueryRenderChild);
+    render.container = element;
+    render.queryConfiguration = new QattCodeBlock(source);
+    render.context = context;
+    render.load();
+
+    // Need to move back to this.
+    // context.addChild(
+    //   new QueryRenderChild(
+    //     element,
+    //     queryConfiguration,
+    //     context,
+    //   ),
+    // );
   }
 }
 
-class QueryRenderChild extends MarkdownRenderChild {
-  _logger = logging.getLogger('Qatt.QueryRenderChild');
+export class QueryRenderChild extends Service {
+  public container: HTMLElement;
+  public queryConfiguration: QattCodeBlock;
+  public context: MarkdownPostProcessorContext;
+
+  plugin = this.use(Plugin);
+  logger = this.use(LoggingService).getLogger('Qatt.QueryRenderChild');
+  queryFactory = this.use(QueryFactory);
+  renderFactory = this.use(RenderFactory);
 
   private readonly queryId: string;
 
   constructor(
-    private readonly plugin: IQueryAllTheThingsPlugin,
-    private readonly container: HTMLElement,
-    private readonly queryConfiguration: QattCodeBlock,
-    private readonly context: MarkdownPostProcessorContext,
   ) {
-    super(container);
+    super();
     this.queryId = 'TBD';
-    if (this.queryConfiguration.logLevel) {
-      this._logger.setLogLevel(this.queryConfiguration.logLevel);
-    }
-
-    this._logger.debug(`Query Render generated for class ${this.containerEl.className} -> ${this.container.className}`);
   }
 
   onload() {
+    if (this.queryConfiguration.logLevel) {
+      this.logger.setLogLevel(this.queryConfiguration.logLevel);
+    }
+
+    this.logger.debug(`Query Render generated for class ${this.container.className} -> ${this.container.className}`);
+
     this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', this.render));
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.render();
@@ -75,12 +86,12 @@ class QueryRenderChild extends MarkdownRenderChild {
     const startTime = new Date(Date.now());
 
     // Run query and get results to be rendered
-    const queryEngine: IQuery = QueryFactory.getQuery(this.queryConfiguration, this.context.sourcePath, this.context.frontmatter, this.plugin);
+    const queryEngine: IQuery = this.queryFactory.getQuery(this.queryConfiguration, this.context.sourcePath, this.context.frontmatter);
     const results = queryEngine.applyQuery(this.queryId);
 
-    const renderEngine: IRenderer = RenderFactory.getRenderer(this.queryConfiguration);
+    const renderEngine: IRenderer = this.renderFactory.getRenderer(this.queryConfiguration);
 
-    const content = this.containerEl.createEl('div');
+    const content = this.container.createEl('div');
     content.setAttr('data-query-id', this.queryId);
 
     if (queryEngine.error) {
@@ -88,24 +99,24 @@ class QueryRenderChild extends MarkdownRenderChild {
     } else {
       // Render Engine Execution
       const html = renderEngine?.renderTemplate(results) ?? 'Unknown error or exception has occurred.';
-      this._logger.debug('Render Results', html);
+      this.logger.debug('Render Results', html);
 
       const postRenderFormat = this.queryConfiguration.postRenderFormat ?? this.plugin.settingsManager?.getValue('postRenderFormat');
-      this._logger.debug('postRenderFormat: ', postRenderFormat);
+      this.logger.debug('postRenderFormat: ', postRenderFormat);
 
       if (postRenderFormat === 'markdown') {
         await MarkdownPreviewView.renderMarkdown(html, content, '', this.plugin);
       } else if (postRenderFormat === 'micromark') {
-        this._logger.debug('micromark Render Results', this.markdown2html(html));
+        this.logger.debug('micromark Render Results', this.markdown2html(html));
         content.innerHTML = this.markdown2html(html);
       } else {
         content.innerHTML = html;
       }
     }
 
-    this.containerEl.firstChild?.replaceWith(content);
+    this.container.firstChild?.replaceWith(content);
     const endTime = new Date(Date.now());
-    this._logger.debugWithId(this.queryId, `Render End: ${endTime.getTime() - startTime.getTime()}ms`);
+    this.logger.debug(this.queryId, `Render End: ${endTime.getTime() - startTime.getTime()}ms`);
   };
 
   markdown2html(markdown?: string): string {

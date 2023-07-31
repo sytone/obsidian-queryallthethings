@@ -1,20 +1,17 @@
-import {type ISettings} from 'Interfaces/Settings';
-import {Feature} from 'Settings/Feature';
 
-// Default data block that is stored in the data file.
-export const DefaultSettings: ISettings = {
-  features: Feature.settingsFlags,
-  generalSettings: {
-    refreshDebounce: 2500,
-    settingsVersion: 1,
-    internalLoggingConsoleLogLimit: 10,
-    postRenderFormat: 'micromark',
-  },
-  headingOpened: {}, // ;  { 'Documentation and Support': true },
-  loggingOptions: {
-    minLevels: {
-      '': 'info',
-      Qatt: 'info',
-    },
-  },
+export interface ISqlSettings {
+  onStartSqlQueries: string;
+}
+
+export const SqlSettingsDefaults: ISqlSettings = {
+  onStartSqlQueries: 'CREATE TABLE my_lookup(name,birthday);\nINSERT INTO my_lookup VALUES ("fred", 2000-02-03);',
 };
+
+export interface IGeneralSettings {
+  onStartSqlQueries: string;
+}
+
+export const GeneralSettingsDefaults: IGeneralSettings = {
+  onStartSqlQueries: 'CREATE TABLE my_lookup(name,birthday);\nINSERT INTO my_lookup VALUES ("fred", 2000-02-03);',
+};
+

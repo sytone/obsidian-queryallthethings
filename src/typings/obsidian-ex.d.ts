@@ -29,7 +29,11 @@ declare module 'obsidian' {
 
   interface Workspace {
     /** Sent to rendered dataview components to tell them to possibly refresh */
-    on (name: 'qatt:refresh-codeblocks' | 'dataview:refresh-views', callback: () => void, ctx?: any): EventRef;
+    on (name:
+    'qatt:refresh-codeblocks' |
+    'dataview:refresh-views' |
+    'qatt:notes-store-update' |
+    'qatt:dataview-store-update', callback: () => void, ctx?: any): EventRef;
   }
 }
 
