@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.5.4](https://github.com/sytone/obsidian-queryallthethings/compare/0.5.3...0.5.4) (2023-08-02)
+
+
+### Features
+
+* update dataview_pages to better represent expectations ([f09ed22](https://github.com/sytone/obsidian-queryallthethings/commits/f09ed22e194778ace4b2d7463c4656f94366edba))
+
+
+### Documentation
+
+* improved documentation and examples ([f0eaf44](https://github.com/sytone/obsidian-queryallthethings/commits/f0eaf44a5e0cf68ccfb1bb0593457c4a99ccf65f))
+
 ### [0.5.3](https://github.com/sytone/obsidian-queryallthethings/compare/0.5.2...0.5.3) (2023-07-31)
 
 
