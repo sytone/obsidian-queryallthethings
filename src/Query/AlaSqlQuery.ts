@@ -359,7 +359,12 @@ export class AlaSqlQuery extends Service implements IQuery {
       dataTable = this.plugin.app.vault.getMarkdownFiles();
     } else if (/\bdataview_pages\b/gi.test(query)) {
       const dataViewApi = getAPI(this.plugin.app);
-      dataTable = dataViewApi ? Array.from(dataViewApi.index.pages.values()) : [];
+      if (dataViewApi) {
+        // Update to match dv.pages() correctly.
+        // console.log(dataViewApi.pages().values[0]);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        dataTable = dataViewApi ? Array.from(dataViewApi.pages().values) : [];
+      }
     }
 
     return dataTable;
