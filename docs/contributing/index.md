@@ -1,5 +1,5 @@
 ---
-nav_order: 60
+nav_order: 50
 layout: default
 title: Contributing
 has_children: true

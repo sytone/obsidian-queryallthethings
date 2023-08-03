@@ -1,7 +1,7 @@
 ---
 nav_order: 4
 layout: default
-parent: Handlebars Templates
+parent: Templates
 title: Default Helpers
 ---
 

@@ -1,3 +1,4 @@
 {
-  "useMarkdownLinks": true
+  "useMarkdownLinks": true,
+  "showInlineTitle": false
 }

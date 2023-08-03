@@ -1,0 +1,51 @@
+{
+  "confirmDeletion": true,
+  "showAddCommand": true,
+  "debug": false,
+  "editorMenu": [],
+  "fileMenu": [],
+  "leftRibbon": [
+    {
+      "id": "obsidian-shellcommands:shell-command-rnlv1f5kwn",
+      "icon": "chevrons-up-down",
+      "name": "Shell commands: Execute: Build QATT Documentation with snippets",
+      "mode": "any",
+      "color": "#25c19a"
+    },
+    {
+      "id": "obsidian-shellcommands:shell-command-y3d6u4vupv",
+      "icon": "download",
+      "name": "Shell commands: Execute: Install Project Packages",
+      "mode": "any",
+      "color": "#ae8484"
+    }
+  ],
+  "rightRibbon": [],
+  "titleBar": [],
+  "statusBar": [],
+  "pageHeader": [
+    {
+      "id": "editor:toggle-source",
+      "icon": "lucide-code-2",
+      "name": "Toggle Live Preview/Source mode",
+      "mode": "any"
+    }
+  ],
+  "macros": [],
+  "explorer": [],
+  "hide": {
+    "statusbar": [],
+    "leftRibbon": []
+  },
+  "spacing": 8,
+  "advancedToolbar": {
+    "rowHeight": 48,
+    "rowCount": 1,
+    "spacing": 0,
+    "buttonWidth": 48,
+    "columnLayout": false,
+    "mappedIcons": [],
+    "tooltips": false,
+    "heightOffset": 0
+  }
+}

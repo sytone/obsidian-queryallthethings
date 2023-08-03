@@ -47,23 +47,27 @@ export class AlaSqlQuery extends Service implements IQuery {
     /*
     // >> alasql-function-stringify-snippet
 
-    The `stringify` function will convert the provided value to a JSON string.
+The `stringify` function will convert the provided value to a JSON string.
 
-    {% raw %}
+In this example it takes the `stat` property of the first note found and renders it as a JSON blob. This can be handy to explore objects if you are not sure what is available.
 
-    ```qatt
-    query: SELECT TOP 1 stringify(stat) AS statPropertyAsJsonString FROM obsidian_markdown_notes
-    template: |
-      {{#each result}}{{statPropertyAsJsonString}}{{/each}}
-    ```
+{% raw %}
 
-    {% endraw %}
+````markdown
+```qatt
+query: SELECT TOP 1 stringify(stat) AS statPropertyAsJsonString FROM obsidian_markdown_notes
+template: |
+  {{#each result}}{{statPropertyAsJsonString}}{{/each}}
+```
+````
 
-    will result in:
+{% endraw %}
 
-    ```text
-    {"ctime":1670345758620,"mtime":1670345758620,"size":316}
-    ```
+will result in:
+
+```text
+{"ctime":1670345758620,"mtime":1670345758620,"size":316}
+```
 
     // << alasql-function-stringify-snippet
     */

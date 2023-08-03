@@ -2,5 +2,6 @@
   "accentColor": "",
   "enabledCssSnippets": [
     "no-external-link-icon"
-  ]
+  ],
+  "showViewHeader": true
 }

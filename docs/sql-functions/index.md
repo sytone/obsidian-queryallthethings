@@ -1,8 +1,9 @@
 ---
-nav_order: 40
+nav_order: 30
 layout: default
 title: SQL Functions
 has_children: true
+parent: Queries
 ---
 
 The main query engine AlaSQL allows for functions to be added to it. By default the following functions have been made available to make the query process simpler.
