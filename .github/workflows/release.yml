@@ -80,3 +80,4 @@ jobs:
           name: ${{ github.ref_name }}
           draft: true
           generateReleaseNotes: true
+          discussionCategory: announcements
