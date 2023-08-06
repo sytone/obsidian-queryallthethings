@@ -1,6 +1,6 @@
 
 import alasql from 'alasql';
-import {Plugin} from 'obsidian';
+import {Plugin, type TFile} from 'obsidian';
 import {getAPI} from 'obsidian-dataview';
 import {type QattCodeBlock} from 'QattCodeBlock';
 import {type IQuery} from 'Query/IQuery';
@@ -47,33 +47,131 @@ export class AlaSqlQuery extends Service implements IQuery {
     /*
     // >> alasql-function-stringify-snippet
 
-The `stringify` function will convert the provided value to a JSON string.
+    The `stringify` function will convert the provided value to a JSON string.
 
-In this example it takes the `stat` property of the first note found and renders it as a JSON blob. This can be handy to explore objects if you are not sure what is available.
+    In this example it takes the `stat` property of the first note found and renders it as a JSON blob. This can be handy to explore objects if you are not sure what is available.
 
-{% raw %}
+    {% raw %}
 
-````markdown
-```qatt
-query: SELECT TOP 1 stringify(stat) AS statPropertyAsJsonString FROM obsidian_markdown_notes
-template: |
-  {{#each result}}{{statPropertyAsJsonString}}{{/each}}
-```
-````
+    ````markdown
+    ```qatt
+    query: SELECT TOP 1 stringify(stat) AS statPropertyAsJsonString FROM obsidian_markdown_notes
+    template: |
+      {{#each result}}{{statPropertyAsJsonString}}{{/each}}
+    ```
+    ````
 
-{% endraw %}
+    {% endraw %}
 
-will result in:
+    will result in:
 
-```text
-{"ctime":1670345758620,"mtime":1670345758620,"size":316}
-```
+    ```text
+    {"ctime":1670345758620,"mtime":1670345758620,"size":316}
+    ```
 
     // << alasql-function-stringify-snippet
     */
     alasql.fn.stringify = function (value) {
       return JSON.stringify(value);
     };
+
+    /*
+    // >> docs-alasql-function-parsewikilinks
+
+    There are multiple functions to help with the parsing of the wiki links in a string.
+
+    This is the signature of the functions you can use in the queries.
+
+    - parseWikiLinkLocation(value: string): string
+    - parseWikiDisplayName(value: string): string
+    - wikiLinkHasDisplayName(value: string): boolean
+
+    In this example it takes the string containing the wiki link and calls the different parsing functions.
+
+    ```text
+    Need to work on [[Projects/Painting The House|Painting The House]] soon.
+    ```
+
+    {% raw %}
+
+    ````markdown
+    ```qatt
+    query: |
+      SELECT
+      parseWikiLinkLocation('Need to work on [[Projects/Painting The House|Painting The House]] soon.') AS Location,
+      parseWikiDisplayName('Need to work on [[Projects/Painting The House|Painting The House]] soon.') AS Display,
+      wikiLinkHasDisplayName('Need to work on [[Projects/Painting The House|Painting The House]] soon.') AS HasDisplay,
+      wikiLinkHasDisplayName('Need to work on [[Projects/Painting The House]] soon.') AS HasNoDisplay,
+      IIF(wikiLinkHasDisplayName('Need to work on [[Projects/Painting The House|Painting The House]] soon.'), parseWikiDisplayName('Need to work on [[Projects/Painting The House|Painting The House]] soon.'), parseWikiLinkLocation('Need to work on [[Projects/Painting The House|Painting The House]] soon.')) AS HasDisplayIf,
+      IIF(wikiLinkHasDisplayName('Need to work on [[Projects/Painting The House]] soon.'), parseWikiDisplayName('Need to work on [[Projects/Painting The House|Will Not show]] soon.'), parseWikiLinkLocation('Need to work on [[Projects/Painting The House]] soon.')) AS HasNoDisplayIf
+    template: |
+      {{stringify result}}
+    ```
+    ````
+
+    {% endraw %}
+
+    will result in:
+
+    ```text
+    [ { "Location": "Projects/Painting The House", "Display": "Painting The House", "HasDisplay": true, "HasNoDisplay": false, "HasDisplayIf": "Painting The House", "HasNoDisplayIf": "Projects/Painting The House" } ]
+    ```
+
+    // << docs-alasql-function-parsewikilinks
+    */
+    alasql.fn.parseWikiLinkLocation = function (value: string): string {
+      const result = parseWikiLinkFromText(value);
+
+      if (result) {
+        const linkAndDisplay = splitOnUnescapedPipe(result);
+        return linkAndDisplay[0];
+      }
+
+      return '';
+    };
+
+    alasql.fn.parseWikiDisplayName = function (value: string): string {
+      const result = parseWikiLinkFromText(value);
+      if (result) {
+        const linkAndDisplay = splitOnUnescapedPipe(result);
+        return linkAndDisplay[1] ?? '';
+      }
+
+      return '';
+    };
+
+    alasql.fn.wikiLinkHasDisplayName = function (value: string): boolean {
+      const result = parseWikiLinkFromText(value);
+      if (!result) {
+        return false;
+      }
+
+      const linkAndDisplay = splitOnUnescapedPipe(result);
+      return linkAndDisplay.length === 2 && linkAndDisplay[1] !== undefined;
+    };
+
+    function parseWikiLinkFromText(text: string): string | undefined {
+      const re = /\[\[([^\[\]]*?)\]\]/u;
+
+      const result = re.exec(text);
+      if (result) {
+        return result[1];
+      }
+    }
+
+    /** Split on unescaped pipes in an inner link. */
+    function splitOnUnescapedPipe(link: string): [string, string | undefined] {
+      let pipe = -1;
+      while ((pipe = link.indexOf('|', pipe + 1)) >= 0) {
+        if (pipe > 0 && link[pipe - 1] === '\\') {
+          continue;
+        }
+
+        return [link.slice(0, Math.max(0, pipe)).replace(/\\\|/g, '|'), link.slice(Math.max(0, pipe + 1))];
+      }
+
+      return [link.replace(/\\\|/g, '|'), undefined];
+    }
 
     alasql.fn.objectFromMap = function (value) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -87,7 +185,7 @@ will result in:
   logger = this.use(LoggingService).getLogger('Qatt.AlaSqlQuery');
   notesCache = this.use(NotesCacheService);
 
-  public queryConfiguration: QattCodeBlock;
+  public codeblockConfiguration: QattCodeBlock;
   private sourcePath: string;
   // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   private frontmatter: any | undefined;
@@ -102,85 +200,33 @@ will result in:
 
   private _sqlQuery: string;
 
-  /**
-   * Creates an instance of QuerySql which parses the YAML source and
-   * enables execution of the queries in it.
-   * @param {QattCodeBlock} queryConfiguration
-   * @param {string} sourcePath
-   * @param {(any | null | undefined)} frontmatter
-   * @memberof QuerySql
-   */
-  /*
-  constructor(
-
-    public queryConfiguration: QattCodeBlock,
-    private readonly sourcePath: string,
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
-    private readonly frontmatter: any | undefined,
-  ) {
-    super();
-    this._name = 'QuerySql';
-
-    if (this.queryConfiguration.query === undefined) {
-      throw new Error('Query is not defined in the code block, the query field is mandatory.');
-    }
-
-    if (this.queryConfiguration.logLevel) {
-      this.logger.setLogLevel(this.queryConfiguration.logLevel);
-    }
-
-    this._queryId = this.generateQueryId(10);
-    this.logger.groupId(this._queryId);
-    this._customJsClasses = [];
-
-    // Parse the source, it is a YAML block to make things simpler.
-    if (queryConfiguration.customJSForSql) {
-      for (const element of queryConfiguration.customJSForSql) {
-        const className = element.split(' ')[0];
-        const functionName = element.split(' ')[1];
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        alasql.fn[functionName] = window.customJS[className][functionName];
-      }
-    }
-
-    this.logger.debugWithId(this._queryId, 'Source Path', this.sourcePath);
-    this.logger.debugWithId(this._queryId, 'Source Front Matter', this.frontmatter);
-    this.logger.debugWithId(this._queryId, 'Source Query', this.queryConfiguration.query);
-    this.logger.debugWithId(this._queryId, 'queryConfiguration', queryConfiguration);
-
-    // Pre compile the query to find any errors.
-    try {
-      const preCompile = alasql.parse(this.queryConfiguration.query);
-      this.logger.debugWithId(this._queryId, 'Source Query', preCompile);
-    } catch (error) {
-      this._error = `Error with query: ${error as string}`;
-      this.logger.errorWithId(this._queryId, `Error with query on page [${sourcePath}]:`, error);
-    }
-
-    this._sqlQuery = this.queryConfiguration.query;
-    this.logger.groupEndId();
-  }
-  */
-
-  public setupQuery(
-    queryConfiguration: QattCodeBlock,
+  public async setupQuery(
+    codeblockConfiguration: QattCodeBlock,
     sourcePath: string,
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
     frontmatter: any | undefined,
     renderId: string,
-  ): void {
+  ): Promise<void> {
     this._name = 'QuerySql';
-    this.queryConfiguration = queryConfiguration;
+    this.codeblockConfiguration = codeblockConfiguration;
     this.sourcePath = sourcePath;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.frontmatter = frontmatter;
 
-    if (this.queryConfiguration.query === undefined) {
-      throw new Error('Query is not defined in the code block, the query field is mandatory.');
+    if (this.codeblockConfiguration.query === undefined && this.codeblockConfiguration.queryFile === undefined) {
+      throw new Error('Query is not defined in the code block, either the query or queryFile field is mandatory.');
     }
 
-    if (this.queryConfiguration.logLevel) {
-      this.logger.setLogLevel(this.queryConfiguration.logLevel);
+    if (this.codeblockConfiguration.queryFile) {
+      const queryFile = this.plugin.app.vault.getAbstractFileByPath(this.codeblockConfiguration.queryFile);
+      const content = (await this.plugin.app.vault.cachedRead(queryFile as TFile));
+      this._sqlQuery = content;
+    } else {
+      this._sqlQuery = this.codeblockConfiguration.query ?? '';
+    }
+
+    if (this.codeblockConfiguration.logLevel) {
+      this.logger.setLogLevel(this.codeblockConfiguration.logLevel);
     }
 
     this._queryId = renderId;
@@ -188,8 +234,8 @@ will result in:
     this._customJsClasses = [];
 
     // Parse the source, it is a YAML block to make things simpler.
-    if (queryConfiguration.customJSForSql) {
-      for (const element of queryConfiguration.customJSForSql) {
+    if (codeblockConfiguration.customJSForSql) {
+      for (const element of codeblockConfiguration.customJSForSql) {
         const className = element.split(' ')[0];
         const functionName = element.split(' ')[1];
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
@@ -201,19 +247,18 @@ will result in:
 
     this.logger.debugWithId(this._queryId, 'Source Path', this.sourcePath);
     this.logger.debugWithId(this._queryId, 'Source Front Matter', this.frontmatter);
-    this.logger.debugWithId(this._queryId, 'Source Query', this.queryConfiguration.query);
-    this.logger.debugWithId(this._queryId, 'queryConfiguration', queryConfiguration);
+    this.logger.debugWithId(this._queryId, 'Source Query', this._sqlQuery);
+    this.logger.debugWithId(this._queryId, 'codeblockConfiguration', codeblockConfiguration);
 
     // Pre compile the query to find any errors.
     try {
-      const preCompile = alasql.parse(this.queryConfiguration.query);
+      const preCompile = alasql.parse(this._sqlQuery);
       this.logger.debugWithId(this._queryId, 'Source Query', preCompile);
     } catch (error) {
       this._error = `Error with query: ${error as string}`;
       this.logger.errorWithId(this._queryId, `Error with query on page [${sourcePath}]:`, error);
     }
 
-    this._sqlQuery = this.queryConfiguration.query;
     this.logger.groupEndId();
   }
 
@@ -267,6 +312,11 @@ will result in:
       return currentQuery.sourcePath;
     };
 
+    // Return the full path the query is running on.
+    alasql.fn.notePathWithoutFileExtension = function () {
+      return currentQuery.sourcePath.split('.')[0];
+    };
+
     // Return the path to the current page the query is running on.
     alasql.fn.notePath = function () {
       return currentQuery.sourcePath.split('/').slice(0, -1).join('/');
@@ -298,12 +348,13 @@ will result in:
     try {
       for (const v of this._sqlQuery.split(';')) {
         if (v.trim() !== '') {
+          const [parsedQuery, dataTables] = this.getDataTables(v);
           const query = this.getParsedQuery(v);
-          const dataTable: any[] = this.getDataTable(v);
+          // Old const dataTable: any[] = this.getDataTable(v);
 
-          this.logger.debugWithId(this._queryId, 'Executing Query:', {originalQuery: this.queryConfiguration.query, parsedQuery: query});
+          this.logger.debugWithId(this._queryId, 'Executing Query:', {originalQuery: this.codeblockConfiguration.query, parsedQuery});
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-          queryResult = alasql(query, [dataTable]);
+          queryResult = alasql(parsedQuery, dataTables);
         }
       }
     } catch (error) {
@@ -318,8 +369,62 @@ will result in:
     return queryResult;
   }
 
+  private getDataTables(query: string): [string, any[]] {
+    let finalQuery = query;
+    let tableCount = 0;
+    const dataArrays = [];
+
+    // Loop through the query and find all the tables and replace with $x
+    while (/\bobsidian_markdown_notes\b/i.test(finalQuery)) {
+      finalQuery = finalQuery.replace(/\bobsidian_markdown_notes\b/i, `$${tableCount}`);
+      tableCount++;
+      dataArrays.push(this.notesCache.getNotes());
+    }
+
+    while (/\bobsidian_markdown_files\b/i.test(finalQuery)) {
+      finalQuery = finalQuery.replace(/\bobsidian_markdown_files\b/i, `$${tableCount}`);
+      tableCount++;
+      dataArrays.push(this.plugin.app.vault.getMarkdownFiles());
+    }
+
+    while (/\bdataview_pages\b/i.test(finalQuery)) {
+      finalQuery = finalQuery.replace(/\bdataview_pages\b/i, `$${tableCount}`);
+      tableCount++;
+      const dataViewApi = getAPI(this.plugin.app);
+      if (dataViewApi) {
+        // Update to match dv.pages() correctly.
+        // console.log(dataViewApi.pages().values[0]);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        dataArrays.push(dataViewApi ? Array.from(dataViewApi.pages().values) : []);
+      }
+    }
+
+    return [finalQuery, dataArrays];
+  }
+
+  /*
+  Update the table below when new columns are added so documentation is updated.
+  // >> obsidian-markdown-files-table-snippet
+
+  If you need to reference a property of a object do not forget to use `->` and not `.`
+
+  | Column Name | Type   | Description                                     |
+  | ----------- | ------ | ----------------------------------------------- |
+  | path        | string | Full path to the markdown file.                 |
+  | name        | string | The name of the file including the extension.   |
+  | basename    | number | Just the name of the file.                      |
+  | extension   | number | The extension of the file. Usually `md`         |
+  | stat        | object | contains the time and size details of the file. |
+  | stat->ctime | number | Time the file was creates as a serial.          |
+  | stat->mtime | number | Time the file was last modified as a serial.    |
+  | stat->size  | number | Size of the file in bytes                       |
+
+  // << obsidian-markdown-files-table-snippet
+  */
+
   private getParsedQuery(query: string) {
     let finalQuery = query;
+
     if (/\bobsidian_markdown_notes\b/gi.test(query)) {
       finalQuery = query.replace(/\bobsidian_markdown_notes\b/gi, '$0');
     } else if (/\bobsidian_markdown_files\b/gi.test(query)) {
@@ -329,49 +434,6 @@ will result in:
     }
 
     return finalQuery;
-  }
-
-  /*
-    Update the table below when new columns are added so documentation is updated.
-    // >> obsidian-markdown-files-table-snippet
-
-    If you need to reference a property of a object do not forget to use `->` and not `.`
-
-    | Column Name | Type   | Description                                     |
-    | ----------- | ------ | ----------------------------------------------- |
-    | path        | string | Full path to the markdown file.                 |
-    | name        | string | The name of the file including the extension.   |
-    | basename    | number | Just the name of the file.                      |
-    | extension   | number | The extension of the file. Usually `md`         |
-    | stat        | object | contains the time and size details of the file. |
-    | stat->ctime | number | Time the file was creates as a serial.          |
-    | stat->mtime | number | Time the file was last modified as a serial.    |
-    | stat->size  | number | Size of the file in bytes                       |
-
-    // << obsidian-markdown-files-table-snippet
-    */
-
-  private getDataTable(query: string): any[] {
-    let dataTable: any[] = [];
-    if (/\bobsidian_markdown_notes\b/gi.test(query)) {
-      dataTable = this.notesCache.notes;
-      this.logger.debugWithId(this._queryId, `notesCache.notes: ${this.notesCache.notes.length}`, this.notesCache.notes);
-
-      // Old direct query for the data every time.
-      // dataTable = this.plugin.app.vault.getMarkdownFiles();
-    } else if (/\bobsidian_markdown_files\b/gi.test(query)) {
-      dataTable = this.plugin.app.vault.getMarkdownFiles();
-    } else if (/\bdataview_pages\b/gi.test(query)) {
-      const dataViewApi = getAPI(this.plugin.app);
-      if (dataViewApi) {
-        // Update to match dv.pages() correctly.
-        // console.log(dataViewApi.pages().values[0]);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        dataTable = dataViewApi ? Array.from(dataViewApi.pages().values) : [];
-      }
-    }
-
-    return dataTable;
   }
 
   /**

@@ -1,5 +1,6 @@
+import {type QattCodeBlock} from 'QattCodeBlock';
 
 export interface IRenderer {
-  renderTemplate: (template: string, result: any) => string;
+  renderTemplate: (codeblockConfiguration: QattCodeBlock, result: any) => Promise<string>;
   defaultTemplate: string;
 }

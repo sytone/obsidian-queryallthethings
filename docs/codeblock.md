@@ -32,6 +32,10 @@ This works the same as `customJSForSql` but makes the functions available as hel
 
 This is the query to pass to the chosen query engine, currently only the AlaSQL engine is available.
 
+## queryFile
+
+To simplify query reuse you can specify a query file, this is the absolute path to a md file in your vault. The file should have nothing but the query contents in it.
+
 ## queryEngine
 
 This defines the query engine to use to execute the query entered for the query field.
@@ -41,6 +45,10 @@ By default it will use alasql so you do not have to set this. The only supported
 ## template
 
 This value is used to render the results of the query.
+
+## templateFile
+
+To simplify template reuse you can template a query file, this is the absolute path to a md file in your vault. The file should have nothing but the template contents in it.
 
 ## postRenderFormat
 

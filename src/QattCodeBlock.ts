@@ -31,6 +31,10 @@ This works the same as `customJSForSql` but makes the functions available as hel
 
 This is the query to pass to the chosen query engine, currently only the AlaSQL engine is available.
 
+## queryFile
+
+To simplify query reuse you can specify a query file, this is the absolute path to a md file in your vault. The file should have nothing but the query contents in it.
+
 ## queryEngine
 
 This defines the query engine to use to execute the query entered for the query field.
@@ -40,6 +44,10 @@ By default it will use alasql so you do not have to set this. The only supported
 ## template
 
 This value is used to render the results of the query.
+
+## templateFile
+
+To simplify template reuse you can template a query file, this is the absolute path to a md file in your vault. The file should have nothing but the template contents in it.
 
 ## postRenderFormat
 
@@ -77,8 +85,10 @@ export interface IQattCodeBlock {
   customJSForSql: string[];
   customJSForHandlebars: string[];
   query: string | undefined;
+  queryFile: string | undefined;
   queryEngine: string | undefined;
   template: string | undefined;
+  templateFile: string | undefined;
   postRenderFormat: string | undefined;
   renderEngine: string | undefined;
   logLevel: string | undefined;
@@ -92,8 +102,10 @@ export class QattCodeBlock implements IQattCodeBlock {
   customJSForSql: string[];
   customJSForHandlebars: string[];
   query: string | undefined;
+  queryFile: string | undefined;
   queryEngine: string | undefined;
   template: string | undefined;
+  templateFile: string | undefined;
   postRenderFormat: string | undefined;
   renderEngine: string | undefined;
   logLevel: string | undefined;
@@ -109,8 +121,10 @@ export class QattCodeBlock implements IQattCodeBlock {
     this.customJSForSql = parsedCodeBlock.customJSForSql;
     this.customJSForHandlebars = parsedCodeBlock.customJSForHandlebars;
     this.query = parsedCodeBlock.query;
+    this.queryFile = parsedCodeBlock.queryFile;
     this.queryEngine = parsedCodeBlock.queryEngine;
     this.template = parsedCodeBlock.template;
+    this.templateFile = parsedCodeBlock.templateFile;
     this.postRenderFormat = parsedCodeBlock.postRenderFormat;
     this.renderEngine = parsedCodeBlock.renderEngine;
     this.id = parsedCodeBlock.id ?? this.generateCodeblockId(10);

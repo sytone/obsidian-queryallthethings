@@ -8,13 +8,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {Service} from '@ophidian/core';
+import {Plugin, type TFile} from 'obsidian';
 import Handlebars, {type HelperOptions} from 'handlebars';
 import {LoggingService} from 'lib/LoggingService';
+import {type QattCodeBlock} from 'QattCodeBlock';
 import {type IRenderer} from 'Render/IRenderer';
 import {markdown2html} from 'Render/MicromarkRenderer';
 
 export class HandlebarsRenderer extends Service implements IRenderer {
   defaultTemplate = '{{stringify result}}';
+  plugin = this.use(Plugin);
   logger = this.use(LoggingService).getLogger('Qatt.HandlebarsRenderer');
 
   /**
@@ -274,10 +277,21 @@ export class HandlebarsRenderer extends Service implements IRenderer {
     });
   }
 
-  public renderTemplate(template: string, result: any) {
+  public async renderTemplate(codeblockConfiguration: QattCodeBlock, result: any) {
+    let template = this.defaultTemplate;
+
+    if (codeblockConfiguration.templateFile) {
+      const templateFile = this.plugin.app.vault.getAbstractFileByPath(codeblockConfiguration.templateFile);
+      const content = (await this.plugin.app.vault.cachedRead(templateFile as TFile));
+      template = content;
+    } else {
+      template = codeblockConfiguration.template ?? '';
+    }
+
     this.logger.debug('rendering compiled template', template);
-    const compliedTemplate = Handlebars.compile(template ?? '{{stringify result}}');
+    const compliedTemplate = Handlebars.compile(template);
 
     return compliedTemplate({result});
   }
 }
+

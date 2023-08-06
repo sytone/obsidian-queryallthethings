@@ -6,8 +6,8 @@ import {TextRenderer} from 'Render/TextRenderer';
 import {Service} from '@ophidian/core';
 
 export class RenderFactory extends Service {
-  public getRenderer(queryConfiguration: IQattCodeBlock): IRenderer {
-    switch (queryConfiguration.renderEngine) {
+  public async getRenderer(codeblockConfiguration: IQattCodeBlock): Promise<IRenderer> {
+    switch (codeblockConfiguration.renderEngine) {
       case 'handlebars': {
         return this.use(HandlebarsRenderer);
       }

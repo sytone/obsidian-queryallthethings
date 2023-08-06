@@ -54,6 +54,7 @@ If you need to reference a property of a object do not forget to use `->` and no
   displayText?: string;
   position: Pos;
 }
+```
 
 ### Pos structure
 

@@ -96,11 +96,11 @@ export class QueryRendererV2Service extends Service {
       this.logger.info(`lastCreation ${this.lastCreation.toISO() ?? ''}`);
       this.logger.debug(`Adding QATT Render for ${source} to context ${context.docId}`);
 
-      const queryConfiguration = new QattCodeBlock(source);
+      const codeblockConfiguration = new QattCodeBlock(source);
       context.addChild(
         new QueryRenderChildV2(
           element,
-          queryConfiguration,
+          codeblockConfiguration,
           context,
           this,
         ),
@@ -119,7 +119,7 @@ export class QueryRendererV2Service extends Service {
  */
 export class QueryRenderChildV2 extends MarkdownRenderChild {
   public container: HTMLElement;
-  public queryConfiguration: QattCodeBlock;
+  public codeblockConfiguration: QattCodeBlock;
   public context: MarkdownPostProcessorContext;
   public service: QueryRendererV2Service;
 
@@ -132,12 +132,12 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
   public constructor(
     container: HTMLElement,
-    queryConfiguration: QattCodeBlock,
+    codeblockConfiguration: QattCodeBlock,
     context: MarkdownPostProcessorContext,
     service: QueryRendererV2Service) {
     super(container);
     this.container = container;
-    this.queryConfiguration = queryConfiguration;
+    this.codeblockConfiguration = codeblockConfiguration;
     this.context = context;
     this.service = service;
 
@@ -151,18 +151,18 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   }
 
   onload() {
-    this.renderId = `${this.queryConfiguration.id}:${this.context.sourcePath}`;
-    if (this.queryConfiguration.logLevel) {
-      this.logger.setLogLevel(this.queryConfiguration.logLevel);
+    this.renderId = `${this.codeblockConfiguration.id}:${this.context.sourcePath}`;
+    if (this.codeblockConfiguration.logLevel) {
+      this.logger.setLogLevel(this.codeblockConfiguration.logLevel);
     }
 
-    this.logger.infoWithId(this.renderId, `Query Render generated for class ${this.container.className} -> ${this.queryConfiguration.queryDataSource}`);
+    this.logger.infoWithId(this.renderId, `Query Render generated for class ${this.container.className} -> ${this.codeblockConfiguration.queryDataSource}`);
 
-    if (this.queryConfiguration.queryDataSource === 'qatt') {
+    if (this.codeblockConfiguration.queryDataSource === 'qatt') {
       this.registerEvent(this.plugin.app.workspace.on('qatt:notes-store-update', this.render));
     }
 
-    if (this.queryConfiguration.queryDataSource === 'dataview') {
+    if (this.codeblockConfiguration.queryDataSource === 'dataview') {
       this.registerEvent(this.plugin.app.workspace.on('qatt:dataview-store-update', this.render));
     }
 
@@ -184,12 +184,12 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
     // Query
     // Run query and get results to be rendered
-    const queryEngine: IQuery = this.queryFactory.getQuery(this.queryConfiguration, this.context.sourcePath, this.context.frontmatter, this.renderId);
+    const queryEngine: IQuery = await this.queryFactory.getQuery(this.codeblockConfiguration, this.context.sourcePath, this.context.frontmatter, this.renderId);
     const results = queryEngine.applyQuery(this.renderId);
 
     // Render
     // Get the engine to render the results to HTML.
-    const renderEngine: IRenderer = this.renderFactory.getRenderer(this.queryConfiguration);
+    const renderEngine: IRenderer = await this.renderFactory.getRenderer(this.codeblockConfiguration);
 
     const content = this.container.createEl('div');
     content.setAttr('data-query-id', this.renderId);
@@ -198,23 +198,23 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       content.setText(`QATT query error: ${queryEngine.error}`);
     } else {
       // Render Engine Execution
-      const html = renderEngine?.renderTemplate(this.queryConfiguration.template ?? renderEngine.defaultTemplate, results) ?? 'Unknown error or exception has occurred.';
-      this.logger.debug('Render Results', html);
+      const renderResults = await renderEngine?.renderTemplate(this.codeblockConfiguration, results) ?? 'Unknown error or exception has occurred.';
+      this.logger.debug('Render Results', renderResults);
 
       // Post Render handling as the output has to be HTML at the end so if the template return markdown then we need to convert it.
       // currently:
       // markdown - Obsidian internal callback.
       // micromark - parsing use micromark and extensions.
-      const postRenderFormat = this.queryConfiguration.postRenderFormat ?? this.service.postRenderFormat;
+      const postRenderFormat = this.codeblockConfiguration.postRenderFormat ?? this.service.postRenderFormat;
       this.logger.debug('postRenderFormat: ', postRenderFormat);
 
       if (postRenderFormat === 'markdown') {
-        await MarkdownPreviewView.renderMarkdown(html, content, '', this.plugin);
+        await MarkdownPreviewView.renderMarkdown(renderResults, content, '', this.plugin);
       } else if (postRenderFormat === 'micromark') {
-        this.logger.debug('micromark Render Results', markdown2html(html));
-        content.innerHTML = markdown2html(html);
+        this.logger.debug('micromark Render Results', markdown2html(renderResults));
+        content.innerHTML = markdown2html(renderResults);
       } else {
-        content.innerHTML = html;
+        content.innerHTML = renderResults;
       }
     }
 
@@ -223,7 +223,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
     // If we are debugging add the render ID to the top of the div to make
     // tracing simpler.
-    if (this.queryConfiguration.logLevel === 'debug') {
+    if (this.codeblockConfiguration.logLevel === 'debug') {
       const debugWrapper = this.container.createEl('sub');
       debugWrapper.className = 'qatt-render-debugWrapper';
       debugWrapper.innerHTML = `RenderID: ${this.renderId}`;
