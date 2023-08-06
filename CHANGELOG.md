@@ -2,6 +2,31 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.6.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.5.4...0.6.0) (2023-08-06)
+
+
+### Features
+
+* enable file for query and template and other additions ([efb29e6](https://github.com/sytone/obsidian-queryallthethings/commits/efb29e676b2cad17291ca46f27ebdc17445520f2))
+* move notes cache to map for more robust management ([8e01510](https://github.com/sytone/obsidian-queryallthethings/commits/8e015103dbfa8a6a5212b63dce146a03357899ab))
+
+
+### Documentation
+
+* update structure and enable obsidan vault for docs ([85c3d7e](https://github.com/sytone/obsidian-queryallthethings/commits/85c3d7e7cf1ce25cb5d6354a602686b3ae3450fb))
+
+
+### Internal
+
+* enable automatic discussion creation on release ([154c3d6](https://github.com/sytone/obsidian-queryallthethings/commits/154c3d672492c701482fc7659c8c55da8a284b30))
+* enable logging to determine release message issue ([150be44](https://github.com/sytone/obsidian-queryallthethings/commits/150be44bdba9c1000c600dcb6f4da62afca32dc5))
+* make release draft to enable release notes updates ([328da6c](https://github.com/sytone/obsidian-queryallthethings/commits/328da6cd23b158cc287de3a9006d26f89e18915e))
+
+
+### Bug Fixes and Changes
+
+* internal caching cleanup part 1 ([79a52d9](https://github.com/sytone/obsidian-queryallthethings/commits/79a52d95e262f374a12e36945aa0337db783a7d8))
+
 ### [0.5.4](https://github.com/sytone/obsidian-queryallthethings/compare/0.5.3...0.5.4) (2023-08-02)
 
 
