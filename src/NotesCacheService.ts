@@ -11,10 +11,10 @@ import {
   type FrontMatterCache,
   type BlockCache,
   type FileStats,
-} from "obsidian";
-import { type Context, Service, use } from "@ophidian/core";
-import { LoggingService, type Logger } from "lib/LoggingService";
-import { DateTime } from "luxon";
+} from 'obsidian';
+import {type Context, Service, use} from '@ophidian/core';
+import {LoggingService, type Logger} from 'lib/LoggingService';
+import {DateTime} from 'luxon';
 
 /*
 Update the table below when new columns are added so documentation is updated.
@@ -48,59 +48,55 @@ If you need to reference a property of a object do not forget to use `->` and no
 export class Note {
   plugin = this.context(Plugin);
 
-  private _content: string;
+  public content: string;
+  public path: string;
+  public name: string;
+  public stat: FileStats;
+  public basename: string;
+  public extension: string;
+  public links: LinkCache[];
+  public embeds: EmbedCache[];
+  public tags: string[];
+  public headings: HeadingCache[];
+  public sections: SectionCache[];
+  public rawListItems: ListItemCache[];
+  public listItems: ListItem[];
+  public frontmatter: FrontMatterCache | undefined;
+  public blocks: Record<string, BlockCache>;
 
   constructor(
     public markdownFile: TFile,
     public metadata: CachedMetadata | undefined,
-    private readonly context: Context
+    private readonly context: Context,
   ) {
-    this.getCachedContent(this.markdownFile);
-  }
-
-  // Only loading up the content if needed and once, this is async so there is a potential race
-  // condition here, but I don't think it will be an issue immediately. Something to fix
-  // in the future.
-  getCachedContent(file: TFile): string {
-    if (!this._content) {
+    if (!this.content) {
       this.plugin.app.vault
         .cachedRead(this.markdownFile)
         .then((content: string) => {
-          this._content = content;
+          this.content = content;
+          if (this.metadata?.listItems) {
+            this.listItems = this.metadata?.listItems.map(
+              li =>
+                new ListItem(
+                  li.parent,
+                  li.task ?? ' ',
+                  li.task !== ' ',
+                  this.content.slice(li.position.start.offset, li.position.end.offset),
+                ),
+            );
+          }
         })
         .catch((error: Error) => {
-          this._content = "";
+          this.content = '';
         });
     }
 
-    return this._content;
-  }
-
-  public get content(): string {
-    return this.getCachedContent(this.markdownFile);
-  }
-
-  public get path(): string {
-    return this.markdownFile.path;
-  }
-
-  public get name(): string {
-    return this.markdownFile.name;
-  }
-
-  public get stat(): FileStats {
-    return this.markdownFile.stat;
-  }
-
-  public get basename(): string {
-    return this.markdownFile.basename;
-  }
-
-  public get extension(): string {
-    return this.markdownFile.extension;
-  }
-
-  /*
+    this.path = this.markdownFile.path;
+    this.name = this.markdownFile.name;
+    this.stat = this.markdownFile.stat;
+    this.basename = this.markdownFile.basename;
+    this.extension = this.markdownFile.extension;
+    /*
   // >> docs-tables-obsidian-markdown-notes-linkcache
 ### LinkCache structure
 
@@ -135,11 +131,9 @@ Loc {
 
   // << docs-tables-obsidian-markdown-notes-linkcache
   */
-  public get links(): LinkCache[] {
-    return this.metadata?.links ?? ([] as LinkCache[]);
-  }
+    this.links = this.metadata?.links ?? ([] as LinkCache[]);
 
-  /*
+    /*
   // >> docs-tables-obsidian-markdown-notes-embedcache
 ### EmbedCache structure
 
@@ -155,23 +149,17 @@ Loc {
 
   // << docs-tables-obsidian-markdown-notes-embedcache
   */
-  public get embeds(): EmbedCache[] {
-    return this.metadata?.embeds ?? ([] as EmbedCache[]);
-  }
+    this.embeds = this.metadata?.embeds ?? ([] as EmbedCache[]);
 
-  public get tags(): string[] {
     if (this.metadata?.tags) {
-      return this.metadata?.tags.map((t) => t.tag);
+      this.tags = this.metadata?.tags.map(t => t.tag);
+    } else if (this.metadata?.frontmatter?.tags) {
+      this.tags = this.metadata?.frontmatter?.tags as string[];
+    } else {
+      this.tags = [];
     }
 
-    if (this.metadata?.frontmatter?.tags) {
-      return this.metadata?.frontmatter?.tags as string[];
-    }
-
-    return [];
-  }
-
-  /*
+    /*
   // >> docs-tables-obsidian-markdown-notes-headingcache
 ### HeadingCache structure
 
@@ -185,11 +173,9 @@ Loc {
 
   // << docs-tables-obsidian-markdown-notes-headingcache
   */
-  public get headings(): HeadingCache[] {
-    return this.metadata?.headings ?? ([] as HeadingCache[]);
-  }
+    this.headings = this.metadata?.headings ?? ([] as HeadingCache[]);
 
-  /*
+    /*
   // >> docs-tables-obsidian-markdown-notes-sectioncache
 
 ### SectionCache structure
@@ -206,15 +192,11 @@ Loc {
 
   // << docs-tables-obsidian-markdown-notes-sectioncache
   */
-  public get sections(): SectionCache[] {
-    return this.metadata?.sections ?? ([] as SectionCache[]);
-  }
+    this.sections = this.metadata?.sections ?? ([] as SectionCache[]);
 
-  public get rawListItems(): ListItemCache[] {
-    return this.metadata?.listItems ?? ([] as ListItemCache[]);
-  }
+    this.rawListItems = this.metadata?.listItems ?? ([] as ListItemCache[]);
 
-  /*
+    /*
   // >> docs-tables-obsidian-markdown-notes-listitem
 
 ### ListItem structure
@@ -230,25 +212,9 @@ Loc {
 
   // << docs-tables-obsidian-markdown-notes-listitem
   */
-  public get listItems(): ListItem[] {
-    let listItems: ListItem[] = [];
+    this.listItems = [];
 
-    if (this.metadata?.listItems) {
-      listItems = this.metadata?.listItems.map(
-        (li) =>
-          new ListItem(
-            li.parent,
-            li.task ?? " ",
-            li.task !== " ",
-            this.content.slice(li.position.start.offset, li.position.end.offset)
-          )
-      );
-    }
-
-    return listItems;
-  }
-
-  /*
+    /*
   // >> docs-tables-obsidian-markdown-notes-frontmattercache
 
 ### FrontMatterCache structure
@@ -262,12 +228,9 @@ Loc {
 
   // << docs-tables-obsidian-markdown-notes-frontmattercache
   */
-  public get frontmatter(): FrontMatterCache | undefined {
-    return this.metadata?.frontmatter;
-  }
+    this.frontmatter = this.metadata?.frontmatter;
 
-  public get blocks(): Record<string, BlockCache> {
-    return this.metadata?.blocks ?? {};
+    this.blocks = this.metadata?.blocks ?? {};
   }
 }
 
@@ -279,15 +242,17 @@ export class ListItem {
     public parent: number,
     public task: string,
     public checked: boolean,
-    public line: string
+    public line: string,
   ) {}
 }
 
 export class NotesCacheService extends Service {
   plugin = this.use(Plugin);
-  logger = this.use(LoggingService).getLogger("Qatt.NotesCacheService");
+  logger = this.use(LoggingService).getLogger('Qatt.NotesCacheService');
   lastUpdate: DateTime;
   public notes: Note[] = [];
+
+  public notesMap = new Map<string, Note>();
 
   constructor() {
     super();
@@ -295,43 +260,29 @@ export class NotesCacheService extends Service {
   }
 
   async onload() {
-    this.logger.info(
-      `NotesCacheService Last Update: ${this.lastUpdate.toISO() ?? ""}`
-    );
+    this.logger.info(`NotesCacheService Last Update: ${this.lastUpdate.toISO() ?? ''}`);
+    const app = this.plugin.app;
     const startTime = new Date(Date.now());
 
-    this.notes = this.plugin.app.vault
-      .getMarkdownFiles()
-      .map(
-        (file: TFile) =>
-          new Note(
-            file,
-            this.plugin.app.metadataCache.getFileCache(file) ?? undefined,
-            this.use
-          )
-      );
+    for (const file of app.vault.getMarkdownFiles()) {
+      this.addNote(file.path, new Note(file, app.metadataCache.getFileCache(file) ?? undefined, this.use));
+    }
+
     const endTime = new Date(Date.now());
-    this.logger.info(
-      `NotesCacheService Loaded ${this.notes.length} items in ${
-        endTime.getTime() - startTime.getTime()
-      }ms`
-    );
+    this.logger.info(`NotesCacheService Loaded ${this.notesMap.size} items in ${endTime.getTime() - startTime.getTime()}ms`);
 
     this.registerEvent(
-      this.plugin.app.vault.on("create", (file) => {
+      this.plugin.app.vault.on('create', file => {
         this.logger.info(`create event detected for ${file.path}`);
         const startTime = new Date(Date.now());
         const n = this.createNoteFromPath(file.path);
         if (n) {
           this.addNote(file.path, n);
         }
-        this.plugin.app.workspace.trigger("qatt:notes-store-update");
-        this.logger.info(
-          `NotesCacheService Updated in ${
-            new Date(Date.now()).getTime() - startTime.getTime()
-          }ms`
-        );
-      })
+
+        this.plugin.app.workspace.trigger('qatt:notes-store-update');
+        this.logger.info(`NotesCacheService Updated in ${new Date(Date.now()).getTime() - startTime.getTime()}ms`);
+      }),
     );
 
     // Modify will be handed via the metadataCache changed event.
@@ -349,97 +300,111 @@ export class NotesCacheService extends Service {
     // }));
 
     this.registerEvent(
-      this.plugin.app.vault.on("delete", (file) => {
+      this.plugin.app.vault.on('delete', file => {
         this.logger.info(`delete event detected for ${file.path}`);
         const startTime = new Date(Date.now());
         this.deleteNote(file.path);
-        this.plugin.app.workspace.trigger("qatt:notes-store-update");
-        this.logger.info(
-          `NotesCacheService Updated in ${
-            new Date(Date.now()).getTime() - startTime.getTime()
-          }ms`
-        );
-      })
+        this.plugin.app.workspace.trigger('qatt:notes-store-update');
+        this.logger.info(`NotesCacheService Updated in ${new Date(Date.now()).getTime() - startTime.getTime()}ms`);
+      }),
     );
 
     this.registerEvent(
-      this.plugin.app.vault.on("rename", (file, oldPath) => {
+      this.plugin.app.vault.on('rename', (file, oldPath) => {
         this.logger.info(`rename event detected for ${file.path}`);
         const startTime = new Date(Date.now());
         const n = this.createNoteFromPath(file.path);
         if (n) {
-          this.replaceNote(oldPath, n);
+          this.deleteNote(oldPath);
+          this.addNote(file.path, n);
         }
 
-        this.plugin.app.workspace.trigger("qatt:notes-store-update");
-        this.logger.info(
-          `NotesCacheService Updated in ${
-            new Date(Date.now()).getTime() - startTime.getTime()
-          }ms`
-        );
-      })
+        this.plugin.app.workspace.trigger('qatt:notes-store-update');
+        this.logger.info(`NotesCacheService Updated in ${new Date(Date.now()).getTime() - startTime.getTime()}ms`);
+      }),
     );
 
     this.registerEvent(
-      this.plugin.app.metadataCache.on("changed", (file, data, cache) => {
-        this.logger.info(
-          `metadataCache changed event detected for ${file.path}`
-        );
+      this.plugin.app.metadataCache.on('changed', (file, data, cache) => {
+        this.logger.info(`metadataCache changed event detected for ${file.path}`);
         const startTime = new Date(Date.now());
-        const n = this.createNoteFromPath(file.path);
+        const n = this.createNoteFromFileAndCache(file, cache);
         if (n) {
-          n.metadata = cache;
           this.replaceNote(file.path, n);
         }
 
-        this.plugin.app.workspace.trigger("qatt:notes-store-update");
-        this.logger.info(
-          `NotesCacheService Updated in ${
-            new Date(Date.now()).getTime() - startTime.getTime()
-          }ms`
-        );
-      })
+        this.plugin.app.workspace.trigger('qatt:notes-store-update');
+        this.logger.info(`NotesCacheService Updated in ${new Date(Date.now()).getTime() - startTime.getTime()}ms`);
+      }),
     );
   }
 
+  getNotes(): Note[] {
+    return Array.from(this.notesMap.values());
+  }
+
   getNoteIndex(path: string): number {
-    return this.notes.findIndex((n) => n.markdownFile.path === path);
+    return this.notes.findIndex(n => n.markdownFile.path === path);
   }
 
   deleteNote(path: string) {
-    const index = this.getNoteIndex(path);
-    if (index > -1) {
-      this.notes.splice(index, 1);
-    }
+    this.notesMap.delete(path);
+    // Old
+    // const index = this.getNoteIndex(path);
+    // if (index > -1) {
+    //   this.notes.splice(index, 1);
+    // }
   }
 
   replaceNote(path: string, note: Note) {
-    const index = this.getNoteIndex(path);
-    if (index > -1) {
-      this.notes[index] = note;
-    }
+    this.notesMap.set(path, note);
+
+    // Old
+    // const index = this.getNoteIndex(path);
+    // if (index > -1) {
+    //   this.notes[index] = note;
+    // }
   }
 
   addNote(path: string, note: Note) {
-    const index = this.getNoteIndex(path);
-    if (index > -1) {
-      this.deleteNote(path);
-      this.notes.push(note);
-    }
+    this.notesMap.set(path, note);
+
+    // Old
+    // const index = this.getNoteIndex(path);
+    // if (index > -1) {
+    //   this.deleteNote(path);
+    //   this.notes.push(note);
+    // }
   }
 
   createNoteFromPath(path: string): Note | undefined {
     const f = this.plugin.app.vault
       .getMarkdownFiles()
-      .find((f) => f.path === path);
+      .find(f => f.path === path);
     if (f) {
       return new Note(
         f,
         this.plugin.app.metadataCache.getFileCache(f) ?? undefined,
-        this.use
+        this.use,
       );
     }
 
     return undefined;
+  }
+
+  createNoteFromFile(file: TFile): Note | undefined {
+    return new Note(
+      file,
+      this.plugin.app.metadataCache.getFileCache(file) ?? undefined,
+      this.use,
+    );
+  }
+
+  createNoteFromFileAndCache(file: TFile, cache: CachedMetadata): Note | undefined {
+    return new Note(
+      file,
+      cache,
+      this.use,
+    );
   }
 }
