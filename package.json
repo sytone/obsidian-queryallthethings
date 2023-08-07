@@ -1,6 +1,6 @@
 {
   "name": "qatt",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Execute SQL base queries against your data in Obsidian and render it how you want using templates.",
   "main": "main.js",
   "scripts": {

@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.7.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.6.0...0.7.0) (2023-08-07)
+
+
+### Features
+
+* allow CSV and markdown table import on start ([3bf8c23](https://github.com/sytone/obsidian-queryallthethings/commits/3bf8c23fcb714962eca78da04e17f631f0740882))
+
+
+### Documentation
+
+* split up the tables reference pages ([04cfec9](https://github.com/sytone/obsidian-queryallthethings/commits/04cfec9930687d5fb9966c8577df95785dc3cca9))
+
+
+### Bug Fixes and Changes
+
+* template logging and default template work ([b733449](https://github.com/sytone/obsidian-queryallthethings/commits/b733449d1adc9c3b22eda75b42841efe0a3b9598))
+
 ## [0.6.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.5.4...0.6.0) (2023-08-06)
 
 
