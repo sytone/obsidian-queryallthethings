@@ -145,11 +145,13 @@ export class Logger {
   }
 
   public groupId(traceId: string): void {
-    console.groupCollapsed(`${traceId}`);
+    // Disabled for the moment.
+    // console.groupCollapsed(`${traceId}`);
   }
 
   public groupEndId(): void {
-    console.groupEnd();
+    // Disabled for the moment.
+    // console.groupEnd();
   }
 
   public traceWithId(traceId: string, message: string, objects?: any): void {

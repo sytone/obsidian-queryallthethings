@@ -1,0 +1,47 @@
+---
+nav_order: 7
+layout: default
+title: Settings
+---
+
+The plugin has multiple settings, there are descriptions in the settings to help you out and some more details here.
+
+## General Settings
+
+### On Start SQL Queries
+
+If you want to create tables and set data so your queries can use it at a later time without having to duplicate the queries you can add them in this setting. These will be executed when the plugin is loaded after the data tables have been initialized.
+
+Here you can make tables and insert data if needed for referencing later.
+
+## Rendering Settings
+
+### Default Post Render Format
+
+Once the template has finished rendering the final output needs to be HTML. If the template returns markdown then it needs to be converted, this settings allows you to select the default processor so you do not have to set it in each codeblock.
+
+The options are:
+
+- Obsidian Markdown - Use the inbuilt markdown rendering, this is async and you may notice rendering issues.
+- Micromark - A external rendering engine that supports most of the Obsidian and GitHub markdown formatting.
+- None - Nothing, all output is expected to be HTML unless the code block has configuration specifying otherwise.
+
+## CSV Loader Settings
+
+### CSV file to load on start
+
+Add the files you want added on load, one per line. The table name will be the name of the file minus the extension.
+
+You can use markdown files so you can see and edit in the Obsidian UI, when referencing the file if you have a page in Obsidian  `refdata/places_to_visit` you would enter `refdata/places_to_visit.md` in the settings box.
+
+For this example file, a table called `places_to_visit` will be created and then you can query it using `SELECT TOP 1 * FROM places_to_visit WHERE country = 'Egypt`.
+
+The CSV file should be well formatted, if there are issues you can look in the console log as on load it outputs the tables being loaded and any errors if found along with the line number.
+
+## Markdown Table Loader Settings
+
+### Markdown file to load on start
+
+Add the files you want added on load, one per line. The table name will be the name of the file minus the extension. Only a markdown table should exist on the page.
+
+This is expecting just a markdown table, nothing before the table or after it. It will ignore empty lines.

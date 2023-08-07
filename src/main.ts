@@ -18,6 +18,8 @@ import {QueryRendererV2Service} from 'QueryRendererV2';
 import {NotesCacheService} from 'NotesCacheService';
 import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
 import {GeneralSettingsDefaults, type IGeneralSettings} from 'Settings/DefaultSettings';
+import {CsvLoaderService} from 'Data/CsvLoaderService';
+import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
 
 export class Note {
   constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
@@ -58,6 +60,8 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   public settingsManager: SettingsManager | undefined;
   public notesCacheService: NotesCacheService | undefined;
   public handlebarsRenderer: HandlebarsRenderer | undefined;
+  public csvLoaderService: CsvLoaderService | undefined;
+  public markdownTableLoaderService: MarkdownTableLoaderService | undefined;
 
   // Settings are rendered in the settings via this. Need to
   // refactor this to use the SettingsTab approach I had.
@@ -130,8 +134,10 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
       // D this.queryRendererService = this.use(QueryRendererService);
       this.queryRendererService = this.use(QueryRendererV2Service);
-
       this.notesCacheService = this.use(NotesCacheService);
+
+      this.csvLoaderService = this.use(CsvLoaderService);
+      this.markdownTableLoaderService = this.use(MarkdownTableLoaderService);
     });
 
     // Refresh tables when dataview index is ready.

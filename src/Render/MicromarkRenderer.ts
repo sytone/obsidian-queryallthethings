@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-
 import {micromark} from 'micromark';
 import {gfm, gfmHtml} from 'micromark-extension-gfm';
 import {html as wikiHtml, syntax as wiki} from 'micromark-extension-wiki-link';
 import {fromMarkdown} from 'mdast-util-from-markdown';
 import {toString} from 'mdast-util-to-string';
-import {fromMarkdown as fromWiki} from 'mdast-util-wiki-link';
+import * as wikiLink from 'mdast-util-wiki-link';
 
 export function markdown2html(markdown?: string, isInline = false): string {
   if (markdown === undefined || markdown === null) {
@@ -41,10 +40,10 @@ export function markdown2text(markdown?: string): string {
     return '';
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const tree = fromMarkdown(markdown, {
     extensions: [wiki()],
-    mdastExtensions: [fromWiki()],
+    mdastExtensions: [wikiLink.fromMarkdown()],
   });
   return toString(tree);
 }
-
