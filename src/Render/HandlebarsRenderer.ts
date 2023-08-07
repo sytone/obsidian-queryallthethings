@@ -278,17 +278,21 @@ export class HandlebarsRenderer extends Service implements IRenderer {
   }
 
   public async renderTemplate(codeblockConfiguration: QattCodeBlock, result: any) {
+    if (codeblockConfiguration.logLevel) {
+      this.logger.setLogLevel(codeblockConfiguration.logLevel);
+    }
+
     let template = this.defaultTemplate;
 
     if (codeblockConfiguration.templateFile) {
       const templateFile = this.plugin.app.vault.getAbstractFileByPath(codeblockConfiguration.templateFile);
       const content = (await this.plugin.app.vault.cachedRead(templateFile as TFile));
       template = content;
-    } else {
+    } else if (codeblockConfiguration.template) {
       template = codeblockConfiguration.template ?? '';
     }
 
-    this.logger.debug('rendering compiled template', template);
+    this.logger.debug('rendering compiled template:', template);
     const compliedTemplate = Handlebars.compile(template);
 
     return compliedTemplate({result});
