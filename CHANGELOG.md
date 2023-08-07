@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.7.1](https://github.com/sytone/obsidian-queryallthethings/compare/0.7.0...0.7.1) (2023-08-07)
+
+
+### Bug Fixes and Changes
+
+* update lock file ([fe7cc30](https://github.com/sytone/obsidian-queryallthethings/commits/fe7cc30ca6ac7e3bc86dc1c6b8edca2e702f5b15))
+
 ## [0.7.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.6.0...0.7.0) (2023-08-07)
 
 
