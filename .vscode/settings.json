@@ -12,6 +12,7 @@
     "nocount",
     "outfile",
     "pagedata",
+    "papaparse",
     "Qatt",
     "taskcheckbox"
   ],

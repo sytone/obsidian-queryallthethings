@@ -4,10 +4,22 @@ import {Service} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
 import {getAPI, isPluginEnabled, type PageMetadata} from 'obsidian-dataview';
 
+/**
+ * This service handles the integration with the dataview plugin.
+ *
+ * @export
+ * @class DataviewService
+ * @extends {Service}
+ */
 export class DataviewService extends Service {
   plugin = this.use(Plugin);
   logger = this.use(LoggingService).getLogger('Qatt.DataviewService');
 
+  /**
+   * Flag to indicate if the dataview plugin is enabled.
+   *
+   * @memberof DataviewService
+   */
   public dataViewEnabled = false;
 
   onload(): void {
@@ -16,6 +28,12 @@ export class DataviewService extends Service {
     }
   }
 
+  /**
+   * Returns a map of all the dataview pages.
+   *
+   * @return {*}  {Map<string, PageMetadata>}
+   * @memberof DataviewService
+   */
   public getDataviewPages(): Map<string, PageMetadata> {
     if (!this.dataViewEnabled) {
       return new Map<string, PageMetadata>();
@@ -29,6 +47,12 @@ export class DataviewService extends Service {
     return dataviewApi.index.pages;
   }
 
+  /**
+   * Returns an array of all the dataview pages.
+   *
+   * @return {*}  {any[]}
+   * @memberof DataviewService
+   */
   public getDataviewPagesArray(): any[] {
     const dataViewApi = getAPI(this.plugin.app);
     if (dataViewApi) {

@@ -1,5 +1,5 @@
 
-import alasql from 'alasql';
+import * as alasql from 'alasql';
 import {Plugin, type TFile} from 'obsidian';
 import {type QattCodeBlock} from 'QattCodeBlock';
 import {type IQuery} from 'Query/IQuery';
