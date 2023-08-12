@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import alasql from 'alasql';
 import {DateTime} from 'luxon';
-import {getAPI, isPluginEnabled, type PageMetadata} from 'obsidian-dataview';
+import {type PageMetadata} from 'obsidian-dataview';
 import {parseTask} from 'Parse/Parsers';
-import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
-import {type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild, Plugin} from 'obsidian';
-import {logging} from 'lib/Logging';
+import {Plugin} from 'obsidian';
 import {Service} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
+import {DataviewService} from 'Integrations/DataviewService';
 
 export interface IDataTables {
   refreshTables (reason: string): void;
@@ -16,6 +15,7 @@ export interface IDataTables {
 export class DataTables extends Service {
   plugin = this.use(Plugin);
   logger = this.use(LoggingService).getLogger('Qatt.DataTables');
+  dvService = this.use(DataviewService);
 
   public runAdhocQuery(query: string): any {
     return alasql(query);
@@ -133,7 +133,7 @@ export class DataTables extends Service {
     alasql('CREATE TABLE dataview_tasks ');
 
     const start = DateTime.now();
-    const dataviewPages = this.getDataviewPages() ?? new Map<string, PageMetadata>();
+    const dataviewPages = this.dvService.getDataviewPages();
 
     // Look at forcing a update on page changes.
     for (const p of dataviewPages) {
@@ -197,7 +197,7 @@ export class DataTables extends Service {
     alasql('CREATE TABLE dataview_lists ');
 
     const start = DateTime.now();
-    const dataviewPages = this.getDataviewPages() ?? new Map<string, PageMetadata>();
+    const dataviewPages = this.dvService.getDataviewPages();
 
     // Look at forcing a update on page changes.
     for (const p of dataviewPages) {
@@ -250,19 +250,6 @@ export class DataTables extends Service {
     }
 
     this.logger.info(`Lists refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
-  }
-
-  private getDataviewPages(): Map<string, PageMetadata> | undefined {
-    if (!isPluginEnabled(this.plugin.app)) {
-      return;
-    }
-
-    const dataviewApi = getAPI(this.plugin.app);
-    if (!dataviewApi) {
-      return;
-    }
-
-    return dataviewApi.index.pages;
   }
 
   // Parse a path to return the filename without an extension.

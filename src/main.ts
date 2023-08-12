@@ -6,7 +6,6 @@ import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin
 import type EventHandler from 'handlers/EventHandler';
 import {type CommandHandler} from 'handlers/CommandHandler';
 import {DataTables} from 'Data/DataTables';
-import {isPluginEnabled} from 'obsidian-dataview';
 import {HandlebarsRenderer} from 'Render/HandlebarsRenderer';
 import {type SettingsManager} from 'Settings/SettingsManager';
 import {AlaSqlQuery} from 'Query/AlaSqlQuery';
@@ -20,6 +19,7 @@ import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/Dyn
 import {GeneralSettingsDefaults, type IGeneralSettings} from 'Settings/DefaultSettings';
 import {CsvLoaderService} from 'Data/CsvLoaderService';
 import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
+import {DataviewService} from 'Integrations/DataviewService';
 
 export class Note {
   constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
@@ -98,10 +98,10 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
     this.use(RenderFactory).load();
     this.use(HandlebarsRenderer).load();
 
-    if (!isPluginEnabled(this.app)) {
-      // eslint-disable-next-line no-new
-      new Notice('Dataview plugin is not installed. Please install it to load Databases.');
-      throw new Error('Dataview plugin is not installed');
+    const dvService = this.use(DataviewService);
+
+    if (!dvService.dataViewEnabled) {
+      const dvNotInstalledNotice = new Notice('Dataview plugin is not installed. Dataview backed tables will be empty.');
     }
 
     // HandlebarsRenderer.registerHandlebarsHelpers();

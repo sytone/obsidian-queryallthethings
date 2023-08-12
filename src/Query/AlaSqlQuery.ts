@@ -1,12 +1,12 @@
 
 import alasql from 'alasql';
 import {Plugin, type TFile} from 'obsidian';
-import {getAPI} from 'obsidian-dataview';
 import {type QattCodeBlock} from 'QattCodeBlock';
 import {type IQuery} from 'Query/IQuery';
-import {Service, useSettings} from '@ophidian/core';
+import {Service} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
 import {NotesCacheService} from 'NotesCacheService';
+import {DataviewService} from 'Integrations/DataviewService';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -184,6 +184,7 @@ export class AlaSqlQuery extends Service implements IQuery {
   plugin = this.use(Plugin);
   logger = this.use(LoggingService).getLogger('Qatt.AlaSqlQuery');
   notesCache = this.use(NotesCacheService);
+  dvService = this.use(DataviewService);
 
   public codeblockConfiguration: QattCodeBlock;
   private sourcePath: string;
@@ -301,7 +302,7 @@ export class AlaSqlQuery extends Service implements IQuery {
    * @return {*}  {*}
    * @memberof QuerySql
    */
-  public query(): any {
+  public async query(): Promise<any> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias, unicorn/no-this-assignment
     const currentQuery = this;
     this.logger.groupId(this._queryId);
@@ -333,6 +334,21 @@ export class AlaSqlQuery extends Service implements IQuery {
       return currentQuery.frontmatter[field];
     };
 
+    // eslint-disable-next-line max-params
+    alasql.from.pageProperty = function (field: string, options: any, cb: any, idx: any, query: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      let result = currentQuery.frontmatter[field];
+
+      //	Res = new alasql.Recordset({data:res,columns:{columnid:'_'}});
+      if (cb) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+        result = cb(result, idx, query);
+      }
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return result;
+    };
+
     // Return the ID of this query used for debugging as needed.
     alasql.fn.queryId = function () {
       return currentQuery._queryId;
@@ -348,10 +364,10 @@ export class AlaSqlQuery extends Service implements IQuery {
     try {
       for (const v of this._sqlQuery.split(';')) {
         if (v.trim() !== '') {
-          const [parsedQuery, dataTables] = this.getDataTables(v);
-          const query = this.getParsedQuery(v);
+          const [parsedQuery, dataTables] = await this.getDataTables(v);
           // Old const dataTable: any[] = this.getDataTable(v);
 
+          this.logger.debugWithId(this._queryId, 'Data Tables:', dataTables);
           this.logger.debugWithId(this._queryId, 'Executing Query:', {originalQuery: this.codeblockConfiguration.query, parsedQuery});
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           queryResult = alasql(parsedQuery, dataTables);
@@ -369,7 +385,7 @@ export class AlaSqlQuery extends Service implements IQuery {
     return queryResult;
   }
 
-  private getDataTables(query: string): [string, any[]] {
+  private async getDataTables(query: string): Promise<[string, any[]]> {
     let finalQuery = query;
     let tableCount = 0;
     const dataArrays = [];
@@ -378,7 +394,8 @@ export class AlaSqlQuery extends Service implements IQuery {
     while (/\bobsidian_markdown_notes\b/i.test(finalQuery)) {
       finalQuery = finalQuery.replace(/\bobsidian_markdown_notes\b/i, `$${tableCount}`);
       tableCount++;
-      dataArrays.push(this.notesCache.getNotes());
+      // eslint-disable-next-line no-await-in-loop
+      dataArrays.push(await this.notesCache.getNotes());
     }
 
     while (/\bobsidian_markdown_files\b/i.test(finalQuery)) {
@@ -390,13 +407,7 @@ export class AlaSqlQuery extends Service implements IQuery {
     while (/\bdataview_pages\b/i.test(finalQuery)) {
       finalQuery = finalQuery.replace(/\bdataview_pages\b/i, `$${tableCount}`);
       tableCount++;
-      const dataViewApi = getAPI(this.plugin.app);
-      if (dataViewApi) {
-        // Update to match dv.pages() correctly.
-        // console.log(dataViewApi.pages().values[0]);
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-        dataArrays.push(dataViewApi ? Array.from(dataViewApi.pages().values) : []);
-      }
+      dataArrays.push(this.dvService.getDataviewPagesArray());
     }
 
     return [finalQuery, dataArrays];
@@ -422,20 +433,6 @@ export class AlaSqlQuery extends Service implements IQuery {
   // << obsidian-markdown-files-table-snippet
   */
 
-  private getParsedQuery(query: string) {
-    let finalQuery = query;
-
-    if (/\bobsidian_markdown_notes\b/gi.test(query)) {
-      finalQuery = query.replace(/\bobsidian_markdown_notes\b/gi, '$0');
-    } else if (/\bobsidian_markdown_files\b/gi.test(query)) {
-      finalQuery = query.replace(/\bobsidian_markdown_files\b/gi, '$0');
-    } else if (/\bdataview_pages\b/gi.test(query)) {
-      finalQuery = query.replace(/\bdataview_pages\b/gi, '$0');
-    }
-
-    return finalQuery;
-  }
-
   /**
    * This is the public entry point for getting the query results.
    *
@@ -443,10 +440,11 @@ export class AlaSqlQuery extends Service implements IQuery {
    * @memberof QuerySql
    */
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  public applyQuery(): any {
+  public async applyQuery(): Promise<any> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const queryResult: any = this.query();
+    const queryResult: any = await this.query();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return queryResult;
   }
 }

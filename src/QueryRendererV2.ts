@@ -185,7 +185,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     // Query
     // Run query and get results to be rendered
     const queryEngine: IQuery = await this.queryFactory.getQuery(this.codeblockConfiguration, this.context.sourcePath, this.context.frontmatter, this.renderId);
-    const results = queryEngine.applyQuery(this.renderId);
+    const results = await queryEngine.applyQuery(this.renderId);
 
     // Render
     // Get the engine to render the results to HTML.

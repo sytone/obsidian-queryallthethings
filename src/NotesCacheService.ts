@@ -11,6 +11,7 @@ import {
   type FrontMatterCache,
   type BlockCache,
   type FileStats,
+  TFolder,
 } from 'obsidian';
 import {type Context, Service, use} from '@ophidian/core';
 import {LoggingService, type Logger} from 'lib/LoggingService';
@@ -46,14 +47,61 @@ If you need to reference a property of a object do not forget to use `->` and no
 */
 
 export class Note {
-  plugin = this.context(Plugin);
+  public static async createNewNote(markdownFile: TFile,
+    metadata: CachedMetadata | undefined,
+    content: string,
+  ): Promise<Note> {
+    const n = new Note();
+    n.content = content;
+    n.path = markdownFile.path;
+    n.name = markdownFile.name;
+    n.stat = markdownFile.stat;
+    n.basename = markdownFile.basename;
+    n.extension = markdownFile.extension;
+    n.parentFolder = markdownFile.path.replace(markdownFile.name, '');
 
-  public content: string;
+    if (metadata?.listItems) {
+      n.listItems = metadata?.listItems.map(
+        li =>
+          new ListItem(
+            li.parent,
+            li.task ?? ' ',
+            li.task !== ' ',
+            content.slice(li.position.start.offset, li.position.end.offset),
+          ),
+      );
+    }
+
+    n.links = metadata?.links ?? ([] as LinkCache[]);
+    n.embeds = metadata?.embeds ?? ([] as EmbedCache[]);
+
+    if (metadata?.tags) {
+      n.tags = metadata?.tags.map(t => t.tag);
+    } else if (metadata?.frontmatter?.tags) {
+      n.tags = metadata?.frontmatter?.tags as string[];
+    } else {
+      n.tags = [];
+    }
+
+    n.headings = metadata?.headings ?? ([] as HeadingCache[]);
+    n.sections = metadata?.sections ?? ([] as SectionCache[]);
+
+    n.rawListItems = metadata?.listItems ?? ([] as ListItemCache[]);
+    n.listItems = [];
+    n.frontmatter = metadata?.frontmatter;
+
+    n.blocks = metadata?.blocks ?? {};
+
+    return n;
+  }
+
   public path: string;
   public name: string;
   public stat: FileStats;
   public basename: string;
   public extension: string;
+  public parentFolder: string;
+
   public links: LinkCache[];
   public embeds: EmbedCache[];
   public tags: string[];
@@ -64,39 +112,9 @@ export class Note {
   public frontmatter: FrontMatterCache | undefined;
   public blocks: Record<string, BlockCache>;
 
-  constructor(
-    public markdownFile: TFile,
-    public metadata: CachedMetadata | undefined,
-    private readonly context: Context,
-  ) {
-    if (!this.content) {
-      this.plugin.app.vault
-        .cachedRead(this.markdownFile)
-        .then((content: string) => {
-          this.content = content;
-          if (this.metadata?.listItems) {
-            this.listItems = this.metadata?.listItems.map(
-              li =>
-                new ListItem(
-                  li.parent,
-                  li.task ?? ' ',
-                  li.task !== ' ',
-                  this.content.slice(li.position.start.offset, li.position.end.offset),
-                ),
-            );
-          }
-        })
-        .catch((error: Error) => {
-          this.content = '';
-        });
-    }
+  public content: string;
 
-    this.path = this.markdownFile.path;
-    this.name = this.markdownFile.name;
-    this.stat = this.markdownFile.stat;
-    this.basename = this.markdownFile.basename;
-    this.extension = this.markdownFile.extension;
-    /*
+  /*
   // >> docs-tables-obsidian-markdown-notes-linkcache
 ### LinkCache structure
 
@@ -131,9 +149,8 @@ Loc {
 
   // << docs-tables-obsidian-markdown-notes-linkcache
   */
-    this.links = this.metadata?.links ?? ([] as LinkCache[]);
 
-    /*
+  /*
   // >> docs-tables-obsidian-markdown-notes-embedcache
 ### EmbedCache structure
 
@@ -149,17 +166,8 @@ Loc {
 
   // << docs-tables-obsidian-markdown-notes-embedcache
   */
-    this.embeds = this.metadata?.embeds ?? ([] as EmbedCache[]);
 
-    if (this.metadata?.tags) {
-      this.tags = this.metadata?.tags.map(t => t.tag);
-    } else if (this.metadata?.frontmatter?.tags) {
-      this.tags = this.metadata?.frontmatter?.tags as string[];
-    } else {
-      this.tags = [];
-    }
-
-    /*
+  /*
   // >> docs-tables-obsidian-markdown-notes-headingcache
 ### HeadingCache structure
 
@@ -173,9 +181,8 @@ Loc {
 
   // << docs-tables-obsidian-markdown-notes-headingcache
   */
-    this.headings = this.metadata?.headings ?? ([] as HeadingCache[]);
 
-    /*
+  /*
   // >> docs-tables-obsidian-markdown-notes-sectioncache
 
 ### SectionCache structure
@@ -192,11 +199,8 @@ Loc {
 
   // << docs-tables-obsidian-markdown-notes-sectioncache
   */
-    this.sections = this.metadata?.sections ?? ([] as SectionCache[]);
 
-    this.rawListItems = this.metadata?.listItems ?? ([] as ListItemCache[]);
-
-    /*
+  /*
   // >> docs-tables-obsidian-markdown-notes-listitem
 
 ### ListItem structure
@@ -212,9 +216,8 @@ Loc {
 
   // << docs-tables-obsidian-markdown-notes-listitem
   */
-    this.listItems = [];
 
-    /*
+  /*
   // >> docs-tables-obsidian-markdown-notes-frontmattercache
 
 ### FrontMatterCache structure
@@ -228,10 +231,6 @@ Loc {
 
   // << docs-tables-obsidian-markdown-notes-frontmattercache
   */
-    this.frontmatter = this.metadata?.frontmatter;
-
-    this.blocks = this.metadata?.blocks ?? {};
-  }
 }
 
 export class ListItem {
@@ -265,19 +264,24 @@ export class NotesCacheService extends Service {
     const startTime = new Date(Date.now());
 
     for (const file of app.vault.getMarkdownFiles()) {
-      this.addNote(file.path, new Note(file, app.metadataCache.getFileCache(file) ?? undefined, this.use));
+      // eslint-disable-next-line no-await-in-loop
+      const note = await this.createNoteFromFile(file);
+      if (note) {
+      // eslint-disable-next-line no-await-in-loop
+        await this.addNote(file.path, note);
+      }
     }
 
     const endTime = new Date(Date.now());
     this.logger.info(`NotesCacheService Loaded ${this.notesMap.size} items in ${endTime.getTime() - startTime.getTime()}ms`);
 
     this.registerEvent(
-      this.plugin.app.vault.on('create', file => {
+      this.plugin.app.vault.on('create', async file => {
         this.logger.info(`create event detected for ${file.path}`);
         const startTime = new Date(Date.now());
-        const n = this.createNoteFromPath(file.path);
+        const n = await this.createNoteFromPath(file.path);
         if (n) {
-          this.addNote(file.path, n);
+          await this.addNote(file.path, n);
         }
 
         this.plugin.app.workspace.trigger('qatt:notes-store-update');
@@ -300,23 +304,23 @@ export class NotesCacheService extends Service {
     // }));
 
     this.registerEvent(
-      this.plugin.app.vault.on('delete', file => {
+      this.plugin.app.vault.on('delete', async file => {
         this.logger.info(`delete event detected for ${file.path}`);
         const startTime = new Date(Date.now());
-        this.deleteNote(file.path);
+        await this.deleteNote(file.path);
         this.plugin.app.workspace.trigger('qatt:notes-store-update');
         this.logger.info(`NotesCacheService Updated in ${new Date(Date.now()).getTime() - startTime.getTime()}ms`);
       }),
     );
 
     this.registerEvent(
-      this.plugin.app.vault.on('rename', (file, oldPath) => {
+      this.plugin.app.vault.on('rename', async (file, oldPath) => {
         this.logger.info(`rename event detected for ${file.path}`);
         const startTime = new Date(Date.now());
-        const n = this.createNoteFromPath(file.path);
+        const n = await this.createNoteFromPath(file.path);
         if (n) {
-          this.deleteNote(oldPath);
-          this.addNote(file.path, n);
+          await this.deleteNote(oldPath);
+          await this.addNote(file.path, n);
         }
 
         this.plugin.app.workspace.trigger('qatt:notes-store-update');
@@ -325,12 +329,12 @@ export class NotesCacheService extends Service {
     );
 
     this.registerEvent(
-      this.plugin.app.metadataCache.on('changed', (file, data, cache) => {
+      this.plugin.app.metadataCache.on('changed', async (file, data, cache) => {
         this.logger.info(`metadataCache changed event detected for ${file.path}`);
         const startTime = new Date(Date.now());
-        const n = this.createNoteFromFileAndCache(file, cache);
+        const n = await this.createNoteFromFileAndCache(file, cache);
         if (n) {
-          this.replaceNote(file.path, n);
+          await this.replaceNote(file.path, n);
         }
 
         this.plugin.app.workspace.trigger('qatt:notes-store-update');
@@ -339,72 +343,51 @@ export class NotesCacheService extends Service {
     );
   }
 
-  getNotes(): Note[] {
+  async getNotes(): Promise<Note[]> {
     return Array.from(this.notesMap.values());
   }
 
-  getNoteIndex(path: string): number {
-    return this.notes.findIndex(n => n.markdownFile.path === path);
+  async getNoteIndex(path: string): Promise<number> {
+    return this.notes.findIndex(n => n.path === path);
   }
 
-  deleteNote(path: string) {
+  async deleteNote(path: string) {
     this.notesMap.delete(path);
-    // Old
-    // const index = this.getNoteIndex(path);
-    // if (index > -1) {
-    //   this.notes.splice(index, 1);
-    // }
   }
 
-  replaceNote(path: string, note: Note) {
+  async replaceNote(path: string, note: Note) {
     this.notesMap.set(path, note);
-
-    // Old
-    // const index = this.getNoteIndex(path);
-    // if (index > -1) {
-    //   this.notes[index] = note;
-    // }
   }
 
-  addNote(path: string, note: Note) {
+  async addNote(path: string, note: Note) {
     this.notesMap.set(path, note);
-
-    // Old
-    // const index = this.getNoteIndex(path);
-    // if (index > -1) {
-    //   this.deleteNote(path);
-    //   this.notes.push(note);
-    // }
   }
 
-  createNoteFromPath(path: string): Note | undefined {
+  async createNoteFromPath(path: string): Promise<Note | undefined> {
     const f = this.plugin.app.vault
       .getMarkdownFiles()
       .find(f => f.path === path);
     if (f) {
-      return new Note(
-        f,
-        this.plugin.app.metadataCache.getFileCache(f) ?? undefined,
-        this.use,
-      );
+      return this.createNoteFromFile(f);
     }
 
     return undefined;
   }
 
-  createNoteFromFile(file: TFile): Note | undefined {
-    return new Note(
+  async createNoteFromFile(file: TFile): Promise<Note | undefined> {
+    return this.createNoteFromFileAndCache(
       file,
       this.plugin.app.metadataCache.getFileCache(file) ?? undefined,
-      this.use,
     );
   }
 
-  createNoteFromFileAndCache(file: TFile, cache: CachedMetadata): Note | undefined {
-    return new Note(
+  async createNoteFromFileAndCache(file: TFile, cache: CachedMetadata | undefined): Promise<Note | undefined> {
+    const notesContent = await this.plugin.app.vault.cachedRead(file);
+
+    return Note.createNewNote(
       file,
       cache,
-      this.use,
+      notesContent,
     );
   }
 }
