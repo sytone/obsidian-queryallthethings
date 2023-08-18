@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.8.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.7.1...0.8.0) (2023-08-18)
+
+
+### Features
+
+* importers reload data on change and added json support and web support ([1309970](https://github.com/sytone/obsidian-queryallthethings/commits/13099706ce0f63e87bd98924f245ddcee233691a))
+
+
+### Internal
+
+* abstract dataview and enable better async support ([817bda1](https://github.com/sytone/obsidian-queryallthethings/commits/817bda18bb02b806648e2cc2327539de2ec1f61f))
+* **deps-dev:** bump commonmarker from 0.23.9 to 0.23.10 in /docs ([#5](https://github.com/sytone/obsidian-queryallthethings/issues/5)) ([ca93cad](https://github.com/sytone/obsidian-queryallthethings/commits/ca93cadd87c22b4a2c74f56874c2fc50f1182011))
+* update comments ([1ee8e4c](https://github.com/sytone/obsidian-queryallthethings/commits/1ee8e4c4ffe2e9c0d5c12bda87ca38e5c9e4ced5))
+
 ### [0.7.1](https://github.com/sytone/obsidian-queryallthethings/compare/0.7.0...0.7.1) (2023-08-07)
 
 
