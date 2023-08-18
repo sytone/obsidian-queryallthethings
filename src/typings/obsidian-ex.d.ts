@@ -33,7 +33,10 @@ declare module 'obsidian' {
     'qatt:refresh-codeblocks' |
     'dataview:refresh-views' |
     'qatt:notes-store-update' |
-    'qatt:dataview-store-update', callback: () => void, ctx?: any): EventRef;
+    'qatt:dataview-store-update' |
+    'qatt:csv-loader-file-update' |
+    'qatt:mdtable-loader-file-update' |
+    'qatt:json-loader-file-update', callback: () => void, ctx?: any): EventRef;
   }
 }
 

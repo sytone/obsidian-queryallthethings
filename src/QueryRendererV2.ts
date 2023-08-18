@@ -167,7 +167,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     }
 
     // Old event
-    // this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', this.render));
+    this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', this.render));
 
     // eslint-disable-next-line @typescript-eslint/no-floating-promises
     this.render();

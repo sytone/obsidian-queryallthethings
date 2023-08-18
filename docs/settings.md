@@ -26,9 +26,23 @@ The options are:
 - Micromark - A external rendering engine that supports most of the Obsidian and GitHub markdown formatting.
 - None - Nothing, all output is expected to be HTML unless the code block has configuration specifying otherwise.
 
+## Loaders
+
+The following loaders will import data from your vault as well as re-importing the data if a change is detected. If this happens a signal is sent to the current pages and any qatt codeblock will be refreshed.
+
+There is limited support for web based data, if you use this option it will only import the data on the first load of Obsidian and will expect the endpoint to be unauthenticated.
+
+To use this option on a new line in one of the loader setting add the following replacing the options with your versions.
+
+`WEB|{Table Name}|{Url to data}`
+
+For example if you had a endpoint that returns JSON you would add this to the settings for the JSON loader. It would make a table called `test_posts` and then return the content from `https://jsonplaceholder.typicode.com/posts`. You can then select data from the `test_posts` table.
+
+`WEB|test_posts|https://jsonplaceholder.typicode.com/posts`
+
 ## CSV Loader Settings
 
-### CSV file to load on start
+### CSV to load on start
 
 Add the files you want added on load, one per line. The table name will be the name of the file minus the extension.
 
@@ -40,8 +54,16 @@ The CSV file should be well formatted, if there are issues you can look in the c
 
 ## Markdown Table Loader Settings
 
-### Markdown file to load on start
+### Markdown Table to load on start
 
 Add the files you want added on load, one per line. The table name will be the name of the file minus the extension. Only a markdown table should exist on the page.
 
 This is expecting just a markdown table, nothing before the table or after it. It will ignore empty lines.
+
+## Json Loader Settings
+
+### Json to load on start
+
+Add the files you want added on load, one per line. The table name will be the name of the file minus the extension. Only JSON content should be in the file.
+
+The content should be an array structure with object in it. If it is an object with an array you will only have one row in the table for that object.

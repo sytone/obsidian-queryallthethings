@@ -19,6 +19,7 @@ import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/Dyn
 import {GeneralSettingsDefaults, type IGeneralSettings} from 'Settings/DefaultSettings';
 import {CsvLoaderService} from 'Data/CsvLoaderService';
 import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
+import {JsonLoaderService} from 'Data/JsonLoaderService';
 import {DataviewService} from 'Integrations/DataviewService';
 
 export class Note {
@@ -60,8 +61,11 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   public settingsManager: SettingsManager | undefined;
   public notesCacheService: NotesCacheService | undefined;
   public handlebarsRenderer: HandlebarsRenderer | undefined;
+
+  // Loading services
   public csvLoaderService: CsvLoaderService | undefined;
   public markdownTableLoaderService: MarkdownTableLoaderService | undefined;
+  public jsonLoaderService: JsonLoaderService | undefined;
 
   // Settings are rendered in the settings via this. Need to
   // refactor this to use the SettingsTab approach I had.
@@ -138,6 +142,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
       this.csvLoaderService = this.use(CsvLoaderService);
       this.markdownTableLoaderService = this.use(MarkdownTableLoaderService);
+      this.jsonLoaderService = this.use(JsonLoaderService);
     });
 
     // Refresh tables when dataview index is ready.
