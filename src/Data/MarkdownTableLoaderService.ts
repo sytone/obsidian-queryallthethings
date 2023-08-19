@@ -91,7 +91,15 @@ export class MarkdownTableLoaderService extends BaseLoaderService {
       const row: Record<string, any> = {};
 
       for (const [index, element] of header.entries()) {
-        row[element.trim()] = tableColumns[index].trim();
+        const cellValue = tableColumns[index].trim();
+        // Check to see if int.
+        // eslint-disable-next-line no-self-compare, no-implicit-coercion
+        if (+cellValue === +cellValue) {
+          // eslint-disable-next-line no-implicit-coercion
+          row[element.trim()] = +cellValue;
+        } else {
+          row[element.trim()] = cellValue;
+        }
       }
 
       data.push(row);
