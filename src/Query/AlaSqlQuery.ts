@@ -398,6 +398,13 @@ export class AlaSqlQuery extends Service implements IQuery {
       dataArrays.push(await this.notesCache.getNotes());
     }
 
+    while (/\bobsidian_markdown_lists\b/i.test(finalQuery)) {
+      finalQuery = finalQuery.replace(/\bobsidian_markdown_lists\b/i, `$${tableCount}`);
+      tableCount++;
+      // eslint-disable-next-line no-await-in-loop
+      dataArrays.push(await this.notesCache.getLists());
+    }
+
     while (/\bobsidian_markdown_files\b/i.test(finalQuery)) {
       finalQuery = finalQuery.replace(/\bobsidian_markdown_files\b/i, `$${tableCount}`);
       tableCount++;

@@ -59,7 +59,7 @@ export class Note {
     n.basename = markdownFile.basename;
     n.extension = markdownFile.extension;
     n.parentFolder = markdownFile.path.replace(markdownFile.name, '');
-
+    n.listItems = [];
     if (metadata?.listItems) {
       n.listItems = metadata?.listItems.map(
         li =>
@@ -68,6 +68,9 @@ export class Note {
             li.task ?? ' ',
             li.task !== ' ',
             content.slice(li.position.start.offset, li.position.end.offset),
+            li.position.start.line,
+            li.position.start.col,
+            n,
           ),
       );
     }
@@ -87,7 +90,6 @@ export class Note {
     n.sections = metadata?.sections ?? ([] as SectionCache[]);
 
     n.rawListItems = metadata?.listItems ?? ([] as ListItemCache[]);
-    n.listItems = [];
     n.frontmatter = metadata?.frontmatter;
 
     n.blocks = metadata?.blocks ?? {};
@@ -237,11 +239,15 @@ export class ListItem {
   /**
    *
    */
+  // eslint-disable-next-line max-params
   constructor(
     public parent: number,
     public task: string,
     public checked: boolean,
-    public line: string,
+    public content: string,
+    public line: number,
+    public column: number,
+    public note: Note,
   ) {}
 }
 
@@ -252,6 +258,7 @@ export class NotesCacheService extends Service {
   public notes: Note[] = [];
 
   public notesMap = new Map<string, Note>();
+  public listItemsMap = new Map<string, ListItem>();
 
   constructor() {
     super();
@@ -274,7 +281,6 @@ export class NotesCacheService extends Service {
 
     const endTime = new Date(Date.now());
     this.logger.info(`NotesCacheService Loaded ${this.notesMap.size} items in ${endTime.getTime() - startTime.getTime()}ms`);
-
     this.registerEvent(
       this.plugin.app.vault.on('create', async file => {
         this.logger.info(`create event detected for ${file.path}`);
@@ -347,6 +353,10 @@ export class NotesCacheService extends Service {
     return Array.from(this.notesMap.values());
   }
 
+  async getLists(): Promise<ListItem[]> {
+    return Array.from(this.listItemsMap.values());
+  }
+
   async getNoteIndex(path: string): Promise<number> {
     return this.notes.findIndex(n => n.path === path);
   }
@@ -357,10 +367,22 @@ export class NotesCacheService extends Service {
 
   async replaceNote(path: string, note: Note) {
     this.notesMap.set(path, note);
+    for (const key of Object.keys(this.listItemsMap)) {
+      if (key.startsWith(`${path}:`)) {
+        this.listItemsMap.delete(key);
+      }
+    }
+
+    for (const li of note.listItems) {
+      this.listItemsMap.set(`${path}:${li.line}`, li);
+    }
   }
 
   async addNote(path: string, note: Note) {
     this.notesMap.set(path, note);
+    for (const li of note.listItems) {
+      this.listItemsMap.set(`${path}:${li.line}`, li);
+    }
   }
 
   async createNoteFromPath(path: string): Promise<Note | undefined> {
