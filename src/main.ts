@@ -137,12 +137,13 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       };
 
       // D this.queryRendererService = this.use(QueryRendererService);
-      this.queryRendererService = this.use(QueryRendererV2Service);
       this.notesCacheService = this.use(NotesCacheService);
 
       this.csvLoaderService = this.use(CsvLoaderService);
       this.markdownTableLoaderService = this.use(MarkdownTableLoaderService);
       this.jsonLoaderService = this.use(JsonLoaderService);
+
+      this.queryRendererService = this.use(QueryRendererV2Service);
     });
 
     // Refresh tables when dataview index is ready.
