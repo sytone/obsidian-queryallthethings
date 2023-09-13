@@ -6,13 +6,13 @@
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Handlebars from 'handlebars';
-import {Component, MarkdownPreviewView} from 'obsidian';
+import {Component, MarkdownPreviewView, MarkdownRenderer} from 'obsidian';
 import {logging} from 'lib/Logging';
 import {type IRenderer} from 'Render/IRenderer';
 
 export class HandlebarsRendererObsidian implements IRenderer {
   public static registerHandlebarsHelpers() {
-    Handlebars.registerHelper('tasklist', function (this: string, options) {
+    Handlebars.registerHelper('obsidiantasklist', value => {
       let hash = 0;
       let i;
       let chr: number;
@@ -49,6 +49,7 @@ export class HandlebarsRendererObsidian implements IRenderer {
     });
 
     Handlebars.registerHelper('taskcheckbox', value => {
+      console.log(value);
       let checked = '';
       let classList = 'task-list-item-checkbox';
       let nextStatus = 'x';
@@ -62,6 +63,53 @@ export class HandlebarsRendererObsidian implements IRenderer {
 
       const checkBoxHtml = `<input class="${classList}" type="checkbox" ${checked} data-task="${currentStatus}" onclick="console.log(this.checked); qattUpdateOriginalTask('${value.page as string}',${value.line as string},'${currentStatus}','${nextStatus}');"></input>`;
       return new Handlebars.SafeString(checkBoxHtml);
+    });
+
+    Handlebars.registerHelper('htmltasklist', value => {
+      const ulOpen = '<ul class="contains-task-list has-list-bullet">';
+      const ulClose = '</ul>';
+      const liOpen = '<li class="task-list-item plugin-tasks-list-item">';
+      const liClose = '</li>';
+      let depth = 0;
+
+      let listHtml = ulOpen;
+      for (const taskItem of value) {
+        if (taskItem.depth > depth) {
+          listHtml += ulOpen;
+          depth++;
+        }
+
+        if (taskItem.depth < depth) {
+          listHtml += ulClose;
+          depth--;
+        }
+
+        let checked = '';
+        let classList = 'task-list-item-checkbox';
+        let nextStatus = 'x';
+
+        const currentStatus: string = taskItem.status as string;
+        const text = taskItem.text as string;
+
+        if (taskItem.status !== ' ') {
+          checked = 'checked';
+          classList += ' is-checked';
+          nextStatus = ' ';
+        }
+
+        const content = document.createElement('span');
+
+        const html = MarkdownRenderer.renderMarkdown(text, content, '', new Component()).then(() => content.innerHTML);
+
+        // A console.log(`HTML: ${content.firstElementChild?.innerHTML}`);
+
+        listHtml += `${liOpen}<input class="${classList}" type="checkbox" ${checked} data-task="${currentStatus}" onclick="console.log(this.checked); qattUpdateOriginalTask('${taskItem.page as string}',${taskItem.line as string},'${currentStatus}','${nextStatus}');"></input>`;
+        listHtml += `${content.firstElementChild?.innerHTML ?? ' '}${liClose}`;
+      }
+
+      listHtml += ulClose;
+
+      return new Handlebars.SafeString(listHtml);
     });
   }
 

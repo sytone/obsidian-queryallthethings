@@ -7,6 +7,7 @@ import {Service} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
 import {NotesCacheService} from 'NotesCacheService';
 import {DataviewService} from 'Integrations/DataviewService';
+import {confirmObjectPath} from 'Internal';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -24,6 +25,10 @@ export class AlaSqlQuery extends Service implements IQuery {
    * @memberof QuerySql
    */
   public static initialize() {
+    // Add the alasql engine to the exposed API. Thi
+    // will allow the user to use the full power of AlaSQL.
+    confirmObjectPath('_qatt.query.alasql', alasql);
+
     // Set moment() function available to AlaSQL.
     alasql.fn.moment = window.moment;
 
@@ -176,6 +181,18 @@ export class AlaSqlQuery extends Service implements IQuery {
     alasql.fn.objectFromMap = function (value) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       return Object.fromEntries(value);
+    };
+
+    alasql.fn.REVERSE = function (value: string): string {
+      return value.split('').reverse().join('');
+    };
+
+    alasql.fn.CHARINDEX = function (expressionToFind: string, expressionToSearch: string, start_location?: number): number {
+      if (start_location !== undefined) {
+        return expressionToSearch.indexOf(expressionToFind, start_location) + 1;
+      }
+
+      return expressionToSearch.indexOf(expressionToFind) + 1;
     };
 
     alasql.options.nocount = true; // Disable row count for queries.

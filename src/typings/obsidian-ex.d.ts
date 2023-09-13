@@ -44,5 +44,6 @@ declare global {
   interface Window {
 
     DataviewAPI?: DataviewApi;
+    _qatt: any;
   }
 }

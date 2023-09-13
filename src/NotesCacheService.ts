@@ -27,7 +27,9 @@ If you need to reference a property of a object do not forget to use `->` and no
 | ----------- | ------ | ----------------------------------------------- |
 | content        | string | Full content of the markdown note.                |
 | path        | string | Full path to the markdown note.                 |
+| internalPath        | string | Full path to the markdown note minus the extension.                 |
 | name        | string | The name of the note including the extension.   |
+| parentFolder        | string | The path of the parent folder for this note.   |
 | basename    | number | Just the name of the note.                      |
 | extension   | number | The extension of the note. Usually `md`         |
 | stat        | object | contains the time and size details of the note. |
@@ -55,6 +57,8 @@ export class Note {
     n.content = content;
     n.path = markdownFile.path;
     n.name = markdownFile.name;
+    n.internalPath = markdownFile.path.replace(`.${markdownFile.extension}`, '');
+
     n.stat = markdownFile.stat;
     n.basename = markdownFile.basename;
     n.extension = markdownFile.extension;
@@ -66,7 +70,6 @@ export class Note {
           new ListItem(
             li.parent,
             li.task ?? ' ',
-            li.task !== ' ',
             content.slice(li.position.start.offset, li.position.end.offset),
             li.position.start.line,
             li.position.start.col,
@@ -98,6 +101,7 @@ export class Note {
   }
 
   public path: string;
+  public internalPath: string;
   public name: string;
   public stat: FileStats;
   public basename: string;
@@ -236,6 +240,13 @@ Loc {
 }
 
 export class ListItem {
+  private get listMatcher() {
+    return /^([\s\t>]*)([-*+]|\d+\.)? *(\[(.)])? *(.*)/gm;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  private _textMatch: RegExpExecArray | null = null;
+
   /**
    *
    */
@@ -243,12 +254,74 @@ export class ListItem {
   constructor(
     public parent: number,
     public task: string,
-    public checked: boolean,
     public content: string,
     public line: number,
     public column: number,
     public note: Note,
   ) {}
+
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  public get textMatch(): RegExpExecArray | null {
+    if (this._textMatch === null) {
+      this._textMatch = this.listMatcher.exec(this.content);
+    }
+
+    return this._textMatch;
+  }
+
+  public get isTopLevel(): boolean {
+    return this.parent < 0;
+  }
+
+  public get page(): string {
+    return this.note.path;
+  }
+
+  public get text(): string {
+    if (this.textMatch !== null) {
+      return this.textMatch[5];
+    }
+
+    return '';
+  }
+
+  public get checked(): boolean {
+    if (this.textMatch !== null) {
+      return this.textMatch[4] === 'x';
+    }
+
+    return false;
+  }
+
+  public get status(): string {
+    if (this.textMatch !== null) {
+      return this.textMatch[4];
+    }
+
+    return ' ';
+  }
+
+  public get treePath(): string {
+    const path = '';
+    // If the number is negative it is the root of a new potential tree. This
+    // does not care about the entire list being collated together at this point.
+    if (this.isTopLevel) {
+      return `${Math.abs(this.line)}`;
+    }
+
+    const parentItem = this.note.listItems.find((value, ind, object) => Math.abs(value.line) === this.parent);
+
+    return (parentItem?.treePath ?? '') + '.' + this.line.toString();
+  }
+
+  public get depth(): number {
+    if (this.isTopLevel) {
+      return 0;
+    }
+
+    const parentItem = this.note.listItems.find((value, ind, object) => Math.abs(value.line) === this.parent);
+    return (parentItem?.depth ?? 0) + 1;
+  }
 }
 
 export class NotesCacheService extends Service {
@@ -354,6 +427,7 @@ export class NotesCacheService extends Service {
   }
 
   async getLists(): Promise<ListItem[]> {
+    console.log(this.listItemsMap);
     return Array.from(this.listItemsMap.values());
   }
 
@@ -367,7 +441,7 @@ export class NotesCacheService extends Service {
 
   async replaceNote(path: string, note: Note) {
     this.notesMap.set(path, note);
-    for (const key of Object.keys(this.listItemsMap)) {
+    for (const key of this.listItemsMap.keys()) {
       if (key.startsWith(`${path}:`)) {
         this.listItemsMap.delete(key);
       }
