@@ -50,7 +50,7 @@ export class AlaSqlQuery extends Service implements IQuery {
     };
 
     /*
-    // >> alasql-function-stringify-snippet
+    // >> id='alasql-function-stringify-snippet' options=''
 
     The `stringify` function will convert the provided value to a JSON string.
 
@@ -73,7 +73,6 @@ export class AlaSqlQuery extends Service implements IQuery {
     ```text
     {"ctime":1670345758620,"mtime":1670345758620,"size":316}
     ```
-
     // << alasql-function-stringify-snippet
     */
     alasql.fn.stringify = function (value) {
@@ -81,7 +80,7 @@ export class AlaSqlQuery extends Service implements IQuery {
     };
 
     /*
-    // >> docs-alasql-function-parsewikilinks
+    // >> id='docs-alasql-function-parsewikilinks' options=''
 
     There are multiple functions to help with the parsing of the wiki links in a string.
 
@@ -438,8 +437,7 @@ export class AlaSqlQuery extends Service implements IQuery {
   }
 
   /*
-  Update the table below when new columns are added so documentation is updated.
-  // >> obsidian-markdown-files-table-snippet
+  // >> id='obsidian-markdown-files-table-snippet' options=''
 
   If you need to reference a property of a object do not forget to use `->` and not `.`
 

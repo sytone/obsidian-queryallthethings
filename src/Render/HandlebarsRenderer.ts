@@ -36,7 +36,7 @@ export class HandlebarsRenderer extends Service implements IRenderer {
     // Just add the simple helpers here.
     Handlebars.registerHelper({
       /*
-      // >> docs-handlebars-helper-capitalize
+      // >> id='docs-handlebars-helper-capitalize' options=''
 
       The `capitalize`\-helper will capitalize the first letter of the string.
 
@@ -69,7 +69,7 @@ export class HandlebarsRenderer extends Service implements IRenderer {
       },
 
       /*
-      // >> docs-handlebars-helper-lowercase
+      // >> id='docs-handlebars-helper-lowercase' options=''
 
       The `lowercase`\-helper will convert the entire string to lowercase.
 
@@ -102,8 +102,7 @@ export class HandlebarsRenderer extends Service implements IRenderer {
       },
 
       /*
-      // >> docs-handlebars-helper-stringify
-
+      // >> id='docs-handlebars-helper-stringify' options=''
       The `lowercase`\-helper will convert the entire string to lowercase.
 
       {% raw %}
@@ -222,8 +221,7 @@ export class HandlebarsRenderer extends Service implements IRenderer {
         return new Handlebars.SafeString(paddingString.repeat((count as number)));
       },
       /*
-      // >> docs-handlebars-helper-obsidianHtmlInternalLink
-
+      // >> id='docs-handlebars-helper-obsidianHtmlInternalLink' options=''
       The `obsidianHtmlInternalLink` helper takes a path and a label and returns a link
       matches the default HTML that obsidian uses for internal links. If ths files ends
       in `.md` then the extension is removed from the link.
@@ -260,7 +258,7 @@ export class HandlebarsRenderer extends Service implements IRenderer {
     });
 
     /*
-    // >> handlebars-helper-micromark-snippet
+    // >> id='handlebars-helper-micromark-snippet' options=''
 
     The `micromark`\-helper renders markdown as HTML using the micromark library. It has one setting
     which will remove the wrapping `<p>` tag from the output if inline is set to true.
@@ -293,7 +291,6 @@ export class HandlebarsRenderer extends Service implements IRenderer {
     ```
     <p>This is a <strong>thing</strong> to do</p>
     ```
-
     // << handlebars-helper-micromark-snippet
     */
     Handlebars.registerHelper('micromark', function (this: any, options) {

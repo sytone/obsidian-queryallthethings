@@ -16,7 +16,6 @@ The following Block level helpers are avaliable to be used in rendering your out
 ### #micromark
 
 %%snippet id='handlebars-helper-micromark-snippet' options='nocodeblock'%%
-
 The `micromark`\-helper renders markdown as HTML using the micromark library. It has one setting
 which will remove the wrapping `<p>` tag from the output if inline is set to true.
 
@@ -48,5 +47,4 @@ If the inline property is not set, then the output will be wrapped in a `<p>` ta
 ```
 <p>This is a <strong>thing</strong> to do</p>
 ```
-
 %%/snippet%%

@@ -7,9 +7,8 @@ title: Dataview Lists (dataview_lists)
 ## Dataview Lists (dataview_lists)
 
 %%snippet id='lists-table-snippet' options='nocodeblock'%%
-
 If a property is not found in the task body it will be set to undefined. This table
-is backed by Dataview and will be refreshed when Dataview is refreshed.
+is backed by dataview and will be refreshed when dataview is refreshed.
 
 | Column Name | Type         | Description |
 | ----------- | ------------ | ----------- |
@@ -25,5 +24,4 @@ is backed by Dataview and will be refreshed when Dataview is refreshed.
 | links       | string       |             |
 | children    | string       |             |
 | parent      | number       |             |
-
 %%/snippet%%

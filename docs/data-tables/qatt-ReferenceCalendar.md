@@ -9,7 +9,6 @@ title: Reference Calendar Table (qatt.ReferenceCalendar)
 The reference calendar is used to help with date based management, you can directly query the table or use it to join to other data sources.
 
 %%snippet id='reference-calendar-table-snippet' options='nocodeblock'%%
-
 | Column Name      | Type    | Description                                                               |
 | ---------------- | ------- | ------------------------------------------------------------------------- |
 | date             | string  | date.toISODate()                                                          |
@@ -31,5 +30,4 @@ The reference calendar is used to help with date based management, you can direc
 | isCurrentQuarter | boolean | Math.ceil(date.month / 3) === Math.ceil(DateTime.now().month / 3)         |
 | isCurrentWeek    | boolean | date.weekNumber === DateTime.now().weekNumber                             |
 | isCurrentDay     | boolean | date.hasSame(DateTime.now(), 'day')                                       |
-
 %%/snippet%%

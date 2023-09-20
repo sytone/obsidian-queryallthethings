@@ -62,8 +62,8 @@ export class DataTables extends Service {
     const start = DateTime.now();
 
     /*
-    Update the table below when new columns are added so documentation is updated.
-    // >> reference-calendar-table-snippet
+    // >> id='reference-calendar-table-snippet' options=''
+
     | Column Name      | Type    | Description                                                               |
     | ---------------- | ------- | ------------------------------------------------------------------------- |
     | date             | string  | date.toISODate()                                                          |
@@ -141,11 +141,10 @@ export class DataTables extends Service {
         if (l.task) {
           const parsedTask = parseTask(l.text);
           /*
-          Update the table below when new columns are added so documentation is updated.
-          // >> tasks-table-snippet
+          // >> id='tasks-table-snippet' options=''
 
           If a property is not found in the task body it will be set to undefined. This table
-          is backed by dataview and will be refreshed when dataview is refreshed.
+          is backed by Dataview and will be refreshed when Dataview is refreshed.
 
           | Column Name    | Type         | Description                                                                                             |
           | -------------- | ------------ | ------------------------------------------------------------------------------------------------------- |
@@ -209,11 +208,10 @@ export class DataTables extends Service {
         }
 
         /*
-        Update the table below when new columns are added so documentation is updated.
-        // >> lists-table-snippet
+        // >> id='lists-table-snippet' options=''
 
         If a property is not found in the task body it will be set to undefined. This table
-        is backed by dataview and will be refreshed when dataview is refreshed.
+        is backed by Dataview and will be refreshed when Dataview is refreshed.
 
         | Column Name | Type         | Description |
         | ----------- | ------------ | ----------- |

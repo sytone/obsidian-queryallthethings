@@ -7,14 +7,15 @@ title: Obsidian Markdown Notes (obsidian_markdown_notes)
 ## Obsidian Markdown Notes (obsidian_markdown_notes)
 
 %%snippet id='docs-tables-obsidian-markdown-notes' options='nocodeblock'%%
-
 If you need to reference a property of a object do not forget to use `->` and not `.`
 
 | Column Name | Type   | Description                                     |
 | ----------- | ------ | ----------------------------------------------- |
 | content        | string | Full content of the markdown note.                |
 | path        | string | Full path to the markdown note.                 |
+| internalPath        | string | Full path to the markdown note minus the extension.                 |
 | name        | string | The name of the note including the extension.   |
+| parentFolder        | string | The path of the parent folder for this note.   |
 | basename    | number | Just the name of the note.                      |
 | extension   | number | The extension of the note. Usually `md`         |
 | stat        | object | contains the time and size details of the note. |
@@ -29,11 +30,9 @@ If you need to reference a property of a object do not forget to use `->` and no
 | listItems  | [ListItem[]](#listcache-structure) | Array of listItems cached by Obsidian                     |
 | frontmatter  | [FrontMatterCache[]](#frontmattercache-structure) | Array of frontmatter cached by Obsidian                     |
 | blocks  | Record<string, BlockCache> | Array of blocks cached by Obsidian                     |
-
 %%/snippet%%
 
 %%snippet id='docs-tables-obsidian-markdown-notes-linkcache' options='nocodeblock'%%
-
 ### LinkCache structure
 
 ```text
@@ -64,11 +63,9 @@ Loc {
   offset: number;
 }
 ```
-
 %%/snippet%%
 
 %%snippet id='docs-tables-obsidian-markdown-notes-embedcache' options='nocodeblock'%%
-
 ### EmbedCache structure
 
 ```text
@@ -80,11 +77,9 @@ Loc {
   position: Pos;
 }
 ```
-
 %%/snippet%%
 
 %%snippet id='docs-tables-obsidian-markdown-notes-headingcache' options='nocodeblock'%%
-
 ### HeadingCache structure
 
 ```text
@@ -94,11 +89,9 @@ Loc {
   position: Pos;
 }
 ```
-
 %%/snippet%%
 
 %%snippet id='docs-tables-obsidian-markdown-notes-sectioncache' options='nocodeblock'%%
-
 ### SectionCache structure
 
 ```text
@@ -110,11 +103,9 @@ Loc {
   position: Pos;
 }
 ```
-
 %%/snippet%%
 
 %%snippet id='docs-tables-obsidian-markdown-notes-listitem' options='nocodeblock'%%
-
 ### ListItem structure
 
 ```text
@@ -125,11 +116,9 @@ Loc {
     line: string;
 }
 ```
-
 %%/snippet%%
 
 %%snippet id='docs-tables-obsidian-markdown-notes-frontmattercache' options='nocodeblock'%%
-
 ### FrontMatterCache structure
 
 ```text
@@ -138,5 +127,4 @@ Loc {
   position: Pos;
 }
 ```
-
 %%/snippet%%

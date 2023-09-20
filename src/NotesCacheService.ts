@@ -19,7 +19,7 @@ import {DateTime} from 'luxon';
 
 /*
 Update the table below when new columns are added so documentation is updated.
-// >> docs-tables-obsidian-markdown-notes
+// >> id='docs-tables-obsidian-markdown-notes' options=''
 
 If you need to reference a property of a object do not forget to use `->` and not `.`
 
@@ -119,9 +119,9 @@ export class Note {
   public blocks: Record<string, BlockCache>;
 
   public content: string;
-
   /*
-  // >> docs-tables-obsidian-markdown-notes-linkcache
+// >> id='docs-tables-obsidian-markdown-notes-linkcache' options=''
+
 ### LinkCache structure
 
 ```text
@@ -152,12 +152,11 @@ Loc {
   offset: number;
 }
 ```
-
-  // << docs-tables-obsidian-markdown-notes-linkcache
-  */
-
+// << docs-tables-obsidian-markdown-notes-linkcache
+*/
   /*
-  // >> docs-tables-obsidian-markdown-notes-embedcache
+// >> id='docs-tables-obsidian-markdown-notes-embedcache' options=''
+
 ### EmbedCache structure
 
 ```text
@@ -169,12 +168,11 @@ Loc {
   position: Pos;
 }
 ```
-
-  // << docs-tables-obsidian-markdown-notes-embedcache
-  */
+// << docs-tables-obsidian-markdown-notes-embedcache
+*/
 
   /*
-  // >> docs-tables-obsidian-markdown-notes-headingcache
+// >> id='docs-tables-obsidian-markdown-notes-headingcache' options=''
 ### HeadingCache structure
 
 ```text
@@ -184,12 +182,10 @@ Loc {
   position: Pos;
 }
 ```
-
-  // << docs-tables-obsidian-markdown-notes-headingcache
-  */
-
+// << docs-tables-obsidian-markdown-notes-headingcache
+*/
   /*
-  // >> docs-tables-obsidian-markdown-notes-sectioncache
+// >> id='docs-tables-obsidian-markdown-notes-sectioncache' options=''
 
 ### SectionCache structure
 
@@ -203,11 +199,10 @@ Loc {
 }
 ```
 
-  // << docs-tables-obsidian-markdown-notes-sectioncache
-  */
-
+// << docs-tables-obsidian-markdown-notes-sectioncache
+*/
   /*
-  // >> docs-tables-obsidian-markdown-notes-listitem
+// >> id='docs-tables-obsidian-markdown-notes-listitem' options=''
 
 ### ListItem structure
 
@@ -220,11 +215,10 @@ Loc {
 }
 ```
 
-  // << docs-tables-obsidian-markdown-notes-listitem
-  */
-
-  /*
-  // >> docs-tables-obsidian-markdown-notes-frontmattercache
+// << docs-tables-obsidian-markdown-notes-listitem
+*/
+/*
+// >> id='docs-tables-obsidian-markdown-notes-frontmattercache' options=''
 
 ### FrontMatterCache structure
 
@@ -234,9 +228,8 @@ Loc {
   position: Pos;
 }
 ```
-
-  // << docs-tables-obsidian-markdown-notes-frontmattercache
-  */
+// << docs-tables-obsidian-markdown-notes-frontmattercache
+*/
 }
 
 export class ListItem {
