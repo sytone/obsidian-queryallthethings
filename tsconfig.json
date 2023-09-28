@@ -19,10 +19,14 @@
     "rootDir": "./src",
     "inlineSourceMap": true,
     "inlineSources": true,
-    "module": "ESNext",
-    "target": "ES2018",
+    "module": "ES2022",
+    "target": "ES2022",
     "allowJs": true,
     "noImplicitAny": true,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "incremental": true,
     "moduleResolution": "node",
     "importHelpers": true,
     "isolatedModules": true,
@@ -44,11 +48,12 @@
     ],
     "lib": [
       "DOM",
-      "ES2018"
+      "ES2022"
     ],
     "types": [
+      "jest",
       "node",
-      "jest"
+      "@types/jest"
     ]
   },
   "include": [

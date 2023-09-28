@@ -1,0 +1,86 @@
+import {type Note} from 'Note';
+
+export class ListItem {
+  private get listMatcher() {
+    return /^([\s\t>]*)([-*+]|\d+\.)? *(\[(.)])? *(.*)/gm;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  private _textMatch: RegExpExecArray | null = null;
+
+  /**
+   *
+   */
+  // eslint-disable-next-line max-params
+  constructor(
+    public parent: number,
+    public task: string,
+    public content: string,
+    public line: number,
+    public column: number,
+    public note: Note,
+  ) {}
+
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  public get textMatch(): RegExpExecArray | null {
+    if (this._textMatch === null) {
+      this._textMatch = this.listMatcher.exec(this.content);
+    }
+
+    return this._textMatch;
+  }
+
+  public get isTopLevel(): boolean {
+    return this.parent < 0;
+  }
+
+  public get page(): string {
+    return this.note.path;
+  }
+
+  public get text(): string {
+    if (this.textMatch !== null) {
+      return this.textMatch[5];
+    }
+
+    return '';
+  }
+
+  public get checked(): boolean {
+    if (this.textMatch !== null) {
+      return this.textMatch[4] === 'x';
+    }
+
+    return false;
+  }
+
+  public get status(): string {
+    if (this.textMatch !== null) {
+      return this.textMatch[4];
+    }
+
+    return ' ';
+  }
+
+  public get treePath(): string {
+    const path = '';
+    // If the number is negative it is the root of a new potential tree. This
+    // does not care about the entire list being collated together at this point.
+    if (this.isTopLevel) {
+      return `${Math.abs(this.line)}`;
+    }
+
+    const parentItem = this.note.listItems.find((value, ind, object) => Math.abs(value.line) === this.parent);
+
+    return (parentItem?.treePath ?? '') + '.' + this.line.toString();
+  }
+
+  public get depth(): number {
+    if (this.isTopLevel) {
+      return 0;
+    }
+
+    const parentItem = this.note.listItems.find((value, ind, object) => Math.abs(value.line) === this.parent);
+    return (parentItem?.depth ?? 0) + 1;
+  }
+}

@@ -94,8 +94,10 @@ export interface IQattCodeBlock {
   logLevel: string | undefined;
   codeBlockContent: string;
   replaceCodeBlock: string | undefined;
+  replaceTargetPath: string | undefined;
   queryDataSource: string;
   id: string;
+  originalCodeBlockContent: string;
 }
 
 export class QattCodeBlock implements IQattCodeBlock {
@@ -110,13 +112,16 @@ export class QattCodeBlock implements IQattCodeBlock {
   renderEngine: string | undefined;
   logLevel: string | undefined;
   replaceCodeBlock: string | undefined;
+  replaceTargetPath: string | undefined;
   queryDataSource: string;
   id: string;
+  originalCodeBlockContent: string;
 
   constructor(
     public codeBlockContent: string,
   ) {
     const parsedCodeBlock = parseYaml(codeBlockContent);
+    this.originalCodeBlockContent = codeBlockContent;
 
     this.customJSForSql = parsedCodeBlock.customJSForSql;
     this.customJSForHandlebars = parsedCodeBlock.customJSForHandlebars;
@@ -151,6 +156,8 @@ export class QattCodeBlock implements IQattCodeBlock {
     } else {
       this.replaceCodeBlock = parsedCodeBlock.replaceCodeBlock;
     }
+
+    this.replaceTargetPath = parsedCodeBlock.replaceTargetPath;
 
     this.queryDataSource = this.getParsedQuerySource(this.query ?? '');
   }

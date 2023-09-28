@@ -2,18 +2,35 @@
   "material-icon-theme.folders.theme": "specific",
   "cSpell.words": [
     "alasql",
+    "alwaysappend",
+    "alwaysprepend",
+    "charindex",
     "collab",
     "collapser",
+    "columnid",
     "DATETIME",
+    "embedcache",
+    "endraw",
+    "frontmattercache",
+    "gnio",
+    "golkca",
+    "headingcache",
     "lezer",
+    "linkcache",
+    "listcache",
+    "listitem",
     "luxon",
+    "mapname",
     "mdast",
     "micromark",
     "nocount",
     "outfile",
     "pagedata",
     "papaparse",
+    "parsewikilinks",
     "Qatt",
+    "Recordset",
+    "sectioncache",
     "taskcheckbox"
   ],
   "[markdown]": {
@@ -22,5 +39,11 @@
   },
   "conventionalCommits.scopes": [
     "logging"
-  ]
+  ],
+  "markdownlint.config": {
+    "MD007": {
+      "indent": 2
+    },
+    "single-trailing-newline": false
+  }
 }

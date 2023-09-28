@@ -50,8 +50,9 @@ export class AlaSqlQuery extends Service implements IQuery {
     };
 
     /*
-    // >> id='alasql-function-stringify-snippet' options=''
-
+    // >> id='alasql-function-stringify-snippet' options='file=sql-functions/stringify.md'
+    title: stringify(value)
+    ---
     The `stringify` function will convert the provided value to a JSON string.
 
     In this example it takes the `stat` property of the first note found and renders it as a JSON blob. This can be handy to explore objects if you are not sure what is available.
@@ -80,8 +81,9 @@ export class AlaSqlQuery extends Service implements IQuery {
     };
 
     /*
-    // >> id='docs-alasql-function-parsewikilinks' options=''
-
+    // >> id='docs-alasql-function-parsewikilinks' options='file=sql-functions/wiki-link-functions.md'
+    title: Wiki Link functions
+    ---
     There are multiple functions to help with the parsing of the wiki links in a string.
 
     This is the signature of the functions you can use in the queries.
@@ -155,6 +157,7 @@ export class AlaSqlQuery extends Service implements IQuery {
     };
 
     function parseWikiLinkFromText(text: string): string | undefined {
+      // eslint-disable-next-line no-useless-escape
       const re = /\[\[([^\[\]]*?)\]\]/u;
 
       const result = re.exec(text);
@@ -182,10 +185,96 @@ export class AlaSqlQuery extends Service implements IQuery {
       return Object.fromEntries(value);
     };
 
+    /*
+    // >> id='docs-sql-statements-reverse' options='file=sql-statements/reverse.md'
+title: REVERSE
+---
+
+## Syntax
+
+```sql
+REVERSE ( string )
+```
+
+## Returns
+
+Returns the string with the characters in reverse order.
+
+## Example
+
+The following example returns the frontmatter->status value reversed.
+
+```yaml
+query: |
+  SELECT TOP 2 path AS Path,
+    REVERSE(frontmatter->status) AS Status
+  FROM obsidian_markdown_notes
+  WHERE frontmatter->status
+template: |
+  {{stringify result}}
+```
+
+```json
+[
+  {
+    "path": "Projects - Demo Project/Why You Should Be Taking More Notes.md",
+    "Status": "gnioD"
+  }, {
+    "path": "Projects - Demo Project/What I Learned From Taking 15,000 Notes.md",
+    "Status": "golkcaB"
+  }
+]
+```
+
+    // << docs-sql-statements-reverse
+    */
     alasql.fn.REVERSE = function (value: string): string {
       return value.split('').reverse().join('');
     };
 
+    /*
+    // >> id='docs-sql-statements-charindex' options='file=sql-statements/charindex.md'
+title: CHARINDEX
+---
+
+## Syntax
+
+```sql
+CHARINDEX ( expressionToFind , expressionToSearch [ , start_location ] )
+```
+
+## Arguments
+
+*expressionToFind*
+A character expression containing the sequence to find.
+
+*expressionToSearch*
+A character expression to search.
+
+*start_location*
+An number at which the search starts. If start_location is not specified, has a negative value, or has a zero (0) value, the search starts at the beginning of expressionToSearch.
+
+## Returns
+
+Returns a number indicating the position in the string.
+
+## Example
+
+The following example finds the location of the word `string` in the string `This is the string to search`.
+
+```yaml
+query: |
+  SELECT CHARINDEX('string', 'This is the string to search') AS StringIndex
+template: |
+  {{stringify result}}
+```
+
+```json
+[ { "StringIndex": 13 } ]
+```
+
+    // << docs-sql-statements-charindex
+    */
     alasql.fn.CHARINDEX = function (expressionToFind: string, expressionToSearch: string, start_location?: number): number {
       if (start_location !== undefined) {
         return expressionToSearch.indexOf(expressionToFind, start_location) + 1;
@@ -380,6 +469,7 @@ export class AlaSqlQuery extends Service implements IQuery {
     try {
       for (const v of this._sqlQuery.split(';')) {
         if (v.trim() !== '') {
+          // eslint-disable-next-line no-await-in-loop
           const [parsedQuery, dataTables] = await this.getDataTables(v);
           // Old const dataTable: any[] = this.getDataTable(v);
 
@@ -398,6 +488,7 @@ export class AlaSqlQuery extends Service implements IQuery {
     this.logger.debugWithId(this._queryId, `queryResult: ${queryResult.length as number}`, queryResult);
     this.logger.groupEndId();
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return queryResult;
   }
 

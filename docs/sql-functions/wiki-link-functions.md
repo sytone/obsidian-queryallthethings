@@ -4,8 +4,6 @@ parent: SQL Functions
 grand_parent: Queries
 title: Wiki Link functions
 ---
-
-%%snippet id='docs-alasql-function-parsewikilinks' options='nocodeblock'%%
 There are multiple functions to help with the parsing of the wiki links in a string.
 
 This is the signature of the functions you can use in the queries.
@@ -44,4 +42,3 @@ will result in:
 ```text
 [ { "Location": "Projects/Painting The House", "Display": "Painting The House", "HasDisplay": true, "HasNoDisplay": false, "HasDisplayIf": "Painting The House", "HasNoDisplayIf": "Projects/Painting The House" } ]
 ```
-%%/snippet%%
