@@ -13,7 +13,7 @@ VS Code will work on all operating systems and the configuration will recommend 
 
 ## Setting up development environment
 
-PNPM is used as the package manager, use `npm install -g pnpm` to install. Version 16 of NodeJS is being used for the build process so ensure that is also installed.
+PNPM is used as the package manager, use `npm install -g pnpm` to install. Version 16 of NodeJS is being used for the build process so ensure that is also installed. If you use Node version manager you can rin `nvm install 16.20.2` to install the current node version.
 
 Run `pnpm install` to ensure dependencies are installed and then `pnpm run build`
 
