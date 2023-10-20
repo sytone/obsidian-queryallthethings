@@ -53,9 +53,6 @@ dependencies:
   obsidian-dataview:
     specifier: 0.5.56
     version: 0.5.56
-  papaparse:
-    specifier: ^5.4.1
-    version: 5.4.1
 
 devDependencies:
   '@codemirror/state':
@@ -97,12 +94,6 @@ devDependencies:
   '@types/node':
     specifier: ^20.8.0
     version: 20.8.0
-  '@types/papaparse':
-    specifier: ^5.3.9
-    version: 5.3.9
-  '@types/parsimmon':
-    specifier: ^1.10.7
-    version: 1.10.7
   '@typescript-eslint/eslint-plugin':
     specifier: ^5.62.0
     version: 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.50.0)(typescript@5.1.3)
@@ -180,7 +171,7 @@ devDependencies:
     version: 5.1.3
   xo:
     specifier: ^0.54.2
-    version: 0.54.2(@typescript-eslint/parser@5.62.0)(webpack@5.88.2)
+    version: 0.54.2(webpack@5.88.2)
 
 packages:
 
@@ -222,7 +213,7 @@ packages:
       '@babel/helpers': 7.23.1
       '@babel/parser': 7.23.0
       '@babel/template': 7.22.15
-      '@babel/traverse': 7.23.0
+      '@babel/traverse': 7.23.2
       '@babel/types': 7.23.0
       convert-source-map: 2.0.0
       debug: 4.3.4
@@ -334,7 +325,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/template': 7.22.15
-      '@babel/traverse': 7.23.0
+      '@babel/traverse': 7.23.2
       '@babel/types': 7.23.0
     transitivePeerDependencies:
       - supports-color
@@ -501,8 +492,8 @@ packages:
       '@babel/types': 7.23.0
     dev: true
 
-  /@babel/traverse@7.23.0:
-    resolution: {integrity: sha512-t/QaEvyIoIkwzpiZ7aoSKK8kObQYeF7T2v+dazAYCb8SXtp58zEVkWW7zAnju8FNKNdr4ScAOEDmMItbyOmEYw==}
+  /@babel/traverse@7.23.2:
+    resolution: {integrity: sha512-azpe59SQ48qG6nu2CzcMLbxUudtN+dOM9kDbUqGq3HXUJRlo7i8fvPoxQUzYgLZ4cMVmuZgm8vvBpNeRhd6XSw==}
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/code-frame': 7.22.13
@@ -1675,16 +1666,6 @@ packages:
 
   /@types/normalize-package-data@2.4.2:
     resolution: {integrity: sha512-lqa4UEhhv/2sjjIQgjX8B+RBjj47eo0mzGasklVJ78UKGQY1r0VpB9XHDaZZO9qzEFDdy4MrXLuEaSmPrPSe/A==}
-    dev: true
-
-  /@types/papaparse@5.3.9:
-    resolution: {integrity: sha512-sZcrKD63qA4/6GyBcVvX6AIp0AkpfyYk00CUQHMBvb4+OVXTZWyXUvidUZaai1wyKUVyJoxO7mgREam/pMRrDw==}
-    dependencies:
-      '@types/node': 20.8.0
-    dev: true
-
-  /@types/parsimmon@1.10.7:
-    resolution: {integrity: sha512-QnO7brOMB4XCVJzU0GZAYhpay7CZLiXowKBOyAmiRcJ4SIGlrh6/cfWdTod+yfSsyli9tx7aunwQij50yHX9Fg==}
     dev: true
 
   /@types/resolve@1.20.2:
@@ -3543,6 +3524,21 @@ packages:
       eslint-plugin-import: 2.28.1(@typescript-eslint/parser@5.62.0)(eslint-import-resolver-webpack@0.13.7)(eslint@8.50.0)
       eslint-plugin-n: 16.1.0(eslint@8.50.0)
       eslint-plugin-promise: 6.1.1(eslint@8.50.0)
+    dev: true
+
+  /eslint-config-xo-typescript@0.57.0(@typescript-eslint/eslint-plugin@5.62.0)(@typescript-eslint/parser@5.62.0)(eslint@8.50.0)(typescript@5.1.3):
+    resolution: {integrity: sha512-u+qcTaADHn2/+hbDqZHRWiAps8JS6BcRsJKAADFxYHIPpYqQeQv9mXuhRe/1+ikfZAIz9hlG1V+Lkj8J7nf34A==}
+    engines: {node: '>=12'}
+    peerDependencies:
+      '@typescript-eslint/eslint-plugin': '>=5.57.0'
+      '@typescript-eslint/parser': '>=5.57.0'
+      eslint: '>=8.0.0'
+      typescript: '>=4.4'
+    dependencies:
+      '@typescript-eslint/eslint-plugin': 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.50.0)(typescript@5.1.3)
+      '@typescript-eslint/parser': 5.62.0(eslint@8.50.0)(typescript@5.1.3)
+      eslint: 8.50.0
+      typescript: 5.1.3
     dev: true
 
   /eslint-config-xo@0.43.1(eslint@8.50.0):
@@ -6657,7 +6653,7 @@ packages:
     resolution: {integrity: sha512-REKQtAuIOKDbvNH/th1C1gWmJWCP5tRn9T/mfZGZt4Zncgko7McXK0aSKFtEInipvgbZJ2nScivvyLdiWluSMw==}
     hasBin: true
     dependencies:
-      obsidian: github.com/obsidianmd/obsidian-api/249eb773347588f4e9fec7c600e1904cd9240fcb(@codemirror/state@6.2.1)(@codemirror/view@6.21.0)
+      obsidian: git@github.com+obsidianmd/obsidian-api/249eb773347588f4e9fec7c600e1904cd9240fcb(@codemirror/state@6.2.1)(@codemirror/view@6.21.0)
       tslib: 2.1.0
     transitivePeerDependencies:
       - '@codemirror/state'
@@ -6667,7 +6663,7 @@ packages:
   /obsidian-dataview@0.5.56:
     resolution: {integrity: sha512-QyXpJLDJVpLmPCiF8ht4XqeuhWaccAs/pSpP+oDmwou4uJvEO4rXosj7joYQXv1QMsxf5UHy2OO56BZoyzVGBg==}
     dependencies:
-      '@codemirror/language': github.com/lishid/cm-language/1aadcc247f20ccfda76424a9f853dbb4ee203fdc
+      '@codemirror/language': git@github.com+lishid/cm-language/1aadcc247f20ccfda76424a9f853dbb4ee203fdc
       '@codemirror/state': 6.2.1
       '@codemirror/view': 6.21.0
       emoji-regex: 10.2.1
@@ -8494,7 +8490,7 @@ packages:
     resolution: {integrity: sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==}
     dev: true
 
-  /xo@0.54.2(@typescript-eslint/parser@5.62.0)(webpack@5.88.2):
+  /xo@0.54.2(webpack@5.88.2):
     resolution: {integrity: sha512-1S3r+ecCg8OVPtu711as+cgwxOg+WQNRgSzqZ+OHzYlsa8CpW3ych0Ve9k8Q2QG6gqO3HSpaS5AXi9D0yPUffg==}
     engines: {node: '>=14.16'}
     hasBin: true
@@ -8505,12 +8501,15 @@ packages:
         optional: true
     dependencies:
       '@eslint/eslintrc': 1.4.1
+      '@typescript-eslint/eslint-plugin': 5.62.0(@typescript-eslint/parser@5.62.0)(eslint@8.50.0)(typescript@5.1.3)
+      '@typescript-eslint/parser': 5.62.0(eslint@8.50.0)(typescript@5.1.3)
       arrify: 3.0.0
       cosmiconfig: 8.3.6(typescript@5.1.3)
       define-lazy-prop: 3.0.0
       eslint: 8.50.0
       eslint-config-prettier: 8.10.0(eslint@8.50.0)
       eslint-config-xo: 0.43.1(eslint@8.50.0)
+      eslint-config-xo-typescript: 0.57.0(@typescript-eslint/eslint-plugin@5.62.0)(@typescript-eslint/parser@5.62.0)(eslint@8.50.0)(typescript@5.1.3)
       eslint-formatter-pretty: 5.0.0
       eslint-import-resolver-webpack: 0.13.7(eslint-plugin-import@2.28.1)(webpack@5.88.2)
       eslint-plugin-ava: 14.0.0(eslint@8.50.0)
@@ -8539,7 +8538,6 @@ packages:
       typescript: 5.1.3
       webpack: 5.88.2(esbuild@0.18.5)
     transitivePeerDependencies:
-      - '@typescript-eslint/parser'
       - eslint-import-resolver-typescript
       - supports-color
     dev: true
@@ -8648,8 +8646,8 @@ packages:
     resolution: {integrity: sha512-V50KMwwzqJV0NpZIZFwfOD5/lyny3WlSzRiXgA0G7VUnRlqttta1L6UQIHzd6EuBY/cHGfwTIck7w1yH6Q5zUw==}
     dev: false
 
-  github.com/lishid/cm-language/1aadcc247f20ccfda76424a9f853dbb4ee203fdc:
-    resolution: {tarball: https://codeload.github.com/lishid/cm-language/tar.gz/1aadcc247f20ccfda76424a9f853dbb4ee203fdc}
+  git@github.com+lishid/cm-language/1aadcc247f20ccfda76424a9f853dbb4ee203fdc:
+    resolution: {commit: 1aadcc247f20ccfda76424a9f853dbb4ee203fdc, repo: git@github.com:lishid/cm-language.git, type: git}
     name: '@codemirror/language'
     version: 6.6.0
     prepare: true
@@ -8663,9 +8661,9 @@ packages:
       style-mod: 4.1.0
     dev: false
 
-  github.com/obsidianmd/obsidian-api/249eb773347588f4e9fec7c600e1904cd9240fcb(@codemirror/state@6.2.1)(@codemirror/view@6.21.0):
-    resolution: {tarball: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/249eb773347588f4e9fec7c600e1904cd9240fcb}
-    id: github.com/obsidianmd/obsidian-api/249eb773347588f4e9fec7c600e1904cd9240fcb
+  git@github.com+obsidianmd/obsidian-api/249eb773347588f4e9fec7c600e1904cd9240fcb(@codemirror/state@6.2.1)(@codemirror/view@6.21.0):
+    resolution: {commit: 249eb773347588f4e9fec7c600e1904cd9240fcb, repo: git@github.com:obsidianmd/obsidian-api.git, type: git}
+    id: git@github.com+obsidianmd/obsidian-api/249eb773347588f4e9fec7c600e1904cd9240fcb
     name: obsidian
     version: 1.4.11
     peerDependencies:
