@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.2](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.0...0.8.2) (2023-10-20)
+
+
+### Features
+
+* add list items table from notes cache ([515dec8](https://github.com/sytone/obsidian-queryallthethings/commits/515dec8ad235e280c47bdeb1082b97b1080025d7))
+* move to new ophidian version ([25e7fa5](https://github.com/sytone/obsidian-queryallthethings/commits/25e7fa5fa2d9e2863533fdb39e78cb44b76b1b13))
+* numbers in markdown tables are imported as integers ([aad8be4](https://github.com/sytone/obsidian-queryallthethings/commits/aad8be4128f77db81f8f9dc08c91e45cd6e43c06))
+
+
+### Bug Fixes and Changes
+
+* move code block registration to last ([9e7b454](https://github.com/sytone/obsidian-queryallthethings/commits/9e7b454ca3c979bdf4e2632602e9e648f1ac756d))
+
+
+### Documentation
+
+* migrate to new snippet format ([0d1cb91](https://github.com/sytone/obsidian-queryallthethings/commits/0d1cb91e2ad6c328d21a99f3902be8fe542461f9))
+
+
+### Internal
+
+* **deps-dev:** bump activesupport from 7.0.5 to 7.0.7.2 in /docs ([#8](https://github.com/sytone/obsidian-queryallthethings/issues/8)) ([c762562](https://github.com/sytone/obsidian-queryallthethings/commits/c762562422d6d60a0c21f652b954876ce86c5d8f))
+* remove old tests ([8516ead](https://github.com/sytone/obsidian-queryallthethings/commits/8516eadf30bf8393669f429230a08e48d09cd6c8))
+
+
 ## [0.8.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.7.1...0.8.0) (2023-08-18)
 
 

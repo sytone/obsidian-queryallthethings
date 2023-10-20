@@ -117,6 +117,9 @@
     }
   },
   "standard-version": {
+    "skip": {
+      "commit": true
+    },
     "tag-prefix": "",
     "types": [
       {
