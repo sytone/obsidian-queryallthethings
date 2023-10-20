@@ -231,7 +231,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
         const noteWithCodeblockContent = noteWithCodeblock ? await this.getCachedContent(noteWithCodeblock) : '';
         if (sectionInfo?.lineStart && sectionInfo?.lineEnd) {
           const cleanedNote = noteWithCodeblockContent.split('\n').splice(sectionInfo.lineStart, sectionInfo.lineEnd - sectionInfo.lineStart);
-          this.logger.info('cleanedNote:', cleanedNote);
+          this.logger.debug('cleanedNote:', cleanedNote);
         }
 
         switch (replaceCodeBlock) {

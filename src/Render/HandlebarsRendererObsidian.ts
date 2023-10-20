@@ -49,7 +49,6 @@ export class HandlebarsRendererObsidian implements IRenderer {
     });
 
     Handlebars.registerHelper('taskcheckbox', value => {
-      console.log(value);
       let checked = '';
       let classList = 'task-list-item-checkbox';
       let nextStatus = 'x';

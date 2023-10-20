@@ -1,13 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
 
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-import {SettingsService, useSettings, type Useful, getContext, onLoad, use} from '@ophidian/core';
-import {type CachedMetadata, Notice, Plugin, type TFile, PluginSettingTab, type Component, Setting, htmlToMarkdown, debounce} from 'obsidian';
+import {SettingsService, type Useful, getContext, onLoad, use} from '@ophidian/core';
+import {LoggingService} from 'lib/LoggingService';
+import {Plugin, PluginSettingTab, Component, Setting, debounce} from 'obsidian';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export interface SettingsProvider extends Component {
-  showSettings?(builder: DynamicSettingsTabBuilder): void;
-  hideSettings?(builder: DynamicSettingsTabBuilder): void;
+  showSettings?(component: Component): void;
 }
 
 export function useSettingsTab<T>(owner: SettingsProvider & Partial<Useful>) {
@@ -68,19 +66,22 @@ export class SettingsTabField {
 export class DynamicSettingsTabBuilder extends PluginSettingTab implements Useful, FieldParent {
   plugin = use(Plugin);
   use = use.this;
+  logger = this.use(LoggingService).getLogger('DynamicSettingsTabBuilder');
+
+  component: Component;
 
   public cssClassPrefix = 'qatt';
 
-  protected onDisplayCallback: (s: DynamicSettingsTabBuilder) => any;
-  protected onHideCallback: (s: DynamicSettingsTabBuilder) => any;
+  protected onDisplayCallback?: (s: Component) => any;
 
   constructor() {
     super(app, use(Plugin));
-    useSettings(this.plugin, null, undefined, () => {
+    this.plugin.register(use(SettingsService).once(() => {
       onLoad(this.plugin, () => {
         this.plugin.addSettingTab(this);
+        this.logger.debug('addSettingTab', this);
       });
-    });
+    }));
   }
 
   clear() {
@@ -88,7 +89,7 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Usefu
     return this;
   }
 
-  field(parentElement = this.containerEl): any {
+  field(parentElement = this.containerEl): FieldBuilder<this> {
     return new FieldBuilder(this, parentElement);
   }
 
@@ -136,8 +137,8 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Usefu
       .setName(input.name)
       .setDesc(input.description)
       .addText(text => {
-        text.setPlaceholder(input.placeholder)
-          .setValue(input.value)
+        text.setPlaceholder(input.placeholder as string)
+          .setValue(input.value as string)
           .onChange(debounce(onChange, 500, true));
       });
   }
@@ -147,8 +148,8 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Usefu
       .setName(input.name)
       .setDesc(input.description)
       .addTextArea(text => {
-        text.setPlaceholder(input.placeholder)
-          .setValue(input.value)
+        text.setPlaceholder(input.placeholder as string)
+          .setValue(input.value as string)
           .onChange(debounce(onChange, 500, true));
         text.inputEl.rows = input.textAreaRows;
         text.inputEl.cols = input.textAreaCols;
@@ -164,50 +165,21 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Usefu
       .addDropdown(dropdown => {
         dropdown
           .addOptions(options)
-          .setValue(input.value)
+          .setValue(input.value as string)
           .onChange(debounce(onChange, 500, true));
       });
   }
 
-  /*
-  AddField(field: SettingsTabField, parentContainer: HTMLElement) {
-    switch (field.type) {
-      case 'checkbox': {
-      // --------------------------------------------------------------------------
-      //                 Render options that are Boolean in nature.
-      // --------------------------------------------------------------------------
-        new Setting(parentContainer)
-          .setName(field.name)
-          .setDesc(field.description)
-          .addToggle(toggle => {
-            const settings = this.settingsManager.getSettings();
-            if (!settings.generalSettings[setting.settingName]) {
-              this.settingsManager.setValue(setting.settingName, setting.initialValue);
-            }
-
-            toggle
-              .setValue(settings.generalSettings[setting.settingName] as boolean)
-              .onChange(async value => {
-                this.settingsManager.setValue(setting.settingName, value);
-                await this.plugin.saveSettings();
-              });
-          });
-
-        break;
-      }
-
-      case 'function': {
-      // --------------------------------------------------------------------------
-      //        If the UI is super custom then call the registered function.
-      // --------------------------------------------------------------------------
-        this.customFunctions[setting.settingName](detailsContainer, this);
-
-        break;
-      }
-    // No default
-    }
+  addToggle(input: SettingsTabField, onChange: (value: boolean) => void, parentElement = this.containerEl) {
+    return this.field(parentElement)
+      .setName(input.name)
+      .setDesc(input.description)
+      .addToggle(toggle => {
+        toggle.setValue(input.value as boolean)
+          .onChange(debounce(onChange, 500, true));
+      });
   }
-*/
+
   // eslint-disable-next-line unicorn/no-thenable
   then(cb: (s: this) => any): this {
     cb(this);
@@ -216,40 +188,29 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Usefu
 
   addProvider(provider: SettingsProvider) {
     if (provider.showSettings) {
-      this.onDisplay(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        provider._loaded && provider.showSettings?.(this);
-      });
-    }
-
-    if (provider.hideSettings) {
-      this.onHide(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-        provider._loaded && provider.hideSettings?.(this);
+      this.onDisplay(c => {
+        if (provider._loaded && provider.showSettings) {
+          provider.showSettings(c);
+        }
       });
     }
 
     return this;
   }
 
-  onDisplay(cb: (s: DynamicSettingsTabBuilder) => any) {
+  onDisplay(cb?: (s: Component) => any) {
     this.onDisplayCallback = chain(this.onDisplayCallback, cb);
   }
 
-  onHide(cb: (s: DynamicSettingsTabBuilder) => any) {
-    this.onHideCallback = chain(cb, this.onHideCallback);
-  }
-
   display() {
-    this.onDisplayCallback?.(this);
+    this.component = new Component();
+    this.component.load();
+    this.onDisplayCallback?.(this.component);
   }
 
   hide() {
-    if (this.onHideCallback) {
-      this.onHideCallback?.(this);
-    } else {
-      this.clear();
-    }
+    this.component.unload();
+    this.clear();
   }
 }
 

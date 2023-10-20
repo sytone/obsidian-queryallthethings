@@ -16,7 +16,6 @@ import {RenderFactory} from 'Render/RenderFactory';
 import {QueryRendererV2Service} from 'QueryRendererV2';
 import {NotesCacheService} from 'NotesCacheService';
 import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
-import {GeneralSettingsDefaults, type IGeneralSettings} from 'Settings/DefaultSettings';
 import {CsvLoaderService} from 'Data/CsvLoaderService';
 import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
 import {JsonLoaderService} from 'Data/JsonLoaderService';
@@ -26,6 +25,16 @@ export class Note {
   constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
 }
 
+export interface IGeneralSettings {
+  onStartSqlQueries: string;
+  announceUpdates: boolean;
+}
+
+export const GeneralSettingsDefaults: IGeneralSettings = {
+  onStartSqlQueries: 'CREATE TABLE my_lookup(name,birthday);\nINSERT INTO my_lookup VALUES ("fred", 2000-02-03);',
+  announceUpdates: true,
+};
+
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
   use = use.plugin(this);
   logger = this.use(LoggingService).getLogger('Qatt');
@@ -33,17 +42,21 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
   // Settings, TBD is I use this or not.
   settingsTab = useSettingsTab(this);
+
   settings = useSettings(
-    this, // Plugin or other owner
-    GeneralSettingsDefaults, // Default settings
+    this,
+    GeneralSettingsDefaults,
     (settings: IGeneralSettings) => {
       // This will run every time the settings are updated.
       this.logger.info('Settings Updated', settings);
+      this.onStartSqlQueries = settings.onStartSqlQueries;
+      this.announceUpdates = settings.announceUpdates;
     },
     (settings: IGeneralSettings) => {
       // This will run when the settings are first loaded.
       this.logger.info('Settings Initialize', settings);
       this.onStartSqlQueries = settings.onStartSqlQueries;
+      this.announceUpdates = settings.announceUpdates;
       if (this.onStartSqlQueries) {
         this.logger.info('Running on start SQL queries', this.onStartSqlQueries);
         const onStartResult = this.dataTables?.runAdhocQuery(this.onStartSqlQueries);
@@ -53,6 +66,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   );
 
   onStartSqlQueries: string;
+  announceUpdates: boolean;
 
   // Public inlineRenderer: InlineRenderer | undefined;
   public queryRendererService: QueryRendererV2Service | undefined;
@@ -72,6 +86,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   showSettings() {
     const tab = this.settingsTab;
     const {settings} = this;
+    this.logger.info('Settings Updated', settings);
 
     tab.initializeTab();
     tab.addHeading(new SettingsTabHeading({text: 'Query All The Things', level: 'h1', noticeText: 'A plugin that allows you to make queries against the internal data of obsidian and render it how you want.'}));
@@ -91,6 +106,20 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
         value: this.onStartSqlQueries,
       }),
       onChange,
+      generalSettingsSection,
+    );
+
+    const announceUpdates = tab.addToggle(
+      new SettingsTabField({
+        name: 'Announce Updates',
+        description: 'If you want to see a notification when the plugin is updated.',
+        value: this.announceUpdates,
+      }),
+      async (value: boolean) => {
+        await settings.update(settings => {
+          settings.announceUpdates = value;
+        });
+      },
       generalSettingsSection,
     );
   }
