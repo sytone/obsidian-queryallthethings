@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.3](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.1...0.8.3) (2023-10-25)
+
+
+### Bug Fixes and Changes
+
+* correct dataview import case ([000e56b](https://github.com/sytone/obsidian-queryallthethings/commits/000e56b2eabd53e0e64359a3eb9f4a8735e40e3b))
+
+
+### Internal
+
+* **release:** 0.8.2 ([648b230](https://github.com/sytone/obsidian-queryallthethings/commits/648b230d9a4ad2e4ecda7442b60b1d742db0f22e))
+
 ### [0.8.2](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.1...0.8.2) (2023-10-25)
 
 
