@@ -38,14 +38,13 @@ Look at the [Qatt Project](https://github.com/users/sytone/projects/4) to see wh
 
 Documentation on installing the plugin and using it can be found at [https://sytone.github.io/obsidian-queryallthethings/](https://sytone.github.io/obsidian-queryallthethings/)
 
-
 ## Getting Started - I don't need documentation
 
 Well, in short after you have installed the plugin make a code block like the following example, this will list all your tasks that are not done and group them by the month when they are due.
 
 If you want more details.... Read the documentation, or reverse engineer the code base. Your Choice!
 
-Note: This plugin currently has a hard dependency on DataView, make sure it is installed as well.
+Note: This plugin currently has a soft dependency on DataView, make sure it is installed if you want to use the dataview backed tables.
 
 ````markdown
 ```qatt
