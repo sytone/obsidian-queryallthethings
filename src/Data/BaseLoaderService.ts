@@ -88,6 +88,10 @@ export class BaseLoaderService extends Service {
     const startTime = new Date(Date.now());
 
     const parsedArray = parseToArrayCallback(content, tableName);
+    if (!parsedArray || parsedArray.length === 0) {
+      return;
+    }
+
     this.logger.info(`Loaded to table '${tableName}'`, parsedArray);
 
     alasql(`DROP TABLE IF EXISTS ${tableName}`);

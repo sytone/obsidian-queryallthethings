@@ -20,6 +20,7 @@ import {CsvLoaderService} from 'Data/CsvLoaderService';
 import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
 import {JsonLoaderService} from 'Data/JsonLoaderService';
 import {DataviewService} from 'Integrations/DataviewService';
+import {SqlLoaderService} from 'Data/SqlLoaderService';
 
 export class Note {
   constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
@@ -80,6 +81,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   public csvLoaderService: CsvLoaderService | undefined;
   public markdownTableLoaderService: MarkdownTableLoaderService | undefined;
   public jsonLoaderService: JsonLoaderService | undefined;
+  public sqlLoaderService: SqlLoaderService | undefined;
 
   // Settings are rendered in the settings via this. Need to
   // refactor this to use the SettingsTab approach I had.
@@ -171,6 +173,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.csvLoaderService = this.use(CsvLoaderService);
       this.markdownTableLoaderService = this.use(MarkdownTableLoaderService);
       this.jsonLoaderService = this.use(JsonLoaderService);
+      this.sqlLoaderService = this.use(SqlLoaderService);
 
       this.queryRendererService = this.use(QueryRendererV2Service);
     });

@@ -84,7 +84,8 @@
     "micromark-extension-wiki-link": "^0.0.4",
     "micromark-util-combine-extensions": "^1.1.0",
     "micromark-util-types": "^1.1.0",
-    "obsidian-dataview": "0.5.56"
+    "obsidian-dataview": "0.5.56",
+    "papaparse": "^5.4.1"
   },
   "xo": {
     "space": true,
@@ -117,9 +118,6 @@
     }
   },
   "standard-version": {
-    "skip": {
-      "commit": true
-    },
     "tag-prefix": "",
     "types": [
       {

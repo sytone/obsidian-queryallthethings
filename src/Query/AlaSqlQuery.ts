@@ -8,6 +8,11 @@ import {LoggingService} from 'lib/LoggingService';
 import {NotesCacheService} from 'NotesCacheService';
 import {DataviewService} from 'Integrations/DataviewService';
 import {confirmObjectPath} from 'Internal';
+import {registerFunctionStringify} from 'Query/Functions/Stringify';
+import {registerFunctionParseWikiLinkLocation, registerFunctionParseWikiLinkDisplayName, registerFunctionWikiLinkHasDisplayName} from 'Query/Functions/ParseWikiLinks';
+import {registerFunctionReverse} from 'Query/Functions/Reverse';
+import {registerFunctionCharindex} from 'Query/Functions/Charindex';
+import {registerFunctionArrayFrom} from 'Query/Functions/ArrayFrom';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -43,244 +48,17 @@ export class AlaSqlQuery extends Service implements IQuery {
       debugger;
     };
 
-    // Allows the user to map a item to an array, for example a Map via mapname->values()
-    alasql.fn.arrayFrom = function (value) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      return Array.from(value);
-    };
-
-    /*
-    // >> id='alasql-function-stringify-snippet' options='file=sql-functions/stringify.md'
-    title: stringify(value)
-    ---
-    The `stringify` function will convert the provided value to a JSON string.
-
-    In this example it takes the `stat` property of the first note found and renders it as a JSON blob. This can be handy to explore objects if you are not sure what is available.
-
-    {% raw %}
-
-    ````markdown
-    ```qatt
-    query: SELECT TOP 1 stringify(stat) AS statPropertyAsJsonString FROM obsidian_markdown_notes
-    template: |
-      {{#each result}}{{statPropertyAsJsonString}}{{/each}}
-    ```
-    ````
-
-    {% endraw %}
-
-    will result in:
-
-    ```text
-    {"ctime":1670345758620,"mtime":1670345758620,"size":316}
-    ```
-    // << alasql-function-stringify-snippet
-    */
-    alasql.fn.stringify = function (value) {
-      return JSON.stringify(value);
-    };
-
-    /*
-    // >> id='docs-alasql-function-parsewikilinks' options='file=sql-functions/wiki-link-functions.md'
-    title: Wiki Link functions
-    ---
-    There are multiple functions to help with the parsing of the wiki links in a string.
-
-    This is the signature of the functions you can use in the queries.
-
-    - parseWikiLinkLocation(value: string): string
-    - parseWikiDisplayName(value: string): string
-    - wikiLinkHasDisplayName(value: string): boolean
-
-    In this example it takes the string containing the wiki link and calls the different parsing functions.
-
-    ```text
-    Need to work on [[Projects/Painting The House|Painting The House]] soon.
-    ```
-
-    {% raw %}
-
-    ````markdown
-    ```qatt
-    query: |
-      SELECT
-      parseWikiLinkLocation('Need to work on [[Projects/Painting The House|Painting The House]] soon.') AS Location,
-      parseWikiDisplayName('Need to work on [[Projects/Painting The House|Painting The House]] soon.') AS Display,
-      wikiLinkHasDisplayName('Need to work on [[Projects/Painting The House|Painting The House]] soon.') AS HasDisplay,
-      wikiLinkHasDisplayName('Need to work on [[Projects/Painting The House]] soon.') AS HasNoDisplay,
-      IIF(wikiLinkHasDisplayName('Need to work on [[Projects/Painting The House|Painting The House]] soon.'), parseWikiDisplayName('Need to work on [[Projects/Painting The House|Painting The House]] soon.'), parseWikiLinkLocation('Need to work on [[Projects/Painting The House|Painting The House]] soon.')) AS HasDisplayIf,
-      IIF(wikiLinkHasDisplayName('Need to work on [[Projects/Painting The House]] soon.'), parseWikiDisplayName('Need to work on [[Projects/Painting The House|Will Not show]] soon.'), parseWikiLinkLocation('Need to work on [[Projects/Painting The House]] soon.')) AS HasNoDisplayIf
-    template: |
-      {{stringify result}}
-    ```
-    ````
-
-    {% endraw %}
-
-    will result in:
-
-    ```text
-    [ { "Location": "Projects/Painting The House", "Display": "Painting The House", "HasDisplay": true, "HasNoDisplay": false, "HasDisplayIf": "Painting The House", "HasNoDisplayIf": "Projects/Painting The House" } ]
-    ```
-
-    // << docs-alasql-function-parsewikilinks
-    */
-    alasql.fn.parseWikiLinkLocation = function (value: string): string {
-      const result = parseWikiLinkFromText(value);
-
-      if (result) {
-        const linkAndDisplay = splitOnUnescapedPipe(result);
-        return linkAndDisplay[0];
-      }
-
-      return '';
-    };
-
-    alasql.fn.parseWikiDisplayName = function (value: string): string {
-      const result = parseWikiLinkFromText(value);
-      if (result) {
-        const linkAndDisplay = splitOnUnescapedPipe(result);
-        return linkAndDisplay[1] ?? '';
-      }
-
-      return '';
-    };
-
-    alasql.fn.wikiLinkHasDisplayName = function (value: string): boolean {
-      const result = parseWikiLinkFromText(value);
-      if (!result) {
-        return false;
-      }
-
-      const linkAndDisplay = splitOnUnescapedPipe(result);
-      return linkAndDisplay.length === 2 && linkAndDisplay[1] !== undefined;
-    };
-
-    function parseWikiLinkFromText(text: string): string | undefined {
-      // eslint-disable-next-line no-useless-escape
-      const re = /\[\[([^\[\]]*?)\]\]/u;
-
-      const result = re.exec(text);
-      if (result) {
-        return result[1];
-      }
-    }
-
-    /** Split on unescaped pipes in an inner link. */
-    function splitOnUnescapedPipe(link: string): [string, string | undefined] {
-      let pipe = -1;
-      while ((pipe = link.indexOf('|', pipe + 1)) >= 0) {
-        if (pipe > 0 && link[pipe - 1] === '\\') {
-          continue;
-        }
-
-        return [link.slice(0, Math.max(0, pipe)).replace(/\\\|/g, '|'), link.slice(Math.max(0, pipe + 1))];
-      }
-
-      return [link.replace(/\\\|/g, '|'), undefined];
-    }
+    registerFunctionArrayFrom();
+    registerFunctionStringify();
+    registerFunctionParseWikiLinkLocation();
+    registerFunctionParseWikiLinkDisplayName();
+    registerFunctionWikiLinkHasDisplayName();
+    registerFunctionReverse();
+    registerFunctionCharindex();
 
     alasql.fn.objectFromMap = function (value) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       return Object.fromEntries(value);
-    };
-
-    /*
-    // >> id='docs-sql-statements-reverse' options='file=sql-statements/reverse.md'
-title: REVERSE
----
-
-## Syntax
-
-```sql
-REVERSE ( string )
-```
-
-## Returns
-
-Returns the string with the characters in reverse order.
-
-## Example
-
-The following example returns the frontmatter->status value reversed.
-
-```yaml
-query: |
-  SELECT TOP 2 path AS Path,
-    REVERSE(frontmatter->status) AS Status
-  FROM obsidian_markdown_notes
-  WHERE frontmatter->status
-template: |
-  {{stringify result}}
-```
-
-```json
-[
-  {
-    "path": "Projects - Demo Project/Why You Should Be Taking More Notes.md",
-    "Status": "gnioD"
-  }, {
-    "path": "Projects - Demo Project/What I Learned From Taking 15,000 Notes.md",
-    "Status": "golkcaB"
-  }
-]
-```
-
-    // << docs-sql-statements-reverse
-    */
-    alasql.fn.REVERSE = function (value: string): string {
-      return value.split('').reverse().join('');
-    };
-
-    /*
-    // >> id='docs-sql-statements-charindex' options='file=sql-statements/charindex.md'
-title: CHARINDEX
----
-
-## Syntax
-
-```sql
-CHARINDEX ( expressionToFind , expressionToSearch [ , start_location ] )
-```
-
-## Arguments
-
-*expressionToFind*
-A character expression containing the sequence to find.
-
-*expressionToSearch*
-A character expression to search.
-
-*start_location*
-An number at which the search starts. If start_location is not specified, has a negative value, or has a zero (0) value, the search starts at the beginning of expressionToSearch.
-
-## Returns
-
-Returns a number indicating the position in the string.
-
-## Example
-
-The following example finds the location of the word `string` in the string `This is the string to search`.
-
-```yaml
-query: |
-  SELECT CHARINDEX('string', 'This is the string to search') AS StringIndex
-template: |
-  {{stringify result}}
-```
-
-```json
-[ { "StringIndex": 13 } ]
-```
-
-    // << docs-sql-statements-charindex
-    */
-    alasql.fn.CHARINDEX = function (expressionToFind: string, expressionToSearch: string, start_location?: number): number {
-      if (start_location !== undefined) {
-        return expressionToSearch.indexOf(expressionToFind, start_location) + 1;
-      }
-
-      return expressionToSearch.indexOf(expressionToFind) + 1;
     };
 
     alasql.options.nocount = true; // Disable row count for queries.

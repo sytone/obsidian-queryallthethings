@@ -1,4 +1,4 @@
-lockfileVersion: '6.1'
+lockfileVersion: '6.0'
 
 settings:
   autoInstallPeers: true
@@ -53,6 +53,9 @@ dependencies:
   obsidian-dataview:
     specifier: 0.5.56
     version: 0.5.56
+  papaparse:
+    specifier: ^5.4.1
+    version: 5.4.1
 
 devDependencies:
   '@codemirror/state':
@@ -66,7 +69,7 @@ devDependencies:
     version: github.com/sytone/ophidian-lib-build/a8bd3c03867f1f7541a6f94493fbe0436dc0e179
   '@ophidian/core':
     specifier: github:ophidian-lib/core
-    version: github.com/ophidian-lib/core/5f9fdfb0cf8072e23539219e672192869da7ea7c(@codemirror/state@6.2.1)(@codemirror/view@6.21.0)
+    version: github.com/ophidian-lib/core/c5c701558192b9c64a628dce69779ca4e8d98c41(@codemirror/state@6.2.1)(@codemirror/view@6.21.0)
   '@preact/signals-core':
     specifier: ^1.5.0
     version: 1.5.0
@@ -8676,9 +8679,9 @@ packages:
       moment: 2.29.4
     dev: false
 
-  github.com/ophidian-lib/core/5f9fdfb0cf8072e23539219e672192869da7ea7c(@codemirror/state@6.2.1)(@codemirror/view@6.21.0):
-    resolution: {tarball: https://codeload.github.com/ophidian-lib/core/tar.gz/5f9fdfb0cf8072e23539219e672192869da7ea7c}
-    id: github.com/ophidian-lib/core/5f9fdfb0cf8072e23539219e672192869da7ea7c
+  github.com/ophidian-lib/core/c5c701558192b9c64a628dce69779ca4e8d98c41(@codemirror/state@6.2.1)(@codemirror/view@6.21.0):
+    resolution: {tarball: https://codeload.github.com/ophidian-lib/core/tar.gz/c5c701558192b9c64a628dce69779ca4e8d98c41}
+    id: github.com/ophidian-lib/core/c5c701558192b9c64a628dce69779ca4e8d98c41
     name: '@ophidian/core'
     version: 0.0.20
     dependencies:
