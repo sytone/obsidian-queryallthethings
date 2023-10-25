@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.1](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.2...0.8.1) (2023-10-25)
+
+
+### Features
+
+* add loading of SQL based queries from files on start ([c609966](https://github.com/sytone/obsidian-queryallthethings/commits/c60996656b75ff326270084aa77eb719334f48c6))
+
+
+### Internal
+
+* release 0.8.2 beta ([c68dba5](https://github.com/sytone/obsidian-queryallthethings/commits/c68dba5f079c9efa5b9a61740e0ead07483f2e56))
+
 ### [0.8.2](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.0...0.8.2) (2023-10-20)
 
 
