@@ -142,7 +142,6 @@ export class NotesCacheService extends Service {
   }
 
   async getLists(): Promise<ListItem[]> {
-    console.log(this.listItemsMap);
     return Array.from(this.listItemsMap.values());
   }
 

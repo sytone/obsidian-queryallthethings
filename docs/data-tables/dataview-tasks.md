@@ -1,5 +1,5 @@
 ---
-nav_order: 5
+nav_order: 25
 layout: default
 parent: Data Tables
 title: Dataview Tasks (dataview_tasks)

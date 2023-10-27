@@ -1,5 +1,5 @@
 ---
-nav_order: 4
+nav_order: 24
 layout: default
 parent: Data Tables
 title: Dataview Pages (dataview_pages)
