@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.4](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.3...0.8.4) (2023-10-27)
+
+
+### Documentation
+
+* Add documentation for obsidian_markdown_lists ([e994e8f](https://github.com/sytone/obsidian-queryallthethings/commits/e994e8f9296649b465d59fcaa0f2b816d2b84e05))
+* update readme and changelog ([5538dd9](https://github.com/sytone/obsidian-queryallthethings/commits/5538dd9ef7b5fef031adb0f36ecb193bd696fb9f))
+
 ### [0.8.3](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.0...0.8.3) (2023-10-25)
 
 ### Features
