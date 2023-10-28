@@ -171,6 +171,10 @@ export class QattCodeBlock implements IQattCodeBlock {
       return 'qatt';
     }
 
+    if (/\bobsidian_markdown_tasks\b/gi.test(query)) {
+      return 'qatt';
+    }
+
     if (/\bobsidian_markdown_files\b/gi.test(query)) {
       return 'obsidian';
     }

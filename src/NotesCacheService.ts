@@ -8,6 +8,7 @@ import {LoggingService} from 'lib/LoggingService';
 import {DateTime} from 'luxon';
 import {Note} from 'Note';
 import type {ListItem} from 'ListItem';
+import { TaskItem } from 'TaskItem';
 
 export class NotesCacheService extends Service {
   plugin = this.use(Plugin);
@@ -17,6 +18,7 @@ export class NotesCacheService extends Service {
 
   public notesMap = new Map<string, Note>();
   public listItemsMap = new Map<string, ListItem>();
+  public taskItemMap = new Map<string, TaskItem>();
   public ignoredFiles: Record<string, DateTime> = {};
 
   constructor() {
@@ -145,12 +147,28 @@ export class NotesCacheService extends Service {
     return Array.from(this.listItemsMap.values());
   }
 
+  async getTasks(): Promise<TaskItem[]> {
+    console.log(this.taskItemMap);
+    return Array.from(this.taskItemMap.values());
+  }
+
   async getNoteIndex(path: string): Promise<number> {
     return this.notes.findIndex(n => n.path === path);
   }
 
   async deleteNote(path: string) {
     this.notesMap.delete(path);
+    for (const key of this.listItemsMap.keys()) {
+      if (key.startsWith(`${path}:`)) {
+        this.listItemsMap.delete(key);
+      }
+    }
+
+    for (const key of this.taskItemMap.keys()) {
+      if (key.startsWith(`${path}:`)) {
+        this.taskItemMap.delete(key);
+      }
+    }
   }
 
   async replaceNote(path: string, note: Note) {
@@ -161,8 +179,17 @@ export class NotesCacheService extends Service {
       }
     }
 
+    for (const key of this.taskItemMap.keys()) {
+      if (key.startsWith(`${path}:`)) {
+        this.taskItemMap.delete(key);
+      }
+    }
+
     for (const li of note.listItems) {
       this.listItemsMap.set(`${path}:${li.line}`, li);
+      if (li.isTask) {
+        this.taskItemMap.set(`${path}:${li.line}`, new TaskItem(li));
+      }
     }
   }
 
@@ -170,6 +197,9 @@ export class NotesCacheService extends Service {
     this.notesMap.set(path, note);
     for (const li of note.listItems) {
       this.listItemsMap.set(`${path}:${li.line}`, li);
+      if (li.isTask) {
+        this.taskItemMap.set(`${path}:${li.line}`, new TaskItem(li));
+      }
     }
   }
 

@@ -21,6 +21,7 @@ import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
 import {JsonLoaderService} from 'Data/JsonLoaderService';
 import {DataviewService} from 'Integrations/DataviewService';
 import {SqlLoaderService} from 'Data/SqlLoaderService';
+import {UpdateModal} from 'lib/UpdateModal';
 
 export class Note {
   constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
@@ -29,11 +30,14 @@ export class Note {
 export interface IGeneralSettings {
   onStartSqlQueries: string;
   announceUpdates: boolean;
+  version: string;
+
 }
 
 export const GeneralSettingsDefaults: IGeneralSettings = {
   onStartSqlQueries: 'CREATE TABLE my_lookup(name,birthday);\nINSERT INTO my_lookup VALUES ("fred", 2000-02-03);',
   announceUpdates: true,
+  version: '',
 };
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
@@ -52,12 +56,14 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.logger.info('Settings Updated', settings);
       this.onStartSqlQueries = settings.onStartSqlQueries;
       this.announceUpdates = settings.announceUpdates;
+      this.version = settings.version;
     },
     (settings: IGeneralSettings) => {
       // This will run when the settings are first loaded.
       this.logger.info('Settings Initialize', settings);
       this.onStartSqlQueries = settings.onStartSqlQueries;
       this.announceUpdates = settings.announceUpdates;
+      this.version = settings.version;
       if (this.onStartSqlQueries) {
         this.logger.info('Running on start SQL queries', this.onStartSqlQueries);
         const onStartResult = this.dataTables?.runAdhocQuery(this.onStartSqlQueries);
@@ -68,6 +74,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
   onStartSqlQueries: string;
   announceUpdates: boolean;
+  version: string;
 
   // Public inlineRenderer: InlineRenderer | undefined;
   public queryRendererService: QueryRendererV2Service | undefined;
@@ -91,7 +98,23 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
     this.logger.info('Settings Updated', settings);
 
     tab.initializeTab();
-    tab.addHeading(new SettingsTabHeading({text: 'Query All The Things', level: 'h1', noticeText: 'A plugin that allows you to make queries against the internal data of obsidian and render it how you want.'}));
+    const settingMainBlockText = `
+    <div>
+    <br />
+<div align="center">
+Query All the Things is a flexible way to query and render data in <a href="https://obsidian.md">Obsidian</a> and from other Obsidian plugins. For help on using the plugin please reference the online documentation <a href='https://sytone.github.io/obsidian-queryallthethings/' target='_blank'>here</a>.
+<br />
+<br />
+<a href='https://github.com/sytone/obsidian-queryallthethings/releases/latest'><img src='https://img.shields.io/github/manifest-json/v/sytone/obsidian-queryallthethings?color=blue'></a>
+<a href='https://github.com/sytone/obsidian-queryallthethings/releases/latest'><img src='https://img.shields.io/github/release-date/sytone/obsidian-queryallthethings'></a>
+<a href='https://github.com/sytone/obsidian-queryallthethings/blob/main/LICENSE'><img src='https://img.shields.io/github/license/sytone/obsidian-queryallthethings'></a>
+<a href='https://github.com/sytone/obsidian-queryallthethings'><img src='https://img.shields.io/github/downloads/sytone/obsidian-queryallthethings/total'></a>
+<a href='https://github.com/sytone/obsidian-queryallthethings/issues'><img src='https://img.shields.io/github/issues/sytone/obsidian-queryallthethings'></a>
+</div>
+
+</div>
+`;
+    tab.addHeading(new SettingsTabHeading({text: `Query All The Things (v${this.manifest.version})`, level: 'h1', noticeHtml: settingMainBlockText}));
     const generalSettingsSection = tab.addHeading(new SettingsTabHeading({text: 'General Settings', level: 'h2', class: 'settings-heading'}));
 
     const onChange = async (value: string) => {
@@ -126,7 +149,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
     );
   }
 
-  onload() {
+  async onload() {
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
 
     this.use(QueryFactory).load();
@@ -194,9 +217,29 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.logger.info(`Refresh QATT Tables: ${evt.button}`);
       this.dataTables?.refreshTables('manual refresh');
     });
+
+    await this.announceUpdate();
   }
 
   onunload() {
     this.logger.info(`unloading plugin "${this.manifest.name}" v${this.manifest.version}`);
+  }
+
+  private async announceUpdate() {
+    const currentVersion = this.manifest.version;
+    const knownVersion = this.version;
+
+    if (currentVersion === knownVersion) {
+      return;
+    }
+
+    await this.settings.update(settings => {
+      settings.version = currentVersion;
+    });
+
+    if (this.announceUpdates) {
+      const updateModal = new UpdateModal(knownVersion);
+      updateModal.open();
+    }
   }
 }

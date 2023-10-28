@@ -80,6 +80,14 @@ export class ListItem {
     return '';
   }
 
+  public get isTask(): boolean {
+    if (this.textMatch !== null) {
+      return this.textMatch[4] !== undefined;
+    }
+
+    return false;
+  }
+
   public get checked(): boolean {
     if (this.textMatch !== null) {
       return this.textMatch[4] === 'x';
