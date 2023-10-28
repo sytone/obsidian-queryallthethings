@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.6](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.5...0.8.6) (2023-10-28)
+
+
+### Features
+
+* add internal tasks table for queries ([da650aa](https://github.com/sytone/obsidian-queryallthethings/commits/da650aa300c7d07287ec0042b5b3db346cdf4a40))
+
 ### [0.8.5](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.4...0.8.5) (2023-10-28)
 
 ### [0.8.4](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.3...0.8.4) (2023-10-27)
