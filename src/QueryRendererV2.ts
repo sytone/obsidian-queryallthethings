@@ -16,11 +16,14 @@ import {NotesCacheService} from 'NotesCacheService';
 export interface IRenderingSettings {
   postRenderFormat: string;
   enableExperimentalRender: boolean;
+  renderingSettingsOpen: boolean;
+
 }
 
 export const RenderingSettingsDefaults: IRenderingSettings = {
   postRenderFormat: 'micromark',
   enableExperimentalRender: false,
+  renderingSettingsOpen: false,
 };
 
 /**
@@ -37,6 +40,7 @@ export class QueryRendererV2Service extends Service {
   plugin = this.use(Plugin);
   logger = this.use(LoggingService).getLogger('Qatt.QueryRendererV2Service');
   notesCacheService = this.use(NotesCacheService);
+  renderingSettingsOpen: boolean;
 
   lastCreation: DateTime;
   settingsTab = useSettingsTab(this);
@@ -46,10 +50,12 @@ export class QueryRendererV2Service extends Service {
     (settings: IRenderingSettings) => {
       this.logger.info('QueryRendererV2Service Updated Settings');
       this.postRenderFormat = settings.postRenderFormat;
+      this.renderingSettingsOpen = settings.renderingSettingsOpen;
     },
     (settings: IRenderingSettings) => {
       this.logger.info('QueryRendererV2Service Initialize Settings');
       this.postRenderFormat = settings.postRenderFormat;
+      this.renderingSettingsOpen = settings.renderingSettingsOpen;
     },
   );
 
@@ -64,7 +70,13 @@ export class QueryRendererV2Service extends Service {
     const tab = this.settingsTab;
     const {settings} = this;
 
-    const settingsSection = tab.addHeading(new SettingsTabHeading({text: 'Rendering Settings', level: 'h2', class: 'settings-heading'}));
+    const onToggle = async (value: boolean) => {
+      await settings.update(settings => {
+        settings.renderingSettingsOpen = value;
+      });
+    };
+
+    const settingsSection = tab.addHeading(new SettingsTabHeading({open: this.renderingSettingsOpen, text: 'Rendering Settings', level: 'h2', class: 'settings-heading'}), onToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {

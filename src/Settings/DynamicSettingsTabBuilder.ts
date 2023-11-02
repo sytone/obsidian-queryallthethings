@@ -25,7 +25,7 @@ export class SettingsTabHeading {
     this.text = payload.text ?? '';
     this.level = payload.level ?? '';
     this.class = payload.class ?? '';
-    this.open = payload.open ?? true;
+    this.open = payload.open ?? false;
     this.noticeClass = payload.noticeClass ?? '';
     this.noticeText = payload.noticeText ?? '';
     this.noticeHtml = payload.noticeHtml ?? '';
@@ -98,7 +98,7 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Usefu
     this.containerEl.addClass('qatt-settings');
   }
 
-  addHeading(heading: SettingsTabHeading) {
+  addHeading(heading: SettingsTabHeading, onToggle: (value: boolean) => void) {
     const detailsContainer = this.containerEl.createEl('details', {
       cls: `${this.cssClassPrefix}-nested-settings`,
       attr: {
@@ -107,10 +107,7 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Usefu
     });
     detailsContainer.empty();
     detailsContainer.addEventListener('toggle', () => {
-      // Save heading state.
-      // headingOpened[heading.text] = detailsContainer.open;
-      // this.settingsManager.updateSettings({headingOpened});
-      // this.plugin.saveSettings();
+      onToggle(detailsContainer.open);
     });
 
     const summary = detailsContainer.createEl('summary');

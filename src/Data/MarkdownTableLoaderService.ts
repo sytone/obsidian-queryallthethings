@@ -1,5 +1,5 @@
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 
 import {useSettings} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
@@ -8,23 +8,28 @@ import {BaseLoaderService} from 'Data/BaseLoaderService';
 
 export interface IMarkdownTableLoaderSettings {
   markdownTableFiles: string;
+  markdownLoaderSettingsOpen: boolean;
 }
 
 export const MarkdownTableLoaderSettingsDefaults: IMarkdownTableLoaderSettings = {
   markdownTableFiles: '',
+  markdownLoaderSettingsOpen: false,
 };
 
 export class MarkdownTableLoaderService extends BaseLoaderService {
   logger = this.use(LoggingService).getLogger('Qatt.MarkdownTableLoaderService');
   settingsTab = useSettingsTab(this);
+  markdownLoaderSettingsOpen: boolean;
 
   settings = useSettings(
     this,
     MarkdownTableLoaderSettingsDefaults,
     async (settings: IMarkdownTableLoaderSettings) => {
+      this.markdownLoaderSettingsOpen = settings.markdownLoaderSettingsOpen;
       await this.settingsUpdateLoad(settings.markdownTableFiles);
     },
     async (settings: IMarkdownTableLoaderSettings) => {
+      this.markdownLoaderSettingsOpen = settings.markdownLoaderSettingsOpen;
       await this.settingsInitialLoad(settings.markdownTableFiles);
     },
   );
@@ -33,7 +38,13 @@ export class MarkdownTableLoaderService extends BaseLoaderService {
     const tab = this.settingsTab;
     const {settings} = this;
 
-    const settingsSection = tab.addHeading(new SettingsTabHeading({text: 'Markdown Table Loader Settings', level: 'h2', class: 'settings-heading'}));
+    const onToggle = async (value: boolean) => {
+      await settings.update(settings => {
+        settings.markdownLoaderSettingsOpen = value;
+      });
+    };
+
+    const settingsSection = tab.addHeading(new SettingsTabHeading({open: this.markdownLoaderSettingsOpen, text: 'Markdown Table Loader Settings', level: 'h2', class: 'settings-heading'}), onToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {

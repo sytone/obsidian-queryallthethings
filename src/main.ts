@@ -22,6 +22,7 @@ import {JsonLoaderService} from 'Data/JsonLoaderService';
 import {DataviewService} from 'Integrations/DataviewService';
 import {SqlLoaderService} from 'Data/SqlLoaderService';
 import {UpdateModal} from 'lib/UpdateModal';
+import {confirmObjectPath, promptWithSuggestions} from 'Internal';
 
 export class Note {
   constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
@@ -31,6 +32,8 @@ export interface IGeneralSettings {
   onStartSqlQueries: string;
   announceUpdates: boolean;
   version: string;
+  mainHeadingOpen: boolean;
+  generalHeadingOpen: boolean;
 
 }
 
@@ -38,6 +41,8 @@ export const GeneralSettingsDefaults: IGeneralSettings = {
   onStartSqlQueries: 'CREATE TABLE my_lookup(name,birthday);\nINSERT INTO my_lookup VALUES ("fred", 2000-02-03);',
   announceUpdates: true,
   version: '',
+  mainHeadingOpen: true,
+  generalHeadingOpen: false,
 };
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
@@ -57,6 +62,8 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.onStartSqlQueries = settings.onStartSqlQueries;
       this.announceUpdates = settings.announceUpdates;
       this.version = settings.version;
+      this.mainHeadingOpen = settings.mainHeadingOpen;
+      this.generalHeadingOpen = settings.generalHeadingOpen;
     },
     (settings: IGeneralSettings) => {
       // This will run when the settings are first loaded.
@@ -64,6 +71,8 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.onStartSqlQueries = settings.onStartSqlQueries;
       this.announceUpdates = settings.announceUpdates;
       this.version = settings.version;
+      this.mainHeadingOpen = settings.mainHeadingOpen;
+      this.generalHeadingOpen = settings.generalHeadingOpen;
       if (this.onStartSqlQueries) {
         this.logger.info('Running on start SQL queries', this.onStartSqlQueries);
         const onStartResult = this.dataTables?.runAdhocQuery(this.onStartSqlQueries);
@@ -75,6 +84,8 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   onStartSqlQueries: string;
   announceUpdates: boolean;
   version: string;
+  mainHeadingOpen: boolean;
+  generalHeadingOpen: boolean;
 
   // Public inlineRenderer: InlineRenderer | undefined;
   public queryRendererService: QueryRendererV2Service | undefined;
@@ -114,8 +125,22 @@ Query All the Things is a flexible way to query and render data in <a href="http
 
 </div>
 `;
-    tab.addHeading(new SettingsTabHeading({text: `Query All The Things (v${this.manifest.version})`, level: 'h1', noticeHtml: settingMainBlockText}));
-    const generalSettingsSection = tab.addHeading(new SettingsTabHeading({text: 'General Settings', level: 'h2', class: 'settings-heading'}));
+
+    const onToggle = async (value: boolean) => {
+      await settings.update(settings => {
+        settings.mainHeadingOpen = value;
+      });
+    };
+
+    tab.addHeading(new SettingsTabHeading({open: this.mainHeadingOpen, text: `Query All The Things (v${this.manifest.version})`, level: 'h1', noticeHtml: settingMainBlockText}), onToggle);
+
+    const onGeneralHeadingToggle = async (value: boolean) => {
+      await settings.update(settings => {
+        settings.generalHeadingOpen = value;
+      });
+    };
+
+    const generalSettingsSection = tab.addHeading(new SettingsTabHeading({open: this.generalHeadingOpen, text: 'General Settings', level: 'h2', class: 'settings-heading'}), onGeneralHeadingToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {
@@ -165,6 +190,7 @@ Query All the Things is a flexible way to query and render data in <a href="http
     // HandlebarsRenderer.registerHandlebarsHelpers();
     HandlebarsRendererObsidian.registerHandlebarsHelpers();
     AlaSqlQuery.initialize();
+    confirmObjectPath('_qatt.ui.promptWithSuggestions', promptWithSuggestions);
 
     // When layout is ready we can refresh tables and register the query renderer.
     this.app.workspace.onLayoutReady(async () => {

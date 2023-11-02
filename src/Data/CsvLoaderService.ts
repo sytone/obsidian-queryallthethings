@@ -8,23 +8,29 @@ import {parse} from 'papaparse';
 
 export interface ICsvLoaderSettings {
   csvFiles: string;
+  csvLoaderSettingsOpen: boolean;
+
 }
 
 export const CsvLoaderSettingsDefaults: ICsvLoaderSettings = {
   csvFiles: '',
+  csvLoaderSettingsOpen: false,
 };
 
 export class CsvLoaderService extends BaseLoaderService {
   logger = this.use(LoggingService).getLogger('Qatt.CsvLoaderService');
   settingsTab = useSettingsTab(this);
+  csvLoaderSettingsOpen: boolean;
 
   settings = useSettings(
     this,
     CsvLoaderSettingsDefaults,
     async (settings: ICsvLoaderSettings) => {
+      this.csvLoaderSettingsOpen = settings.csvLoaderSettingsOpen;
       await this.settingsUpdateLoad(settings.csvFiles);
     },
     async (settings: ICsvLoaderSettings) => {
+      this.csvLoaderSettingsOpen = settings.csvLoaderSettingsOpen;
       await this.settingsInitialLoad(settings.csvFiles);
     },
   );
@@ -33,7 +39,13 @@ export class CsvLoaderService extends BaseLoaderService {
     const tab = this.settingsTab;
     const {settings} = this;
 
-    const settingsSection = tab.addHeading(new SettingsTabHeading({text: 'CSV Loader Settings', level: 'h2', class: 'settings-heading'}));
+    const onToggle = async (value: boolean) => {
+      await settings.update(settings => {
+        settings.csvLoaderSettingsOpen = value;
+      });
+    };
+
+    const settingsSection = tab.addHeading(new SettingsTabHeading({open: this.csvLoaderSettingsOpen, text: 'CSV Loader Settings', level: 'h2', class: 'settings-heading'}), onToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {

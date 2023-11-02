@@ -1,5 +1,5 @@
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import {useSettings} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
 import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
@@ -8,23 +8,29 @@ import {parse} from 'papaparse';
 
 export interface IJsonLoaderSettings {
   jsonFiles: string;
+  jsonLoaderSettingsOpen: boolean;
+
 }
 
 export const JsonLoaderSettingsDefaults: IJsonLoaderSettings = {
   jsonFiles: '',
+  jsonLoaderSettingsOpen: false,
 };
 
 export class JsonLoaderService extends BaseLoaderService {
   logger = this.use(LoggingService).getLogger('Qatt.JsonLoaderService');
   settingsTab = useSettingsTab(this);
+  jsonLoaderSettingsOpen: boolean;
 
   settings = useSettings(
     this,
     JsonLoaderSettingsDefaults,
     async (settings: IJsonLoaderSettings) => {
+      this.jsonLoaderSettingsOpen = settings.jsonLoaderSettingsOpen;
       await this.settingsUpdateLoad(settings.jsonFiles);
     },
     async (settings: IJsonLoaderSettings) => {
+      this.jsonLoaderSettingsOpen = settings.jsonLoaderSettingsOpen;
       await this.settingsInitialLoad(settings.jsonFiles);
     },
   );
@@ -33,7 +39,13 @@ export class JsonLoaderService extends BaseLoaderService {
     const tab = this.settingsTab;
     const {settings} = this;
 
-    const settingsSection = tab.addHeading(new SettingsTabHeading({text: 'JSON Loader Settings', level: 'h2', class: 'settings-heading'}));
+    const onToggle = async (value: boolean) => {
+      await settings.update(settings => {
+        settings.jsonLoaderSettingsOpen = value;
+      });
+    };
+
+    const settingsSection = tab.addHeading(new SettingsTabHeading({open: this.jsonLoaderSettingsOpen, text: 'JSON Loader Settings', level: 'h2', class: 'settings-heading'}), onToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {

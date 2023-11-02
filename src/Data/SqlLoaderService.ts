@@ -7,25 +7,29 @@ import {DataTables} from 'Data/DataTables';
 
 export interface ISqlLoaderSettings {
   sqlFiles: string;
+  sqlLoaderSettingsOpen: boolean;
 }
 
 export const JsonLoaderSettingsDefaults: ISqlLoaderSettings = {
   sqlFiles: '',
+  sqlLoaderSettingsOpen: false,
 };
 
 export class SqlLoaderService extends BaseLoaderService {
   logger = this.use(LoggingService).getLogger('Qatt.SqlLoaderService');
   dataTables = this.use(DataTables);
-
   settingsTab = useSettingsTab(this);
+  sqlLoaderSettingsOpen: boolean;
 
   settings = useSettings(
     this,
     JsonLoaderSettingsDefaults,
     async (settings: ISqlLoaderSettings) => {
+      this.sqlLoaderSettingsOpen = settings.sqlLoaderSettingsOpen;
       await this.settingsUpdateLoad(settings.sqlFiles);
     },
     async (settings: ISqlLoaderSettings) => {
+      this.sqlLoaderSettingsOpen = settings.sqlLoaderSettingsOpen;
       await this.settingsInitialLoad(settings.sqlFiles);
     },
   );
@@ -34,7 +38,13 @@ export class SqlLoaderService extends BaseLoaderService {
     const tab = this.settingsTab;
     const {settings} = this;
 
-    const settingsSection = tab.addHeading(new SettingsTabHeading({text: 'SQL Loader Settings', level: 'h2', class: 'settings-heading'}));
+    const onToggle = async (value: boolean) => {
+      await settings.update(settings => {
+        settings.sqlLoaderSettingsOpen = value;
+      });
+    };
+
+    const settingsSection = tab.addHeading(new SettingsTabHeading({open: this.sqlLoaderSettingsOpen, text: 'SQL Loader Settings', level: 'h2', class: 'settings-heading'}), onToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {
