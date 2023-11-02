@@ -1,10 +1,8 @@
 
-
 import {useSettings} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
 import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
 import {BaseLoaderService} from 'Data/BaseLoaderService';
-import {parse} from 'papaparse';
 
 export interface IJsonLoaderSettings {
   jsonFiles: string;

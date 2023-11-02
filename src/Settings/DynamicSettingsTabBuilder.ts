@@ -59,7 +59,7 @@ export class SettingsTabField {
     this.noticeText = payload.noticeText ?? '';
     this.noticeHtml = payload.noticeHtml ?? '';
     this.textAreaRows = payload.textAreaRows ?? 8;
-    this.textAreaCols = payload.textAreaCols ?? 40;
+    this.textAreaCols = payload.textAreaCols ?? 60;
   }
 }
 

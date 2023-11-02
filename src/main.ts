@@ -187,6 +187,11 @@ Query All the Things is a flexible way to query and render data in <a href="http
       const dvNotInstalledNotice = new Notice('Dataview plugin is not installed. Dataview backed tables will be empty.');
     }
 
+    // Check for Custom JS
+    if (!window.customJS) {
+      const dvNotInstalledNotice = new Notice('CustomJS plugin is not installed. Referencing custom scripts in your query blocks will not work.');
+    }
+
     // HandlebarsRenderer.registerHandlebarsHelpers();
     HandlebarsRendererObsidian.registerHandlebarsHelpers();
     AlaSqlQuery.initialize();

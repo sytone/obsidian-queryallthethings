@@ -1,6 +1,4 @@
 
-
-
 import {useSettings} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
 import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
