@@ -1,4 +1,5 @@
 ---
+nav_exclude: true
 notetype: project
 version: 2
 project-name: Project One
@@ -35,7 +36,7 @@ priority: "2"
 ## Tasks
 
 - [ ] Fill out overview for Project One
-- [ ] Fill out overview for #project/projone 
+- [ ] Fill out overview for #project/projone
 
 ## Backlinks
 
@@ -44,12 +45,12 @@ query: |
   SELECT path, getNoteName(path) AS name, moment(stat->mtime).format('YYYY-MM-DD') AS LastUpdate
   FROM obsidian_markdown_notes
   WHERE content LIKE '%'+noteFileName()+'%' AND getNoteName(path) <> noteFileName()
-template: | 
+template: |
   | File | Last Modified |
-  | ---- | --------- |
+  | ---- | ------------- |
   {{#each result}}
   |{{obsidianHtmlInternalLink path name}} | {{LastUpdate}} |
-  {{/each}} 
+  {{/each}}
 postRenderFormat: micromark
 ```
 
@@ -59,16 +60,16 @@ postRenderFormat: micromark
 query: |
   SELECT page, getNoteName(page) AS name, text
   FROM obsidian_markdown_tasks
-  WHERE 
-    text LIKE '%'+noteFileName()+'%' 
+  WHERE
+    text LIKE '%'+noteFileName()+'%'
     OR text LIKE '%#projone%'
     OR text LIKE '%#project/projone%'
-template: | 
+template: |
   | File | Task |
-  | ---- | --------- |
+  | ---- | ---- |
   {{#each result}}
   |{{obsidianHtmlInternalLink page name}} | {{text}}|
-  {{/each}} 
+  {{/each}}
 postRenderFormat: micromark
 ```
 
