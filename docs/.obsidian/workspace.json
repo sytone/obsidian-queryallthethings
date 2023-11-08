@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "index.md",
+                "file": "contributing/documentation.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "index.md",
+                "file": "contributing/documentation.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "index.md",
+                "file": "contributing/documentation.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,17 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "index.md"
+                "file": "contributing/documentation.md"
+              }
+            }
+          },
+          {
+            "id": "8cdbfe174e0c8e36",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency"
               }
             }
           }
@@ -142,47 +152,48 @@
       "command-palette:Open command palette": false,
       "cmdr:Shell commands: Execute: Build QATT Documentation with snippets": false,
       "cmdr:Shell commands: Execute: Install Project Packages": false,
+      "cmdr:Shell commands: Execute: Build and install plugin": false,
       "qatt:Refresh QATT Tables": false
     }
   },
   "active": "be1e6fcf7fab5f2a",
   "lastOpenFiles": [
-    "data-tables/dataview-tasks.md",
-    "data-tables/index.md",
-    "data-tables/qatt-ReferenceCalendar.md",
-    "data-tables/obsidian-markdown-notes.md",
-    "data-tables/obsidian-markdown-files.md",
-    "data-tables/dataview-pages.md",
-    "data-tables/dataview-lists.md",
-    "how-the-plugin-generates-output.md",
-    "data-tables.md",
-    "Examples/dataview-fields.md",
-    "sql-functions/stringify.md",
-    "sql-functions/index.md",
-    "sql-functions/custom-functions.md",
-    "Examples/index.md",
-    "data-tables",
-    "index.md",
-    "sql-statements/index.md",
-    "installation.md",
-    "about.md",
-    "Examples/active-tasks-grouped-by-day.md",
+    "contributing/index.md",
     "contributing/documentation.md",
     "contributing/development.md",
-    "contributing/index.md",
-    "_site/contributing/documentation.md",
+    "data-tables/qatt-ReferenceCalendar.md",
+    "data-tables/obsidian-markdown-tasks.md",
+    "data-tables/obsidian-markdown-notes.md",
+    "data-tables/obsidian-markdown-lists.md",
+    "data-tables/obsidian-markdown-files.md",
+    "data-tables/index.md",
+    "data-tables/dataview-tasks.md",
+    "data-tables/dataview-pages.md",
+    "data-tables/dataview-lists.md",
+    "Examples/active-tasks-grouped-by-day.md",
+    "Examples/dataview-fields.md",
+    "Examples/using-updatepropertyfromlist.md",
+    "live-examples/notes/projects/Project Two.md",
+    "live-examples/notes/projects/Project One.md",
+    "live-examples/notes/index.md",
+    "live-examples/index.md",
+    "live-examples/project-list.md",
+    "queries/alasql.md",
+    "queries/index.md",
+    "sql-functions/_header.md",
+    "sql-functions/arrayfrom.md",
+    "sql-functions/custom-functions.md",
+    "sql-functions/index.md",
+    "live-examples/notes",
+    "live-examples/notes/projects",
+    "live-examples",
+    "New folder",
+    "sample-notes/projects",
+    "sample-notes",
+    "data-tables",
     "_site/contributing/documentation/index.html",
     "_site/contributing/documentation",
     "_site/contributing/Untitled/index.html",
-    "_site/contributing/Untitled",
-    "sql-statements/in.md",
-    "sql-statements/if-then-else.md",
-    "sql-statements/coalesce.md",
-    "_site/templates/template/index.html",
-    "_site/templates/template",
-    "_site/templates/index.html",
-    "_site/templates/handlebars/index.html",
-    "_site/templates/handlebars",
     "_site/assets/images/small-image.jpg",
     "_site/assets/images/large-image.jpg"
   ]

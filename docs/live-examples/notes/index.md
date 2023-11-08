@@ -1,0 +1,1 @@
+This folder contains all the notes that are used in the examples. This makes it simpler to use the same notes across examples reducing time to make the examples and have them populated. 

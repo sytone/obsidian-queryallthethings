@@ -1,0 +1,7 @@
+{
+  "version": "0.8.6",
+  "mainHeadingOpen": true,
+  "generalHeadingOpen": false,
+  "renderingSettingsOpen": true,
+  "postRenderFormat": "micromark"
+}

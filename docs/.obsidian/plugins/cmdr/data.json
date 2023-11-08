@@ -18,6 +18,13 @@
       "name": "Shell commands: Execute: Install Project Packages",
       "mode": "any",
       "color": "#ae8484"
+    },
+    {
+      "id": "obsidian-shellcommands:shell-command-joou77pnjd",
+      "icon": "plug-zap",
+      "name": "Shell commands: Execute: Build and install plugin",
+      "mode": "any",
+      "color": "#918821"
     }
   ],
   "rightRibbon": [],

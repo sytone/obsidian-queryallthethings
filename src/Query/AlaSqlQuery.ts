@@ -13,6 +13,7 @@ import {registerFunctionParseWikiLinkLocation, registerFunctionParseWikiLinkDisp
 import {registerFunctionReverse} from 'Query/Functions/Reverse';
 import {registerFunctionCharindex} from 'Query/Functions/Charindex';
 import {registerFunctionArrayFrom} from 'Query/Functions/ArrayFrom';
+import {registerFunctionUpdatePropertyFromList} from 'Query/Functions/UpdatePropertyFromList';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -55,6 +56,7 @@ export class AlaSqlQuery extends Service implements IQuery {
     registerFunctionWikiLinkHasDisplayName();
     registerFunctionReverse();
     registerFunctionCharindex();
+    registerFunctionUpdatePropertyFromList();
 
     alasql.fn.objectFromMap = function (value) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
