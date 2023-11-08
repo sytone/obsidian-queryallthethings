@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.7](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.6...0.8.7) (2023-11-08)
+
+
+### Features
+
+* add suggestore and setting display state ([150063b](https://github.com/sytone/obsidian-queryallthethings/commits/150063bbd367a30c355d50d5a66945504690c479))
+* add updatePropertyFromList sql function ([e20b590](https://github.com/sytone/obsidian-queryallthethings/commits/e20b5902b1b69915e4ed6ed93cc0360cdfe6547d))
+
+
+### Documentation
+
+* add sql union documentation and example ([3a973b2](https://github.com/sytone/obsidian-queryallthethings/commits/3a973b2c8327c368e61209cde0ccd9eade131c1b))
+
+
+### Internal
+
+* add warning for CustomJS plugin if missing ([c7864a8](https://github.com/sytone/obsidian-queryallthethings/commits/c7864a852c54891aaea1021b9538c7efe2c6f920))
+
 ### [0.8.6](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.5...0.8.6) (2023-10-28)
 
 
