@@ -15,13 +15,13 @@ In the example below you have the `query`, as noted this is based off SQL so sit
 ````markdown
 ```qatt
 query: |
-  SELECT TOP 1 *
-  FROM obsidian_markdown_files
-  ORDER BY stat->ctime DESC
+  SELECT TOP 5 *
+  FROM obsidian_markdown_notes
+  ORDER BY stat->mtime DESC
 template: |
-      {{#each result}}
-        [[{{path}}\|{{basename}}]]
-      {{/each}}
+  {{#each result}}
+   - [[{{path}}\|{{basename}}]]
+  {{/each}}
 ```
 ````
 

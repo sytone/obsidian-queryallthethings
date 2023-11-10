@@ -48,21 +48,12 @@ Note: This plugin currently has a soft dependency on DataView, make sure it is i
 
 ````markdown
 ```qatt
-# logLevel: debug
 query: |
-  SELECT moment(dueDate)->format("MMMM Do, YYYY") AS Month, page, task, status, line, tags, doneDate, priority
-  from tasks
-  where status != 'x'
-  ORDER BY dueDate asc
+  SELECT TOP 5 * FROM obsidian_markdown_notes ORDER BY stat->mtime DESC
 template: |
-    {{#group result by="Month"}}
-      <h4>{{ value }}</h4>
-      <ul class='contains-task-list'>
-      {{#each items}}
-        <li class='task-list-item plugin-tasks-list-item'> {{ taskcheckbox this }} {{#markdown2}} {{task}} [[{{page}}|📝]] {{/markdown2}}</li>
-      {{/each}}
-      </ul>
-    {{/group}}
+  {{#each result}}
+   - [[{{path}}\|{{basename}}]]
+  {{/each}}
 ```
 ````
 
