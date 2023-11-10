@@ -8,7 +8,7 @@ import {LoggingService} from 'lib/LoggingService';
 import {DateTime} from 'luxon';
 import {Note} from 'Note';
 import type {ListItem} from 'ListItem';
-import { TaskItem } from 'TaskItem';
+import {TaskItem} from 'TaskItem';
 
 export class NotesCacheService extends Service {
   plugin = this.use(Plugin);
@@ -148,7 +148,6 @@ export class NotesCacheService extends Service {
   }
 
   async getTasks(): Promise<TaskItem[]> {
-    console.log(this.taskItemMap);
     return Array.from(this.taskItemMap.values());
   }
 
