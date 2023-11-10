@@ -1,8 +1,9 @@
-# Sample workflow for building and deploying a Jekyll site to GitHub Pages
+# This runs on every commit to main so documentation updates are faster and can be
+# done outside of PRs as well.
 name: Publish Documentation
 
 on:
-  # Runs on pushes targeting the default branch
+  # Runs on pushes targeting the main branch
   push:
     branches: ['main']
 
@@ -28,33 +29,35 @@ jobs:
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
-      - name: Use Node.js
+      - name: Use Node.js ⚙️
         uses: actions/setup-node@v3
         with:
           node-version: 16
-      - uses: pnpm/action-setup@v2
+      - name: Setup PNPM ⚙️
+        uses: pnpm/action-setup@v2
         with:
           version: 8
       # Build the documentation and run injections
-      - name: Build
+      - name: Build Documentation 📚
         id: build
         run: |
           pnpm install
           pnpm run build:docs
-      - name: Setup Pages
+      - name: Setup Pages 📄
         uses: actions/configure-pages@v3
+      # Run the local action to transform the links and callouts.
       - name: Transform Links 🚀
         uses: ./.github/actions/obsidian-vault-to-jekyll-markdown
         with:
           src_root_directory: docs
           root_index_filename: index.md
           url_base: '/obsidian-queryallthethings'
-      - name: Build with Jekyll
+      - name: Build with Jekyll 🏗️
         uses: actions/jekyll-build-pages@v1
         with:
           source: ./docs/
           destination: ./_site
-      - name: Upload artifact
+      - name: Upload artifact 📦
         uses: actions/upload-pages-artifact@v1
 
   # Deployment job
@@ -65,6 +68,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Deploy to GitHub Pages
+      - name: Deploy to GitHub Pages 🚀
         id: deployment
         uses: actions/deploy-pages@v2
