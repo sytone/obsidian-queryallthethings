@@ -1,6 +1,6 @@
 
 import alasql from 'alasql';
-import {Plugin, type TFile} from 'obsidian';
+import {type FrontMatterCache, Plugin, type TFile} from 'obsidian';
 import {type QattCodeBlock} from 'QattCodeBlock';
 import {type IQuery} from 'Query/IQuery';
 import {Service} from '@ophidian/core';
@@ -80,6 +80,8 @@ export class AlaSqlQuery extends Service implements IQuery {
   private _queryId: string;
   private _error: string | undefined = undefined;
   private _customJsClasses: Array<[string, string]>;
+  private queryFile: TFile;
+  private codeBlockFile: TFile;
 
   // Pending a future PR to enable Custom JS again.
   // private _customJsClasses: Array<[string, string]>;
@@ -98,14 +100,15 @@ export class AlaSqlQuery extends Service implements IQuery {
     this.sourcePath = sourcePath;
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     this.frontmatter = frontmatter;
+    this.codeBlockFile = this.plugin.app.vault.getAbstractFileByPath(this.sourcePath) as TFile;
 
     if (this.codeblockConfiguration.query === undefined && this.codeblockConfiguration.queryFile === undefined) {
       throw new Error('Query is not defined in the code block, either the query or queryFile field is mandatory.');
     }
 
     if (this.codeblockConfiguration.queryFile) {
-      const queryFile = this.plugin.app.vault.getAbstractFileByPath(this.codeblockConfiguration.queryFile);
-      const content = (await this.plugin.app.vault.cachedRead(queryFile as TFile));
+      this.queryFile = this.plugin.app.vault.getAbstractFileByPath(this.codeblockConfiguration.queryFile) as TFile;
+      const content = (await this.plugin.app.vault.cachedRead(this.queryFile));
       this._sqlQuery = content;
     } else {
       this._sqlQuery = this.codeblockConfiguration.query ?? '';
@@ -215,8 +218,14 @@ export class AlaSqlQuery extends Service implements IQuery {
 
     // Return the front matter field from the page the query is running on.
     alasql.fn.pageProperty = function (field: string) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-      return currentQuery.frontmatter[field];
+      const fileCache = currentQuery.plugin.app.metadataCache.getFileCache(currentQuery.codeBlockFile);
+      if (fileCache?.frontmatter !== undefined) {
+        const frontmatter: FrontMatterCache = fileCache.frontmatter;
+        // currentQuery.logger.infoWithId(this._queryId, `Getting frontmatter for :${field}`,frontmatter[field]);
+        return frontmatter[field] as string;
+      }
+
+      return '';
     };
 
     // eslint-disable-next-line max-params
