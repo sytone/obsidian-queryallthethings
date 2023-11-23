@@ -221,7 +221,7 @@ export class AlaSqlQuery extends Service implements IQuery {
       const fileCache = currentQuery.plugin.app.metadataCache.getFileCache(currentQuery.codeBlockFile);
       if (fileCache?.frontmatter !== undefined) {
         const frontmatter: FrontMatterCache = fileCache.frontmatter;
-        // currentQuery.logger.infoWithId(this._queryId, `Getting frontmatter for :${field}`,frontmatter[field]);
+        // CurrentQuery.logger.infoWithId(this._queryId, `Getting frontmatter for :${field}`,frontmatter[field]);
         return frontmatter[field] as string;
       }
 
@@ -255,6 +255,8 @@ export class AlaSqlQuery extends Service implements IQuery {
     }
 
     let queryResult: any;
+    const resultArray = [];
+
     try {
       for (const v of this._sqlQuery.split(';')) {
         if (v.trim() !== '') {
@@ -266,12 +268,17 @@ export class AlaSqlQuery extends Service implements IQuery {
           this.logger.debugWithId(this._queryId, 'Executing Query:', {originalQuery: this.codeblockConfiguration.query, parsedQuery});
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           queryResult = alasql(parsedQuery, dataTables);
+          resultArray.push(queryResult);
         }
       }
     } catch (error) {
       this._error = `Error with query: ${error as string}`;
       this.logger.errorWithId(this._queryId, `Error with query on page [${this.sourcePath}]:`, error);
       queryResult = [];
+    }
+
+    if (resultArray.length > 1) {
+      queryResult = resultArray;
     }
 
     this.logger.debugWithId(this._queryId, `queryResult: ${queryResult.length as number}`, queryResult);
