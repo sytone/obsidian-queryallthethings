@@ -38,7 +38,8 @@
     "editor.formatOnPaste": true
   },
   "conventionalCommits.scopes": [
-    "logging"
+    "logging",
+    "render"
   ],
   "markdownlint.config": {
     "MD007": {
