@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.8](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.7...0.8.8) (2023-12-02)
+
+
+### Features
+
+* enable frontmatter data to be queried for page ([cb13701](https://github.com/sytone/obsidian-queryallthethings/commits/cb1370127179bfdf55d5f414c43f615f5fe2b5fe))
+* **render:** add 100+ handlebars helpers to rendering templates ([5f015f4](https://github.com/sytone/obsidian-queryallthethings/commits/5f015f42434d7036765df67aa7a9acf57a6d133e))
+* return all query results as collection to be rendered and not just last query ([83e48aa](https://github.com/sytone/obsidian-queryallthethings/commits/83e48aa6ef34e9e8fda87902059e2237fe9b46d5))
+
+
+### Bug Fixes and Changes
+
+* add exclude to properties of example pages ([b9d6150](https://github.com/sytone/obsidian-queryallthethings/commits/b9d6150f1b6d887fb78e769603e8dd16a571e601))
+* remove log entry from get tasks function ([b150d19](https://github.com/sytone/obsidian-queryallthethings/commits/b150d194c0733cd216d079438a15e2220c17b1e0))
+
+
+### Internal
+
+* cleanup actions files ([7f65413](https://github.com/sytone/obsidian-queryallthethings/commits/7f654135568cfb0cc0207111c7707b8d14608380))
+
+
+### Documentation
+
+* added help Url so HelpMate support is avaliable. ([861ab56](https://github.com/sytone/obsidian-queryallthethings/commits/861ab56b3911cc6e0da2a9bac1cd94f24b2de6af))
+* update examples and simple queries ([87ad280](https://github.com/sytone/obsidian-queryallthethings/commits/87ad280e8fcb34d98ad3c22298ff071785fc709b))
+
 ### [0.8.7](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.6...0.8.7) (2023-11-08)
 
 
