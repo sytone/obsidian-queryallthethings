@@ -75,7 +75,7 @@ export class MarkdownTableLoaderService extends BaseLoaderService {
     return lineNumber;
   }
 
-  public importCallback = (content: string, tableName: string) => {
+  public importCallback = (content: string, tableName: string, settings: string) => {
     // Get the first row with content and the pipe.
     const headerLine = this.getFirstLineNumberWithContent(content);
     const header = content.split('\n')[headerLine].split('|').filter(Boolean);

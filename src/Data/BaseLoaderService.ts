@@ -3,7 +3,7 @@ import {Service} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
 import alasql from 'alasql';
 
-type GetDataArrayFromFileCallback = (content: string, tableName: string) => any[];
+type GetDataArrayFromFileCallback = (content: string, tableName: string, settings: string) => any[];
 
 export class BaseLoaderService extends Service {
   plugin = this.use(Plugin);
@@ -19,7 +19,7 @@ export class BaseLoaderService extends Service {
       this.plugin.app.metadataCache.on('changed', async (file, data, cache) => {
         if (this.fileInImportList(file)) {
           this.logger.info(`metadataCache changed event detected for ${file.path}`);
-          await this.importArrayToTableFromFile(file, this.importCallback);
+          await this.importArrayToTableFromFile(file, this.importCallback, '');
           this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
         }
       }),
@@ -59,35 +59,45 @@ export class BaseLoaderService extends Service {
       if (file.startsWith('WEB|')) {
         const pageDetails = file.split('|');
         const tableName = pageDetails[1];
-        const url = new URL(pageDetails[2]);
+        let url: URL;
+        let settings = '';
+        if (pageDetails[2].startsWith('SETTINGS:')) {
+          settings = pageDetails[2].replace('SETTINGS:', '');
+          url = new URL(pageDetails[3]);
+        } else {
+          url = new URL(pageDetails[2]);
+        }
+
         // eslint-disable-next-line no-await-in-loop
-        await this.importArrayToTableFromUrl(url, tableName, this.importCallback);
+        await this.importArrayToTableFromUrl(url, tableName, this.importCallback, settings);
       } else {
         const queryFile = this.plugin.app.vault.getAbstractFileByPath(file);
         // eslint-disable-next-line no-await-in-loop
-        await this.importArrayToTableFromFile((queryFile as TFile), this.importCallback);
+        await this.importArrayToTableFromFile((queryFile as TFile), this.importCallback, '');
       }
     }
   }
 
-  public async importArrayToTableFromUrl(url: URL, tableName: string, parseToArrayCallback: GetDataArrayFromFileCallback) {
+  public async importArrayToTableFromUrl(url: URL, tableName: string, parseToArrayCallback: GetDataArrayFromFileCallback, settings: string) {
     const response = await fetch(url);
     const content = await response.text();
-    await this.importArrayToTable(content, tableName, parseToArrayCallback);
+    await this.importArrayToTable(content, tableName, parseToArrayCallback, settings);
   }
 
-  public async importArrayToTableFromFile(file: TFile, parseToArrayCallback: GetDataArrayFromFileCallback) {
+  public async importArrayToTableFromFile(file: TFile, parseToArrayCallback: GetDataArrayFromFileCallback, settings: string) {
     const tableName = file.basename;
     this.logger.info(`Loading '${file.path}' as table '${tableName}'`);
     const content = (await this.plugin.app.vault.cachedRead(file));
 
-    await this.importArrayToTable(content, tableName, parseToArrayCallback);
+    await this.importArrayToTable(content, tableName, parseToArrayCallback, settings);
   }
 
-  public async importArrayToTable(content: string, tableName: string, parseToArrayCallback: GetDataArrayFromFileCallback) {
+  public async importArrayToTable(content: string, tableName: string, parseToArrayCallback: GetDataArrayFromFileCallback, settings: string) {
     const startTime = new Date(Date.now());
 
-    const parsedArray = parseToArrayCallback(content, tableName);
+    this.logger.info(`Importing to ${tableName} with ${settings}`);
+
+    const parsedArray = parseToArrayCallback(content, tableName, settings);
     if (!parsedArray || parsedArray.length === 0) {
       return;
     }

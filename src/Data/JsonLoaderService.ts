@@ -62,6 +62,18 @@ export class JsonLoaderService extends BaseLoaderService {
     );
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  public importCallback = (content: string, tableName: string) => JSON.parse(content) as any[];
+  public importCallback = (content: string, tableName: string, settings: string) => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    let fullContent = JSON.parse(content);
+
+    const parsingSettings = new URLSearchParams(settings);
+    const childProperty = parsingSettings.get('childProperty');
+    if (childProperty !== null) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      fullContent = fullContent[childProperty];
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return fullContent as any[];
+  };
 }

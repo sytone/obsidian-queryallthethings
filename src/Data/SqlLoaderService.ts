@@ -63,7 +63,7 @@ export class SqlLoaderService extends BaseLoaderService {
     );
   }
 
-  public importCallback = (content: string, tableName: string) => {
+  public importCallback = (content: string, tableName: string, settings: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const sqlQueryResult = this.dataTables?.runAdhocQuery(content);
     this.logger.info('SQL query result', sqlQueryResult);

@@ -3,7 +3,7 @@
 import 'jest';
 import {type IQattCodeBlock} from 'QattCodeBlock';
 import {HandlebarsHelpers} from 'Render/HandlebarsHelpers';
-import Handlebars, {type HelperOptions} from 'handlebars';
+import Handlebars, {type HelperOptions} from '@jaredwray/fumanchu';
 
 function generateCodeBlock(template: string): IQattCodeBlock {
   return {

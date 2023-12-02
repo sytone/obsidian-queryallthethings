@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import Handlebars from 'handlebars';
+import Handlebars from '@jaredwray/fumanchu';
 import {Component, MarkdownPreviewView, MarkdownRenderer} from 'obsidian';
 import {logging} from 'lib/Logging';
 import {type IRenderer} from 'Render/IRenderer';

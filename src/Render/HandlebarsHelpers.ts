@@ -7,8 +7,35 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import Handlebars, {type HelperOptions} from 'handlebars';
+import Handlebars, {type HelperOptions} from '@jaredwray/fumanchu';
 import {markdown2html} from 'Render/MicromarkRenderer';
+
+function isOptions(value: any) {
+  return value?.hash;
+}
+
+function isBlock(options: any) {
+  return isOptions(options)
+    && typeof options.fn === 'function'
+    && typeof options.inverse === 'function';
+}
+
+// eslint-disable-next-line @typescript-eslint/ban-types
+function handlebarsValue(value: any, context: Object | null, options: Object | null) {
+  if (isOptions(value)) {
+    return handlebarsValue(null, value, options);
+  }
+
+  if (isOptions(context)) {
+    return handlebarsValue(value, {}, context);
+  }
+
+  if (isBlock(options)) {
+    return value ? options.fn(context) : options.inverse(context);
+  }
+
+  return value;
+}
 
 /*
   // >> id='docs-handlebars-helper-capitalize' options=''
@@ -178,6 +205,118 @@ export function registerIsLowPriority(): void {
   Handlebars.registerHelper('isLowPriority', (value: number) => value === 3);
 }
 
+export function registerTable(): void {
+  Handlebars.registerHelper('table', () => {
+    // HB:  {{ table string val1 result1 val2 result2 val3 result3 ... }}
+    if (arguments.length < 4) {
+      return '';
+    } // String val1 result1 options
+
+    if (arguments[0] === undefined || arguments[0] === null) {
+      return arguments[0];
+    }
+
+    const length = arguments.length - 1;
+    const options = arguments[length];
+    let value = arguments[0].toString();
+    for (let i = 1; i < length; i += 2) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      const result = value.match(new RegExp(`^${arguments[i]}$`, 'u'));
+      if (result) {
+        value = arguments[i + 1];
+        // Replace all occurrences of $n with the corresponding match
+        if (result.length > 1) {
+          console.info(JSON.stringify(result.groups, null, 2));
+          value = value.replaceAll(/\$(\d+)/g, (match: string, p1: string) => {
+            const parameter = Number(p1); // First parameter = 1
+            if (parameter < result.length) {
+              return result[parameter];
+            }
+
+            return match;	// Number is too high!
+          });
+        }
+      }
+    }
+
+    return handlebarsValue(value, this, options);
+  });
+}
+
+export function registerSubString(): void {
+  Handlebars.registerHelper('substring', () => {
+    const length = arguments.length - 1;
+    const options = arguments[length];
+    let value = arguments[0];
+    if (length === 3) {
+      // Fourth parameter = options
+      const beginPos = arguments[1];
+      const length = arguments[2];
+      if (typeof value === 'string' && typeof beginPos === 'number' && typeof length === 'number') {
+        value = value.slice(beginPos, beginPos + length);
+      }
+    }
+
+    return handlebarsValue(value, this, options);
+  });
+}
+
+export function registerStringArray(): void {
+  Handlebars.registerHelper('strarray', () => {
+    const length = arguments.length - 1;
+    const options = arguments[length];
+    const orig = arguments[0];
+    if (arguments.length !== 2 || typeof orig !== 'string') {
+      return handlebarsValue(orig, this, options);
+    }
+
+    return handlebarsValue([...orig], this, options);
+  });
+}
+
+export function registerReplaceReg(): void {
+  Handlebars.registerHelper('replacereg', () => {
+    if (arguments.length !== 4) {
+      return arguments[0];
+    }
+
+    const orig: string = arguments[0];
+    const pattern = new RegExp(arguments[1], 'g');
+    const replacement: string = arguments[2];
+    const options: any = arguments[3];
+    const result: string = pattern[Symbol.replace](orig, replacement);
+    return handlebarsValue(result, this, options);
+  });
+}
+
+export function registerStringSplit(): void {
+  Handlebars.registerHelper('strsplit', () => {
+    if (arguments.length != 3) {
+      return arguments[0];
+    }
+
+    const orig: string = arguments[0];
+    const pattern: RegExp = arguments[1]; // String or RegExp
+    const options: any = arguments[2];
+    const result: any = orig.split(pattern);
+    return handlebarsValue(result, this, options);
+  });
+}
+
+export function registerSetVar(): void {
+  Handlebars.registerHelper('setvar', () => {
+    if (arguments.length !== 3) {
+      return arguments[0];
+    }
+
+    const varName: string = arguments[0];
+    const varValue: string = arguments[1];
+    const options: any = arguments[2];
+    options.data.root[varName] = varValue;
+    return handlebarsValue('', null, null);
+  });
+}
+
 export function registerGroup(): void {
     type IMap = Record<string, {value: string; items: Array<Record<string, any>>}>;
 
@@ -263,6 +402,12 @@ export function registerHandlebarsHelpers(): void {
   registerIsMediumPriority();
   registerIsLowPriority();
   registerGroup();
+  registerTable();
+  registerSubString();
+  registerStringArray();
+  registerReplaceReg();
+  registerStringSplit();
+  registerSetVar();
 
   // Just add the simple helpers here.
   Handlebars.registerHelper({

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {Service} from '@ophidian/core';
 import {Plugin, type TFile} from 'obsidian';
-import Handlebars from 'handlebars';
+import Handlebars from '@jaredwray/fumanchu';
 import {LoggingService} from 'lib/LoggingService';
 import {type QattCodeBlock} from 'QattCodeBlock';
 import {type IRenderer} from 'Render/IRenderer';

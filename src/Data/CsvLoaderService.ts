@@ -64,7 +64,7 @@ export class CsvLoaderService extends BaseLoaderService {
     );
   }
 
-  public importCallback = (content: string, tableName: string) => {
+  public importCallback = (content: string, tableName: string, settings: string) => {
     const tr = parse(content, {
       header: true,
       dynamicTyping: true,
