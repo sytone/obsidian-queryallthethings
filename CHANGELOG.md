@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.10](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.9...0.8.10) (2023-12-05)
+
+
+### Bug Fixes and Changes
+
+* customjs plugin check ([959f7b7](https://github.com/sytone/obsidian-queryallthethings/commits/959f7b77c87a964f9d78236116bcaf9674e79e5a))
+
 ### [0.8.9](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.8...0.8.9) (2023-12-05)
 
 
