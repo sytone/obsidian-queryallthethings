@@ -80,10 +80,16 @@ export class MarkdownTableLoaderService extends BaseLoaderService {
     const headerLine = this.getFirstLineNumberWithContent(content);
     const header = content.split('\n')[headerLine].split('|').filter(Boolean);
     const data = [];
+    this.logger.info(`getFirstLineNumberWithContent ${headerLine}`, header);
 
-    for (const line of content.split('\n').slice(1)) {
-      if (line.trim().length === 0) {
-        continue;
+    // Extract the table contents starting after the header line. Technically we could also
+    // skip the second line but just incase something weird happens and there are no
+    // break characters. '---' is the default break character in Obsidian tables.
+    for (const line of content.split('\n').slice(headerLine + 1)) {
+      if (line.trim().length === 0 || !line.trim().startsWith('|')) {
+        // If there is a new line with no content we are at the end of the table.
+        // If the line does not start with the pipe '|' then we are at the end of the table.
+        break;
       }
 
       const tableColumns = line.split('|').filter(Boolean);
@@ -93,6 +99,7 @@ export class MarkdownTableLoaderService extends BaseLoaderService {
         continue;
       }
 
+      // Ignore the break between the header and the data.
       if (tableColumns[0].trim().startsWith('-')) {
         continue;
       }
