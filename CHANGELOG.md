@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.8.9](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.8...0.8.9) (2023-12-05)
+
+
+### Bug Fixes and Changes
+
+* disable extra handlebars helpers and move dataview check to handle async race ([a188054](https://github.com/sytone/obsidian-queryallthethings/commits/a18805499ced7cdccad7e547ea13268799675f32))
+
 ### [0.8.8](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.7...0.8.8) (2023-12-02)
 
 
