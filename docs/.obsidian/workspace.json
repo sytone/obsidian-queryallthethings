@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "contributing/documentation.md",
+                "file": "index.md",
                 "mode": "source",
                 "source": false
               }
@@ -69,7 +69,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 205.5
   },
   "right": {
     "id": "a814a0fd662569a7",
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "contributing/documentation.md",
+                "file": "index.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "contributing/documentation.md",
+                "file": "index.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "contributing/documentation.md"
+                "file": "index.md"
               }
             }
           },
@@ -158,8 +158,9 @@
   },
   "active": "be1e6fcf7fab5f2a",
   "lastOpenFiles": [
-    "contributing/index.md",
+    "first-query.md",
     "contributing/documentation.md",
+    "contributing/index.md",
     "contributing/development.md",
     "data-tables/qatt-ReferenceCalendar.md",
     "data-tables/obsidian-markdown-tasks.md",
@@ -183,7 +184,6 @@
     "sql-functions/_header.md",
     "sql-functions/arrayfrom.md",
     "sql-functions/custom-functions.md",
-    "sql-functions/index.md",
     "live-examples/notes",
     "live-examples/notes/projects",
     "live-examples",

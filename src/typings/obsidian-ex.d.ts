@@ -17,14 +17,9 @@ declare module 'obsidian' {
 
   interface App {
     appId: string;
-    // Plugins: {
-    //     enabledPlugins: Set<string>;
-    //     plugins: {
-    //         dataview?: {
-    //             api: DataviewApi;
-    //         };
-    //     };
-    // };
+    plugins: {
+      enabledPlugins: Set<string>;
+    };
   }
 
   interface Workspace {

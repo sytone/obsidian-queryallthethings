@@ -229,7 +229,7 @@ Query All the Things is a flexible way to query and render data in <a href="http
       }
 
       // Check for Custom JS
-      if (!window.customJS) {
+      if (!app.plugins.enabledPlugins.has('customjs')) {
         const dvNotInstalledNotice = new Notice('CustomJS plugin is not installed. Referencing custom scripts in your query blocks will not work.');
       }
     });
