@@ -1,0 +1,148 @@
+{
+  "main": {
+    "id": "aad4a8bd4834aa11",
+    "type": "split",
+    "children": [
+      {
+        "id": "e23845ae91468da5",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "22ef839f672548b9",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "first-query.md",
+                "mode": "source",
+                "source": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "353672f26635af6d",
+    "type": "mobile-drawer",
+    "children": [
+      {
+        "id": "55b22cbecdbd08be",
+        "type": "leaf",
+        "state": {
+          "type": "file-explorer",
+          "state": {
+            "sortOrder": "alphabetical"
+          }
+        }
+      },
+      {
+        "id": "0d09c4e7de2a2365",
+        "type": "leaf",
+        "state": {
+          "type": "search",
+          "state": {
+            "query": "",
+            "matchingCase": false,
+            "explainSearch": false,
+            "collapseAll": false,
+            "extraContext": false,
+            "sortOrder": "alphabetical"
+          }
+        }
+      },
+      {
+        "id": "469f85cb2972d68e",
+        "type": "leaf",
+        "state": {
+          "type": "tag",
+          "state": {
+            "sortOrder": "frequency",
+            "useHierarchy": true
+          }
+        }
+      },
+      {
+        "id": "674b880ec8a7d9d8",
+        "type": "leaf",
+        "state": {
+          "type": "all-properties",
+          "state": {
+            "sortOrder": "frequency"
+          }
+        }
+      },
+      {
+        "id": "916bfa67398388dc",
+        "type": "leaf",
+        "state": {
+          "type": "bookmarks",
+          "state": {}
+        }
+      }
+    ],
+    "currentTab": 0
+  },
+  "right": {
+    "id": "8a75aea9c7d2d554",
+    "type": "mobile-drawer",
+    "children": [
+      {
+        "id": "dc401a7ae90caeb1",
+        "type": "leaf",
+        "state": {
+          "type": "backlink",
+          "state": {
+            "file": "first-query.md",
+            "collapseAll": false,
+            "extraContext": false,
+            "sortOrder": "alphabetical",
+            "showSearch": false,
+            "searchQuery": "",
+            "backlinkCollapsed": false,
+            "unlinkedCollapsed": true
+          }
+        }
+      },
+      {
+        "id": "3b1aa6c5d2d6db21",
+        "type": "leaf",
+        "state": {
+          "type": "outgoing-link",
+          "state": {
+            "file": "first-query.md",
+            "linksCollapsed": false,
+            "unlinkedCollapsed": true
+          }
+        }
+      },
+      {
+        "id": "c9f8b3ac3d41a60d",
+        "type": "leaf",
+        "state": {
+          "type": "outline",
+          "state": {
+            "file": "first-query.md"
+          }
+        }
+      }
+    ],
+    "currentTab": 0
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "qatt:Refresh QATT Tables": false,
+      "cmdr:Shell commands: Execute: Build QATT Documentation with snippets": false,
+      "cmdr:Shell commands: Execute: Install Project Packages": false,
+      "cmdr:Shell commands: Execute: Build and install plugin": false,
+      "switcher:Open quick switcher": false,
+      "command-palette:Open command palette": false
+    }
+  },
+  "active": "22ef839f672548b9",
+  "lastOpenFiles": [
+    "index.md"
+  ]
+}

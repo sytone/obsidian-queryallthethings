@@ -181,16 +181,7 @@ Query All the Things is a flexible way to query and render data in <a href="http
     this.use(RenderFactory).load();
     this.use(HandlebarsRenderer).load();
 
-    const dvService = this.use(DataviewService);
-
-    if (!dvService.dataViewEnabled) {
-      const dvNotInstalledNotice = new Notice('Dataview plugin is not installed. Dataview backed tables will be empty.');
-    }
-
-    // Check for Custom JS
-    if (!window.customJS) {
-      const dvNotInstalledNotice = new Notice('CustomJS plugin is not installed. Referencing custom scripts in your query blocks will not work.');
-    }
+    this.use(DataviewService).load();
 
     // HandlebarsRenderer.registerHandlebarsHelpers();
     HandlebarsRendererObsidian.registerHandlebarsHelpers();
@@ -230,6 +221,17 @@ Query All the Things is a flexible way to query and render data in <a href="http
       this.sqlLoaderService = this.use(SqlLoaderService);
 
       this.queryRendererService = this.use(QueryRendererV2Service);
+
+      const dvService = this.use(DataviewService);
+
+      if (!dvService.dataViewEnabled) {
+        const dvNotInstalledNotice = new Notice('Dataview plugin is not installed. Dataview backed tables will be empty.');
+      }
+
+      // Check for Custom JS
+      if (!window.customJS) {
+        const dvNotInstalledNotice = new Notice('CustomJS plugin is not installed. Referencing custom scripts in your query blocks will not work.');
+      }
     });
 
     // Refresh tables when dataview index is ready.

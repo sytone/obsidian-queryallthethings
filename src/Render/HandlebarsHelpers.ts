@@ -9,11 +9,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Handlebars, {type HelperOptions} from 'handlebars';
 import {markdown2html} from 'Render/MicromarkRenderer';
-const handlebars = require('handlebars');
-const helpers = require('@budibase/handlebars-helpers')({
-  handlebars,
+// const handlebars = require('handlebars');
+// const helpers = require('@budibase/handlebars-helpers')({
+//   handlebars,
 
-});
+// });
 /*
   // >> id='docs-handlebars-helper-capitalize' options=''
 
