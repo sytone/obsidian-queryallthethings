@@ -64,6 +64,23 @@ export class HandlebarsRendererObsidian implements IRenderer {
       return new Handlebars.SafeString(checkBoxHtml);
     });
 
+    Handlebars.registerHelper('taskcheckboxwithappend', value => {
+      let checked = '';
+      let classList = 'task-list-item-checkbox';
+      let nextStatus = 'x';
+      const currentStatus: string = value.status as string;
+      const appendValue: string = value.append as string;
+
+      if (value.status !== ' ') {
+        checked = 'checked';
+        classList += ' is-checked';
+        nextStatus = ' ';
+      }
+
+      const checkBoxHtml = `<input class="${classList}" type="checkbox" ${checked} data-task="${currentStatus}" onclick="console.log(this.checked); qattUpdateOriginalTaskWithAppend('${value.page as string}',${value.line as string},'${currentStatus}','${nextStatus}','${appendValue}');"></input>`;
+      return new Handlebars.SafeString(checkBoxHtml);
+    });
+
     Handlebars.registerHelper('htmltasklist', value => {
       const ulOpen = '<ul class="contains-task-list has-list-bullet">';
       const ulClose = '</ul>';

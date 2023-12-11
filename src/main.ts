@@ -212,6 +212,24 @@ Query All the Things is a flexible way to query and render data in <a href="http
         app.workspace.trigger('dataview:refresh-views');
       };
 
+      (window as any).qattUpdateOriginalTaskWithAppend = async function (page: string, line: number, currentStatus: string, nextStatus: string, append: string) {
+        nextStatus = nextStatus === '' ? ' ' : nextStatus;
+
+        const rawFileText = await app.vault.adapter.read(page);
+        const hasRN = rawFileText.contains('\r');
+        const fileText = rawFileText.split(/\r?\n/u);
+
+        if (fileText.length < line) {
+          return;
+        }
+
+        fileText[line] = `${fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`)}${append}`;
+
+        const newText = fileText.join(hasRN ? '\r\n' : '\n');
+        await app.vault.adapter.write(page, newText);
+        app.workspace.trigger('dataview:refresh-views');
+      };
+
       // D this.queryRendererService = this.use(QueryRendererService);
       this.notesCacheService = this.use(NotesCacheService);
 

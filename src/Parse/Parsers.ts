@@ -1,3 +1,10 @@
+const dueDatePrefixes = ['📅', 'due::'];
+const doneDatePrefixes = ['✅', 'completion::'];
+const startDatePrefixes = ['🛫', 'start::'];
+const createDatePrefixes = ['➕', 'created::'];
+const scheduledDatePrefixes = ['⏳', 'scheduled::'];
+const doDatePrefixes = ['💨', 'do::'];
+
 export const parseTask = (taskString: string) => {
   const tags: string[] = [];
   const tagsNormalized: string[] = [];
@@ -7,22 +14,70 @@ export const parseTask = (taskString: string) => {
   let startDate: string | undefined;
   let createDate: string | undefined;
   let scheduledDate: string | undefined;
+  let doDate: string | undefined;
   let priority;
+  let cleanTask = taskString;
 
   for (let index = 0; index < tokens.length; index++) {
     parseTags(tokens, index, tags, tagsNormalized);
 
-    dueDate = dueDate ?? parseDate(tokens, index, ['📅', 'due::']);
-    doneDate = doneDate ?? parseDate(tokens, index, ['✅', 'completion::']);
-    startDate = startDate ?? parseDate(tokens, index, ['🛫', 'start::']);
-    createDate = createDate ?? parseDate(tokens, index, ['➕', 'created::']);
-    scheduledDate = scheduledDate ?? parseDate(tokens, index, ['⏳', 'scheduled::']);
+    dueDate = dueDate ?? parseDate(tokens, index, dueDatePrefixes);
+    doneDate = doneDate ?? parseDate(tokens, index, doneDatePrefixes);
+    startDate = startDate ?? parseDate(tokens, index, startDatePrefixes);
+    createDate = createDate ?? parseDate(tokens, index, createDatePrefixes);
+    scheduledDate = scheduledDate ?? parseDate(tokens, index, scheduledDatePrefixes);
+    doDate = doDate ?? parseDate(tokens, index, doDatePrefixes);
 
     priority = priority ?? parsePriority(tokens, index);
   }
 
-  return {tags, tagsNormalized, dueDate, doneDate, startDate, createDate, scheduledDate, priority};
+  if (dueDate) {
+    cleanTask = cleanTaskProperties(cleanTask, dueDate, dueDatePrefixes);
+  }
+
+  if (doneDate) {
+    cleanTask = cleanTaskProperties(cleanTask, doneDate, doneDatePrefixes);
+  }
+
+  if (startDate) {
+    cleanTask = cleanTaskProperties(cleanTask, startDate, startDatePrefixes);
+  }
+
+  if (createDate) {
+    cleanTask = cleanTaskProperties(cleanTask, createDate, createDatePrefixes);
+  }
+
+  if (scheduledDate) {
+    cleanTask = cleanTaskProperties(cleanTask, scheduledDate, scheduledDatePrefixes);
+  }
+
+  if (doDate) {
+    cleanTask = cleanTaskProperties(cleanTask, doDate, doDatePrefixes);
+  }
+
+  if (priority) {
+    cleanTask = cleanTask.replace('⏫', '');
+    cleanTask = cleanTask.replace('🔼', '');
+    cleanTask = cleanTask.replace('🔽', '');
+    cleanTask = cleanTask.replace('priority:: high', '');
+    cleanTask = cleanTask.replace('priority:: medium', '');
+    cleanTask = cleanTask.replace('priority:: low', '');
+  }
+
+  cleanTask = cleanTask.trim().slice(6);
+
+  return {tags, tagsNormalized, dueDate, doneDate, startDate, createDate, scheduledDate, doDate, priority, cleanTask};
 };
+
+function cleanTaskProperties(taskString: string, searchString: string, prefixes: string[]) {
+  taskString = taskString.replace(searchString, '');
+
+  for (const prefix of prefixes) {
+    taskString = taskString.replace(prefix, '');
+  }
+
+  return taskString;
+}
 
 function parsePriority(tokens: string[], index: number) {
   if (tokens[index].startsWith('⏫') || (tokens[index].startsWith('priority::') && tokens[index + 1].startsWith('high'))) {
