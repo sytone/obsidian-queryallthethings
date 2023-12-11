@@ -194,41 +194,7 @@ Query All the Things is a flexible way to query and render data in <a href="http
 
       this.dataTables?.refreshTables('layout ready');
 
-      (window as any).qattUpdateOriginalTask = async function (page: string, line: number, currentStatus: string, nextStatus: string) {
-        nextStatus = nextStatus === '' ? ' ' : nextStatus;
-
-        const rawFileText = await app.vault.adapter.read(page);
-        const hasRN = rawFileText.contains('\r');
-        const fileText = rawFileText.split(/\r?\n/u);
-
-        if (fileText.length < line) {
-          return;
-        }
-
-        fileText[line] = fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`);
-
-        const newText = fileText.join(hasRN ? '\r\n' : '\n');
-        await app.vault.adapter.write(page, newText);
-        app.workspace.trigger('dataview:refresh-views');
-      };
-
-      (window as any).qattUpdateOriginalTaskWithAppend = async function (page: string, line: number, currentStatus: string, nextStatus: string, append: string) {
-        nextStatus = nextStatus === '' ? ' ' : nextStatus;
-
-        const rawFileText = await app.vault.adapter.read(page);
-        const hasRN = rawFileText.contains('\r');
-        const fileText = rawFileText.split(/\r?\n/u);
-
-        if (fileText.length < line) {
-          return;
-        }
-
-        fileText[line] = `${fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`)}${append}`;
-
-        const newText = fileText.join(hasRN ? '\r\n' : '\n');
-        await app.vault.adapter.write(page, newText);
-        app.workspace.trigger('dataview:refresh-views');
-      };
+      await this.updateWindowLevelFunctions();
 
       // D this.queryRendererService = this.use(QueryRendererService);
       this.notesCacheService = this.use(NotesCacheService);
@@ -269,6 +235,15 @@ Query All the Things is a flexible way to query and render data in <a href="http
       this.dataTables?.refreshTables('manual refresh');
     });
 
+    // This adds an editor command that can perform some operation on the current editor instance
+    this.addCommand({
+      id: 'qatt-internal-reloadwindowfunctions',
+      name: 'Internal - Reload Window Level Functions',
+      callback: async () => {
+        await this.updateWindowLevelFunctions();
+      },
+    });
+
     await this.announceUpdate();
   }
 
@@ -292,5 +267,72 @@ Query All the Things is a flexible way to query and render data in <a href="http
       const updateModal = new UpdateModal(knownVersion);
       updateModal.open();
     }
+  }
+
+  private async updateWindowLevelFunctions() {
+    (window as any).qattUpdateOriginalTask = async function (page: string, line: number, currentStatus: string, nextStatus: string) {
+      nextStatus = nextStatus === '' ? ' ' : nextStatus;
+
+      const rawFileText = await app.vault.adapter.read(page);
+      const hasRN = rawFileText.contains('\r');
+      const fileText = rawFileText.split(/\r?\n/u);
+
+      if (fileText.length < line) {
+        return;
+      }
+
+      fileText[line] = fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`);
+
+      const newText = fileText.join(hasRN ? '\r\n' : '\n');
+      await app.vault.adapter.write(page, newText);
+      app.workspace.trigger('dataview:refresh-views');
+    };
+
+    // eslint-disable-next-line max-params
+    (window as any).qattUpdateOriginalTaskWithAppend = async function (page: string, line: number, currentStatus: string, nextStatus: string, append: string) {
+      nextStatus = nextStatus === '' ? ' ' : nextStatus;
+
+      const rawFileText = await app.vault.adapter.read(page);
+      const hasRN = rawFileText.contains('\r');
+      const fileText = rawFileText.split(/\r?\n/u);
+
+      if (fileText.length < line) {
+        return;
+      }
+
+      fileText[line] = `${fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`)}${append}`;
+
+      const newText = fileText.join(hasRN ? '\r\n' : '\n');
+      await app.vault.adapter.write(page, newText);
+      app.workspace.trigger('dataview:refresh-views');
+    };
+
+    (window as any).qattUpdateOriginalTaskWithDoneDate = async function (page: string, line: number, currentStatus: string, nextStatus: string) {
+      nextStatus = nextStatus === '' ? ' ' : nextStatus;
+
+      const rawFileText = await app.vault.adapter.read(page);
+      const hasRN = rawFileText.contains('\r');
+      const fileText = rawFileText.split(/\r?\n/u);
+
+      if (fileText.length < line) {
+        return;
+      }
+
+      if (nextStatus === 'x' && !fileText[line].includes('✅')) {
+        const doneDate = new Date().toISOString().split('T')[0];
+        fileText[line] = `${fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`)} ✅ ${doneDate}`;
+      } else {
+        fileText[line] = `${fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`)}`;
+      }
+
+      if (nextStatus !== 'x' && fileText[line].includes('✅')) {
+        const donePrefixIndex = fileText[line].lastIndexOf('✅');
+        fileText[line] = fileText[line].slice(0, donePrefixIndex) + fileText[line].slice(donePrefixIndex + 12);
+      }
+
+      const newText = fileText.join(hasRN ? '\r\n' : '\n');
+      await app.vault.adapter.write(page, newText);
+      app.workspace.trigger('dataview:refresh-views');
+    };
   }
 }

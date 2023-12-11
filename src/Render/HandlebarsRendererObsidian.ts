@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import Handlebars from 'handlebars';
+import Handlebars, {type HelperOptions} from 'handlebars';
 import {Component, MarkdownPreviewView, MarkdownRenderer} from 'obsidian';
 import {logging} from 'lib/Logging';
 import {type IRenderer} from 'Render/IRenderer';
@@ -78,6 +78,28 @@ export class HandlebarsRendererObsidian implements IRenderer {
       }
 
       const checkBoxHtml = `<input class="${classList}" type="checkbox" ${checked} data-task="${currentStatus}" onclick="console.log(this.checked); qattUpdateOriginalTaskWithAppend('${value.page as string}',${value.line as string},'${currentStatus}','${nextStatus}','${appendValue}');"></input>`;
+      return new Handlebars.SafeString(checkBoxHtml);
+    });
+
+    Handlebars.registerHelper('flexibletaskcheckbox', (value, options: HelperOptions) => {
+      const fn = options.fn;
+      const inverse = options.inverse;
+      const hash = options.hash;
+      const callback: string = hash?.callback ?? 'qattUpdateOriginalTask';
+      let nextStatus: string = hash?.nextStatus ?? 'x';
+      let classList: string = hash?.classList ?? 'task-list-item-checkbox';
+      const log: boolean = hash?.log ?? false;
+      const currentStatus: string = value.status as string;
+      const appendValue: string = value.append as string;
+      let checked = '';
+
+      if (value.status !== ' ') {
+        checked = 'checked';
+        classList += ' is-checked';
+        nextStatus = ' ';
+      }
+
+      const checkBoxHtml = `<input class="${classList}" type="checkbox" ${checked} data-task="${currentStatus}" onclick="${log ? 'console.log(this.checked); ' : ''}${callback}('${value.page as string}',${value.line as string},'${currentStatus}','${nextStatus}','${appendValue}');"></input>`;
       return new Handlebars.SafeString(checkBoxHtml);
     });
 
