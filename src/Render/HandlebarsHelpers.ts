@@ -8,7 +8,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Handlebars, {type HelperOptions} from 'handlebars';
-import {markdown2html} from 'Render/MicromarkRenderer';
+import {markdown2html} from 'PostRender/MicromarkRenderer';
 /*
   // >> id='docs-handlebars-helper-capitalize' options=''
 

@@ -160,7 +160,6 @@ export class QattCodeBlock implements IQattCodeBlock {
     this.replaceTargetPath = parsedCodeBlock.replaceTargetPath;
 
     this.queryDataSource = this.getParsedQuerySource(this.query ?? 'qatt');
-
   }
 
   private getParsedQuerySource(query: string) {

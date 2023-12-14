@@ -5,6 +5,43 @@ import {html as wikiHtml, syntax as wiki} from 'micromark-extension-wiki-link';
 import {fromMarkdown} from 'mdast-util-from-markdown';
 import {toString} from 'mdast-util-to-string';
 import * as wikiLink from 'mdast-util-wiki-link';
+import {type IPostRenderer} from 'PostRender/IPostRenderer';
+import {type Component} from 'obsidian';
+
+export class MicromarkPostRenderer implements IPostRenderer {
+  public async renderMarkdown(renderResults: string, element: HTMLElement, sourcePath: string, component: Component) {
+    element.innerHTML = this.markdown2html(renderResults);
+  }
+
+  private markdown2html(markdown?: string, isInline = false): string {
+    if (markdown === undefined || markdown === null) {
+      return '';
+    }
+
+    const html = micromark(markdown, {
+      allowDangerousHtml: true,
+      extensions: [
+        wiki({aliasDivider: '|'}),
+        gfm(),
+      ],
+      htmlExtensions: [
+        wikiHtml({
+          permalinks: [],
+          wikiLinkClassName: 'internal-link data-link-icon data-link-icon-after data-link-text',
+          hrefTemplate: (permalink: string) => `${permalink}`,
+          pageResolver: (name: string) => [name],
+        }),
+        gfmHtml(),
+      ],
+    });
+
+    if (isInline && !markdown.includes('\n\n')) {
+      return html.replace(/<p>|<\/p>/g, '');
+    }
+
+    return html;
+  }
+}
 
 export function markdown2html(markdown?: string, isInline = false): string {
   if (markdown === undefined || markdown === null) {
@@ -40,7 +77,6 @@ export function markdown2text(markdown?: string): string {
     return '';
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
   const tree = fromMarkdown(markdown, {
     extensions: [wiki()],
     mdastExtensions: [wikiLink.fromMarkdown()],

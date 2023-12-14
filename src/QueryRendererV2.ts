@@ -1,4 +1,3 @@
-/* eslint-disable object-shorthand */
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild, Plugin, debounce, type TFile} from 'obsidian';
@@ -11,8 +10,12 @@ import {Service, useSettings} from '@ophidian/core';
 import {LoggingService, type Logger} from 'lib/LoggingService';
 import {DateTime} from 'luxon';
 import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
-import {markdown2html} from 'Render/MicromarkRenderer';
+import {MicromarkPostRenderer, markdown2html} from 'PostRender/MicromarkRenderer';
 import {NotesCacheService} from 'NotesCacheService';
+import {ObsidianRenderer} from 'PostRender/ObsidianRenderer';
+import {type IPostRenderer} from 'PostRender/IPostRenderer';
+import {HtmlRenderer} from 'PostRender/HtmlRenderer';
+import {RawRenderer} from 'PostRender/RawRenderer';
 
 export interface IRenderingSettings {
   postRenderFormat: string;
@@ -256,7 +259,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
             if (this.codeblockConfiguration.replaceTargetPath) {
             // Search for codeblock in original markdown file.
 
-              await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, postRenderResults, 'replace');
+              await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, postRenderResults.innerHTML, 'replace');
             }
 
             break;
@@ -264,7 +267,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
           case 'always': {
             if (this.codeblockConfiguration.replaceTargetPath) {
-              await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, postRenderResults, 'replace');
+              await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, postRenderResults.innerHTML, 'replace');
             }
 
             break;
@@ -272,7 +275,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
           case 'alwaysappend': {
             if (this.codeblockConfiguration.replaceTargetPath) {
-              await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, postRenderResults, 'append');
+              await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, postRenderResults.innerHTML, 'append');
             }
 
             break;
@@ -280,7 +283,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
           case 'alwaysprepend': {
             if (this.codeblockConfiguration.replaceTargetPath) {
-              await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, postRenderResults, 'prepend');
+              await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, postRenderResults.innerHTML, 'prepend');
             }
 
             break;
@@ -288,7 +291,13 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
         // No default
         }
 
-        content.append(postRenderResults);
+        const docFrag = document.createDocumentFragment();
+
+        for (const childNode of Array.from(postRenderResults.children)) {
+          docFrag.append(childNode); // Note that this does NOT go to the DOM
+        }
+
+        content.append(docFrag);
       }
 
       // Replace the content of the container with the new content.
@@ -388,35 +397,67 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
    * @returns The rendered content.
    */
   private async getPostRenderFormat(postRenderFormat: string, renderResults: string, renderedContent: HTMLSpanElement, sourcePath: string) {
-    const postRenderFunctions: Record<string, () => Promise<HTMLSpanElement>> = {
-      markdown: async () => {
-        await MarkdownPreviewView.renderMarkdown(renderResults, renderedContent, sourcePath, this.plugin);
-        this.logger.debugWithId(this.renderId, 'renderedContent from MarkdownPreviewView.renderMarkdown', renderedContent);
-        this.logger.debugWithId(this.renderId, 'renderedContent from MarkdownPreviewView.renderMarkdown', renderedContent.innerHTML);
+    let postRenderer: IPostRenderer;
+    switch (postRenderFormat) {
+      case 'markdown': {
+        postRenderer = new ObsidianRenderer();
+        break;
+      }
 
-        return renderedContent;
-      },
-      micromark: async () => {
-        const micromarkHtml = markdown2html(renderResults);
-        const parentSpan = document.createElement('span');
-        parentSpan.innerHTML = micromarkHtml;
-        return parentSpan;
-      },
-      raw: async () => {
-        const parentSpan = document.createElement('span');
-        parentSpan.innerHTML = renderResults;
-        return parentSpan;
-      },
-      html: async () => {
-        const parentSpan = document.createElement('span');
-        parentSpan.innerHTML = renderResults;
-        return parentSpan;
-      },
-    };
+      case 'micromark': {
+        postRenderer = new MicromarkPostRenderer();
+        break;
+      }
 
-    const postRenderFunction = postRenderFunctions[postRenderFormat] || (async () => renderResults);
+      case 'html': {
+        postRenderer = new HtmlRenderer();
+        break;
+      }
 
-    return postRenderFunction();
+      case 'raw': {
+        postRenderer = new RawRenderer();
+        break;
+      }
+
+      default: {
+        postRenderer = new RawRenderer();
+        break;
+      }
+    }
+
+    await postRenderer.renderMarkdown(renderResults, renderedContent, sourcePath, this.plugin);
+    return renderedContent;
+
+    // Old Approach
+    // const postRenderFunctions: Record<string, () => Promise<HTMLSpanElement>> = {
+    //   markdown: async () => {
+    //     await MarkdownPreviewView.renderMarkdown(renderResults, renderedContent, sourcePath, this.plugin);
+    //     this.logger.debugWithId(this.renderId, 'renderedContent from MarkdownPreviewView.renderMarkdown', renderedContent);
+    //     this.logger.debugWithId(this.renderId, 'renderedContent from MarkdownPreviewView.renderMarkdown', renderedContent.innerHTML);
+
+    //     return renderedContent;
+    //   },
+    //   micromark: async () => {
+    //     const micromarkHtml = markdown2html(renderResults);
+    //     const parentSpan = document.createElement('span');
+    //     parentSpan.innerHTML = micromarkHtml;
+    //     return parentSpan;
+    //   },
+    //   raw: async () => {
+    //     const parentSpan = document.createElement('span');
+    //     parentSpan.innerHTML = renderResults;
+    //     return parentSpan;
+    //   },
+    //   html: async () => {
+    //     const parentSpan = document.createElement('span');
+    //     parentSpan.innerHTML = renderResults;
+    //     return parentSpan;
+    //   },
+    // };
+
+    // const postRenderFunction = postRenderFunctions[postRenderFormat] || (async () => renderResults);
+
+    // return postRenderFunction();
   }
 }
 
