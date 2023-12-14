@@ -1,3 +1,4 @@
+/* eslint-disable object-shorthand */
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild, Plugin, debounce, type TFile} from 'obsidian';
@@ -193,6 +194,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   render = async () => {
     this.logger.groupId(this.renderId);
     const startTime = new Date(Date.now());
+    this.container.innerHTML = '';
 
     try {
       // If there is a target replacement file then we need to ignore it for the cache update
@@ -230,7 +232,8 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
         const postRenderFormat = this.codeblockConfiguration.postRenderFormat ?? this.service.postRenderFormat;
         this.logger.debug('postRenderFormat: ', postRenderFormat);
         const renderedContent = document.createElement('span');
-        const postRenderResults = await this.getPostRenderFormat(postRenderFormat, renderResults, renderedContent);
+        const postRenderResults = await this.getPostRenderFormat(postRenderFormat, renderResults, renderedContent, this.context.sourcePath);
+        this.logger.debug('postRenderResults:', postRenderResults);
 
         // Determine if the code block should be replaced with the rendered content or output to a
         // separate file.
@@ -285,11 +288,11 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
         // No default
         }
 
-        content.innerHTML = postRenderResults;
+        content.append(postRenderResults);
       }
 
       // Replace the content of the container with the new content.
-      this.container.firstChild?.replaceWith(content);
+      // this.container.firstChild?.replaceWith(content);
 
       // If we are debugging add the render ID to the top of the div to make
       // tracing simpler.
@@ -384,14 +387,31 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
    * @param renderedContent - The HTML element where the content will be rendered.
    * @returns The rendered content.
    */
-  private async getPostRenderFormat(postRenderFormat: string, renderResults: string, renderedContent: HTMLSpanElement) {
-    const postRenderFunctions: Record<string, () => Promise<string>> = {
+  private async getPostRenderFormat(postRenderFormat: string, renderResults: string, renderedContent: HTMLSpanElement, sourcePath: string) {
+    const postRenderFunctions: Record<string, () => Promise<HTMLSpanElement>> = {
       markdown: async () => {
-        await MarkdownPreviewView.renderMarkdown(renderResults, renderedContent, '', this.plugin);
-        return renderedContent.innerHTML;
+        await MarkdownPreviewView.renderMarkdown(renderResults, renderedContent, sourcePath, this.plugin);
+        this.logger.debugWithId(this.renderId, 'renderedContent from MarkdownPreviewView.renderMarkdown', renderedContent);
+        this.logger.debugWithId(this.renderId, 'renderedContent from MarkdownPreviewView.renderMarkdown', renderedContent.innerHTML);
+
+        return renderedContent;
       },
-      micromark: async () => markdown2html(renderResults),
-      raw: async () => renderResults,
+      micromark: async () => {
+        const micromarkHtml = markdown2html(renderResults);
+        const parentSpan = document.createElement('span');
+        parentSpan.innerHTML = micromarkHtml;
+        return parentSpan;
+      },
+      raw: async () => {
+        const parentSpan = document.createElement('span');
+        parentSpan.innerHTML = renderResults;
+        return parentSpan;
+      },
+      html: async () => {
+        const parentSpan = document.createElement('span');
+        parentSpan.innerHTML = renderResults;
+        return parentSpan;
+      },
     };
 
     const postRenderFunction = postRenderFunctions[postRenderFormat] || (async () => renderResults);
