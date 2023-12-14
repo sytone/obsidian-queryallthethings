@@ -9,11 +9,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import Handlebars, {type HelperOptions} from 'handlebars';
 import {markdown2html} from 'Render/MicromarkRenderer';
-// const handlebars = require('handlebars');
-// const helpers = require('@budibase/handlebars-helpers')({
-//   handlebars,
-
-// });
 /*
   // >> id='docs-handlebars-helper-capitalize' options=''
 
@@ -166,6 +161,22 @@ export function registerStringify(): void {
   Handlebars.registerHelper('stringify', (value: any) => new Handlebars.SafeString(JSON.stringify(value, null, 2)));
 }
 
+export function registerCodeBlockHeader(): void {
+  Handlebars.registerHelper('codeBlockHeader', (value: any) => new Handlebars.SafeString('```' + value));
+}
+
+export function registerCodeBlockFooter(): void {
+  Handlebars.registerHelper('codeBlockFooter', () => new Handlebars.SafeString('```'));
+}
+
+export function registerToInt(): void {
+  Handlebars.registerHelper('toInt', (value: any) => Number.parseInt(value, 10));
+}
+
+export function registerTrim(): void {
+  Handlebars.registerHelper('trim', (value: string) => String(value).trim());
+}
+
 export function registerNotelink(): void {
   Handlebars.registerHelper('notelink', (value: string) => `[[${value}]]`);
 }
@@ -267,6 +278,10 @@ export function registerHandlebarsHelpers(): void {
   registerIsMediumPriority();
   registerIsLowPriority();
   registerGroup();
+  registerCodeBlockHeader();
+  registerCodeBlockFooter();
+  registerToInt();
+  registerTrim();
 
   // Just add the simple helpers here.
   Handlebars.registerHelper({
