@@ -159,7 +159,8 @@ export class QattCodeBlock implements IQattCodeBlock {
 
     this.replaceTargetPath = parsedCodeBlock.replaceTargetPath;
 
-    this.queryDataSource = this.getParsedQuerySource(this.query ?? '');
+    this.queryDataSource = this.getParsedQuerySource(this.query ?? 'qatt');
+
   }
 
   private getParsedQuerySource(query: string) {
@@ -191,7 +192,7 @@ export class QattCodeBlock implements IQattCodeBlock {
       return 'dataview';
     }
 
-    return '';
+    return 'qatt';
   }
 
   /**
