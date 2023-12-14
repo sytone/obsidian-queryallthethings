@@ -216,7 +216,43 @@ export class AlaSqlQuery extends Service implements IQuery {
       return currentQuery.sourcePath.split('/').slice(-1)[0].split('.')[0];
     };
 
-    // Return the front matter field from the page the query is running on.
+    /*
+// >> id='docs-sql-statements-pageproperty' options='file=sql-statements/pageproperty.md'
+title: pageProperty
+---
+
+## Syntax
+
+```sql
+pageProperty ( string )
+```
+
+## Returns
+
+Returns the value of the front matter field specified from the page the query is running on.
+
+## Example
+
+The following example returns the frontmatter->status value reversed.
+
+```yaml
+query: |
+  SELECT pageProperty('task_status') AS TaskStatus
+template: |
+  {{#each result}}
+    The page property 'task_status' is set to {{TaskStatus}}
+  {{/each}}
+```
+
+```text
+The page property 'task_status' is set to x
+
+```
+
+Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simple-live.md' for a live example.
+
+// << docs-sql-statements-pageproperty
+*/
     alasql.fn.pageProperty = function (field: string) {
       const fileCache = currentQuery.plugin.app.metadataCache.getFileCache(currentQuery.codeBlockFile);
       if (fileCache?.frontmatter !== undefined) {
