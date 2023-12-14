@@ -1,7 +1,16 @@
 {
-  "version": "0.8.9",
-  "mainHeadingOpen": true,
-  "generalHeadingOpen": false,
+  "postRenderFormat": "markdown",
+  "enableExperimentalRender": false,
   "renderingSettingsOpen": true,
-  "postRenderFormat": "micromark"
+  "sqlFiles": "",
+  "sqlLoaderSettingsOpen": true,
+  "jsonFiles": "Examples/ttrpg/creatures_b1.json",
+  "jsonLoaderSettingsOpen": true,
+  "markdownTableFiles": "",
+  "markdownLoaderSettingsOpen": false,
+  "csvFiles": "",
+  "csvLoaderSettingsOpen": false,
+  "version": "0.8.10",
+  "mainHeadingOpen": true,
+  "generalHeadingOpen": false
 }

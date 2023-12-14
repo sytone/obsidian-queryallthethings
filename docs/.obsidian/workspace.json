@@ -4,7 +4,7 @@
     "type": "split",
     "children": [
       {
-        "id": "e99d761899e274ed",
+        "id": "a318d92e15f83d7d",
         "type": "tabs",
         "children": [
           {
@@ -13,11 +13,31 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "index.md",
+                "file": "Examples/ttrpg/monster-search-live.md",
                 "mode": "source",
-                "source": false
+                "source": true
               }
-            }
+            },
+            "group": "2f90ef264ee014aa"
+          }
+        ]
+      },
+      {
+        "id": "b0535479b6384406",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "57ebe8b6ec29fd3d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Examples/ttrpg/monster-search-live.md",
+                "mode": "preview",
+                "source": true
+              }
+            },
+            "group": "2f90ef264ee014aa"
           }
         ]
       }
@@ -69,7 +89,8 @@
       }
     ],
     "direction": "horizontal",
-    "width": 205.5
+    "width": 288.5,
+    "collapsed": true
   },
   "right": {
     "id": "a814a0fd662569a7",
@@ -85,7 +106,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "index.md",
+                "file": "Examples/ttrpg/monster-search-live.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +123,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "index.md",
+                "file": "Examples/ttrpg/monster-search-live.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +146,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "index.md"
+                "file": "Examples/ttrpg/monster-search-live.md"
               }
             }
           },
@@ -135,7 +156,9 @@
             "state": {
               "type": "all-properties",
               "state": {
-                "sortOrder": "frequency"
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
               }
             }
           }
@@ -153,37 +176,41 @@
       "cmdr:Shell commands: Execute: Build QATT Documentation with snippets": false,
       "cmdr:Shell commands: Execute: Install Project Packages": false,
       "cmdr:Shell commands: Execute: Build and install plugin": false,
+      "obsidian-5e-statblocks:Open Creature Pane": false,
       "qatt:Refresh QATT Tables": false
     }
   },
   "active": "be1e6fcf7fab5f2a",
   "lastOpenFiles": [
-    "first-query.md",
-    "contributing/documentation.md",
-    "contributing/index.md",
-    "contributing/development.md",
-    "data-tables/qatt-ReferenceCalendar.md",
-    "data-tables/obsidian-markdown-tasks.md",
-    "data-tables/obsidian-markdown-notes.md",
-    "data-tables/obsidian-markdown-lists.md",
-    "data-tables/obsidian-markdown-files.md",
-    "data-tables/index.md",
-    "data-tables/dataview-tasks.md",
-    "data-tables/dataview-pages.md",
-    "data-tables/dataview-lists.md",
+    "Examples/active-tasks-grouped-by-day-live.md",
+    "Examples/ttrpg/monster-search-live.md",
+    "Examples/ttrpg/monster-search.md",
+    "Examples/using-pageproperty-simple-live.md",
     "Examples/active-tasks-grouped-by-day.md",
     "Examples/dataview-fields.md",
     "Examples/using-updatepropertyfromlist.md",
-    "live-examples/notes/projects/Project Two.md",
-    "live-examples/notes/projects/Project One.md",
+    "live-examples/project-list.md",
     "live-examples/notes/index.md",
     "live-examples/index.md",
-    "live-examples/project-list.md",
-    "queries/alasql.md",
-    "queries/index.md",
-    "sql-functions/_header.md",
-    "sql-functions/arrayfrom.md",
+    "codeblock.md",
+    "settings.md",
+    "live-examples/notes/projects/Project Two.md",
+    "sql-functions/wikilinkhasdisplayname.md",
+    "live-examples/notes/projects/Project One.md",
+    "sql-functions/updatepropertyfromlist.md",
+    "sql-functions/stringify.md",
+    "sql-functions/parsewikilinklocation.md",
+    "sql-functions/parsewikilinkdisplayname.md",
+    "sql-functions/index.md",
     "sql-functions/custom-functions.md",
+    "sql-functions/arrayfrom.md",
+    "Examples/ttrpg/creatures_b1.json",
+    "Examples/creatures-b1.json",
+    "Examples/ttrpg/index.md",
+    "Examples/index.md",
+    "sql-statements/index.md",
+    "sql-statements/charindex.md",
+    "Examples/ttrpg",
     "live-examples/notes",
     "live-examples/notes/projects",
     "live-examples",
@@ -191,9 +218,6 @@
     "sample-notes/projects",
     "sample-notes",
     "data-tables",
-    "_site/contributing/documentation/index.html",
-    "_site/contributing/documentation",
-    "_site/contributing/Untitled/index.html",
     "_site/assets/images/small-image.jpg",
     "_site/assets/images/large-image.jpg"
   ]

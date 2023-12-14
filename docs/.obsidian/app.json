@@ -1,4 +1,5 @@
 {
   "useMarkdownLinks": true,
-  "showInlineTitle": false
+  "showInlineTitle": false,
+  "showUnsupportedFiles": true
 }
