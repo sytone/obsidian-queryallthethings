@@ -39,7 +39,9 @@
   },
   "conventionalCommits.scopes": [
     "logging",
-    "render"
+    "render",
+    "query",
+    "docs"
   ],
   "markdownlint.config": {
     "MD007": {
