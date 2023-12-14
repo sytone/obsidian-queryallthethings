@@ -11,7 +11,7 @@ tags:
 subtitle: This is project one which is very important
 aliases:
   - projone
-status: In Progress
+status: Waiting
 area: Career
 priority: "2"
 ---

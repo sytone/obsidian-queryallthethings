@@ -11,7 +11,7 @@ tags:
 subtitle: This is project one which is very important
 aliases:
   - projone
-status: Todo
+status: In Progress
 area: Fun
 priority: "3"
 ---

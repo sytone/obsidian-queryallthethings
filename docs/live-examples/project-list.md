@@ -8,6 +8,7 @@ This note contains live examples of:
 Click on the Status to update it using the suggester. 
 
 ```qatt
+postRenderFormat: micromark
 query: |
   SELECT
     frontmatter->[project-name] AS project, 
@@ -15,7 +16,7 @@ query: |
     frontmatter->priority AS priority,
     frontmatter->area AS area,
     path,
-    updatePropertyFromList(frontmatter->status, path, @['Active','Done','Todo','In Progress','Waiting','Archive'], 'status') AS updateStatus,
+    updatePropertyFromList(frontmatter->status, path, @['Active','Done','Todo','In Progress','Waiting','Archive'], 'status') AS updateStatus, 
     updatePropertyFromList(frontmatter->area, path, @['Health', 'Family', 'Fun', 'Social', 'Career', 'Financial', 'Learning'], 'area') AS updateArea,
     updatePropertyFromList(frontmatter->priority, path, @[1, 2, 3], 'priority') AS updatePriority
   FROM obsidian_markdown_notes
