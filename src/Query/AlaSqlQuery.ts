@@ -8,12 +8,7 @@ import {LoggingService} from 'lib/LoggingService';
 import {NotesCacheService} from 'NotesCacheService';
 import {DataviewService} from 'Integrations/DataviewService';
 import {confirmObjectPath} from 'Internal';
-import {registerFunctionStringify} from 'Query/Functions/Stringify';
-import {registerFunctionParseWikiLinkLocation, registerFunctionParseWikiLinkDisplayName, registerFunctionWikiLinkHasDisplayName} from 'Query/Functions/ParseWikiLinks';
-import {registerFunctionReverse} from 'Query/Functions/Reverse';
-import {registerFunctionCharindex} from 'Query/Functions/Charindex';
-import {registerFunctionArrayFrom} from 'Query/Functions/ArrayFrom';
-import {registerFunctionUpdatePropertyFromList} from 'Query/Functions/UpdatePropertyFromList';
+import * as alasqlFunctions from 'Query/Functions';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
@@ -49,14 +44,9 @@ export class AlaSqlQuery extends Service implements IQuery {
       debugger;
     };
 
-    registerFunctionArrayFrom();
-    registerFunctionStringify();
-    registerFunctionParseWikiLinkLocation();
-    registerFunctionParseWikiLinkDisplayName();
-    registerFunctionWikiLinkHasDisplayName();
-    registerFunctionReverse();
-    registerFunctionCharindex();
-    registerFunctionUpdatePropertyFromList();
+    for (const alasqlFunction of Object.entries(alasqlFunctions)) {
+      alasqlFunction[1]();
+    }
 
     alasql.fn.objectFromMap = function (value) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
