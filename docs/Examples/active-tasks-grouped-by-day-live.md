@@ -2,6 +2,7 @@
 layout: default
 parent: Examples
 title: Active tasks grouped by day
+published: false
 ---
 
 This example uses the `obsidian_markdown_tasks` table to get all the tasks that have a due date and then uses the `#group` helper in handlebars to render the results.
@@ -10,9 +11,9 @@ It shows moment being used to validate and parse the dates for output. I also sh
 
 ## Tasks for query:
 
-- [ ] Task number 1 📅 2023-11-11 📜 
+- [ ] Task number 1 📅 2023-11-11 📜
 - [ ] Task number 2 📅 2023-11-11 📜
-- [ ] Task number 3 📅 2023-10-11 📜 
+- [ ] Task number 3 📅 2023-10-11 📜
 - [ ] Task number 4 📅 2023-10-12 📜
 
 ## Live Result:
@@ -22,15 +23,15 @@ postRenderFormat: html
 query: |
   SELECT
     IIF(moment(dueDate, 'YYYY-MM-DD', true).isValid(), moment(dueDate)->format("MMMM Do, YYYY"), 'No Due Date') AS Month,
-    page, 
+    page,
     text,
     status,
     line,
     tags,
-    doneDate,  
+    doneDate,
     priority
   FROM obsidian_markdown_tasks
-  WHERE status != 'x' 
+  WHERE status != 'x'
     and text LIKE '%📜%'
     and moment(dueDate, 'YYYY-MM-DD', true).isValid()
   ORDER BY dueDate asc, priority desc

@@ -293,37 +293,40 @@ export function registerHandlebarsHelpers(): void {
       const paddingString = hash?.padWith ?? '  ';
       return new Handlebars.SafeString(paddingString.repeat((count as number)));
     },
+
     /*
-      // >> id='docs-handlebars-helper-obsidianHtmlInternalLink' options=''
-      The `obsidianHtmlInternalLink` helper takes a path and a label and returns a link
-      matches the default HTML that obsidian uses for internal links. If ths files ends
-      in `.md` then the extension is removed from the link.
+// >> id='docs-handlebars-helper-obsidianhtmlinternallink' options='file=hb-helpers/obsidianhtmlinternallink.md'
+title: obsidian html internal link
+---
+The `obsidianHtmlInternalLink` helper takes a path and a label and returns a link
+matches the default HTML that obsidian uses for internal links. If ths files ends
+in `.md` then the extension is removed from the link.
 
-      {% raw %}
+{% raw %}
 
-      ```handlebars
-        {{{obsidianHtmlInternalLink internalPath basename}}}
-      ```
+```handlebars
+  {{{obsidianHtmlInternalLink internalPath basename}}}
+```
 
-      {% endraw %}
+{% endraw %}
 
-      when used with this context:
+when used with this context:
 
-      ```
-      {
-        path: "notepages/school/My Cool Page",
-        name: "My Cool Page is here!"
-      }
-      ```
+```
+{
+  path: "notepages/school/My Cool Page",
+  name: "My Cool Page is here!"
+}
+```
 
-      will result in:
+will result in:
 
-      ```
-      <a data-tooltip-position="top" aria-label="notepages/school/My Cool Page" data-href="notepages/school/My Cool Page" href="notepages/school/My Cool Page" class="internal-link" target="_blank" rel="noopener">My Cool Page is here!</a>
-      ```
+```
+<a data-tooltip-position="top" aria-label="notepages/school/My Cool Page" data-href="notepages/school/My Cool Page" href="notepages/school/My Cool Page" class="internal-link" target="_blank" rel="noopener">My Cool Page is here!</a>
+```
 
-      // << docs-handlebars-helper-obsidianHtmlInternalLink
-      */
+// << docs-handlebars-helper-obsidianhtmlinternallink
+*/
     obsidianHtmlInternalLink(link: string, label: string) {
       return new Handlebars.SafeString(`<a data-tooltip-position="top" aria-label="${link}" data-href="${link}" href="${link}" class="internal-link" target="_blank" rel="noopener">${label}</a>`);
     },
