@@ -194,6 +194,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   /**
    * Renders the query and displays the results.
    */
+
   render = async () => {
     this.logger.groupId(this.renderId);
     const startTime = new Date(Date.now());
@@ -206,102 +207,9 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
         await this.service.notesCacheService.ignoreFileEventsForPeriod(this.codeblockConfiguration.replaceTargetPath, 1000);
       }
 
-      // Query
-      // Run query and get results to be rendered
-      const queryEngine: IQuery = await this.queryFactory.getQuery(this.codeblockConfiguration, this.context.sourcePath, this.context.frontmatter, this.renderId);
-      const results = await queryEngine.applyQuery(this.renderId);
-
-      // Render
-      // Get the engine to render the results using the specified render engine.
-      const renderEngine: IRenderer = await this.renderFactory.getRenderer(this.codeblockConfiguration);
-
+      // Setup the base div that all the content will be shown in.
       const content = this.container.createEl('div');
       content.setAttr('data-query-id', this.renderId);
-
-      if (queryEngine.error) {
-        content.setText(`QATT query error: ${queryEngine.error}`);
-      } else {
-        // Render Engine Execution
-        const renderResults = await renderEngine?.renderTemplate(this.codeblockConfiguration, results) ?? 'Unknown error or exception has occurred.';
-        this.logger.debug('Render Results', renderResults);
-
-        // Post Rendering
-        // Post Render handling as the output has to be HTML at the end if you want obsidian to
-        // render it. You can force raw which is handy for update the files contents.
-        // currently:
-        // markdown - Obsidian internal callback.
-        // micromark - parsing use micromark and extensions.
-        // raw - return the raw output from the template with no changes from original render.
-        const postRenderFormat = this.codeblockConfiguration.postRenderFormat ?? this.service.postRenderFormat;
-        this.logger.debug('postRenderFormat: ', postRenderFormat);
-        const renderedContent = document.createElement('span');
-        const postRenderResults = await this.getPostRenderFormat(postRenderFormat, renderResults, renderedContent, this.context.sourcePath);
-        this.logger.debug('postRenderResults:', postRenderResults);
-
-        // Determine if the code block should be replaced with the rendered content or output to a
-        // separate file.
-        const replaceCodeBlock = this.codeblockConfiguration.replaceCodeBlock ?? 'never';
-        this.logger.debug('replaceCodeBlock:', replaceCodeBlock);
-        this.logger.debug('replaceTargetPath:', this.codeblockConfiguration.replaceTargetPath);
-
-        const sectionInfo = this.context.getSectionInfo(this.container);
-        const noteWithCodeblock = this.getTargetFile(this.context.sourcePath);
-        const noteWithCodeblockContent = noteWithCodeblock ? await this.getCachedContent(noteWithCodeblock) : '';
-        if (sectionInfo?.lineStart && sectionInfo?.lineEnd) {
-          const cleanedNote = noteWithCodeblockContent.split('\n').splice(sectionInfo.lineStart, sectionInfo.lineEnd - sectionInfo.lineStart);
-          this.logger.debug('cleanedNote:', cleanedNote);
-        }
-
-        switch (replaceCodeBlock) {
-          // If once it needs to find and replace the code block on the page.
-          // If always it needs to find and append the rendered output to the page by default.
-          case 'once': {
-            if (this.codeblockConfiguration.replaceTargetPath) {
-            // Search for codeblock in original markdown file.
-
-              await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, postRenderResults.innerHTML, 'replace');
-            }
-
-            break;
-          }
-
-          case 'always': {
-            if (this.codeblockConfiguration.replaceTargetPath) {
-              await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, postRenderResults.innerHTML, 'replace');
-            }
-
-            break;
-          }
-
-          case 'alwaysappend': {
-            if (this.codeblockConfiguration.replaceTargetPath) {
-              await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, postRenderResults.innerHTML, 'append');
-            }
-
-            break;
-          }
-
-          case 'alwaysprepend': {
-            if (this.codeblockConfiguration.replaceTargetPath) {
-              await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, postRenderResults.innerHTML, 'prepend');
-            }
-
-            break;
-          }
-        // No default
-        }
-
-        const docFrag = document.createDocumentFragment();
-
-        for (const childNode of Array.from(postRenderResults.children)) {
-          docFrag.append(childNode); // Note that this does NOT go to the DOM
-        }
-
-        content.append(docFrag);
-      }
-
-      // Replace the content of the container with the new content.
-      // this.container.firstChild?.replaceWith(content);
 
       // If we are debugging add the render ID to the top of the div to make
       // tracing simpler.
@@ -311,6 +219,104 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
         debugWrapper.innerHTML = `RenderID: ${this.renderId}<br />`;
         content.prepend(debugWrapper);
       }
+
+      // Query
+      // Run query and get results to be rendered
+      const queryEngine: IQuery = await this.queryFactory.getQuery(this.codeblockConfiguration, this.context.sourcePath, this.context.frontmatter, this.renderId);
+      const results = await queryEngine.applyQuery(this.renderId);
+
+      if (queryEngine.error) {
+        content.setText(`QATT query error: ${queryEngine.error}`);
+        const endTime = new Date(Date.now());
+        this.logger.infoWithId(this.renderId, `Render End: ${endTime.getTime() - startTime.getTime()}ms`);
+        this.logger.groupEndId();
+        return;
+      }
+
+      // Render
+      // Get the engine to render the results using the specified render engine.
+      const renderEngine: IRenderer = await this.renderFactory.getRenderer(this.codeblockConfiguration);
+      // Render Engine Execution
+      const renderResults = await renderEngine?.renderTemplate(this.codeblockConfiguration, results) ?? 'Unknown error or exception has occurred.';
+      this.logger.debug('Render Results:', renderResults);
+
+      // Post Rendering
+      // Post Render handling as the output has to be HTML at the end if you want obsidian to
+      // render it. You can force raw which is handy for update the files contents.
+      // currently:
+      // markdown - Obsidian internal callback.
+      // micromark - parsing use micromark and extensions.
+      // raw - return the raw output from the template with no changes from original render.
+      const postRenderFormat = this.codeblockConfiguration.postRenderFormat ?? this.service.postRenderFormat;
+      this.logger.debug('postRenderFormat: ', postRenderFormat);
+
+      // Content will be inserted into a SPAN element.
+      const renderedContentElement = document.createElement('span');
+      const {renderedContent, rawPostRenderResult} = await this.getPostRenderFormat(postRenderFormat, renderResults, renderedContentElement, this.context.sourcePath);
+      this.logger.debug('postRenderResults:', renderedContent);
+
+      // Determine if we are rendering on this page or to a separate page.
+      const replaceCodeBlock = this.codeblockConfiguration.replaceCodeBlock ?? 'never';
+      this.logger.debug('replaceCodeBlock:', replaceCodeBlock);
+      this.logger.debug('replaceTargetPath:', this.codeblockConfiguration.replaceTargetPath);
+
+      // Pull out this code block.
+      // This is TBD work and not production ready.
+      // const sectionInfo = this.context.getSectionInfo(this.container);
+      // const noteWithCodeblock = this.getTargetFile(this.context.sourcePath);
+      // const noteWithCodeblockContent = noteWithCodeblock ? await this.getCachedContent(noteWithCodeblock) : '';
+      // if (sectionInfo?.lineStart && sectionInfo?.lineEnd) {
+      //   const cleanedNote = noteWithCodeblockContent.split('\n').splice(sectionInfo.lineStart, sectionInfo.lineEnd - sectionInfo.lineStart);
+      //   this.logger.debug('cleanedNote:', cleanedNote);
+      // }
+
+      switch (replaceCodeBlock) {
+        // If once it needs to find and replace the code block on the page.
+        // If always it needs to find and append the rendered output to the page by default.
+        case 'once': {
+          if (this.codeblockConfiguration.replaceTargetPath) {
+            await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, rawPostRenderResult, 'replace');
+          }
+
+          break;
+        }
+
+        case 'always': {
+          if (this.codeblockConfiguration.replaceTargetPath) {
+            await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, rawPostRenderResult, 'replace');
+          }
+
+          break;
+        }
+
+        case 'alwaysappend': {
+          if (this.codeblockConfiguration.replaceTargetPath) {
+            await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, rawPostRenderResult, 'append');
+          }
+
+          break;
+        }
+
+        case 'alwaysprepend': {
+          if (this.codeblockConfiguration.replaceTargetPath) {
+            await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, rawPostRenderResult, 'prepend');
+          }
+
+          break;
+        }
+      // No default
+      }
+
+      const docFrag = document.createDocumentFragment();
+
+      for (const childNode of Array.from(renderedContent.children)) {
+        docFrag.append(childNode); // Note that this does NOT go to the DOM
+      }
+
+      content.append(docFrag);
+
+      // Replace the content of the container with the new content.
+      // this.container.firstChild?.replaceWith(content);
     } catch (error) {
       this.logger.error('Render Failure', error);
     }
@@ -425,8 +431,8 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       }
     }
 
-    await postRenderer.renderMarkdown(renderResults, renderedContent, sourcePath, this.plugin);
-    return renderedContent;
+    const rawPostRenderResult = await postRenderer.renderMarkdown(renderResults, renderedContent, sourcePath, this.plugin);
+    return {renderedContent, rawPostRenderResult};
 
     // Old Approach
     // const postRenderFunctions: Record<string, () => Promise<HTMLSpanElement>> = {

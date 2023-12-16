@@ -10,7 +10,9 @@ import {type Component} from 'obsidian';
 
 export class MicromarkPostRenderer implements IPostRenderer {
   public async renderMarkdown(renderResults: string, element: HTMLElement, sourcePath: string, component: Component) {
-    element.innerHTML = this.markdown2html(renderResults);
+    const html = this.markdown2html(renderResults);
+    element.innerHTML = html;
+    return html;
   }
 
   private markdown2html(markdown?: string, isInline = false): string {
