@@ -71,11 +71,26 @@ This sets the level of logging used when this code block is processed. Setting i
 
 **Pending Feature**
 
-As the results of the query and render are only shown in Obsidian if tou look at the markdown file in a text editor you will only see the query and template details. For most situations this would be fine but if you want the results and rendered output to be more permanent you can use this option to write the output to the page directly.
+If set to true the page that the codeblock on it will be updated with the rendered content, this process updates the file so outside of obsidian you can access the contents.
+
+## replaceTargetPath
+
+**Pending Feature**
+
+The path to the file to replace the contents of with the rendered output. This is an absolute path to a file in your vault.
+
+## replaceType
+
+**Pending Feature**
+
+Valid replacement types for the codeblock or target file.
+['never', 'once', 'onceDaily', 'onceDailyAppend', 'onceDailyPrepend', 'onceWeekly', 'always', 'alwaysappend', 'alwaysprepend']
+
+As the results of the query and render are only shown in Obsidian if you look at the markdown file in a text editor you will only see the query and template details. For most situations this would be fine but if you want the results and rendered output to be more permanent you can use this option to write the output to the page directly.
 
 By default the value will be `never` so each time the page is shown in Obsidian it is dynamically rendered.
 
-If you set it to `once` the entire codeblock will be processed and replaced with the output, this will remove the codeblock from the file completely and the rendered results will not change from that point forward.
+If you set it to `once` the entire codeblock or target path will be processed and replaced with the output, this will remove / disable the codeblock from the file completely and the rendered results will not change from that point forward.
 
 If you set it to `always` the rendered output will be placed before the codeblock and in preview and reading view the codeblock will be rendered as a blank string to hide it. It is still there and you can edit it in edit mode. When viewing in a text editor you will see the rendered output and then the codeblock below it. To place the renderers content after the codeblock use `alwaysappend`. You can also use `alwaysprepend` if you want to be explicit.
 
@@ -93,8 +108,9 @@ export interface IQattCodeBlock {
   renderEngine: string | undefined;
   logLevel: string | undefined;
   codeBlockContent: string;
-  replaceCodeBlock: string | undefined;
+  replaceCodeBlock: boolean | undefined;
   replaceTargetPath: string | undefined;
+  replaceType: string | undefined;
   queryDataSource: string;
   id: string;
   originalCodeBlockContent: string;
@@ -111,8 +127,9 @@ export class QattCodeBlock implements IQattCodeBlock {
   postRenderFormat: string | undefined;
   renderEngine: string | undefined;
   logLevel: string | undefined;
-  replaceCodeBlock: string | undefined;
+  replaceCodeBlock: boolean | undefined;
   replaceTargetPath: string | undefined;
+  replaceType: string | undefined;
   queryDataSource: string;
   id: string;
   originalCodeBlockContent: string;
@@ -135,26 +152,15 @@ export class QattCodeBlock implements IQattCodeBlock {
     this.id = parsedCodeBlock.id ?? this.generateCodeblockId(10);
 
     // Set to info by default.
-    if (
-      parsedCodeBlock.logLevel !== 'trace'
-      && parsedCodeBlock.logLevel !== 'debug'
-      && parsedCodeBlock.logLevel !== 'info'
-      && parsedCodeBlock.logLevel !== 'warn'
-      && parsedCodeBlock.logLevel !== 'error') {
-      this.logLevel = 'info';
-    } else {
-      this.logLevel = parsedCodeBlock.logLevel;
-    }
+    const validLogLevels = ['trace', 'debug', 'info', 'warn', 'error'];
+    this.logLevel = validLogLevels.includes(parsedCodeBlock.logLevel as string) ? parsedCodeBlock.logLevel : 'info';
 
-    if (
-      parsedCodeBlock.replaceCodeBlock !== 'never'
-      && parsedCodeBlock.replaceCodeBlock !== 'once'
-      && parsedCodeBlock.replaceCodeBlock !== 'always'
-      && parsedCodeBlock.replaceCodeBlock !== 'alwaysappend'
-      && parsedCodeBlock.replaceCodeBlock !== 'alwaysprepend') {
-      this.replaceCodeBlock = 'never';
-    } else {
-      this.replaceCodeBlock = parsedCodeBlock.replaceCodeBlock;
+    // Set to never by default.
+    const validReplaceTypes = ['never', 'once', 'onceDaily', 'onceDailyAppend', 'onceDailyPrepend', 'onceWeekly', 'always', 'alwaysappend', 'alwaysprepend'];
+    this.replaceType = validReplaceTypes.includes(parsedCodeBlock.replaceType as string) ? parsedCodeBlock.replaceType : 'never';
+
+    if (parsedCodeBlock.replaceCodeBlock === undefined) {
+      this.replaceCodeBlock = false;
     }
 
     this.replaceTargetPath = parsedCodeBlock.replaceTargetPath;

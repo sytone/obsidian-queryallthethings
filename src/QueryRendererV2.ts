@@ -1,6 +1,6 @@
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {type MarkdownPostProcessorContext, MarkdownPreviewView, MarkdownRenderChild, Plugin, debounce, type TFile} from 'obsidian';
+import {type MarkdownPostProcessorContext, MarkdownPreviewView, moment, MarkdownRenderChild, Plugin, debounce, type TFile} from 'obsidian';
 import {QattCodeBlock} from 'QattCodeBlock';
 import {type IRenderer} from 'Render/IRenderer';
 import {RenderFactory} from 'Render/RenderFactory';
@@ -220,7 +220,9 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
         content.prepend(debugWrapper);
       }
 
+      // --------------------------------------------------
       // Query
+      // --------------------------------------------------
       // Run query and get results to be rendered
       const queryEngine: IQuery = await this.queryFactory.getQuery(this.codeblockConfiguration, this.context.sourcePath, this.context.frontmatter, this.renderId);
       const results = await queryEngine.applyQuery(this.renderId);
@@ -233,14 +235,18 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
         return;
       }
 
+      // --------------------------------------------------
       // Render
+      // --------------------------------------------------
       // Get the engine to render the results using the specified render engine.
       const renderEngine: IRenderer = await this.renderFactory.getRenderer(this.codeblockConfiguration);
       // Render Engine Execution
       const renderResults = await renderEngine?.renderTemplate(this.codeblockConfiguration, results) ?? 'Unknown error or exception has occurred.';
       this.logger.debug('Render Results:', renderResults);
 
+      // --------------------------------------------------
       // Post Rendering
+      // --------------------------------------------------
       // Post Render handling as the output has to be HTML at the end if you want obsidian to
       // render it. You can force raw which is handy for update the files contents.
       // currently:
@@ -253,11 +259,14 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       // Content will be inserted into a SPAN element.
       const renderedContentElement = document.createElement('span');
       const {renderedContent, rawPostRenderResult} = await this.getPostRenderFormat(postRenderFormat, renderResults, renderedContentElement, this.context.sourcePath);
-      this.logger.debug('postRenderResults:', renderedContent);
+      this.logger.debug('postRenderResults:', renderedContent.outerHTML);
+      this.logger.debug('rawPostRenderResult:', rawPostRenderResult);
 
       // Determine if we are rendering on this page or to a separate page.
-      const replaceCodeBlock = this.codeblockConfiguration.replaceCodeBlock ?? 'never';
+      const replaceCodeBlock = this.codeblockConfiguration.replaceCodeBlock ?? false;
       this.logger.debug('replaceCodeBlock:', replaceCodeBlock);
+      const replaceType = this.codeblockConfiguration.replaceType ?? 'never';
+      this.logger.debug('replaceType:', replaceType);
       this.logger.debug('replaceTargetPath:', this.codeblockConfiguration.replaceTargetPath);
 
       // Pull out this code block.
@@ -270,43 +279,18 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       //   this.logger.debug('cleanedNote:', cleanedNote);
       // }
 
-      switch (replaceCodeBlock) {
-        // If once it needs to find and replace the code block on the page.
-        // If always it needs to find and append the rendered output to the page by default.
-        case 'once': {
-          if (this.codeblockConfiguration.replaceTargetPath) {
-            await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, rawPostRenderResult, 'replace');
-          }
-
-          break;
-        }
-
-        case 'always': {
-          if (this.codeblockConfiguration.replaceTargetPath) {
-            await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, rawPostRenderResult, 'replace');
-          }
-
-          break;
-        }
-
-        case 'alwaysappend': {
-          if (this.codeblockConfiguration.replaceTargetPath) {
-            await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, rawPostRenderResult, 'append');
-          }
-
-          break;
-        }
-
-        case 'alwaysprepend': {
-          if (this.codeblockConfiguration.replaceTargetPath) {
-            await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, rawPostRenderResult, 'prepend');
-          }
-
-          break;
-        }
-      // No default
+      // If we have a target path we need to update a external file with the results.
+      if (replaceType !== 'never' && this.codeblockConfiguration.replaceTargetPath) {
+        await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, rawPostRenderResult, replaceType);
+        return;
       }
 
+      // Do the replacement in the open file. TBD.
+      if (replaceType !== 'never' && replaceCodeBlock) {
+        return;
+      }
+
+      // Update the element with the rendered content.
       const docFrag = document.createDocumentFragment();
 
       for (const childNode of Array.from(renderedContent.children)) {
@@ -328,6 +312,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
   /**
    * Writes the rendered output to a file.
+   * If the file already exists and the replacement command is once only, then the file will not be modified.
    * @param targetPath - The path of the target file.
    * @param postRenderResults - The rendered output to be written to the file.
    * @param replaceCodeBlock - Determines whether to append or prepend the rendered output to the existing file content.
@@ -337,15 +322,34 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
     const targetFile = this.getTargetFile(targetPath);
     let content = '';
+    let lastModified = window.moment();
+
+    if (targetFile && replaceCodeBlock === 'once') {
+      this.logger.debugWithId(this.renderId, `The file '${targetPath}' already exists and replacement is once only.`);
+      return;
+    }
 
     if (targetFile) {
       content = await this.getCachedContent(targetFile);
+      lastModified = window.moment(targetFile.stat.mtime);
+    }
+
+    // If lastModified date is greater than 24 hours and replaceCodeBlock is set to onceDaily then proceed.
+    if (lastModified.isAfter(window.moment().subtract(1, 'day')) && replaceCodeBlock === 'onceDaily') {
+      this.logger.debugWithId(this.renderId, `The file '${targetPath}' was updated less than a day ago and replacement is onceDaily only.`);
+      return;
+    }
+
+    // If lastModified date is greater than 1 week and replaceCodeBlock is set to onceWeekly then proceed.
+    if (lastModified.isAfter(window.moment().subtract(1, 'week')) && replaceCodeBlock === 'onceWeekly') {
+      this.logger.debugWithId(this.renderId, `The file '${targetPath}' was updated less than a week ago and replacement is onceWeekly only.`);
+      return;
     }
 
     let updatedContent = '';
-    if (replaceCodeBlock === 'append') {
+    if (replaceCodeBlock.toLowerCase().includes('append')) {
       updatedContent = content + postRenderResults;
-    } else if (replaceCodeBlock === 'prepend') {
+    } else if (replaceCodeBlock.toLowerCase().includes('prepend')) {
       updatedContent = postRenderResults + content;
     } else {
       updatedContent = postRenderResults;
@@ -392,6 +396,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
    * @returns The TFile object for the file located at the specified target path, or undefined if the file is not found.
    */
   private getTargetFile(targetPath: string): TFile | undefined {
+    targetPath = targetPath.replace(/\\/g, '/');
     return this.plugin.app.vault.getFiles().find(file => file.path === targetPath);
   }
 
