@@ -1,52 +1,5 @@
+import {type IRelease, type ReleaseNotes} from 'ReleaseNotes';
 import {Component, MarkdownRenderer, Modal} from 'obsidian';
-
-interface IRelease {
-  tag_name: string;
-  body: string;
-  draft: boolean;
-  prerelease: boolean;
-}
-
-/**
- * Fetches the releases for a repository on GitHub and returns the release notes for every release
- * that comes after a specific release.
- *
- * @param repoOwner The owner of the repository.
- * @param repoName The name of the repository.
- * @param releaseTagName The tag name of the release to start getting release notes from.
- * @returns An array of Release objects, each containing the tag name and release notes for a single release.
- * @throws An error if there was an error fetching the releases or if the release with the specified tag name
- *         could not be found.
- */
-async function getReleaseNotesAfter(
-  repoOwner: string,
-  repoName: string,
-  releaseTagName: string,
-): Promise<IRelease[]> {
-  const response = await fetch(
-    `https://api.github.com/repos/${repoOwner}/${repoName}/releases`,
-  );
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const releases: IRelease[] | {message: string} = await response.json();
-
-  if ((!response.ok && 'message' in releases) || !Array.isArray(releases)) {
-    throw new Error(
-      `Failed to fetch releases: ${releases.message ?? 'Unknown error'}`,
-    );
-  }
-
-  const startReleaseIdx = releases.findIndex(
-    release => release.tag_name === releaseTagName,
-  );
-
-  if (startReleaseIdx === -1) {
-    throw new Error(`Could not find release with tag ${releaseTagName}`);
-  }
-
-  return releases
-    .slice(0, startReleaseIdx)
-    .filter(release => !release.draft && !release.prerelease);
-}
 
 function addExtraHashToHeadings(
   markdownText: string,
@@ -72,40 +25,25 @@ export class UpdateModal extends Modal {
   private readonly releaseNotesPromise: Promise<IRelease[]>;
   private readonly previousVersion: string;
 
-  constructor(previousQAVersion: string) {
+  constructor(previousVersion: string, releaseNotes: ReleaseNotes) {
     super(app);
-    this.previousVersion = previousQAVersion;
-    if (previousQAVersion === undefined || previousQAVersion === '') {
-      this.previousVersion = '0.6.0';
+    this.previousVersion = previousVersion;
+    if (previousVersion === undefined || previousVersion === '') {
+      this.previousVersion = '0.0.0';
     }
 
-    this.releaseNotesPromise = getReleaseNotesAfter(
-      'sytone',
-      'obsidian-queryallthethings',
-      previousQAVersion,
-    );
-    this.releaseNotesPromise
-      .then(releases => {
-        this.releases = releases;
+    this.releases = releaseNotes.getChangesSince(this.previousVersion);
+    if (this.releases.length === 0) {
+      this.close();
+      return;
+    }
 
-        if (this.releases.length === 0) {
-          this.close();
-          return;
-        }
-
-        this.display();
-      })
-      .catch(error => {
-        this.close();
-      });
+    this.display();
   }
 
   onOpen() {
     const {contentEl} = this;
     contentEl.empty();
-    contentEl.createEl('h1', {
-      text: `Fetching release notes... ${this.previousVersion}`,
-    });
   }
 
   onClose() {
@@ -113,12 +51,17 @@ export class UpdateModal extends Modal {
     contentEl.empty();
   }
 
-  private display(): void {
+  public display(): void {
+    if (this.releases.length === 0) {
+      this.close();
+      return;
+    }
+
     const {contentEl} = this;
     contentEl.empty();
-    contentEl.classList.add('quickadd-update-modal-container');
+    contentEl.classList.add('qatt-update-modal-container');
 
-    const header = `### New in QuickAdd v${this.releases[0].tag_name}\n`;
+    const header = `### New in Query Add the Things v${this.releases[0].version}\n`;
     const text = 'Thank you for using QuickAdd! If you like the plugin, please consider supporting me by buying me a coffee. With your sponsorship, I\'ll be able to contribute more to my existing projects, start new ones, and be more responsive to issues & feature requests.';
     const buymeacoffee = '<div class="quickadd-bmac-container"><a href="https://www.buymeacoffee.com/chhoumann" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 144px !important;" ></a></div>';
 

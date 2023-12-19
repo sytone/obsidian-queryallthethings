@@ -1,5 +1,4 @@
 import {type ListItem} from 'ListItem';
-import {type Note} from 'Note';
 import {parseTask} from 'Parse/Parsers';
 
 /*

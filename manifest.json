@@ -7,5 +7,13 @@
   "author": "Sytone",
   "authorUrl": "https://github.com/sytone",
   "helpUrl": "https://sytone.github.io/obsidian-queryallthethings/",
-  "isDesktopOnly": false
+  "isDesktopOnly": false,
+  "releases": [
+    {
+      "0.8.9": "This is a hotfix that disables the new handlebars helpers as some are causing conflicts."
+    },
+    {
+      "0.8.10": "Fixes issue with CustomJS detection, the window object would not always be in place when the plugin loaded. Added check to see installed and activated plugins has CustomJS as that is reliable during plugin load."
+    }
+  ]
 }

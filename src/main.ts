@@ -4,7 +4,7 @@ import {type CachedMetadata, Notice, Plugin, type TFile} from 'obsidian';
 import {use, useSettings} from '@ophidian/core';
 import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
 import type EventHandler from 'handlers/EventHandler';
-import {type CommandHandler} from 'handlers/CommandHandler';
+import {CommandHandler} from 'handlers/CommandHandler';
 import {DataTables} from 'Data/DataTables';
 import {HandlebarsRenderer} from 'Render/HandlebarsRenderer';
 import {type SettingsManager} from 'Settings/SettingsManager';
@@ -23,6 +23,7 @@ import {DataviewService} from 'Integrations/DataviewService';
 import {SqlLoaderService} from 'Data/SqlLoaderService';
 import {UpdateModal} from 'lib/UpdateModal';
 import {confirmObjectPath, promptWithSuggestions} from 'Internal';
+import {ReleaseNotes} from 'ReleaseNotes';
 
 export class Note {
   constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
@@ -34,7 +35,7 @@ export interface IGeneralSettings {
   version: string;
   mainHeadingOpen: boolean;
   generalHeadingOpen: boolean;
-
+  internalLoggingConsoleLogLimit: number;
 }
 
 export const GeneralSettingsDefaults: IGeneralSettings = {
@@ -43,12 +44,15 @@ export const GeneralSettingsDefaults: IGeneralSettings = {
   version: '',
   mainHeadingOpen: true,
   generalHeadingOpen: false,
+  internalLoggingConsoleLogLimit: 10,
 };
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
   use = use.plugin(this);
   logger = this.use(LoggingService).getLogger('Qatt');
   dataTables = this.use(DataTables);
+  commandHandler = this.use(CommandHandler);
+  releaseNotes = this.use(ReleaseNotes);
 
   // Settings, TBD is I use this or not.
   settingsTab = useSettingsTab(this);
@@ -61,18 +65,23 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.logger.info('Settings Updated', settings);
       this.onStartSqlQueries = settings.onStartSqlQueries;
       this.announceUpdates = settings.announceUpdates;
-      this.version = settings.version;
+      this.version = '0.8.9'; // Old settings.version;
       this.mainHeadingOpen = settings.mainHeadingOpen;
       this.generalHeadingOpen = settings.generalHeadingOpen;
+      this.internalLoggingConsoleLogLimit = settings.internalLoggingConsoleLogLimit;
+      this.commandHandler.setup(settings.internalLoggingConsoleLogLimit);
     },
     (settings: IGeneralSettings) => {
       // This will run when the settings are first loaded.
       this.logger.info('Settings Initialize', settings);
       this.onStartSqlQueries = settings.onStartSqlQueries;
       this.announceUpdates = settings.announceUpdates;
-      this.version = settings.version;
+      this.version = '0.8.9'; // Old settings.version;
       this.mainHeadingOpen = settings.mainHeadingOpen;
       this.generalHeadingOpen = settings.generalHeadingOpen;
+      this.internalLoggingConsoleLogLimit = settings.internalLoggingConsoleLogLimit;
+      this.commandHandler.setup(settings.internalLoggingConsoleLogLimit);
+
       if (this.onStartSqlQueries) {
         this.logger.info('Running on start SQL queries', this.onStartSqlQueries);
         const onStartResult = this.dataTables?.runAdhocQuery(this.onStartSqlQueries);
@@ -86,11 +95,11 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   version: string;
   mainHeadingOpen: boolean;
   generalHeadingOpen: boolean;
+  internalLoggingConsoleLogLimit: number;
 
   // Public inlineRenderer: InlineRenderer | undefined;
   public queryRendererService: QueryRendererV2Service | undefined;
   public eventHandler: EventHandler | undefined;
-  public commandHandler: CommandHandler | undefined;
   public settingsManager: SettingsManager | undefined;
   public notesCacheService: NotesCacheService | undefined;
   public handlebarsRenderer: HandlebarsRenderer | undefined;
@@ -172,6 +181,20 @@ Query All the Things is a flexible way to query and render data in <a href="http
       },
       generalSettingsSection,
     );
+
+    const consoleLogingLimit = tab.addTextInput(
+      new SettingsTabField({
+        name: 'Console Logging Limit',
+        description: 'The number of rows to show when dumping the internal logging to the console.',
+        value: this.internalLoggingConsoleLogLimit,
+      }),
+      async (value: string) => {
+        await settings.update(settings => {
+          settings.internalLoggingConsoleLogLimit = value as unknown as number;
+        });
+      },
+      generalSettingsSection,
+    );
   }
 
   async onload() {
@@ -235,14 +258,7 @@ Query All the Things is a flexible way to query and render data in <a href="http
       this.dataTables?.refreshTables('manual refresh');
     });
 
-    // This adds an editor command that can perform some operation on the current editor instance
-    this.addCommand({
-      id: 'qatt-internal-reloadwindowfunctions',
-      name: 'Internal - Reload Window Level Functions',
-      callback: async () => {
-        await this.updateWindowLevelFunctions();
-      },
-    });
+    this.commandHandler.setup(this.internalLoggingConsoleLogLimit);
 
     await this.announceUpdate();
   }
@@ -251,26 +267,8 @@ Query All the Things is a flexible way to query and render data in <a href="http
     this.logger.info(`unloading plugin "${this.manifest.name}" v${this.manifest.version}`);
   }
 
-  private async announceUpdate() {
-    const currentVersion = this.manifest.version;
-    const knownVersion = this.version;
-
-    if (currentVersion === knownVersion) {
-      return;
-    }
-
-    await this.settings.update(settings => {
-      settings.version = currentVersion;
-    });
-
-    if (this.announceUpdates) {
-      const updateModal = new UpdateModal(knownVersion);
-      updateModal.open();
-    }
-  }
-
-  private async updateWindowLevelFunctions() {
-    (window as any).qattUpdateOriginalTask = async function (page: string, line: number, currentStatus: string, nextStatus: string) {
+  public async updateWindowLevelFunctions() {
+    window.qattUpdateOriginalTask = async function (page: string, line: number, currentStatus: string, nextStatus: string) {
       nextStatus = nextStatus === '' ? ' ' : nextStatus;
 
       const rawFileText = await app.vault.adapter.read(page);
@@ -289,7 +287,7 @@ Query All the Things is a flexible way to query and render data in <a href="http
     };
 
     // eslint-disable-next-line max-params
-    (window as any).qattUpdateOriginalTaskWithAppend = async function (page: string, line: number, currentStatus: string, nextStatus: string, append: string) {
+    window.qattUpdateOriginalTaskWithAppend = async function (page: string, line: number, currentStatus: string, nextStatus: string, append: string) {
       nextStatus = nextStatus === '' ? ' ' : nextStatus;
 
       const rawFileText = await app.vault.adapter.read(page);
@@ -307,7 +305,7 @@ Query All the Things is a flexible way to query and render data in <a href="http
       app.workspace.trigger('dataview:refresh-views');
     };
 
-    (window as any).qattUpdateOriginalTaskWithDoneDate = async function (page: string, line: number, currentStatus: string, nextStatus: string) {
+    window.qattUpdateOriginalTaskWithDoneDate = async function (page: string, line: number, currentStatus: string, nextStatus: string) {
       nextStatus = nextStatus === '' ? ' ' : nextStatus;
 
       const rawFileText = await app.vault.adapter.read(page);
@@ -334,5 +332,37 @@ Query All the Things is a flexible way to query and render data in <a href="http
       await app.vault.adapter.write(page, newText);
       app.workspace.trigger('dataview:refresh-views');
     };
+  }
+
+  public async announceUpdate() {
+    const currentVersion = this.manifest.version;
+    const knownVersion = this.version;
+    this.logger.info(`Current version: ${currentVersion}, Known version: ${knownVersion}`);
+
+    if (currentVersion === knownVersion) {
+      return;
+    }
+
+    // Add all release notes from this.manifest.releases.
+    // This is a map of version to release notes.
+    // The release notes are in markdown format.
+    for (const release of this.manifest.releases) {
+      for (const [key, value] of Object.entries(release)) {
+        this.logger.info(`Adding release notes for ${key} ${value}`, release);
+        this.releaseNotes.addVersion(key, value);
+      }
+    }
+
+    this.logger.info('Adding release notes for:', this.releaseNotes.getChangesSince(knownVersion));
+
+    await this.settings.update(settings => {
+      settings.version = currentVersion;
+    });
+
+    if (this.announceUpdates) {
+      const updateModal = new UpdateModal(knownVersion, this.releaseNotes);
+      updateModal.open();
+      updateModal.display();
+    }
   }
 }

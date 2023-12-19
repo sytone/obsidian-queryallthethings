@@ -22,6 +22,15 @@ declare module 'obsidian' {
     };
   }
 
+  interface Plugin {
+    updateWindowLevelFunctions (): void;
+    announceUpdate (): void;
+  }
+
+  export interface PluginManifest {
+    releases: Array<Record<string, string>>;
+  }
+
   interface Workspace {
     /** Sent to rendered dataview components to tell them to possibly refresh */
     on (name:
@@ -40,5 +49,8 @@ declare global {
 
     DataviewAPI?: DataviewApi;
     _qatt: any;
+    qattUpdateOriginalTask: (page: string, line: number, currentStatus: string, nextStatus: string) => void;
+    qattUpdateOriginalTaskWithAppend: (page: string, line: number, currentStatus: string, nextStatus: string, append: string) => void;
+    qattUpdateOriginalTaskWithDoneDate: (page: string, line: number, currentStatus: string, nextStatus: string) => void;
   }
 }
