@@ -19,7 +19,7 @@ The `group`\-helper will group the result by the specified column.
 
 {% endraw %}
 
-See the [group](examples/handlebars/group) page for a full example.
+See the [group](/examples/handlebars/group) page for a full example.
 
 // << docs-handlebars-helpers-group
 */
