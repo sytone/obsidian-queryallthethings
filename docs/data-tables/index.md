@@ -1,5 +1,5 @@
 ---
-nav_order: 5
+nav_order: 7
 layout: default
 title: Data Tables
 has_children: true

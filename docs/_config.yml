@@ -32,7 +32,7 @@ github_username:  sytone
 plugins:
   - jekyll-feed
 
-permalink: pretty
+permalink: /:categories/:slug
 
 # Back to top link
 back_to_top: true
@@ -47,11 +47,18 @@ gh_edit_source: docs # the source that your files originate from
 gh_edit_view_mode: 'tree' # "tree" or "edit" if you want the user to jump into the editor immediately
 
 # Build settings
-remote_theme: just-the-docs/just-the-docs
+# remote_theme: just-the-docs/just-the-docs
+theme: just-the-docs
 heading_anchors: true
 # color_scheme: dark
 
+# Aux links for the upper right navigation
+aux_links:
+  "Query All The Things on GitHub":
+    - "//github.com/sytone/obsidian-queryallthethings"
 
+# Makes Aux links open in a new tab. Default is false
+aux_links_new_tab: true
 
 # Enable or disable the site search
 # Supports true (default) or false

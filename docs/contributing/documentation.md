@@ -24,11 +24,153 @@ template: |
 {% endraw %}
 `````
 
-You will also see lines looking like this `%%snippet id='alasql-function-stringify-snippet' options='nocodeblock'%%` in the code. The pre-processor for the documentation pulls contents from the code to place in the documentation. This means that when code changes re made the documentation can be updated at the same time. 
+You will also see lines looking like this `%%snippet id='alasql-function-stringify-snippet' options='nocodeblock'%%` in the code. The pre-processor for the documentation pulls contents from the code to place in the documentation. This means that when code changes re made the documentation can be updated at the same time.
 
 If you edit the content between these pages in the docs folder the content will be lost, make sure you update the content int he source files where the snippets are located.
 
 To run the pre-processor for documentation execute `pnpm run build:docs` and it will pull out the snippets and replace them in the docs files.
+
+## Site Structure
+
+|   index.md (1)
+|   first-query.md (2)
+|   codeblock.md (4)
+|   installation.md (3)
+|   how-the-plugin-generates-output.md (5)
+|   settings.md (6)
++---data-tables
+|       index.md (7)
+|       qatt-ReferenceCalendar.md (1)
+|       obsidian-markdown-notes.md (2)
+|       obsidian-markdown-files.md (3)
+|       obsidian-markdown-lists.md (4)
+|       obsidian-markdown-tasks.md (5)
+|       dataview-pages.md (24)
+|       dataview-tasks.md (25)
+|       dataview-lists.md (26)
+|
+|   404.html
+|   about.md
+|
++---contributing
+|       development.md
+|       documentation.md
+|       index.md
+|
+
+|
++---Examples
+|   |   active-tasks-grouped-by-day-live.md
+|   |   active-tasks-grouped-by-day.md
+|   |   dataview-fields.md
+|   |   index.md
+|   |   listing-recently-updated-files-live.md
+|   |   listing-recently-updated-files.md
+|   |   using-pageproperty-simple-live.md
+|   |   using-updatepropertyfromlist.md
+|   |
+|   +---handlebars
+|   |       capitalize.md
+|   |       group.md
+|   |
+|   \---ttrpg
+|           creatures_b1.json
+|           index.md
+|           monster-search-live.md
+|           monster-search.md
+|
++---hb-helpers
+|       group.md
+|       index.md
+|       lowercase.md
+|       obsidianhtmlinternallink.md
+|       stringify.md
+|       uppercase.md
+|       _header.md
+|
++---live-examples
+|   |   index.md
+|   |   project-list.md
+|   |
+|   \---notes
+|       |   index.md
+|       |
+|       \---projects
+|               Project One.md
+|               Project Two.md
+|
++---queries
+|       alasql.md
+|       index.md
+|
++---sample-notes
++---sql-functions
+|       arrayfrom.md
+|       custom-functions.md
+|       index.md
+|       parsewikilinkdisplayname.md
+|       parsewikilinklocation.md
+|       stringify.md
+|       updatepropertyfromlist.md
+|       wikilinkhasdisplayname.md
+|       _header.md
+|
++---sql-statements
+|       case.md
+|       charindex.md
+|       coalesce.md
+|       if-then-else.md
+|       in.md
+|       index.md
+|       pageproperty.md
+|       reverse.md
+|       union.md
+|       _header.md
+|
++---templates
+|       handlebars-helpers.md.removed
+|       handlebars.md
+|       index.md
+|       template.md
+|       _header.md
+|
+
+
+|-- index.md (1)
+|-- first-query.md (2)
+|-- installation.md (3)
+|-- codeblock.md (4)
+|-- data-tables
+|   |-- index.md (5)
+|   |--
+|-- how-the-plugin-generates-output (6)
+|-- settings.md (7)
+|-- about.md
+
++-- ..
+|-- (Jekyll files)
+|
+|-- docs
+|   |-- ui-components
+|   |   |-- index.md  (parent page)
+|   |   |-- buttons.md
+|   |   |-- code.md
+|   |   |-- labels.md
+|   |   |-- tables.md
+|   |   +-- typography.md
+|   |
+|   |-- utilities
+|   |   |-- index.md      (parent page)
+|   |   |-- color.md
+|   |   |-- layout.md
+|   |   |-- responsive-modifiers.md
+|   |   +-- typography.md
+|   |
+|   |-- (other md files, pages with no children)
+|   +-- ..
+|
+|-- (Jekyll files)
++-- ..
 
 ## Building documentation in a Docker container
 

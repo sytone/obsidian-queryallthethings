@@ -26,9 +26,13 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: docs
     steps:
       - name: Checkout 🛎️
         uses: actions/checkout@v3
+      # Run the build and transformations using custom action.
       - name: Use Node.js ⚙️
         uses: actions/setup-node@v3
         with:
@@ -43,8 +47,6 @@ jobs:
         run: |
           pnpm install
           pnpm run build:docs
-      - name: Setup Pages 📄
-        uses: actions/configure-pages@v3
       # Run the local action to transform the links and callouts.
       - name: Transform Links 🚀
         uses: ./.github/actions/obsidian-vault-to-jekyll-markdown
@@ -52,13 +54,35 @@ jobs:
           src_root_directory: docs
           root_index_filename: index.md
           url_base: '/obsidian-queryallthethings'
-      - name: Build with Jekyll 🏗️
-        uses: actions/jekyll-build-pages@v1
+
+      - name: Setup Ruby ⚙️
+        uses: ruby/setup-ruby@v1
         with:
-          source: ./docs/
-          destination: ./_site
+          ruby-version: '3.1' # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          cache-version: 0 # Increment this number if you need to re-download cached gems
+          working-directory: '${{ github.workspace }}/docs'
+
+      - name: Setup Pages 📄
+        id: pages
+        uses: actions/configure-pages@v3
+
+      - name: Build with Jekyll 🏗️
+        # Outputs to the './_site' directory by default
+        run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
+        env:
+          JEKYLL_ENV: production
+
+      # - name: Build with Jekyll 🏗️
+      #   uses: actions/jekyll-build-pages@v1
+      #   with:
+      #     source: ./docs/
+      #     destination: ./_site
+
       - name: Upload artifact 📦
         uses: actions/upload-pages-artifact@v1
+        with:
+          path: "docs/_site/"
 
   # Deployment job
   deploy:

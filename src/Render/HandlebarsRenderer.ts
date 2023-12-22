@@ -5,7 +5,8 @@ import Handlebars from 'handlebars';
 import {LoggingService} from 'lib/LoggingService';
 import {type QattCodeBlock} from 'QattCodeBlock';
 import {type IRenderer} from 'Render/IRenderer';
-import {registerHandlebarsHelpers} from 'Render/HandlebarsHelpers';
+import {registerHandlebarsHelpers} from 'Render/HandlebarsHelpersGroup';
+import * as handlebarsHelpers from 'Render/HandlebarsHelpers';
 
 export class HandlebarsRenderer extends Service implements IRenderer {
   defaultTemplate = '{{stringify result}}';
@@ -22,6 +23,10 @@ export class HandlebarsRenderer extends Service implements IRenderer {
   onload(): void {
     this.logger.info('Setting up inbuilt Handlebars helpers');
     registerHandlebarsHelpers();
+    for (const handlebarsHelper of Object.entries(handlebarsHelpers)) {
+      this.logger.info('Setting up inbuilt Handlebars helpers', handlebarsHelper);
+      Handlebars.registerHelper(handlebarsHelper[0], handlebarsHelper[1]);
+    }
   }
 
   public async renderTemplate(codeblockConfiguration: QattCodeBlock, result: any) {
