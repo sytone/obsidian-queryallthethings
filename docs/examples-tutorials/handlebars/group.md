@@ -1,6 +1,6 @@
 ---
 layout: default
-parent: Examples
+parent: Examples / Tutorials
 title: Handlebars - Group
 published: true
 ---
@@ -11,17 +11,17 @@ The render helper `group` then takes the result of the query and does a group by
 The items in the group are then available via the `items` property. Below this is iterated though to get the `date` value and if it `isWeekend`. These are then used to display different outputs if `isWeekend` is true.
 
 ```qatt
-query: | 
+query: |
   SELECT *
   FROM qatt.ReferenceCalendar
   WHERE year = moment()->year()
   AND month = 2
-template: | 
+template: |
   {{#group result by="weekOfYear"}}
   #### Week {{value}}
   {{#each items}}
   {{#if isWeekend}}
-  - {{date}} 🥳🎂🍾🥂  
+  - {{date}} 🥳🎂🍾🥂
   {{else}}
   - {{date}} ⚒️
   {{/if}}

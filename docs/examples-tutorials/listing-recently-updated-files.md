@@ -1,6 +1,6 @@
 ---
 layout: default
-parent: Examples
+parent: Examples / Tutorials
 title: Listing recently updated files
 ---
 

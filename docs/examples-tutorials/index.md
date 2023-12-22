@@ -1,7 +1,7 @@
 ---
-nav_order: 10
+nav_order: 20
 layout: default
-title: Examples
+title: Examples / Tutorials
 has_children: true
 ---
 

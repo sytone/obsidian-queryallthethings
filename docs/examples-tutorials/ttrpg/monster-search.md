@@ -1,7 +1,7 @@
 ---
 layout: default
 parent: TTRPG Examples
-grand_parent: Examples
+grand_parent: Examples / Tutorials
 title: Monster Search
 ---
 
