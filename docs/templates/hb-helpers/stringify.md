@@ -1,5 +1,7 @@
-/*
-// >> id='docs-handlebars-helper-stringify' options='file=templates/hb-helpers/stringify.md'
+---
+layout: default
+parent: Handlebars Helpers
+grand_parent: Using Templates
 title: stringify value
 ---
 The `stringify`\-helper will convert the referenced object to a JSON string.
@@ -41,9 +43,3 @@ will result in:
   }
 }
 ```
-
-// << docs-handlebars-helper-stringify
-*/
-export function stringify(value: any) {
-  return new Handlebars.SafeString(JSON.stringify(value, null, 2));
-}

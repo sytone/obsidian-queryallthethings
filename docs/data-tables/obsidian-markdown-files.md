@@ -2,11 +2,10 @@
 nav_order: 3
 layout: default
 parent: Data Tables
-title: Obsidian Markdown Files (obsidian_markdown_files)
+title: Obsidian Markdown Files
 ---
 ## Obsidian Markdown Files (obsidian_markdown_files)
 
-%%snippet id='obsidian-markdown-files-table-snippet' options='nocodeblock'%%
 If you need to reference a property of a object do not forget to use `->` and not `.`
 
 | Column Name | Type   | Description                                     |
@@ -19,4 +18,3 @@ If you need to reference a property of a object do not forget to use `->` and no
 | stat->ctime | number | Time the file was creates as a serial.          |
 | stat->mtime | number | Time the file was last modified as a serial.    |
 | stat->size  | number | Size of the file in bytes                       |
-%%/snippet%%

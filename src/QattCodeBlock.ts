@@ -3,7 +3,12 @@ import {parseYaml} from 'obsidian';
 
 /*
 
-// >> id='docs-codeblock-configuration' options=''
+// >> id='docs-codeblock-configuration' options='file=codeblock.md'
+---
+nav_order: 4
+layout: default
+title: Codeblock Configuration
+---
 
 When you create the query and template to render the results if the query the configuration values are placed in a markdown codeblock with the tag `qatt` added after the first three backticks of the block.
 

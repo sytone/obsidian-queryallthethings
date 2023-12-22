@@ -1,5 +1,5 @@
 /*
-// >> id='docs-handlebars-helper-lowercase' options='file=hb-helpers/lowercase.md'
+// >> id='docs-handlebars-helper-lowercase' options='file=templates/hb-helpers/lowercase.md'
 title: lowercase value
 ---
 The `lowercase`\-helper will convert the entire string to lowercase.

@@ -1,7 +1,7 @@
 ---
 layout: default
 parent: SQL Functions
-grand_parent: Queries
+grand_parent: Writing Queries
 title: stringify(value)
 ---
 The `stringify` function will convert the provided value to a JSON string.

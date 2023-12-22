@@ -2,7 +2,7 @@ import {type HelperOptions} from 'handlebars';
 
 type IMap = Record<string, {value: string; items: Array<Record<string, any>>}>;
 /*
-// >> id='docs-handlebars-helpers-group' options='file=hb-helpers/group.md'
+// >> id='docs-handlebars-helpers-group' options='file=templates/hb-helpers/group.md'
 title: group
 ---
 

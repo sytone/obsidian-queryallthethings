@@ -29,8 +29,9 @@ template: |
 
 Once the query above has returned a result the template will then take the result and render an output by iterating over all the rows in the result and where `path` and `basename` have a value a link will be generated using a markdown syntax.
 
-Once a query result has been rendered by the template and backing template engine, in this cAse Handlebars, it will be passed to Obsidian to be shown in the UI. All output in Obsidian is expected to be in HTML. To make this simpler by default `micromark` is enabled as a post processor. The output from the template will be processed and any markdown found will be converted to HTML for output.
+Once a query result has been rendered by the template and backing template engine, in this case Handlebars, it will be passed to Obsidian to be shown in the UI. All output in Obsidian is expected to be in HTML. To make this simpler by default `micromark` is enabled as a post processor. The output from the template will be processed and any markdown found will be converted to HTML for output.
 
+### Live Example if opened in Vault
 
 ```qatt
 query: |

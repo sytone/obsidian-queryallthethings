@@ -1,7 +1,7 @@
 import alasql from 'alasql';
 
 /*
-// >> id='alasql-function-arrayfrom' options='file=sql-functions/arrayfrom.md'
+// >> id='alasql-function-arrayfrom' options='file=queries/sql-functions/arrayfrom.md'
 title: arrayfrom(value)
 ---
 The `arrayfrom` function allows the user to map a item to an array, for example a Map via mapname->values()

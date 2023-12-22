@@ -1,7 +1,7 @@
 import alasql from 'alasql';
 
 /*
-// >> id='alasql-function-stringify-snippet' options='file=sql-functions/stringify.md'
+// >> id='alasql-function-stringify-snippet' options='file=queries/sql-functions/stringify.md'
 title: stringify(value)
 ---
 The `stringify` function will convert the provided value to a JSON string.

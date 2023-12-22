@@ -17,7 +17,7 @@ In Obsidian:
 Once installed, close the community plugins window and activate the newly installed plugin
 
 > [!NOTE]
-> This plugin currently has a hard dependency on DataView, make sure it is installed as well. If it is not found you will get a message asking you to install it.
+> If you want to use the dataview integration please make sure it is installed. Without it the `dataview_pages`, `dataview_tasks` and `dataview_lists` tables will be empty.
 
 ## Manually
 

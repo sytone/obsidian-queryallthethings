@@ -1,7 +1,7 @@
 ---
 nav_order: 15
 layout: default
-title: Queries
+title: Writing Queries
 has_children: true
 ---
 

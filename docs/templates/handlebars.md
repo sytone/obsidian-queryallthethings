@@ -1,11 +1,9 @@
 ---
 nav_order: 4
 layout: default
-parent: Templates
+parent: Using Templates
 title: Default Helpers
 ---
-
-
 
 This page is based off <https://handlebarsjs.com/guide/builtin-helpers.html> and contains details on the built in helpers.
 

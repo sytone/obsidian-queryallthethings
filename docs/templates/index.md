@@ -1,7 +1,7 @@
 ---
 nav_order: 16
 layout: default
-title: Templates
+title: Using Templates
 has_children: true
 ---
 
@@ -10,5 +10,3 @@ The main engine used to render the results of a query uses the handlebars syntax
 Full details on Handlebars can be found on their site. [Handlebars Guide](https://handlebarsjs.com/guide/)
 
 The handlebars syntax is about rendering and has limited logic, the query is expected to handle the complexity of the data manipulation leaving the output to handlebars.
-
-

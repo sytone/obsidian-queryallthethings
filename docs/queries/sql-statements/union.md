@@ -1,7 +1,7 @@
 ---
 layout: default
 parent: SQL Statements
-grand_parent: Queries
+grand_parent: Writing Queries
 title: UNION
 ---
 
@@ -40,7 +40,7 @@ query: |
   ORDER BY RESOURCEGROUP, TYPE
 template: |
   | Name | Type | Resource Group | Location | Subscription |
-  | --- | --- | --- | --- | --- |
+  | ---- | ---- | -------------- | -------- | ------------ |
   {{#each result}}
     | {{NAME}} | {{TYPE}} | {{RESOURCEGROUP}} | {{LOCATION}} | {{SUBSCRIPTION}} |
   {{/each}}
@@ -49,11 +49,11 @@ template: |
 Note: Output is truncated for example.
 
 ```text
-| Name | Type | Resource Group | Location | Subscription |
-| --- | --- | --- | --- | --- |
-| serviceone | App Service plan | app-services | West US | VSEnt Subscription |
-| serviceone-ai | Application Insights | app-services | West US | VSEnt Subscription |
-| serviceone-app | Function App | app-services | West US | VSUlt Subscription |
+| Name           | Type                 | Resource Group | Location | Subscription       |
+| -------------- | -------------------- | -------------- | -------- | ------------------ |
+| serviceone     | App Service plan     | app-services   | West US  | VSEnt Subscription |
+| serviceone-ai  | Application Insights | app-services   | West US  | VSEnt Subscription |
+| serviceone-app | Function App         | app-services   | West US  | VSUlt Subscription |
 ```
 
 ## References

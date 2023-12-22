@@ -207,7 +207,7 @@ export class AlaSqlQuery extends Service implements IQuery {
     };
 
     /*
-// >> id='docs-sql-statements-pageproperty' options='file=sql-statements/pageproperty.md'
+// >> id='docs-sql-statements-pageproperty' options='file=queries/sql-statements/pageproperty.md'
 title: pageProperty
 ---
 
@@ -357,7 +357,14 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
   }
 
   /*
-  // >> id='obsidian-markdown-files-table-snippet' options=''
+  // >> id='obsidian-markdown-files-table-snippet' options='file=data-tables/obsidian-markdown-files.md'
+  ---
+  nav_order: 3
+  layout: default
+  parent: Data Tables
+  title: Obsidian Markdown Files
+  ---
+  ## Obsidian Markdown Files (obsidian_markdown_files)
 
   If you need to reference a property of a object do not forget to use `->` and not `.`
 

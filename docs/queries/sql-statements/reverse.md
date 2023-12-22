@@ -1,7 +1,7 @@
-import alasql from 'alasql';
-
-/*
-// >> id='docs-sql-statements-reverse' options='file=queries/sql-statements/reverse.md'
+---
+layout: default
+parent: SQL Statements
+grand_parent: Writing Queries
 title: REVERSE
 ---
 
@@ -40,12 +40,3 @@ template: |
   }
 ]
 ```
-
-// << docs-sql-statements-reverse
-*/
-export function registerFunctionReverse(): void {
-  alasql.fn.REVERSE = function (value: string): string {
-    return value.split('').reverse().join('');
-  };
-}
-

@@ -1,14 +1,14 @@
 ---
 layout: default
 parent: SQL Functions
-grand_parent: Queries
-title: parseWikiLinkDisplayName(string)
+grand_parent: Writing Queries
+title: parseWikiLinkLocation(string)
 ---
 There are multiple functions to help with the parsing of the wiki links in a string.
 
-This is the signature of the function you can use to extract the display name from the wiki link.
+This is the signature of the function you can use to extract the location from the wiki link.
 
-- parseWikiLinkDisplayName(value: string): string
+- parseWikiLinkLocation(value: string): string
 
 In this example it takes the string containing the wiki link and calls the different parsing functions.
 
@@ -22,7 +22,7 @@ Need to work on [[Projects/Painting The House|Painting The House]] soon.
 ```qatt
 query: |
   SELECT
-  parseWikiLinkDisplayName('Need to work on [[Projects/Painting The House|Painting The House]] soon.') AS Display
+  parseWikiLinkLocation('Need to work on [[Projects/Painting The House|Painting The House]] soon.') AS Location
 template: |
   {{stringify result}}
 ```
@@ -33,5 +33,5 @@ template: |
 will result in:
 
 ```text
-[ { "Display": "Painting The House" } ]
+[ { "Location": "Projects/Painting The House" } ]
 ```

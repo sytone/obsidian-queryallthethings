@@ -27,7 +27,7 @@ export function registerHandlebarsHelpers(): void {
     },
 
     /*
-// >> id='docs-handlebars-helper-obsidianhtmlinternallink' options='file=hb-helpers/obsidianhtmlinternallink.md'
+// >> id='docs-handlebars-helper-obsidianhtmlinternallink' options='file=templates/hb-helpers/obsidianhtmlinternallink.md'
 title: obsidian html internal link
 ---
 The `obsidianHtmlInternalLink` helper takes a path and a label and returns a link

@@ -1,7 +1,7 @@
 ---
 layout: default
 parent: Handlebars Helpers
-grand_parent: Templates
+grand_parent: Using Templates
 title: obsidian html internal link
 ---
 The `obsidianHtmlInternalLink` helper takes a path and a label and returns a link

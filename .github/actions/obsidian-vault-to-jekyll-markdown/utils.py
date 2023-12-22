@@ -16,6 +16,9 @@ def get_all_document_paths(source_directory):
 
     all_paths.sort(reverse=True)
 
+    for resolvedPath in all_paths:
+        print(f"📄 {resolvedPath}")
+
     return all_paths
 
 
@@ -98,7 +101,7 @@ def replace_comment_blocks(text):
 def replace_callouts(text):
     results = text
 
-    
+
     # regex = r"(^> \[!(NOTE|INFO)\].*?\n{2})"
     # Only supports one line notes and infos.
     regex = r"(^> \[!(NOTE|INFO)\].*?\n.*?\n)"

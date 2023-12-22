@@ -2,11 +2,10 @@
 nav_order: 2
 layout: default
 parent: Data Tables
-title: Obsidian Markdown Notes (obsidian_markdown_notes)
+title: Obsidian Markdown Notes
 ---
 ## Obsidian Markdown Notes (obsidian_markdown_notes)
 
-%%snippet id='docs-tables-obsidian-markdown-notes' options='nocodeblock'%%
 If you need to reference a property of a object do not forget to use `->` and not `.`
 
 | Column Name | Type   | Description                                     |
@@ -30,9 +29,7 @@ If you need to reference a property of a object do not forget to use `->` and no
 | listItems  | [ListItem[]](#listcache-structure) | Array of listItems cached by Obsidian                     |
 | frontmatter  | [FrontMatterCache[]](#frontmattercache-structure) | Array of frontmatter cached by Obsidian                     |
 | blocks  | Record<string, BlockCache> | Array of blocks cached by Obsidian                     |
-%%/snippet%%
 
-%%snippet id='docs-tables-obsidian-markdown-notes-linkcache' options='nocodeblock'%%
 ### LinkCache structure
 
 ```text
@@ -63,9 +60,7 @@ Loc {
   offset: number;
 }
 ```
-%%/snippet%%
 
-%%snippet id='docs-tables-obsidian-markdown-notes-embedcache' options='nocodeblock'%%
 ### EmbedCache structure
 
 ```text
@@ -77,9 +72,7 @@ Loc {
   position: Pos;
 }
 ```
-%%/snippet%%
 
-%%snippet id='docs-tables-obsidian-markdown-notes-headingcache' options='nocodeblock'%%
 ### HeadingCache structure
 
 ```text
@@ -89,9 +82,7 @@ Loc {
   position: Pos;
 }
 ```
-%%/snippet%%
 
-%%snippet id='docs-tables-obsidian-markdown-notes-sectioncache' options='nocodeblock'%%
 ### SectionCache structure
 
 ```text
@@ -103,9 +94,7 @@ Loc {
   position: Pos;
 }
 ```
-%%/snippet%%
 
-%%snippet id='docs-tables-obsidian-markdown-notes-listitem' options='nocodeblock'%%
 ### ListItem structure
 
 ```text
@@ -116,9 +105,7 @@ Loc {
     line: string;
 }
 ```
-%%/snippet%%
 
-%%snippet id='docs-tables-obsidian-markdown-notes-frontmattercache' options='nocodeblock'%%
 ### FrontMatterCache structure
 
 ```text
@@ -127,4 +114,3 @@ Loc {
   position: Pos;
 }
 ```
-%%/snippet%%

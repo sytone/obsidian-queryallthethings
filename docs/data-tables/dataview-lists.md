@@ -2,11 +2,10 @@
 nav_order: 26
 layout: default
 parent: Data Tables
-title: Dataview Lists (dataview_lists)
+title: Dataview Lists
 ---
 ## Dataview Lists (dataview_lists)
 
-%%snippet id='lists-table-snippet' options='nocodeblock'%%
 If a property is not found in the task body it will be set to undefined. This table
 is backed by Dataview and will be refreshed when Dataview is refreshed.
 
@@ -24,4 +23,4 @@ is backed by Dataview and will be refreshed when Dataview is refreshed.
 | links       | string       |             |
 | children    | string       |             |
 | parent      | number       |             |
-%%/snippet%%
+

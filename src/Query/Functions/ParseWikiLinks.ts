@@ -1,7 +1,7 @@
 import alasql from 'alasql';
 
 /*
-// >> id='docs-alasql-function-parsewikilinklocation' options='file=sql-functions/parsewikilinklocation.md'
+// >> id='docs-alasql-function-parsewikilinklocation' options='file=queries/sql-functions/parsewikilinklocation.md'
 title: parseWikiLinkLocation(string)
 ---
 There are multiple functions to help with the parsing of the wiki links in a string.
@@ -52,7 +52,7 @@ export function registerFunctionParseWikiLinkLocation(): void {
 }
 
 /*
-// >> id='docs-alasql-function-parsewikilinkdisplayname' options='file=sql-functions/parsewikilinkdisplayname.md'
+// >> id='docs-alasql-function-parsewikilinkdisplayname' options='file=queries/sql-functions/parsewikilinkdisplayname.md'
 title: parseWikiLinkDisplayName(string)
 ---
 There are multiple functions to help with the parsing of the wiki links in a string.
@@ -102,7 +102,7 @@ export function registerFunctionParseWikiLinkDisplayName(): void {
 }
 
 /*
-// >> id='docs-alasql-function-wikilinkhasdisplayname' options='file=sql-functions/wikilinkhasdisplayname.md'
+// >> id='docs-alasql-function-wikilinkhasdisplayname' options='file=queries/sql-functions/wikilinkhasdisplayname.md'
 title: wikiLinkHasDisplayName(string)
 ---
 There are multiple functions to help with the parsing of the wiki links in a string.

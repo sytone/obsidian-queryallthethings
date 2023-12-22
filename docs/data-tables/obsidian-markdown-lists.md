@@ -2,7 +2,7 @@
 nav_order: 4
 layout: default
 parent: Data Tables
-title: Obsidian Markdown Lists (obsidian_markdown_lists)
+title: Obsidian Markdown Lists
 ---
 
 ## Obsidian Markdown Lists (obsidian_markdown_lists)

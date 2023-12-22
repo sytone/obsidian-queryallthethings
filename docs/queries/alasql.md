@@ -2,7 +2,7 @@
 layout: default
 title: AlaSQL Queries
 nav_order: 1
-parent: Queries
+parent: Writing Queries
 ---
 ## Writing queries and using the features of AlaSQL
 
@@ -10,7 +10,7 @@ AlaSQL support most normal SQL queries, including the creation of tables and ins
 
 The plugin already has a database in local storage called `qatt` that has the event log as well as the reference calendar for your convenience. See [Adding tables to the local storage database](#Adding%20tables%20to%20the%20local%20storage%20database) for more details.
 
-When writing queries you can use the inbuilt tables documented on [Data Tables](data-tables.md) to search for data. These are all based on your notes and metadata in them. 
+When writing queries you can use the inbuilt tables documented on [Data Tables](data-tables.md) to search for data. These are all based on your notes and metadata in them.
 
 
 ## Adding tables to the local storage database
@@ -30,13 +30,13 @@ Ref: [Quirky · AlaSQL/alasql Wiki (github.com)](https://github.com/alasql/alasq
 You can use
 
 ```
-[column] 
+[column]
 ```
 
 or
 
 ```
-`column` 
+`column`
 ```
 
 for columns with spaces, special symbols, etc. This also applies to **column named with [AlaSQL Reserved Keywords](#AlaSQL%20Reserved%20Keywords)** independent of the letter case. So names like `date`, `begin`, `content`, `last`, `max`, `min`, `count`, `natural`, `path`, `right`, `show`, `temp`, `timeout`, `target`, `top`, `value`, and `work` needs to be wrapped.

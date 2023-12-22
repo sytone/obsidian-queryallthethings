@@ -2,7 +2,7 @@
 nav_order: 24
 layout: default
 parent: Data Tables
-title: Dataview Pages (dataview_pages)
+title: Dataview Pages
 ---
 ## Dataview Pages (dataview_pages)
 

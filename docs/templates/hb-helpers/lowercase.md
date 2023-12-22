@@ -1,5 +1,7 @@
-/*
-// >> id='docs-handlebars-helper-lowercase' options='file=templates/hb-helpers/lowercase.md'
+---
+layout: default
+parent: Handlebars Helpers
+grand_parent: Using Templates
 title: lowercase value
 ---
 The `lowercase`\-helper will convert the entire string to lowercase.
@@ -25,9 +27,3 @@ will result in:
 ```text
 this is some sentence
 ```
-
-// << docs-handlebars-helper-lowercase
-*/
-export function uppercase(value: string) {
-  return value ? value.toUpperCase() : value;
-}

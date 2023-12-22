@@ -1,7 +1,7 @@
 ---
 layout: default
 parent: SQL Functions
-grand_parent: Queries
+grand_parent: Writing Queries
 title: wikiLinkHasDisplayName(string)
 ---
 There are multiple functions to help with the parsing of the wiki links in a string.

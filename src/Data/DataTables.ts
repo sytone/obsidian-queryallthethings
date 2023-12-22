@@ -62,7 +62,16 @@ export class DataTables extends Service {
     const start = DateTime.now();
 
     /*
-    // >> id='reference-calendar-table-snippet' options=''
+    // >> id='reference-calendar-table-snippet' options='file=data-tables/qatt-referencecalendar.md'
+    ---
+    nav_order: 1
+    layout: default
+    parent: Data Tables
+    title: Reference Calendar Table
+    ---
+    ## Reference Calendar Table (qatt.ReferenceCalendar)
+
+    The reference calendar is used to help with date based management, you can directly query the table or use it to join to other data sources.
 
     | Column Name      | Type    | Description                                                               |
     | ---------------- | ------- | ------------------------------------------------------------------------- |

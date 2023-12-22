@@ -4,7 +4,6 @@ layout: default
 title: Codeblock Configuration
 ---
 
-%%snippet id='docs-codeblock-configuration' options='nocodeblock'%%
 When you create the query and template to render the results if the query the configuration values are placed in a markdown codeblock with the tag `qatt` added after the first three backticks of the block.
 
 The configuration is YAML based and support the following properties. As it is YAML you can use the `|` symbol after the key name and enter your values on multiple lines which are indented.
@@ -71,11 +70,25 @@ This sets the level of logging used when this code block is processed. Setting i
 
 **Pending Feature**
 
-As the results of the query and render are only shown in Obsidian if tou look at the markdown file in a text editor you will only see the query and template details. For most situations this would be fine but if you want the results and rendered output to be more permanent you can use this option to write the output to the page directly.
+If set to true the page that the codeblock on it will be updated with the rendered content, this process updates the file so outside of obsidian you can access the contents.
+
+## replaceTargetPath
+
+**Pending Feature**
+
+The path to the file to replace the contents of with the rendered output. This is an absolute path to a file in your vault.
+
+## replaceType
+
+**Pending Feature**
+
+Valid replacement types for the codeblock or target file.
+['never', 'once', 'onceDaily', 'onceDailyAppend', 'onceDailyPrepend', 'onceWeekly', 'always', 'alwaysappend', 'alwaysprepend']
+
+As the results of the query and render are only shown in Obsidian if you look at the markdown file in a text editor you will only see the query and template details. For most situations this would be fine but if you want the results and rendered output to be more permanent you can use this option to write the output to the page directly.
 
 By default the value will be `never` so each time the page is shown in Obsidian it is dynamically rendered.
 
-If you set it to `once` the entire codeblock will be processed and replaced with the output, this will remove the codeblock from the file completely and the rendered results will not change from that point forward.
+If you set it to `once` the entire codeblock or target path will be processed and replaced with the output, this will remove / disable the codeblock from the file completely and the rendered results will not change from that point forward.
 
 If you set it to `always` the rendered output will be placed before the codeblock and in preview and reading view the codeblock will be rendered as a blank string to hide it. It is still there and you can edit it in edit mode. When viewing in a text editor you will see the rendered output and then the codeblock below it. To place the renderers content after the codeblock use `alwaysappend`. You can also use `alwaysprepend` if you want to be explicit.
-%%/snippet%%

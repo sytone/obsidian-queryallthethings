@@ -1,7 +1,7 @@
 ---
 layout: default
 parent: SQL Functions
-grand_parent: Queries
+grand_parent: Writing Queries
 title: updatePropertyFromList(value)
 ---
 The `updatePropertyFromList` function will return a link that when clicked will prompt the user to select a value from a list. When the user selects a value the property will be updated on the file.

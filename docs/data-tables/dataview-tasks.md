@@ -2,11 +2,10 @@
 nav_order: 25
 layout: default
 parent: Data Tables
-title: Dataview Tasks (dataview_tasks)
+title: Dataview Tasks
 ---
 ## Dataview Tasks (dataview_tasks)
 
-%%snippet id='tasks-table-snippet' options='nocodeblock'%%
 If a property is not found in the task body it will be set to undefined. This table
 is backed by Dataview and will be refreshed when Dataview is refreshed.
 
@@ -24,4 +23,3 @@ is backed by Dataview and will be refreshed when Dataview is refreshed.
 | createDate     | string       | Create date of the task as string.                                                                      |
 | scheduledDate  | string       | Schedule date of the task as string.                                                                    |
 | priority       | number       | Priority of the task with 1 as highest and 3 as lowest                                                  |
-%%/snippet%%

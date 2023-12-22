@@ -14,7 +14,14 @@ import {ListItem} from 'ListItem';
 
 /*
 Update the table below when new columns are added so documentation is updated.
-// >> id='docs-tables-obsidian-markdown-notes' options=''
+// >> id='docs-tables-obsidian-markdown-notes' options='file=data-tables/obsidian-markdown-notes.md'
+---
+nav_order: 2
+layout: default
+parent: Data Tables
+title: Obsidian Markdown Notes
+---
+## Obsidian Markdown Notes (obsidian_markdown_notes)
 
 If you need to reference a property of a object do not forget to use `->` and not `.`
 
@@ -39,11 +46,6 @@ If you need to reference a property of a object do not forget to use `->` and no
 | listItems  | [ListItem[]](#listcache-structure) | Array of listItems cached by Obsidian                     |
 | frontmatter  | [FrontMatterCache[]](#frontmattercache-structure) | Array of frontmatter cached by Obsidian                     |
 | blocks  | Record<string, BlockCache> | Array of blocks cached by Obsidian                     |
-
-// << docs-tables-obsidian-markdown-notes
-*/
-/*
-// >> id='docs-tables-obsidian-markdown-notes-linkcache' options=''
 
 ### LinkCache structure
 
@@ -75,10 +77,6 @@ Loc {
   offset: number;
 }
 ```
-// << docs-tables-obsidian-markdown-notes-linkcache
-*/
-/*
-// >> id='docs-tables-obsidian-markdown-notes-embedcache' options=''
 
 ### EmbedCache structure
 
@@ -91,11 +89,7 @@ Loc {
   position: Pos;
 }
 ```
-// << docs-tables-obsidian-markdown-notes-embedcache
-*/
 
-/*
-// >> id='docs-tables-obsidian-markdown-notes-headingcache' options=''
 ### HeadingCache structure
 
 ```text
@@ -105,10 +99,6 @@ Loc {
   position: Pos;
 }
 ```
-// << docs-tables-obsidian-markdown-notes-headingcache
-*/
-/*
-// >> id='docs-tables-obsidian-markdown-notes-sectioncache' options=''
 
 ### SectionCache structure
 
@@ -122,11 +112,6 @@ Loc {
 }
 ```
 
-// << docs-tables-obsidian-markdown-notes-sectioncache
-*/
-/*
-// >> id='docs-tables-obsidian-markdown-notes-listitem' options=''
-
 ### ListItem structure
 
 ```text
@@ -138,11 +123,6 @@ Loc {
 }
 ```
 
-// << docs-tables-obsidian-markdown-notes-listitem
-*/
-/*
-// >> id='docs-tables-obsidian-markdown-notes-frontmattercache' options=''
-
 ### FrontMatterCache structure
 
 ```text
@@ -151,7 +131,7 @@ Loc {
   position: Pos;
 }
 ```
-// << docs-tables-obsidian-markdown-notes-frontmattercache
+// << docs-tables-obsidian-markdown-notes
 */
 export class Note {
   public static async createNewNote(markdownFile: TFile,

@@ -1,4 +1,4 @@
 ---
 layout: default
 parent: SQL Functions
-grand_parent: Queries
+grand_parent: Writing Queries

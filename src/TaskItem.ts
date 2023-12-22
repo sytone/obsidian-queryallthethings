@@ -7,7 +7,7 @@ import {parseTask} from 'Parse/Parsers';
 nav_order: 5
 layout: default
 parent: Data Tables
-title: Obsidian Markdown Tasks (obsidian_markdown_tasks)
+title: Obsidian Markdown Tasks
 ---
 
 ## Obsidian Markdown Tasks (obsidian_markdown_tasks)
