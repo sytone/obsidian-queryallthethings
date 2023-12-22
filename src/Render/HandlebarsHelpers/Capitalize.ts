@@ -28,6 +28,40 @@ This is some sentence
 
 // << docs-handlebars-helper-capitalize
 */
+/*
+// >> id='docs-examples-handlebars-capitalize' options='file=examples-tutorials/handlebars/capitalize.md'
+title: Capitalize Helper
+---
+
+This uses a simple query to help show what the Capitalize helper does when rendering.
+
+### Example
+````markdown
+{% raw %}
+```qatt
+query: |
+  SELECT 'word' AS LowerCaseWord
+template: |
+  {{#each result}}
+    Value from result: **{{LowerCaseWord}}**
+    Value using capitalize: **{{capitalize LowerCaseWord}}**
+  {{/each}}
+```
+{% endraw %}
+````
+### Live in Vault
+```qatt
+query: |
+  SELECT 'word' AS LowerCaseWord
+template: |
+  {{#each result}}
+    Value from result: **{{LowerCaseWord}}**
+    Value using capitalize: **{{capitalize LowerCaseWord}}**
+  {{/each}}
+```
+
+// << docs-examples-handlebars-capitalize
+*/
 export function capitalize(word: string) {
   return word.charAt(0).toUpperCase() + word.slice(1);
 }

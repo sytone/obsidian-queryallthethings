@@ -32,12 +32,14 @@ To run the pre-processor for documentation execute `pnpm run build:docs` and it 
 
 ## Site Structure
 
+```text
 |   index.md (1)
 |   first-query.md (2)
 |   codeblock.md (4)
 |   installation.md (3)
-|   how-the-plugin-generates-output.md (5)
+|   output-generation.md (5)
 |   settings.md (6)
+|
 +---data-tables
 |       index.md (7)
 |       qatt-ReferenceCalendar.md (1)
@@ -49,17 +51,24 @@ To run the pre-processor for documentation execute `pnpm run build:docs` and it 
 |       dataview-tasks.md (25)
 |       dataview-lists.md (26)
 |
-|   404.html
-|   about.md
++---queries
+|   |   alasql.md
+|   |   index.md
+|   |
+|   +---sql-functions (Any custom function documentation)
+|   |       ...
+|   |
+|   \---sql-statements (SQL statement documentation and help)
+|           ...
 |
-+---contributing
-|       development.md
-|       documentation.md
-|       index.md
++---templates
+|   |   handlebars.md
+|   |   index.md
+|   |
+|   \---hb-helpers (Any custom Handlebars Helper documentation)
+|           ...
 |
-
-|
-+---Examples
++---examples-tutorials (all examples and tutorials are here. Append with live so there is a version that works in a vault if they load the docs zip.)
 |   |   active-tasks-grouped-by-day-live.md
 |   |   active-tasks-grouped-by-day.md
 |   |   dataview-fields.md
@@ -69,108 +78,19 @@ To run the pre-processor for documentation execute `pnpm run build:docs` and it 
 |   |   using-pageproperty-simple-live.md
 |   |   using-updatepropertyfromlist.md
 |   |
-|   +---handlebars
+|   +---handlebars (handlebars explicit live examples)
 |   |       capitalize.md
 |   |       group.md
 |   |
-|   \---ttrpg
-|           creatures_b1.json
-|           index.md
-|           monster-search-live.md
-|           monster-search.md
-|
-+---hb-helpers
-|       group.md
-|       index.md
-|       lowercase.md
-|       obsidianhtmlinternallink.md
-|       stringify.md
-|       uppercase.md
-|       _header.md
-|
-+---live-examples
-|   |   index.md
-|   |   project-list.md
 |   |
-|   \---notes
-|       |   index.md
-|       |
-|       \---projects
-|               Project One.md
-|               Project Two.md
-|
-+---queries
-|       alasql.md
+|   \---ttrpg (TTRPG specific examples)
++---contributing
+|       development.md
+|       documentation.md
 |       index.md
 |
-+---sample-notes
-+---sql-functions
-|       arrayfrom.md
-|       custom-functions.md
-|       index.md
-|       parsewikilinkdisplayname.md
-|       parsewikilinklocation.md
-|       stringify.md
-|       updatepropertyfromlist.md
-|       wikilinkhasdisplayname.md
-|       _header.md
-|
-+---sql-statements
-|       case.md
-|       charindex.md
-|       coalesce.md
-|       if-then-else.md
-|       in.md
-|       index.md
-|       pageproperty.md
-|       reverse.md
-|       union.md
-|       _header.md
-|
-+---templates
-|       handlebars-helpers.md.removed
-|       handlebars.md
-|       index.md
-|       template.md
-|       _header.md
-|
-
-
-|-- index.md (1)
-|-- first-query.md (2)
-|-- installation.md (3)
-|-- codeblock.md (4)
-|-- data-tables
-|   |-- index.md (5)
-|   |--
-|-- how-the-plugin-generates-output (6)
-|-- settings.md (7)
-|-- about.md
-
-+-- ..
-|-- (Jekyll files)
-|
-|-- docs
-|   |-- ui-components
-|   |   |-- index.md  (parent page)
-|   |   |-- buttons.md
-|   |   |-- code.md
-|   |   |-- labels.md
-|   |   |-- tables.md
-|   |   +-- typography.md
-|   |
-|   |-- utilities
-|   |   |-- index.md      (parent page)
-|   |   |-- color.md
-|   |   |-- layout.md
-|   |   |-- responsive-modifiers.md
-|   |   +-- typography.md
-|   |
-|   |-- (other md files, pages with no children)
-|   +-- ..
-|
-|-- (Jekyll files)
-+-- ..
+|   about.md
+```
 
 ## Building documentation in a Docker container
 

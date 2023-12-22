@@ -11,7 +11,6 @@ The query below will return the top 10 notes from the `obsidian_markdown_notes` 
 If you are using javascript objects instead of using the `.` when calling functions/properties off classes you use a `->` to address the function or property.
 
 {% raw %}
-
 ````markdown
 ```qatt
 query: |
@@ -24,5 +23,4 @@ template: |
   {{/each}}
 ```
 ````
-
 {% endraw %}

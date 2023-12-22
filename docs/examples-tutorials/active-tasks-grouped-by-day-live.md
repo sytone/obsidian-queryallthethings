@@ -9,14 +9,14 @@ This example uses the `obsidian_markdown_tasks` table to get all the tasks that 
 
 It shows moment being used to validate and parse the dates for output. I also shows a more complex output where we are rendering the results direct to html with attributes and callbacks to enable more integration in Obsidian. The `postRenderFormat` property tells the rendering engine not to do any post processing to convert markdown to HTML as the output is already in HTML.
 
-## Tasks for query:
+## Tasks for query
 
 - [ ] Task number 1 📅 2023-11-11 📜
 - [ ] Task number 2 📅 2023-11-11 📜
 - [ ] Task number 3 📅 2023-10-11 📜
 - [ ] Task number 4 📅 2023-10-12 📜
 
-## Live Result:
+## Live Result
 
 ```qatt
 postRenderFormat: html

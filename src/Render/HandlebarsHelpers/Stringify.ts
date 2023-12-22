@@ -1,3 +1,5 @@
+import Handlebars, {type HelperOptions} from 'handlebars';
+
 /*
 // >> id='docs-handlebars-helper-stringify' options='file=templates/hb-helpers/stringify.md'
 title: stringify value

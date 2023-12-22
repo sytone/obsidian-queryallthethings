@@ -4,40 +4,20 @@
     "type": "split",
     "children": [
       {
-        "id": "a318d92e15f83d7d",
+        "id": "9286cff9d14b77eb",
         "type": "tabs",
         "children": [
           {
-            "id": "c8cd2b2f334a65f6",
+            "id": "60c58a9e7d5033ee",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "templates/hb-helpers/group.md",
+                "file": "index.md",
                 "mode": "source",
-                "source": true
+                "source": false
               }
-            },
-            "group": "07908c2c3e6fce3a"
-          }
-        ]
-      },
-      {
-        "id": "1088130e4f2863a2",
-        "type": "tabs",
-        "children": [
-          {
-            "id": "5f83440911062696",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "templates/hb-helpers/group.md",
-                "mode": "preview",
-                "source": true
-              }
-            },
-            "group": "07908c2c3e6fce3a"
+            }
           }
         ]
       }
@@ -105,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "templates/hb-helpers/group.md",
+                "file": "index.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -122,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "templates/hb-helpers/group.md",
+                "file": "index.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -145,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "templates/hb-helpers/group.md"
+                "file": "index.md"
               }
             }
           },
@@ -179,44 +159,44 @@
       "qatt:Refresh QATT Tables": false
     }
   },
-  "active": "c8cd2b2f334a65f6",
+  "active": "60c58a9e7d5033ee",
   "lastOpenFiles": [
+    "codeblock.md",
+    "index.md",
+    "templates/hb-helpers/codeblockheader.md",
+    "examples-tutorials/handlebars/codeblockheader.md",
+    "_site/templates/hb-helpers/codeblockheader.html",
+    "_site/examples-tutorials/handlebars/codeblockheader.html",
+    "examples-tutorials/handlebars/codeblockfooter.md",
+    "examples-tutorials/handlebars/group.md",
+    "examples-tutorials/handlebars/capitalize.md",
+    "templates/hb-helpers/group.md",
+    "_site/examples/handlebars/group.md",
+    "_site/examples/handlebars",
+    "_site/examples",
+    "examples/handlebars/group.md",
+    "examples/handlebars",
+    "examples",
+    "templates/hb-helpers/codeblockfooter.md",
+    "examples-tutorials/listing-recently-updated-files.md",
+    "_site/templates/hb-helpers/codeblockfooter.html",
+    "_site/examples-tutorials/handlebars/codeblockfooter.html",
+    "examples-tutorials/active-tasks-grouped-by-day.md",
+    "examples-tutorials/active-tasks-grouped-by-day-live.md",
+    "examples-tutorials/handlebars/_header.md",
+    "templates/hb-helpers/index.md",
+    "_site/examples-tutorials/handlebars/index.html",
+    "examples-tutorials/handlebars/index.md",
     "_site/examples-tutorials/live-examples/project-list.md",
     "_site/examples-tutorials/live-examples/notes/index.md",
     "_site/examples-tutorials/live-examples/index.md",
     "_site/examples-tutorials/live-examples/notes/projects/Project Two.html",
-    "_site/examples-tutorials/live-examples/notes/projects/Project One.html",
-    "_site/examples-tutorials/live-examples/notes/projects",
-    "_site/examples-tutorials/live-examples/notes",
-    "_site/examples-tutorials/live-examples",
     "examples-tutorials/live-examples/notes/projects/Project Two.md",
     "examples-tutorials/live-examples/notes/projects/Project One.md",
     "examples-tutorials/live-examples/notes/index.md",
-    "examples-tutorials/live-examples/notes/projects",
-    "examples-tutorials/live-examples/notes",
     "examples-tutorials/live-examples/project-list.md",
     "examples-tutorials/live-examples/index.md",
-    "examples-tutorials/live-examples",
-    "_site/examples-tutorials/ttrpg/creatures_b1.json",
-    "_site/examples-tutorials/using-updatepropertyfromlist.html",
     "examples-tutorials/using-updatepropertyfromlist.md",
-    "examples-tutorials/using-pageproperty-simple-live.md",
-    "examples-tutorials/listing-recently-updated-files.md",
-    "examples-tutorials/listing-recently-updated-files-live.md",
-    "examples-tutorials/index.md",
-    "examples-tutorials/dataview-fields.md",
-    "examples-tutorials/active-tasks-grouped-by-day.md",
-    "examples-tutorials/active-tasks-grouped-by-day-live.md",
-    "examples-tutorials/ttrpg/monster-search.md",
-    "examples-tutorials/ttrpg/monster-search-live.md",
-    "examples-tutorials/ttrpg/index.md",
-    "examples-tutorials/handlebars/group.md",
-    "examples-tutorials/handlebars/capitalize.md",
-    "contributing/documentation.md",
-    "templates/hb-helpers/_header.md",
-    "templates/hb-helpers/uppercase.md",
-    "templates/hb-helpers/stringify.md",
-    "templates/hb-helpers/lowercase.md",
     "_site/assets/images/small-image.jpg",
     "_site/assets/images/large-image.jpg"
   ]

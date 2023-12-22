@@ -25,3 +25,4 @@ coverage
 src/**/*.js
 ts-jest.log
 .github/actions/obsidian-vault-to-jekyll-markdown/__pycache__/**/*
+.jekyll-cache
