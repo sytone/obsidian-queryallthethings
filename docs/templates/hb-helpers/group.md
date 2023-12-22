@@ -18,4 +18,4 @@ The `group`\-helper will group the result by the specified column.
 
 {% endraw %}
 
-See the [group](/examples/handlebars/group) page for a full example.
+See the [group](../../examples-tutorials/handlebars/group) page for a full example.
