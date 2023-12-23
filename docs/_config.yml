@@ -50,6 +50,7 @@ gh_edit_view_mode: 'tree' # "tree" or "edit" if you want the user to jump into t
 # remote_theme: just-the-docs/just-the-docs
 theme: just-the-docs
 heading_anchors: true
+color_scheme: dark
 # color_scheme: dark
 
 # Aux links for the upper right navigation
