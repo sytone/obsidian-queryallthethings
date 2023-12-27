@@ -18,7 +18,7 @@ export class BaseLoaderService extends Service {
     this.registerEvent(
       this.plugin.app.metadataCache.on('changed', async (file, data, cache) => {
         if (this.fileInImportList(file)) {
-          this.logger.info(`metadataCache changed event detected for ${file.path}`);
+          this.logger.info(`metadataCache changed event detected for ${file.path}`, file);
           await this.importArrayToTableFromFile(file, this.importCallback);
           this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
         }
@@ -64,8 +64,18 @@ export class BaseLoaderService extends Service {
         await this.importArrayToTableFromUrl(url, tableName, this.importCallback);
       } else {
         const queryFile = this.plugin.app.vault.getAbstractFileByPath(file);
-        // eslint-disable-next-line no-await-in-loop
-        await this.importArrayToTableFromFile((queryFile as TFile), this.importCallback);
+
+        if (!queryFile) {
+          this.logger.warn(`Unable to find file ${file} for import, please check your settings.`);
+          continue;
+        }
+
+        try {
+          // eslint-disable-next-line no-await-in-loop
+          await this.importArrayToTableFromFile((queryFile as TFile), this.importCallback);
+        } catch (error) {
+          this.logger.info(`Error processing ${file} for import`, error);
+        }
       }
     }
   }

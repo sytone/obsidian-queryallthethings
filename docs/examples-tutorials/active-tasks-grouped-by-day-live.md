@@ -40,7 +40,7 @@ template: |
   <h4>{{ value }}</h4>
       <ul class='contains-task-list'>
       {{#each items}}
-      <li class='task-list-item plugin-tasks-list-item'> {{ taskcheckbox this }} {{#if (isHighPriority priority)}}<strong>{{/if}} {{#micromark inline="true"}} {{text}} [[{{page}}|📝]] {{/micromark}} {{#if (isHighPriority priority)}}</strong>{{/if}}</li>
+      <li class='task-list-item plugin-tasks-list-item'> {{ taskCheckbox this }} {{#if (isHighPriority priority)}}<strong>{{/if}} {{#micromark inline="true"}} {{text}} [[{{page}}|📝]] {{/micromark}} {{#if (isHighPriority priority)}}</strong>{{/if}}</li>
       {{/each}}
       </ul>
   {{/group}}

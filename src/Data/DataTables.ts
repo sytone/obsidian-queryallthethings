@@ -32,8 +32,10 @@ export class DataTables extends Service {
     alasql('CREATE TABLE IF NOT EXISTS qatt.Events (date DATETIME, event STRING)');
     alasql('CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar');
 
-    this.refreshTasksTableFromDataview(reason);
-    this.refreshListsTableFromDataview(reason);
+    if (this.dvService.dataViewEnabled) {
+      this.refreshTasksTableFromDataview(reason);
+      this.refreshListsTableFromDataview(reason);
+    }
 
     // UPDATE qatt.ReferenceCalendar SET date = '2000-01-01' WHERE isToday;
     const start = DateTime.now();

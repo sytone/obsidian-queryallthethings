@@ -42,3 +42,4 @@ This stared as a fork of tasks focused on making queries against tasks more flex
 ## Development
 
 If you want to help out go ahead and fork and push back changes, more details on the [development](development.md) page.
+

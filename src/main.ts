@@ -1,29 +1,29 @@
 /* eslint-disable unicorn/filename-case */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {type CachedMetadata, Notice, Plugin, type TFile} from 'obsidian';
-import {use, useSettings} from '@ophidian/core';
-import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
-import type EventHandler from 'handlers/EventHandler';
-import {CommandHandler} from 'handlers/CommandHandler';
-import {DataTables} from 'Data/DataTables';
-import {HandlebarsRenderer} from 'Render/HandlebarsRenderer';
-import {type SettingsManager} from 'Settings/SettingsManager';
 import {AlaSqlQuery} from 'Query/AlaSqlQuery';
-import {HandlebarsRendererObsidian} from 'Render/HandlebarsRendererObsidian';
-import {LoggingService} from 'lib/LoggingService';
-import {QueryFactory} from 'Query/QueryFactory';
-import {RenderFactory} from 'Render/RenderFactory';
-import {QueryRendererV2Service} from 'QueryRendererV2';
-import {NotesCacheService} from 'NotesCacheService';
-import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
-import {CsvLoaderService} from 'Data/CsvLoaderService';
-import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
-import {JsonLoaderService} from 'Data/JsonLoaderService';
-import {DataviewService} from 'Integrations/DataviewService';
-import {SqlLoaderService} from 'Data/SqlLoaderService';
-import {UpdateModal} from 'lib/UpdateModal';
+import {CommandHandler} from 'handlers/CommandHandler';
 import {confirmObjectPath, promptWithSuggestions} from 'Internal';
+import {CsvLoaderService} from 'Data/CsvLoaderService';
+import {DataTables} from 'Data/DataTables';
+import {DataviewService} from 'Integrations/DataviewService';
+import {HandlebarsRenderer} from 'Render/HandlebarsRenderer';
+import {JsonLoaderService} from 'Data/JsonLoaderService';
+import {LoggingService} from 'lib/LoggingService';
+import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
+import {NotesCacheService} from 'NotesCacheService';
+import {QueryFactory} from 'Query/QueryFactory';
+import {QueryRendererV2Service} from 'QueryRendererV2';
 import {ReleaseNotes} from 'ReleaseNotes';
+import {RenderFactory} from 'Render/RenderFactory';
+import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
+import {SqlLoaderService} from 'Data/SqlLoaderService';
+import {type CachedMetadata, Notice, Plugin, type TFile} from 'obsidian';
+import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
+import {type SettingsManager} from 'Settings/SettingsManager';
+import {UpdateModal} from 'lib/UpdateModal';
+import {use, useSettings} from '@ophidian/core';
+import {EventHandler} from 'handlers/EventHandler';
+import {WindowFunctionsService} from 'lib/WindowFunctionsService';
 
 export class Note {
   constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
@@ -52,9 +52,13 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   logger = this.use(LoggingService).getLogger('Qatt');
   dataTables = this.use(DataTables);
   commandHandler = this.use(CommandHandler);
+  eventHandler = this.use(EventHandler);
   releaseNotes = this.use(ReleaseNotes);
+  windowFunctions = this.use(WindowFunctionsService);
 
-  // Settings, TBD is I use this or not.
+  /* -------------------------------------------------------------------------- */
+  /*                            Plugin wide settings                            */
+  /* -------------------------------------------------------------------------- */
   settingsTab = useSettingsTab(this);
 
   settings = useSettings(
@@ -99,7 +103,6 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
   // Public inlineRenderer: InlineRenderer | undefined;
   public queryRendererService: QueryRendererV2Service | undefined;
-  public eventHandler: EventHandler | undefined;
   public settingsManager: SettingsManager | undefined;
   public notesCacheService: NotesCacheService | undefined;
   public handlebarsRenderer: HandlebarsRenderer | undefined;
@@ -203,11 +206,8 @@ Query All the Things is a flexible way to query and render data in <a href="http
     this.use(QueryFactory).load();
     this.use(RenderFactory).load();
     this.use(HandlebarsRenderer).load();
-
     this.use(DataviewService).load();
 
-    // HandlebarsRenderer.registerHandlebarsHelpers();
-    HandlebarsRendererObsidian.registerHandlebarsHelpers();
     AlaSqlQuery.initialize();
     confirmObjectPath('_qatt.ui.promptWithSuggestions', promptWithSuggestions);
 
@@ -217,9 +217,6 @@ Query All the Things is a flexible way to query and render data in <a href="http
 
       this.dataTables?.refreshTables('layout ready');
 
-      await this.updateWindowLevelFunctions();
-
-      // D this.queryRendererService = this.use(QueryRendererService);
       this.notesCacheService = this.use(NotesCacheService);
 
       this.csvLoaderService = this.use(CsvLoaderService);
@@ -229,28 +226,28 @@ Query All the Things is a flexible way to query and render data in <a href="http
 
       this.queryRendererService = this.use(QueryRendererV2Service);
 
+      /* ------------------------- DataView based support ------------------------- */
       const dvService = this.use(DataviewService);
+      if (dvService.dataViewEnabled) {
+        // Refresh tables when dataview index is ready.
+        this.registerEvent(this.app.metadataCache.on('dataview:index-ready', () => {
+          this.logger.info('dataview:index-ready event detected.');
+          this.dataTables?.refreshTables('dataview:index-ready event detected');
+        }));
 
-      if (!dvService.dataViewEnabled) {
+        this.registerEvent(this.app.workspace.on('dataview:refresh-views', () => {
+          this.logger.info('dataview:refresh-views event detected.');
+          this.dataTables?.refreshTables('dataview:refresh-views event detected');
+        }));
+      } else {
         const dvNotInstalledNotice = new Notice('Dataview plugin is not installed. Dataview backed tables will be empty.');
       }
 
-      // Check for Custom JS
+      /* ------------------------- Custom JS based support ------------------------- */
       if (!app.plugins.enabledPlugins.has('customjs')) {
         const dvNotInstalledNotice = new Notice('CustomJS plugin is not installed. Referencing custom scripts in your query blocks will not work.');
       }
     });
-
-    // Refresh tables when dataview index is ready.
-    this.registerEvent(this.app.metadataCache.on('dataview:index-ready', () => {
-      this.logger.info('dataview:index-ready event detected.');
-      this.dataTables?.refreshTables('dataview:index-ready event detected');
-    }));
-
-    this.registerEvent(this.app.workspace.on('dataview:refresh-views', () => {
-      this.logger.info('dataview:refresh-views event detected.');
-      this.dataTables?.refreshTables('dataview:refresh-views event detected');
-    }));
 
     // Allow user to refresh the tables manually.
     this.addRibbonIcon('refresh-cw', 'Refresh QATT Tables', (evt: MouseEvent) => {
@@ -259,79 +256,13 @@ Query All the Things is a flexible way to query and render data in <a href="http
     });
 
     this.commandHandler.setup(this.internalLoggingConsoleLogLimit);
+    this.eventHandler.setup();
 
     await this.announceUpdate();
   }
 
   onunload() {
     this.logger.info(`unloading plugin "${this.manifest.name}" v${this.manifest.version}`);
-  }
-
-  public async updateWindowLevelFunctions() {
-    window.qattUpdateOriginalTask = async function (page: string, line: number, currentStatus: string, nextStatus: string) {
-      nextStatus = nextStatus === '' ? ' ' : nextStatus;
-
-      const rawFileText = await app.vault.adapter.read(page);
-      const hasRN = rawFileText.contains('\r');
-      const fileText = rawFileText.split(/\r?\n/u);
-
-      if (fileText.length < line) {
-        return;
-      }
-
-      fileText[line] = fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`);
-
-      const newText = fileText.join(hasRN ? '\r\n' : '\n');
-      await app.vault.adapter.write(page, newText);
-      app.workspace.trigger('dataview:refresh-views');
-    };
-
-    // eslint-disable-next-line max-params
-    window.qattUpdateOriginalTaskWithAppend = async function (page: string, line: number, currentStatus: string, nextStatus: string, append: string) {
-      nextStatus = nextStatus === '' ? ' ' : nextStatus;
-
-      const rawFileText = await app.vault.adapter.read(page);
-      const hasRN = rawFileText.contains('\r');
-      const fileText = rawFileText.split(/\r?\n/u);
-
-      if (fileText.length < line) {
-        return;
-      }
-
-      fileText[line] = `${fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`)}${append}`;
-
-      const newText = fileText.join(hasRN ? '\r\n' : '\n');
-      await app.vault.adapter.write(page, newText);
-      app.workspace.trigger('dataview:refresh-views');
-    };
-
-    window.qattUpdateOriginalTaskWithDoneDate = async function (page: string, line: number, currentStatus: string, nextStatus: string) {
-      nextStatus = nextStatus === '' ? ' ' : nextStatus;
-
-      const rawFileText = await app.vault.adapter.read(page);
-      const hasRN = rawFileText.contains('\r');
-      const fileText = rawFileText.split(/\r?\n/u);
-
-      if (fileText.length < line) {
-        return;
-      }
-
-      if (nextStatus === 'x' && !fileText[line].includes('✅')) {
-        const doneDate = new Date().toISOString().split('T')[0];
-        fileText[line] = `${fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`)} ✅ ${doneDate}`;
-      } else {
-        fileText[line] = `${fileText[line].replace(`[${currentStatus}]`, `[${nextStatus}]`)}`;
-      }
-
-      if (nextStatus !== 'x' && fileText[line].includes('✅')) {
-        const donePrefixIndex = fileText[line].lastIndexOf('✅');
-        fileText[line] = fileText[line].slice(0, donePrefixIndex) + fileText[line].slice(donePrefixIndex + 12);
-      }
-
-      const newText = fileText.join(hasRN ? '\r\n' : '\n');
-      await app.vault.adapter.write(page, newText);
-      app.workspace.trigger('dataview:refresh-views');
-    };
   }
 
   public async announceUpdate() {

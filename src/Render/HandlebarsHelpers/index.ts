@@ -15,3 +15,8 @@ export * from 'Render/HandlebarsHelpers/Uppercase';
 export * from 'Render/HandlebarsHelpers/Pad';
 export * from 'Render/HandlebarsHelpers/Micromark';
 export * from 'Render/HandlebarsHelpers/ObsidianHtmlInternalLink';
+export * from 'Render/HandlebarsHelpers/TaskCheckbox';
+export * from 'Render/HandlebarsHelpers/TaskCheckboxWithAppend';
+export * from 'Render/HandlebarsHelpers/FlexibleTaskCheckbox';
+export * from 'Render/HandlebarsHelpers/HtmlTaskList';
+

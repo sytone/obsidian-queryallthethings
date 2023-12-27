@@ -180,9 +180,6 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       this.registerEvent(this.plugin.app.workspace.on('qatt:dataview-store-update', this.render));
     }
 
-    // Old event
-    this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', this.render));
-
     await this.render();
   }
 

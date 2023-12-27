@@ -31,7 +31,8 @@
     "Qatt",
     "Recordset",
     "sectioncache",
-    "taskcheckbox"
+    "taskcheckbox",
+    "useid"
   ],
   "[markdown]": {
     "editor.formatOnSave": true,

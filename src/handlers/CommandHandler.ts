@@ -3,10 +3,12 @@ import alasql from 'alasql';
 import {LoggingService, type Logger} from 'lib/LoggingService';
 import {Service} from '@ophidian/core';
 import {type CachedMetadata, Notice, Plugin, type TFile} from 'obsidian';
+import {WindowFunctionsService} from 'lib/WindowFunctionsService';
 
 export class CommandHandler extends Service {
   plugin = this.use(Plugin);
   logger = this.use(LoggingService).getLogger('Qatt.CommandHandler');
+  windowFunctions = this.use(WindowFunctionsService);
 
   public setup(internalLoggingConsoleLogLimit: number): void {
     this.plugin.addCommand({
@@ -57,7 +59,7 @@ export class CommandHandler extends Service {
       id: 'qatt-internal-reload-window-functions',
       name: 'Internal - Reload Window Level Functions',
       callback: () => {
-        this.plugin.updateWindowLevelFunctions();
+        this.windowFunctions.attachFunctions();
       },
     });
 
