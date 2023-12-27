@@ -69,7 +69,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.logger.info('Settings Updated', settings);
       this.onStartSqlQueries = settings.onStartSqlQueries;
       this.announceUpdates = settings.announceUpdates;
-      this.version = '0.8.9'; // Old settings.version;
+      this.version = settings.version;
       this.mainHeadingOpen = settings.mainHeadingOpen;
       this.generalHeadingOpen = settings.generalHeadingOpen;
       this.internalLoggingConsoleLogLimit = settings.internalLoggingConsoleLogLimit;
@@ -80,7 +80,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.logger.info('Settings Initialize', settings);
       this.onStartSqlQueries = settings.onStartSqlQueries;
       this.announceUpdates = settings.announceUpdates;
-      this.version = '0.8.9'; // Old settings.version;
+      this.version = settings.version;
       this.mainHeadingOpen = settings.mainHeadingOpen;
       this.generalHeadingOpen = settings.generalHeadingOpen;
       this.internalLoggingConsoleLogLimit = settings.internalLoggingConsoleLogLimit;
@@ -91,6 +91,9 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
         const onStartResult = this.dataTables?.runAdhocQuery(this.onStartSqlQueries);
         this.logger.info('On start SQL queries result', onStartResult);
       }
+
+      this.announceUpdate();
+
     },
   );
 
@@ -200,6 +203,8 @@ Query All the Things is a flexible way to query and render data in <a href="http
     );
   }
 
+
+
   async onload() {
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
 
@@ -218,12 +223,10 @@ Query All the Things is a flexible way to query and render data in <a href="http
       this.dataTables?.refreshTables('layout ready');
 
       this.notesCacheService = this.use(NotesCacheService);
-
       this.csvLoaderService = this.use(CsvLoaderService);
       this.markdownTableLoaderService = this.use(MarkdownTableLoaderService);
       this.jsonLoaderService = this.use(JsonLoaderService);
       this.sqlLoaderService = this.use(SqlLoaderService);
-
       this.queryRendererService = this.use(QueryRendererV2Service);
 
       /* ------------------------- DataView based support ------------------------- */
@@ -255,10 +258,8 @@ Query All the Things is a flexible way to query and render data in <a href="http
       this.dataTables?.refreshTables('manual refresh');
     });
 
-    this.commandHandler.setup(this.internalLoggingConsoleLogLimit);
     this.eventHandler.setup();
 
-    await this.announceUpdate();
   }
 
   onunload() {
@@ -271,6 +272,8 @@ Query All the Things is a flexible way to query and render data in <a href="http
     this.logger.info(`Current version: ${currentVersion}, Known version: ${knownVersion}`);
 
     if (currentVersion === knownVersion) {
+      this.logger.info('No update announcements');
+
       return;
     }
 
@@ -294,6 +297,8 @@ Query All the Things is a flexible way to query and render data in <a href="http
       const updateModal = new UpdateModal(knownVersion, this.releaseNotes);
       updateModal.open();
       updateModal.display();
+    } else {
+      this.logger.info('Update announcements disabled.');
     }
   }
 }

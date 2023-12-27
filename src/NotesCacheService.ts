@@ -10,6 +10,15 @@ import {Note} from 'Note';
 import type {ListItem} from 'ListItem';
 import {TaskItem} from 'TaskItem';
 
+
+/**
+ * Manages a cache of notes and their associated list items.
+ * It will trigger 'qatt:notes-store-update' when a note is added, updated or deleted.
+ *
+ * @export
+ * @class NotesCacheService
+ * @extends {Service}
+ */
 export class NotesCacheService extends Service {
   plugin = this.use(Plugin);
   logger = this.use(LoggingService).getLogger('Qatt.NotesCacheService');

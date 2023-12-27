@@ -39,6 +39,6 @@ export class ReleaseNotes extends Service {
       }
     }
 
-    return changes;
+    return changes.reverse();
   }
 }

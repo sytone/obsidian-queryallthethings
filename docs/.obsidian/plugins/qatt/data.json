@@ -12,5 +12,6 @@
   "csvLoaderSettingsOpen": false,
   "version": "0.8.10",
   "mainHeadingOpen": true,
-  "generalHeadingOpen": false
+  "generalHeadingOpen": true,
+  "announceUpdates": true
 }

@@ -61,20 +61,28 @@ export class UpdateModal extends Modal {
     contentEl.empty();
     contentEl.classList.add('qatt-update-modal-container');
 
-    const header = `### New in Query Add the Things v${this.releases[0].version}\n`;
-    const text = 'Thank you for using QuickAdd! If you like the plugin, please consider supporting me by buying me a coffee. With your sponsorship, I\'ll be able to contribute more to my existing projects, start new ones, and be more responsive to issues & feature requests.';
-    const buymeacoffee = '<div class="quickadd-bmac-container"><a href="https://www.buymeacoffee.com/chhoumann" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 144px !important;" ></a></div>';
-
-    const contentDiv = contentEl.createDiv('quickadd-update-modal');
     const releaseNotes = this.releases
-      .map(release => release.body)
-      .join('\n---\n');
+      .map(release => `## Release v${release.version}\n\n${release.body}`)
+      .join('\n\n---\n\n');
 
-    const andNow = `And now, here is everything new in QuickAdd since your last update (v${this.previousVersion}):`;
-    const feedbackForm = 'I\'d love to get your feedback on QuickAdd! Please fill out this <a href="https://forms.gle/WRq1ewcKK8qmkqps6">feedback form</a> to let me know what you think.';
-    const markdownString = `${header}\n${text}\n${buymeacoffee}\n${feedbackForm}\n\n${andNow}\n\n---\n\n${addExtraHashToHeadings(
-      releaseNotes,
-    )}`;
+    const markdownString = `
+### New in Query All the Things v${this.releases[0].version} 🎉
+
+Thank you for using Query All the Things! I hope you're enjoying it.
+I'm always looking for ways to improve the plugin, so if you have any feedback, please let me know by creating an <a href="https://github.com/sytone/obsidian-queryallthethings/issues">issue</a>.
+
+And now, here is everything new in Query All the Things since your last update (v${this.previousVersion}).
+
+*You can disable these announcements in the plugin settings under General*
+
+---
+
+${addExtraHashToHeadings(releaseNotes)}
+
+`;
+
+    console.log(markdownString);
+    const contentDiv = contentEl.createDiv('qatt-update-modal');
 
     void MarkdownRenderer.renderMarkdown(
       markdownString,
