@@ -5,7 +5,6 @@ import Handlebars from 'handlebars';
 import {LoggingService} from 'lib/LoggingService';
 import {type QattCodeBlock} from 'QattCodeBlock';
 import {type IRenderer} from 'Render/IRenderer';
-import {registerHandlebarsHelpers} from 'Render/HandlebarsHelpersGroup';
 import * as handlebarsHelpers from 'Render/HandlebarsHelpers';
 
 export class HandlebarsRenderer extends Service implements IRenderer {
@@ -22,7 +21,8 @@ export class HandlebarsRenderer extends Service implements IRenderer {
    */
   onload(): void {
     this.logger.info('Setting up inbuilt Handlebars helpers');
-    registerHandlebarsHelpers();
+
+    // Iterate through all the exported helpers in the HandlebarsHelpers/index.ts file
     for (const handlebarsHelper of Object.entries(handlebarsHelpers)) {
       this.logger.info('Setting up inbuilt Handlebars helpers', handlebarsHelper);
       Handlebars.registerHelper(handlebarsHelper[0], handlebarsHelper[1]);
