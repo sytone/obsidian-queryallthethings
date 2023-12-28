@@ -16,9 +16,10 @@
     "prerelease": "xo --fix && mdinject --root=./src --docs-root=./docs --wrap && mocha --ci",
     "release": "standard-version",
     "release:dry": "standard-version --dry-run",
+    "release:major": "standard-version --release-as major --no-verify",
     "release:minor": "standard-version --release-as minor --no-verify",
-    "release:patch": "standard-version --release-as patch --no-verify",
-    "release:major": "standard-version --release-as major --no-verify"
+    "release:minor:dry": "standard-version --release-as minor --no-verify --dry-run",
+    "release:patch": "standard-version --release-as patch --no-verify"
   },
   "keywords": [
     "obsidian",

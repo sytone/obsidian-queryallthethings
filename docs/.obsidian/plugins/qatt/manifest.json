@@ -20,6 +20,9 @@
     },
     {
       "0.8.10": "Fixes issue with CustomJS detection, the window object would not always be in place when the plugin loaded. Added check to see installed and activated plugins has CustomJS as that is reliable during plugin load."
+    },
+    {
+      "0.9.0": "You can download the documentation and example vault to open in obsidian to see the queries in action <A href=\"https://github.com/sytone/obsidian-queryallthethings/releases/latest/download/obsidian-queryallthethings.vault.zip\">here</a>.\n## Features\n- Update markdown table import handling to work with pages with markdown and multiple tables. It will import the first table found on the note.\n- Added do date to task parsing as a column ('💨', 'do::')\n- Added new functions to append to the  the task when called from the `taskCheckboxWithAppend` handlebars helper. Allows done date to be added. \n- Added `flexibleTaskCheckbox` handlebars helper to allow next status to be specified on click.\n- Added more options to the query export feature. Target pages can be updated once, once a day or once a week. \n## Bug Fixes and Changes\n- Changes the DOM changes when the code block is parsed to be more consistent.\n- Updated post rending model to be clearer and allow extensions to it.\n- Separated out all handlebars handlers to be separate files, also fixed casing issues.\n## Documentation\n- Added a TTRPG based example\n- Reordered documentation to be more clear.\n- Created documentation stubs for all handlebars helpers.\n- Added new examples with live versions that work when you open docs as an obsidian vault."
     }
   ]
 }
