@@ -2,6 +2,56 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.9.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.10...0.9.0) (2023-12-28)
+
+
+### Features
+
+* cleanup announcement service ([b085a91](https://github.com/sytone/obsidian-queryallthethings/commits/b085a914b3337ffea2bbd9c1ffcac9ca9b79019a))
+* cleanup command handlers and release notes ([3e16730](https://github.com/sytone/obsidian-queryallthethings/commits/3e16730cfce3ccc9d0f2209482b79c17fc352c7e))
+* dynamic done state management for tasks ([0e43833](https://github.com/sytone/obsidian-queryallthethings/commits/0e438339915ccd1691e96b52913ed340e1e86429))
+* **query:** enable correct extraction of page properties for use in queries ([4f650f7](https://github.com/sytone/obsidian-queryallthethings/commits/4f650f7576b4327fc3107386deac3950c768734e))
+* refactored the post render code to be separate ([b6d7f05](https://github.com/sytone/obsidian-queryallthethings/commits/b6d7f050086e85326b33723c841bf631134a445f))
+* **render:** updated rendered insertion into dom ([ef37ed6](https://github.com/sytone/obsidian-queryallthethings/commits/ef37ed6a7b1d0875509385f44efca3f65716763a))
+* simplify function management ([76c12f2](https://github.com/sytone/obsidian-queryallthethings/commits/76c12f2e84e6ec0eaf718c983bb8156b33e7a6d0))
+* update task management capabilities ([549f744](https://github.com/sytone/obsidian-queryallthethings/commits/549f744bd75378458abf4dbb73db95dd41ba47d7))
+
+
+### Bug Fixes and Changes
+
+* file render cleanup ([b17c130](https://github.com/sytone/obsidian-queryallthethings/commits/b17c1303e0e06c1c094c37bab9fd6b87f493ac86))
+* make markdown table parsing more robust ([825f6f8](https://github.com/sytone/obsidian-queryallthethings/commits/825f6f848149bfbbe55b706785be33a579f4decb))
+* **query:** set tables being used to qatt by default for refresh events ([293ef62](https://github.com/sytone/obsidian-queryallthethings/commits/293ef6246bac23a6ca9a544c9b7045c8a99faf9d))
+* remove external helpers breaking render engine ([41ab05c](https://github.com/sytone/obsidian-queryallthethings/commits/41ab05cb8a9c1160e4fb1b53d14179c402b9d1d1))
+* update lock file ([8e730a3](https://github.com/sytone/obsidian-queryallthethings/commits/8e730a36c108aaca7abe97fa211dbe279369edb1))
+
+
+### Documentation
+
+* add renamed calendar reference table back ([829ae82](https://github.com/sytone/obsidian-queryallthethings/commits/829ae82f11eceed051b2700f30b0f6be2f68c0a3))
+* add ttrpg example and update for new rendering model ([3997a8c](https://github.com/sytone/obsidian-queryallthethings/commits/3997a8c35a0016ba4e6b15b6a028fcf48de77000))
+* added a simple note listing example ([f154c67](https://github.com/sytone/obsidian-queryallthethings/commits/f154c67f669de14f0b2fb48193e5beceb7a668e8))
+* added more examples ([788cce2](https://github.com/sytone/obsidian-queryallthethings/commits/788cce2f6a44f7bb4ed49cf6e0c42a888d05ca0d))
+* change to dark theme ([3c5e37a](https://github.com/sytone/obsidian-queryallthethings/commits/3c5e37a68083ada7291f9e49e6a0c09a2991483f))
+* fixed link top example ([6e04182](https://github.com/sytone/obsidian-queryallthethings/commits/6e04182e11701d7034fe846491f61791ac728843))
+* move examples content ([aa01e4a](https://github.com/sytone/obsidian-queryallthethings/commits/aa01e4aaa94560cfab2732900b5ac66a1415611c))
+* test path changes ([fc0b874](https://github.com/sytone/obsidian-queryallthethings/commits/fc0b874379deef1174a93030ba5699c727d20f79))
+
+
+### Internal
+
+* add noteLink handler back ([ddf2175](https://github.com/sytone/obsidian-queryallthethings/commits/ddf2175211da3ea9f40424af904bda963893370c))
+* **docs:** update vault plugins and settings ([6c6df7c](https://github.com/sytone/obsidian-queryallthethings/commits/6c6df7cdc649252dce5d02d6fd95b3e8ea8ebfeb))
+* fix casing issue ([935c57e](https://github.com/sytone/obsidian-queryallthethings/commits/935c57ec9034559fc13c164a6baa3879171440d7))
+* helper functions and documentation moves ([7da3ff6](https://github.com/sytone/obsidian-queryallthethings/commits/7da3ff6389c87900a2ea8b63dfc2a8b7275f1c54))
+* more handler cleanup and service abstraction ([83c20ae](https://github.com/sytone/obsidian-queryallthethings/commits/83c20ae9fe1b87867633ef13033461812995ead2))
+* move remaining helpers to separate files ([90cccbc](https://github.com/sytone/obsidian-queryallthethings/commits/90cccbc3814a52e8a18c970a08804b8f622a74cb))
+* prepare for next release ([b429a56](https://github.com/sytone/obsidian-queryallthethings/commits/b429a56549de03d2c3aecb42b0d7886430e05248))
+* remove download link as it is the announcement template ([5ff5280](https://github.com/sytone/obsidian-queryallthethings/commits/5ff5280cb084e9aaa98f9ee4b46951a5023a8b6d))
+* **render:** cleanup of render logic to increase maintinability ([aebcfeb](https://github.com/sytone/obsidian-queryallthethings/commits/aebcfeb83cd202dd2375a58251bbca9a1eb66827))
+* update commit settings ([2e577f6](https://github.com/sytone/obsidian-queryallthethings/commits/2e577f62201538e5e2a3dd9891e53b17c0cf2e00))
+* update docs path ([31bff78](https://github.com/sytone/obsidian-queryallthethings/commits/31bff785fa075ee06d5c6224816201ec9e15f40f))
+
 ### [0.8.10](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.9...0.8.10) (2023-12-05)
 
 
