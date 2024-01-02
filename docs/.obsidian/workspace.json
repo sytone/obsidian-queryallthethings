@@ -14,8 +14,8 @@
               "type": "markdown",
               "state": {
                 "file": "index.md",
-                "mode": "source",
-                "source": true
+                "mode": "preview",
+                "source": false
               }
             }
           }
