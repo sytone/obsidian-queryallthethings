@@ -18,12 +18,16 @@ query: |
 template: |
   {{#each result}}
   - {{basename}}
-  {{/each}}  
-postRenderFormat: html  
+  {{/each}}
+postRenderFormat: html
 replaceTargetPath: examples-tutorials/generated-top-ten-notes.md
 replaceType: always
 ```
 ````
+
+## Live Example
+
+Open docs in Obsidian to see this example live.
 
 View this page in source mode to see the code block below this line that generates the included file.
 
@@ -36,8 +40,8 @@ query: |
 template: |
   {{#each result}}
   - {{basename}}
-  {{/each}}  
-postRenderFormat: html  
+  {{/each}}
+postRenderFormat: html
 replaceTargetPath: examples-tutorials/generated-top-ten-notes.md
 replaceType: always
 ```
