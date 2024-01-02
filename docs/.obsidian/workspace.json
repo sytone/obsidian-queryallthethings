@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "codeblock.md",
+                "file": "index.md",
                 "mode": "source",
                 "source": true
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "codeblock.md",
+                "file": "index.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "codeblock.md",
+                "file": "index.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "codeblock.md"
+                "file": "index.md"
               }
             }
           },
@@ -162,6 +162,7 @@
   "active": "60c58a9e7d5033ee",
   "lastOpenFiles": [
     "examples-tutorials/replace-target-path-example.md",
+    "codeblock.md",
     "examples-tutorials/listing-recently-updated-files.md",
     "examples-tutorials/listing-recently-updated-files-live.md",
     "examples-tutorials/using-pageproperty-simple-live.md",
@@ -169,7 +170,6 @@
     "examples-tutorials/using-updatepropertyfromlist.md",
     "examples-tutorials/index.md",
     "examples-tutorials/dataview-fields.md",
-    "codeblock.md",
     "index.md",
     "examples-tutorials/active-tasks-grouped-by-day.md",
     "data-tables/obsidian-markdown-notes.md",
