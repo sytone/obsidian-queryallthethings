@@ -92,3 +92,5 @@ By default the value will be `never` so each time the page is shown in Obsidian 
 If you set it to `once` the entire codeblock or target path will be processed and replaced with the output, this will remove / disable the codeblock from the file completely and the rendered results will not change from that point forward.
 
 If you set it to `always` the rendered output will be placed before the codeblock and in preview and reading view the codeblock will be rendered as a blank string to hide it. It is still there and you can edit it in edit mode. When viewing in a text editor you will see the rendered output and then the codeblock below it. To place the renderers content after the codeblock use `alwaysappend`. You can also use `alwaysprepend` if you want to be explicit.
+
+%%This file is auto-generated. Do not edit. Generated at: 2024-01-02T19:42:57.770Z%%

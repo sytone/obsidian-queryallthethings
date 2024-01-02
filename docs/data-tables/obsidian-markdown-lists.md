@@ -26,3 +26,5 @@ The list item is parse by the following regular expression to extract informatio
 | status      | string  |                                       |
 | treePath    | string  |                                       |
 | depth       | number  |                                       |
+
+%%This file is auto-generated. Do not edit. Generated at: 2024-01-02T19:42:57.767Z%%

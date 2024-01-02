@@ -31,3 +31,5 @@ will result in:
 ```html
 <a data-tooltip-position="top" aria-label="notepages/school/My Cool Page" data-href="notepages/school/My Cool Page" href="notepages/school/My Cool Page" class="internal-link" target="_blank" rel="noopener">My Cool Page is here!</a>
 ```
+
+%%This file is auto-generated. Do not edit. Generated at: 2024-01-02T19:42:57.810Z%%

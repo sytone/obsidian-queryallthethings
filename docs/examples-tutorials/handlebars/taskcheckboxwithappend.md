@@ -32,3 +32,5 @@ template: |
     {{taskCheckboxWithAppend 'text'}}
   {{/each}}
 ```
+
+%%This file is auto-generated. Do not edit. Generated at: 2024-01-02T19:42:57.821Z%%
