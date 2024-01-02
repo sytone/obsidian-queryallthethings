@@ -13,9 +13,9 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "index.md",
+                "file": "codeblock.md",
                 "mode": "source",
-                "source": false
+                "source": true
               }
             }
           }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "index.md",
+                "file": "codeblock.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "index.md",
+                "file": "codeblock.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "index.md"
+                "file": "codeblock.md"
               }
             }
           },
@@ -161,32 +161,32 @@
   },
   "active": "60c58a9e7d5033ee",
   "lastOpenFiles": [
+    "examples-tutorials/replace-target-path-example.md",
+    "examples-tutorials/listing-recently-updated-files.md",
+    "examples-tutorials/listing-recently-updated-files-live.md",
+    "examples-tutorials/using-pageproperty-simple-live.md",
+    "examples-tutorials/generated-top-ten-notes.md",
+    "examples-tutorials/using-updatepropertyfromlist.md",
+    "examples-tutorials/index.md",
+    "examples-tutorials/dataview-fields.md",
     "codeblock.md",
     "index.md",
+    "examples-tutorials/active-tasks-grouped-by-day.md",
+    "data-tables/obsidian-markdown-notes.md",
+    "data-tables/obsidian-markdown-lists.md",
+    "data-tables/obsidian-markdown-files.md",
     "about.md",
     "first-query.md",
     "installation.md",
     "output-generation.md",
     "settings.md",
     "data-tables/obsidian-markdown-tasks.md",
-    "data-tables/obsidian-markdown-files.md",
     "data-tables/dataview-tasks.md",
-    "data-tables/obsidian-markdown-notes.md",
     "data-tables/qatt-referencecalendar.md",
     "data-tables/index.md",
     "data-tables/dataview-pages.md",
     "data-tables/dataview-lists.md",
-    "data-tables/obsidian-markdown-lists.md",
     "queries/sql-functions/parsewikilinklocation.md",
-    "queries/sql-functions/parsewikilinkdisplayname.md",
-    "queries/sql-functions/custom-functions.md",
-    "queries/sql-functions/arrayfrom.md",
-    "templates/index.md",
-    "templates/template.md",
-    "queries/sql-statements/in.md",
-    "queries/sql-statements/if-then-else.md",
-    "queries/sql-statements/charindex.md",
-    "queries/sql-statements/case.md",
     "_site/templates/hb-helpers/taskcheckboxwithappend.html",
     "_site/examples-tutorials/handlebars/taskcheckboxwithappend.html",
     "_site/templates/hb-helpers/taskcheckbox.html",

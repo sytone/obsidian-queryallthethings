@@ -19,6 +19,34 @@ When you create the query and template to render the results if the query the co
 
 The configuration is YAML based and support the following properties. As it is YAML you can use the `|` symbol after the key name and enter your values on multiple lines which are indented.
 
+Here is an example of all codeblock configurations
+
+{% raw %}
+
+```yaml
+customJSForSql: ['MyCoolClass ConvertWordsToEmoji','MyCoolClass AnotherSQLFunction']
+customJSForHandlebars: ['MyCoolClass MyHandlebarsHelper']
+query: |
+  SELECT TOP 10
+    basename
+  FROM obsidian_markdown_notes
+queryFile: qatt/queries/GetTop10Notes.md
+queryEngine: alasql
+template: |
+  {{#each result}}
+  {{basename}}
+  {{/each}}
+templateFile: qatt/templates/ListOfNotes.md
+postRenderFormat: markdown | micromark | html | raw
+renderEngine: handlebars | text
+logLevel: trace | debug | info | warn | error
+replaceCodeBlock: true | false
+replaceTargetPath: notes/topten.md
+replaceType: never | once | onceDaily | onceDailyAppend | onceDailyPrepend | onceWeekly | always | alwaysappend | alwaysprepend
+```
+
+{% endraw %}
+
 %%snippet id='docs-codeblock-configuration-customjsforsql' options='nocodeblock'%%
 %%/snippet%%
 
@@ -69,6 +97,7 @@ export interface IQattCodeBlock {
    * @memberof IQattCodeBlock
    * Published documentation:
   // >> id='docs-codeblock-configuration-customjsforsql' options=''
+
   ## customJSForSql
 
   If you have the CustomJS plugin installed this field allows you to reference any CustomJS classes and methods and they will be loaded in the AlaSQL engine so you can call them in a query to extend the capabilities of the query for personal needs.
@@ -93,6 +122,7 @@ export interface IQattCodeBlock {
    * @memberof IQattCodeBlock
    * Published documentation:
    // >> id='docs-codeblock-configuration-customjsforhandlebars' options=''
+
    ## customJSForHandlebars
 
    This works the same as `customJSForSql` but makes the functions available as helper blocks in handlebars so you can customize you rendering further.
@@ -108,6 +138,7 @@ export interface IQattCodeBlock {
    * @memberof IQattCodeBlock
    * Published documentation:
    // >> id='docs-codeblock-configuration-query' options=''
+
    ## query
 
    This is the query to pass to the chosen query engine, currently only the AlaSQL engine is available.
@@ -123,6 +154,7 @@ export interface IQattCodeBlock {
    * @memberof IQattCodeBlock
    * Published documentation:
    // >> id='docs-codeblock-configuration-queryfile' options=''
+
    ## queryFile
 
    To simplify query reuse you can specify a query file, this is the absolute path to a md file in your vault. The file should have nothing but the query contents in it.
@@ -138,6 +170,7 @@ export interface IQattCodeBlock {
    * @memberof IQattCodeBlock
    * Published documentation:
    // >> id='docs-codeblock-configuration-queryengine' options=''
+
    ## queryEngine
 
    This defines the query engine to use to execute the query entered for the query field.
@@ -155,6 +188,7 @@ export interface IQattCodeBlock {
    * @memberof IQattCodeBlock
    * Published documentation:
    // >> id='docs-codeblock-configuration-template' options=''
+
    ## template
 
    This value is used to render the results of the query.
@@ -170,6 +204,7 @@ export interface IQattCodeBlock {
    * @memberof IQattCodeBlock
    * Published documentation:
    // >> id='docs-codeblock-configuration-templatefile' options=''
+
    ## templateFile
 
    To simplify template reuse you can template a query file, this is the absolute path to a md file in your vault. The file should have nothing but the template contents in it.
@@ -185,6 +220,7 @@ export interface IQattCodeBlock {
    * @memberof IQattCodeBlock
    * Published documentation:
    // >> id='docs-codeblock-configuration-postrenderformat' options=''
+
    ## postRenderFormat
 
    Once the render engine is completed the output will be written to the page in Obsidian. As Obsidian uses HTML to display information to the user the rendered output will be treated as HTML. If you use a template that output markdown it would not be rendered correctly.
@@ -206,6 +242,7 @@ export interface IQattCodeBlock {
    * @memberof IQattCodeBlock
    * Published documentation:
    // >> id='docs-codeblock-configuration-renderengine' options=''
+
    ## renderEngine
 
    By default it will use handlebars so you do not have to set this. It supports two options currently, `handlebars` which will use the handlebars library to render the results and `text` which will render the results as a JSON string. More can be added as needed and pul requests for new rendering formats are welcome.
@@ -221,6 +258,7 @@ export interface IQattCodeBlock {
    * @memberof IQattCodeBlock
    * Published documentation:
    // >> id='docs-codeblock-configuration-loglevel' options=''
+
    ## logLevel
 
    This sets the level of logging used when this code block is processed. Setting it to `debug` or `trace` will give you the raw data and rendered results in a raw format in the console. This is handy for debugging issues with the results or rendering.
@@ -232,10 +270,11 @@ export interface IQattCodeBlock {
   /**
    *
    *
-   * @type {string}
+   * @type {(boolean | undefined)}
    * @memberof IQattCodeBlock
    * Published documentation:
    // >> id='docs-codeblock-configuration-replacecodeblock' options=''
+
    ## replaceCodeBlock
 
    **Pending Feature**
@@ -243,23 +282,6 @@ export interface IQattCodeBlock {
    If set to true the page that the codeblock on it will be updated with the rendered content, this process updates the file so outside of obsidian you can access the contents.
 
    // << docs-codeblock-configuration-replacecodeblock
-   */
-  codeBlockContent: string;
-
-  /**
-   *
-   *
-   * @type {(boolean | undefined)}
-   * @memberof IQattCodeBlock
-   * Published documentation:
-   // >> id='docs-codeblock-configuration-replacetargetpath' options=''
-   ## replaceCodeBlock
-
-   **Pending Feature**
-
-   If set to true the page that the codeblock on it will be updated with the rendered content, this process updates the file so outside of obsidian you can access the contents.
-
-   // << docs-codeblock-configuration-replacetargetpath
    */
   replaceCodeBlock: boolean | undefined;
 
@@ -269,14 +291,17 @@ export interface IQattCodeBlock {
    * @type {(string | undefined)}
    * @memberof IQattCodeBlock
    * Published documentation:
-   // >> id='docs-codeblock-configuration-replacetype' options=''
+   // >> id='docs-codeblock-configuration-replacetargetpath' options=''
+
    ## replaceTargetPath
 
    **Pending Feature**
 
    The path to the file to replace the contents of with the rendered output. This is an absolute path to a file in your vault.
 
-   // << docs-codeblock-configuration-replacetype
+   If this is defined the `replaceCodeBlock` option is ignored and the page with the codeblock will not be updated.
+
+   // << docs-codeblock-configuration-replacetargetpath
    */
   replaceTargetPath: string | undefined;
 
@@ -305,6 +330,14 @@ export interface IQattCodeBlock {
    // << docs-codeblock-configuration-replacetype
    */
   replaceType: string | undefined;
+
+  /**
+   * The content of the codeblock. May be modified, use `originalCodeBlockContent` to get the original content.
+   *
+   * @type {string}
+   * @memberof IQattCodeBlock
+   */
+  codeBlockContent: string;
 
   /**
    * The data source that the query is using. Could be qatt or dataview. This is used internally and not meant to be set by users.

@@ -8,6 +8,34 @@ When you create the query and template to render the results if the query the co
 
 The configuration is YAML based and support the following properties. As it is YAML you can use the `|` symbol after the key name and enter your values on multiple lines which are indented.
 
+Here is an example of all codeblock configurations
+
+{% raw %}
+
+```yaml
+customJSForSql: ['MyCoolClass ConvertWordsToEmoji','MyCoolClass AnotherSQLFunction']
+customJSForHandlebars: ['MyCoolClass MyHandlebarsHelper']
+query: |
+  SELECT TOP 10
+    basename
+  FROM obsidian_markdown_notes
+queryFile: qatt/queries/GetTop10Notes.md
+queryEngine: alasql
+template: |
+  {{#each result}}
+  {{basename}}
+  {{/each}}
+templateFile: qatt/templates/ListOfNotes.md
+postRenderFormat: markdown | micromark | html | raw
+renderEngine: handlebars | text
+logLevel: trace | debug | info | warn | error
+replaceCodeBlock: true | false
+replaceTargetPath: notes/topten.md
+replaceType: never | once | onceDaily | onceDailyAppend | onceDailyPrepend | onceWeekly | always | alwaysappend | alwaysprepend
+```
+
+{% endraw %}
+
 %%snippet id='docs-codeblock-configuration-customjsforsql' options='nocodeblock'%%
 ## customJSForSql
 
@@ -95,19 +123,30 @@ If set to true the page that the codeblock on it will be updated with the render
 %%/snippet%%
 
 %%snippet id='docs-codeblock-configuration-replacetargetpath' options='nocodeblock'%%
-## replaceCodeBlock
-
-**Pending Feature**
-
-If set to true the page that the codeblock on it will be updated with the rendered content, this process updates the file so outside of obsidian you can access the contents.
-%%/snippet%%
-
-%%snippet id='docs-codeblock-configuration-replacetype' options='nocodeblock'%%
 ## replaceTargetPath
 
 **Pending Feature**
 
 The path to the file to replace the contents of with the rendered output. This is an absolute path to a file in your vault.
+
+If this is defined the `replaceCodeBlock` option is ignored and the page with the codeblock will not be updated.
+%%/snippet%%
+
+%%snippet id='docs-codeblock-configuration-replacetype' options='nocodeblock'%%
+## replaceType
+
+**Pending Feature**
+
+Valid replacement types for the codeblock or target file.
+['never', 'once', 'onceDaily', 'onceDailyAppend', 'onceDailyPrepend', 'onceWeekly', 'always', 'alwaysappend', 'alwaysprepend']
+
+As the results of the query and render are only shown in Obsidian if you look at the markdown file in a text editor you will only see the query and template details. For most situations this would be fine but if you want the results and rendered output to be more permanent you can use this option to write the output to the page directly.
+
+By default the value will be `never` so each time the page is shown in Obsidian it is dynamically rendered.
+
+If you set it to `once` the entire codeblock or target path will be processed and replaced with the output, this will remove / disable the codeblock from the file completely and the rendered results will not change from that point forward.
+
+If you set it to `always` the rendered output will be placed before the codeblock and in preview and reading view the codeblock will be rendered as a blank string to hide it. It is still there and you can edit it in edit mode. When viewing in a text editor you will see the rendered output and then the codeblock below it. To place the renderers content after the codeblock use `alwaysappend`. You can also use `alwaysprepend` if you want to be explicit.
 %%/snippet%%
 
 %%This file is auto-generated. Do not edit. Generated at: Tue Jan 02 2024%%
