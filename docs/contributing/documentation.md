@@ -30,6 +30,8 @@ If you edit the content between these pages in the docs folder the content will 
 
 To run the pre-processor for documentation execute `pnpm run build:docs` and it will pull out the snippets and replace them in the docs files.
 
+You can open these documents in Obsidian, use the following command to also setup the build to automatically build and publish the changes you make to the plugin `$env:OBSIDIAN_TEST_VAULT = Resolve-Path "./docs"; pnpm run build:dev`. Please take into account some of the documents are automatically generated.
+
 ## Site Structure
 
 ```text

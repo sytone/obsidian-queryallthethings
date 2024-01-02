@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "index.md",
+                "file": "templates/template.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "index.md",
+                "file": "templates/template.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "index.md",
+                "file": "templates/template.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "index.md"
+                "file": "templates/template.md"
               }
             }
           },
@@ -161,17 +161,32 @@
   },
   "active": "60c58a9e7d5033ee",
   "lastOpenFiles": [
-    "examples-tutorials/live-examples/project-list.md",
-    "examples-tutorials/live-examples/index.md",
-    "examples-tutorials/active-tasks-grouped-by-day.md",
-    "examples-tutorials/active-tasks-grouped-by-day-live.md",
-    "examples-tutorials/dataview-fields.md",
-    "examples-tutorials/index.md",
-    "examples-tutorials/listing-recently-updated-files.md",
-    "examples-tutorials/listing-recently-updated-files-live.md",
-    "examples-tutorials/using-pageproperty-simple-live.md",
-    "examples-tutorials/using-updatepropertyfromlist.md",
+    "queries/sql-statements/in.md",
+    "queries/sql-statements/if-then-else.md",
+    "queries/sql-statements/charindex.md",
+    "queries/sql-statements/case.md",
+    "queries/alasql.md",
+    "queries/sql-functions/parsewikilinklocation.md",
+    "queries/sql-functions/parsewikilinkdisplayname.md",
+    "queries/sql-functions/custom-functions.md",
+    "queries/sql-functions/arrayfrom.md",
+    "queries/sql-functions/_header.md",
+    "templates/index.md",
+    "templates/template.md",
+    "templates/handlebars.md",
+    "data-tables/qatt-referencecalendar.md",
+    "data-tables/obsidian-markdown-tasks.md",
+    "data-tables/obsidian-markdown-notes.md",
+    "data-tables/obsidian-markdown-lists.md",
+    "data-tables/obsidian-markdown-files.md",
+    "data-tables/dataview-tasks.md",
+    "data-tables/dataview-pages.md",
+    "data-tables/dataview-lists.md",
+    "examples-tutorials/live-examples/notes/projects/Project Two.md",
+    "examples-tutorials/live-examples/notes/projects/Project One.md",
+    "examples-tutorials/live-examples/notes/index.md",
     "index.md",
+    "examples-tutorials/live-examples/project-list.md",
     "_site/templates/hb-helpers/taskcheckboxwithappend.html",
     "_site/examples-tutorials/handlebars/taskcheckboxwithappend.html",
     "_site/templates/hb-helpers/taskcheckbox.html",
@@ -180,23 +195,8 @@
     "_site/examples-tutorials/handlebars/htmltasklist.html",
     "_site/templates/hb-helpers/flexibletaskcheckbox.html",
     "_site/examples-tutorials/handlebars/flexibletaskcheckbox.html",
-    "examples-tutorials/handlebars/taskcheckboxwithappend.md",
-    "templates/hb-helpers/taskcheckboxwithappend.md",
-    "examples-tutorials/handlebars/taskcheckbox.md",
-    "templates/hb-helpers/taskcheckbox.md",
-    "examples-tutorials/handlebars/htmltasklist.md",
-    "templates/hb-helpers/htmltasklist.md",
-    "examples-tutorials/handlebars/flexibletaskcheckbox.md",
-    "templates/hb-helpers/flexibletaskcheckbox.md",
-    "codeblock.md",
-    "templates/hb-helpers/codeblockheader.md",
-    "examples-tutorials/handlebars/codeblockheader.md",
     "_site/templates/hb-helpers/codeblockheader.html",
     "_site/examples-tutorials/handlebars/codeblockheader.html",
-    "examples-tutorials/handlebars/codeblockfooter.md",
-    "examples-tutorials/handlebars/group.md",
-    "examples-tutorials/handlebars/capitalize.md",
-    "templates/hb-helpers/group.md",
     "_site/assets/images/small-image.jpg",
     "_site/assets/images/large-image.jpg"
   ]
