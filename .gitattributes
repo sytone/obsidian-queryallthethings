@@ -1,30 +1,11 @@
 * text=auto
 
-*.bat text eol=crlf
-*.cmd text eol=crlf
 *.ps1 text eol=crlf
 
 *.sh text eol=lf
 
-*.csproj   text eol=crlf
-*.filters  text eol=crlf
-*.props    text eol=crlf
-*.sqlproj  text eol=crlf
-*.sln      text eol=crlf
-*.vcxitems text eol=crlf
-*.vcxproj  text eol=crlf
-
-*.cs        text
 *.config    text
-*.jmx       text
 *.json      text
-*.sql       text
-*.tt        text
-*.ttinclude text
-*.wxi       text
-*.wxl       text
-*.wxs       text
-*.xaml      text
 *.xml       text
 
 *.bmp binary
