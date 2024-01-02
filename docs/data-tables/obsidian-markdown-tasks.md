@@ -25,4 +25,4 @@ title: Obsidian Markdown Tasks
 | doDate         | string   | When to do the task ['💨', 'do::']           |
 | priority       | number   | Priority of task based on indicator ['⏫🔼🔽', 'priority::']             |
 
-%%This file is auto-generated. Do not edit. Generated at: 2024-01-02T19:42:57.822Z%%
+%%This file is auto-generated. Do not edit. Generated at: Tue Jan 02 2024%%

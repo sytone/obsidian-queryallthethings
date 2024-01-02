@@ -19,4 +19,4 @@ If you need to reference a property of a object do not forget to use `->` and no
 | stat->mtime | number | Time the file was last modified as a serial.    |
 | stat->size  | number | Size of the file in bytes                       |
 
-%%This file is auto-generated. Do not edit. Generated at: 2024-01-02T19:42:57.772Z%%
+%%This file is auto-generated. Do not edit. Generated at: Tue Jan 02 2024%%

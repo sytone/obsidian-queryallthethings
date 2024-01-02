@@ -20,4 +20,4 @@ The `group`\-helper will group the result by the specified column.
 
 See the [group](../../examples-tutorials/handlebars/group) page for a full example.
 
-%%This file is auto-generated. Do not edit. Generated at: 2024-01-02T19:42:57.798Z%%
+%%This file is auto-generated. Do not edit. Generated at: Tue Jan 02 2024%%
