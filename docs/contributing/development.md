@@ -17,6 +17,22 @@ PNPM is used as the package manager, use `npm install -g pnpm` to install. Versi
 
 Run `pnpm install` to ensure dependencies are installed and then `pnpm run build`
 
+## Git configuration and LF/CRLF
+
+If you are using Obsidian it converts all files to LF by default, which means git will say there are modifications on windows where there are no changes, just the LF/CRLF difference. To work in LF only in windows do the following:
+
+```powershell
+git config core.autocrlf false
+git config core.eol lf
+```
+
+You may need to reset your local enlistment after this change, you can do so with these commands
+
+```powershell
+git rm -rf --cached .
+git reset --hard HEAD
+```
+
 ## Dev Container
 
 To make the process of developing simpler this repo has a dev container configuration. This means you can use a virtual container to work on changes and connect to that from any location in the browser or VSCode.
@@ -36,4 +52,3 @@ Symlink Example:
 ```powershell
 New-Item -ItemType Junction -Target ".\dist" -Path "C:\obsidian\brainstore\.obsidian\plugins\qatt\"
 ```
-

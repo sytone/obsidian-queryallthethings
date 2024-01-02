@@ -92,8 +92,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
         this.logger.info('On start SQL queries result', onStartResult);
       }
 
-      this.announceUpdate();
-
+      void this.announceUpdate();
     },
   );
 
@@ -203,8 +202,6 @@ Query All the Things is a flexible way to query and render data in <a href="http
     );
   }
 
-
-
   async onload() {
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
 
@@ -259,13 +256,19 @@ Query All the Things is a flexible way to query and render data in <a href="http
     });
 
     this.eventHandler.setup();
-
   }
 
   onunload() {
     this.logger.info(`unloading plugin "${this.manifest.name}" v${this.manifest.version}`);
   }
 
+
+  /**
+   * This will show the latest update notes if the version has changed.
+   *
+   * @return {*}
+   * @memberof QueryAllTheThingsPlugin
+   */
   public async announceUpdate() {
     const currentVersion = this.manifest.version;
     const knownVersion = this.version;

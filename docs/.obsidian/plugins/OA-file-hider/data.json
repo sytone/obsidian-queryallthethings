@@ -1,0 +1,14 @@
+{
+  "hidden": true,
+  "hiddenList": [
+    "Gemfile.old",
+    "Gemfile.lock",
+    "Gemfile",
+    "Dockerfile",
+    "404.html",
+    "_config.docker.yml",
+    "_config.yml",
+    "templates/handlebars-helpers.md.removed",
+    "_site"
+  ]
+}

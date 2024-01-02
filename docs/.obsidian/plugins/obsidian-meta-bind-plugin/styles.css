@@ -46,6 +46,50 @@ div.mb-view-wrapper {
 	display: inline;
 }
 
+.mb-button {
+	background-color: transparent !important;
+	border: none !important;
+}
+
+.mb-button-inline {
+	display: inline !important;
+}
+
+.mb-button-block {
+}
+
+.mb-button-group {
+	background-color: transparent !important;
+	border: none !important;
+
+	& > .mb-button {
+		&:first-child:not(:last-child) {
+			& > .mb-button-inner {
+				border-radius: var(--mb-border-radius) 0 0 var(--mb-border-radius);
+			}
+		}
+
+		&:last-child:not(:first-child) {
+			& > .mb-button-inner {
+				border-radius: 0 var(--mb-border-radius) var(--mb-border-radius) 0;
+			}
+		}
+
+		&:last-child:first-child {
+			& > .mb-button-inner {
+				border-radius: var(--mb-border-radius);
+			}
+		}
+
+		& > .mb-button-inner {
+			border-radius: 0;
+		}
+	}
+}
+
+.mb-button-inner {
+}
+
 /* Toggle Input */
 .mb-input-wrapper .checkbox-container {
 	vertical-align: text-bottom;
@@ -436,6 +480,36 @@ table.mb-html-table {
 
 .mb-table-wrapper {
 	overflow-x: auto;
+}
+
+/* --- HIGHLIGHTING CLASSES --- */
+.mb-highlight-test {
+	color: #00bfbc;
+}
+
+.mb-highlight-ident,
+.cm-mb-highlight-ident {
+	color: var(--code-normal);
+}
+
+.mb-highlight-control,
+.cm-mb-highlight-control {
+	color: var(--code-keyword);
+}
+
+.mb-highlight-string,
+.cm-mb-highlight-string {
+	color: var(--code-string);
+}
+
+.mb-highlight-keyword,
+.cm-mb-highlight-keyword {
+	color: var(--code-property);
+}
+
+.mb-highlight-error,
+.cm-mb-highlight-error {
+	color: var(--text-error);
 }
 
 /* --- UTIL CLASSES --- */
