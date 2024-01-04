@@ -36,6 +36,8 @@ export interface IGeneralSettings {
   mainHeadingOpen: boolean;
   generalHeadingOpen: boolean;
   internalLoggingConsoleLogLimit: number;
+  disableDataviewMissingNotification: boolean;
+  disableCustomJsMissingNotification: boolean;
 }
 
 export const GeneralSettingsDefaults: IGeneralSettings = {
@@ -45,6 +47,8 @@ export const GeneralSettingsDefaults: IGeneralSettings = {
   mainHeadingOpen: true,
   generalHeadingOpen: false,
   internalLoggingConsoleLogLimit: 10,
+  disableDataviewMissingNotification: false,
+  disableCustomJsMissingNotification: false,
 };
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
@@ -92,6 +96,15 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
         this.logger.info('On start SQL queries result', onStartResult);
       }
 
+      if (!app.plugins.enabledPlugins.has('dataview') && !settings.disableDataviewMissingNotification) {
+        const dvNotInstalledNotice = new Notice('Dataview plugin is not installed. Dataview backed tables will be empty.');
+      }
+
+      if (!app.plugins.enabledPlugins.has('customjs') && !settings.disableCustomJsMissingNotification) {
+        const dvNotInstalledNotice = new Notice('CustomJS plugin is not installed. Referencing custom scripts in your query blocks will not work.');
+      }
+
+      // It has an internal check to see if enabled.
       void this.announceUpdate();
     },
   );
@@ -200,6 +213,34 @@ Query All the Things is a flexible way to query and render data in <a href="http
       },
       generalSettingsSection,
     );
+
+    tab.addToggle(
+      new SettingsTabField({
+        name: 'Disable Dataview Missing Notification',
+        description: 'Disables the Dataview plugin missing notification.',
+        value: settings.current?.disableDataviewMissingNotification,
+      }),
+      async (value: boolean) => {
+        await settings.update(settings => {
+          settings.disableDataviewMissingNotification = value;
+        });
+      },
+      generalSettingsSection,
+    );
+
+    tab.addToggle(
+      new SettingsTabField({
+        name: 'Disable CustomJS Missing Notification',
+        description: 'Disables the CustomJS plugin missing notification.',
+        value: settings.current?.disableCustomJsMissingNotification,
+      }),
+      async (value: boolean) => {
+        await settings.update(settings => {
+          settings.disableCustomJsMissingNotification = value;
+        });
+      },
+      generalSettingsSection,
+    );
   }
 
   async onload() {
@@ -239,13 +280,6 @@ Query All the Things is a flexible way to query and render data in <a href="http
           this.logger.info('dataview:refresh-views event detected.');
           this.dataTables?.refreshTables('dataview:refresh-views event detected');
         }));
-      } else {
-        const dvNotInstalledNotice = new Notice('Dataview plugin is not installed. Dataview backed tables will be empty.');
-      }
-
-      /* ------------------------- Custom JS based support ------------------------- */
-      if (!app.plugins.enabledPlugins.has('customjs')) {
-        const dvNotInstalledNotice = new Notice('CustomJS plugin is not installed. Referencing custom scripts in your query blocks will not work.');
       }
     });
 
@@ -261,7 +295,6 @@ Query All the Things is a flexible way to query and render data in <a href="http
   onunload() {
     this.logger.info(`unloading plugin "${this.manifest.name}" v${this.manifest.version}`);
   }
-
 
   /**
    * This will show the latest update notes if the version has changed.

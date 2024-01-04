@@ -1,11 +1,11 @@
 {
   "postRenderFormat": "markdown",
   "enableExperimentalRender": false,
-  "renderingSettingsOpen": true,
+  "renderingSettingsOpen": false,
   "sqlFiles": "",
-  "sqlLoaderSettingsOpen": true,
+  "sqlLoaderSettingsOpen": false,
   "jsonFiles": "examples-tutorials/ttrpg/creatures_b1.json",
-  "jsonLoaderSettingsOpen": true,
+  "jsonLoaderSettingsOpen": false,
   "markdownTableFiles": "",
   "markdownLoaderSettingsOpen": false,
   "csvFiles": "",
@@ -13,5 +13,7 @@
   "version": "0.9.0",
   "mainHeadingOpen": true,
   "generalHeadingOpen": true,
-  "announceUpdates": true
+  "announceUpdates": true,
+  "disableDataviewMissingNotification": true,
+  "disableCustomJsMissingNotification": true
 }
