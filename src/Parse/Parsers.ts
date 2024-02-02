@@ -1,3 +1,5 @@
+import {type TaskItem} from 'TaskItem';
+
 const dueDatePrefixes = ['📅', 'due::'];
 const doneDatePrefixes = ['✅', 'completion::'];
 const startDatePrefixes = ['🛫', 'start::'];
@@ -69,7 +71,31 @@ export const parseTask = (taskString: string) => {
   return {tags, tagsNormalized, dueDate, doneDate, startDate, createDate, scheduledDate, doDate, priority, cleanTask};
 };
 
-function cleanTaskProperties(taskString: string, searchString: string, prefixes: string[]) {
+const regex = /\[(.+?):: (.+?)]/g;
+
+export const parseDataViewProperty = (task: TaskItem) => {
+  const taskString = task.text;
+  let cleanTask = task.cleanTask;
+
+  let m;
+
+  while ((m = regex.exec(taskString)) !== null) {
+    // This is necessary to avoid infinite loops with zero-width matches
+    if (m.index === regex.lastIndex) {
+      regex.lastIndex++;
+    }
+
+    const key = m[1];
+    const value = m[2];
+
+    Object.assign(task, {[`${key}`]: value});
+    cleanTask = cleanTask.replace(`[${key}:: ${value}]`, '');
+  }
+
+  return cleanTask;
+};
+
+export const cleanTaskProperties = (taskString: string, searchString: string, prefixes: string[]) => {
   taskString = taskString.replace(searchString, '');
 
   for (const prefix of prefixes) {
@@ -77,7 +103,7 @@ function cleanTaskProperties(taskString: string, searchString: string, prefixes:
   }
 
   return taskString;
-}
+};
 
 function parsePriority(tokens: string[], index: number) {
   if (tokens[index].startsWith('⏫') || (tokens[index].startsWith('priority::') && tokens[index + 1].startsWith('high'))) {

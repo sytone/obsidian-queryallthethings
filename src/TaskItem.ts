@@ -1,5 +1,5 @@
 import {type ListItem} from 'ListItem';
-import {parseTask} from 'Parse/Parsers';
+import {parseDataViewProperty, parseTask} from 'Parse/Parsers';
 
 /*
 // >> id='docs-tables-obsidian-markdown-tasks' options='file=data-tables/obsidian-markdown-tasks.md'
@@ -49,11 +49,12 @@ export class TaskItem {
   public readonly scheduledDate;
   public readonly doDate;
   public readonly priority;
-  public readonly cleanTask;
+  public readonly cleanTask: string;
   private readonly _parsedTask;
 
   constructor(
     public listItem: ListItem,
+    public enableDataViewInlineFieldParsing: boolean = false,
   ) {
     this._parsedTask = parseTask(listItem.content);
     this.page = this.listItem.page;
@@ -72,5 +73,11 @@ export class TaskItem {
     this.doDate = this._parsedTask.doDate;
     this.priority = this._parsedTask.priority;
     this.cleanTask = this._parsedTask.cleanTask;
+
+    if (this.enableDataViewInlineFieldParsing) {
+      this.cleanTask = parseDataViewProperty(this);
+    }
+
+    this.cleanTask = this.cleanTask.trim();
   }
 }
