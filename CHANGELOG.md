@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [0.10.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.9.0...0.10.0) (2024-02-02)
+
+
+### Features
+
+* add obsidian help and joinarray sql function ([98a3774](https://github.com/sytone/obsidian-queryallthethings/commits/98a3774157970fb5363499fb82cb978cf96e8959))
+* add settings to disable missing dv and cjs plugins ([ba74125](https://github.com/sytone/obsidian-queryallthethings/commits/ba741259488d6285381610ea2aa9d9e63f6f47c7))
+* add two sql functions for line based search ([56543b3](https://github.com/sytone/obsidian-queryallthethings/commits/56543b36767e61c81814ff0ae9f4d1eb6ba71cf8))
+* enable processing of DataView Inline tasks ([2db62a8](https://github.com/sytone/obsidian-queryallthethings/commits/2db62a8772b263def0934d9f9c62cc3f85eeb493)), closes [#11](https://github.com/sytone/obsidian-queryallthethings/issues/11)
+
+
+### Internal
+
+* moving to LF only in windows due to Obsidan defaults ([f114437](https://github.com/sytone/obsidian-queryallthethings/commits/f11443778342c9d8137ba1d74c76d186b28887ac))
+* update snippet injector version ([121a621](https://github.com/sytone/obsidian-queryallthethings/commits/121a6213ba955410f2ee66057b1ca6cd1a2da986))
+* update snippet injector with LF base generation notice ([4451317](https://github.com/sytone/obsidian-queryallthethings/commits/4451317c8e0cdca89010c05725c681302800c64a))
+
+
+### Documentation
+
+* added example for replaceTargetPath ([88fde46](https://github.com/sytone/obsidian-queryallthethings/commits/88fde46e211ff3961aee1e5d708880d61ed7ee33))
+* change injection newline option ([194a79c](https://github.com/sytone/obsidian-queryallthethings/commits/194a79c2c64dbe1a06f63cf65f20e84a8c5f3821))
+* clarified the live example part ([b90e7bd](https://github.com/sytone/obsidian-queryallthethings/commits/b90e7bd328027cd805c5504f9e9a082500fb2b9f))
+* regenerated docs with new snippet injector version ([e5836b2](https://github.com/sytone/obsidian-queryallthethings/commits/e5836b24d6a0c9e386c67adfc88349b9eb5675dc))
+* set obsidian selected page to index ([8bf235c](https://github.com/sytone/obsidian-queryallthethings/commits/8bf235cb461335e1d1b3f47ed91ed33b12940312))
+* switch from source and make it reading ([fb92b2c](https://github.com/sytone/obsidian-queryallthethings/commits/fb92b2c5cbb26c62ff82b0128fb6be258f43162b))
+* update generated to be just date ([21c18c9](https://github.com/sytone/obsidian-queryallthethings/commits/21c18c9757c1e4574643bd34c57318263bc1be36))
+* update plugins and codeblock structure ([6268e11](https://github.com/sytone/obsidian-queryallthethings/commits/6268e1113d53d000414ef6dc6dbe2997cfe6ad18))
+
 ## [0.9.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.8.10...0.9.0) (2023-12-28)
 
 
