@@ -9,18 +9,18 @@
     "githubPages": false,
     "readme": "none"
   },
-  "ts-node": {
-    "esm": true,
-    "experimentalSpecifierResolution": "node"
-  },
+  // "ts-node": {
+  //   "esm": true,
+  //   "experimentalSpecifierResolution": "node"
+  // },
   "compilerOptions": {
     "outDir": "./dist", // target for compiled files
     "baseUrl": "./src",
     "rootDir": "./src",
     "inlineSourceMap": true,
     "inlineSources": true,
-    "module": "ES2022",
-    "target": "ES2022",
+    "module": "ESNext",
+    "target": "es2020",
     "allowJs": true,
     "noImplicitAny": true,
     "composite": true,
@@ -44,11 +44,11 @@
     },
     "typeRoots": [
       "./node_modules/@types",
-      "./typings"
+      "./src/typings"
     ],
     "lib": [
       "DOM",
-      "ES2022"
+      "es2020"
     ],
     "types": [
       "jest",

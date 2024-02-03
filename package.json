@@ -11,7 +11,7 @@
     "build:docs": "mdinject --root=./src --docs-root=./docs --wrap",
     "lint": "xo --fix",
     "lint:markdown": "markdownlint-cli2-config \".config/.markdownlint-cli2.jsonc\" \"**/*.md\" \"#node_modules\" \"#CHANGELOG.md\" \"#docs/CHANGELOG.md\"",
-    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules pnpm exec jest",
+    "test": "jest",
     "test:dev": "cross-env NODE_OPTIONS=--experimental-vm-modules pnpm exec jest --watch",
     "prerelease": "xo --fix && mdinject --root=./src --docs-root=./docs --wrap && mocha --ci",
     "release": "standard-version",
