@@ -2,14 +2,25 @@ import {
   Plugin,
   type TFile,
   type CachedMetadata,
+  type App,
 } from 'obsidian';
-import {Service} from '@ophidian/core';
+import {Service, useSettings} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
 import {DateTime} from 'luxon';
 import {Note} from 'Note';
 import type {ListItem} from 'ListItem';
 import {TaskItem} from 'TaskItem';
+import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
 
+export interface INotesCacheServiceSettings {
+  enableDataViewInlineFieldParsingForTasks: boolean;
+  notesCacheSettingsOpen: boolean;
+}
+
+export const NotesCacheServiceSettingsDefaults: INotesCacheServiceSettings = {
+  enableDataViewInlineFieldParsingForTasks: false,
+  notesCacheSettingsOpen: false,
+};
 
 /**
  * Manages a cache of notes and their associated list items.
@@ -23,8 +34,38 @@ export class NotesCacheService extends Service {
   plugin = this.use(Plugin);
   logger = this.use(LoggingService).getLogger('Qatt.NotesCacheService');
   lastUpdate: DateTime;
-  public notes: Note[] = [];
+  notesCacheSettingsOpen: boolean;
 
+  settingsTab = useSettingsTab(this);
+  settings = useSettings(
+    this,
+    NotesCacheServiceSettingsDefaults,
+    async (settings: INotesCacheServiceSettings) => {
+      this.logger.info('NotesCacheService Updated Settings');
+      this.enableDataViewInlineFieldParsingForTasks = settings.enableDataViewInlineFieldParsingForTasks;
+      this.notesCacheSettingsOpen = settings.notesCacheSettingsOpen;
+    },
+    async (settings: INotesCacheServiceSettings) => {
+      this.logger.info('NotesCacheService Initialize Settings');
+      this.enableDataViewInlineFieldParsingForTasks = settings.enableDataViewInlineFieldParsingForTasks;
+      this.notesCacheSettingsOpen = settings.notesCacheSettingsOpen;
+
+      await this.cacheAllNotes(app);
+    },
+  );
+
+  /**
+   * Enable parsing of DataView Inline properties for tasks.
+   *
+   * If enable this will add any DataView Inline properties to the
+   * obsidian_markdown_tasks table as a column.
+   *
+   * @type {boolean}
+   * @memberof NotesCacheService
+   */
+  enableDataViewInlineFieldParsingForTasks: boolean;
+
+  public notes: Note[] = [];
   public notesMap = new Map<string, Note>();
   public listItemsMap = new Map<string, ListItem>();
   public taskItemMap = new Map<string, TaskItem>();
@@ -35,22 +76,36 @@ export class NotesCacheService extends Service {
     this.lastUpdate = DateTime.now();
   }
 
+  showSettings() {
+    const tab = this.settingsTab;
+    const {settings} = this;
+
+    const onToggle = async (value: boolean) => {
+      await settings.update(settings => {
+        settings.notesCacheSettingsOpen = value;
+      });
+    };
+
+    const settingsSection = tab.addHeading(new SettingsTabHeading({open: this.notesCacheSettingsOpen, text: 'Notes Cache Settings', level: 'h2', class: 'settings-heading'}), onToggle);
+
+    const toggleInlineFieldParsing = tab.addToggle(
+      new SettingsTabField({
+        name: 'Enable DataView Inline Field Parsing for Tasks (obsidian_markdown_tasks table)',
+        description: 'This enabled processing of any DataView Inline properties added to a task. The name of the property is added to the obsidian_markdown_tasks table as a column. Restart Obsidian to re-cache all files.',
+        value: this.enableDataViewInlineFieldParsingForTasks,
+      }),
+      async (value: boolean) => {
+        await settings.update(settings => {
+          settings.enableDataViewInlineFieldParsingForTasks = value;
+        });
+      },
+      settingsSection,
+    );
+  }
+
   async onload() {
     this.logger.info(`NotesCacheService Last Update: ${this.lastUpdate.toISO() ?? ''}`);
-    const app = this.plugin.app;
-    const startTime = new Date(Date.now());
 
-    for (const file of app.vault.getMarkdownFiles()) {
-      // eslint-disable-next-line no-await-in-loop
-      const note = await this.createNoteFromFile(file);
-      if (note) {
-      // eslint-disable-next-line no-await-in-loop
-        await this.addNote(file.path, note);
-      }
-    }
-
-    const endTime = new Date(Date.now());
-    this.logger.info(`NotesCacheService Loaded ${this.notesMap.size} items in ${endTime.getTime() - startTime.getTime()}ms`);
     this.registerEvent(
       this.plugin.app.vault.on('create', async file => {
         this.logger.info(`create event detected for ${file.path}`);
@@ -148,6 +203,22 @@ export class NotesCacheService extends Service {
     this.ignoredFiles[path] = DateTime.now().plus({milliseconds: period});
   }
 
+  async cacheAllNotes(app: App) {
+    const startTime = new Date(Date.now());
+
+    for (const file of app.vault.getMarkdownFiles()) {
+      // eslint-disable-next-line no-await-in-loop
+      const note = await this.createNoteFromFile(file);
+      if (note) {
+        // eslint-disable-next-line no-await-in-loop
+        await this.addNote(file.path, note);
+      }
+    }
+
+    const endTime = new Date(Date.now());
+    this.logger.info(`NotesCacheService Loaded ${this.notesMap.size} items in ${endTime.getTime() - startTime.getTime()}ms`);
+  }
+
   async getNotes(): Promise<Note[]> {
     return Array.from(this.notesMap.values());
   }
@@ -196,7 +267,7 @@ export class NotesCacheService extends Service {
     for (const li of note.listItems) {
       this.listItemsMap.set(`${path}:${li.line}`, li);
       if (li.isTask) {
-        this.taskItemMap.set(`${path}:${li.line}`, new TaskItem(li));
+        this.taskItemMap.set(`${path}:${li.line}`, new TaskItem(li, this.enableDataViewInlineFieldParsingForTasks));
       }
     }
   }
@@ -206,7 +277,7 @@ export class NotesCacheService extends Service {
     for (const li of note.listItems) {
       this.listItemsMap.set(`${path}:${li.line}`, li);
       if (li.isTask) {
-        this.taskItemMap.set(`${path}:${li.line}`, new TaskItem(li));
+        this.taskItemMap.set(`${path}:${li.line}`, new TaskItem(li, this.enableDataViewInlineFieldParsingForTasks));
       }
     }
   }
