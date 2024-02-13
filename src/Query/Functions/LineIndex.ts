@@ -45,27 +45,59 @@ template: |
 */
 export function registerFunctionLineIndex(): void {
   alasql.fn.LINEINDEX = function (expressionToFind: string, expressionToSearch: string, start_location?: number): number {
-    let line = 0;
-    let matchedChars = 0;
+    const implementationVersion = 3;
 
-    if (start_location !== undefined) {
-      expressionToSearch = expressionToSearch.split('\n').slice(start_location).join('\n');
+    if (implementationVersion === 3) {
+      const lines = expressionToSearch.split('\n');
+      for (const [i, line] of lines.entries()) {
+        if (line.includes(expressionToFind)) {
+          return i;
+        }
+      }
+
+      return -1; // Not found
     }
 
-    for (const element of expressionToSearch) {
-      if (element === expressionToFind[matchedChars]) {
-        matchedChars++;
-      } else {
-        matchedChars = 0;
+    if (implementationVersion === 2) {
+      if (!expressionToSearch || !expressionToFind) {
+        return -1;
       }
 
-      if (matchedChars === expressionToFind.length) {
-        return line;
+      const char = (typeof expressionToFind === 'string') ? expressionToSearch.indexOf(expressionToFind) : expressionToFind;
+      const subBody = expressionToSearch.slice(0, Math.max(0, char));
+      if (subBody === '') {
+        return -1;
       }
 
-      if (element === '\n') {
-        line++;
+      const match = subBody.match(/\\n/gi);
+      return match ? match.length + 1 : -1;
+    }
+
+    if (implementationVersion === 1) {
+      let line = 0;
+      let matchedChars = 0;
+
+      if (start_location !== undefined) {
+        expressionToSearch = expressionToSearch.split('\n').slice(start_location).join('\n');
       }
+
+      for (const element of expressionToSearch) {
+        if (element === expressionToFind[matchedChars]) {
+          matchedChars++;
+        } else {
+          matchedChars = 0;
+        }
+
+        if (matchedChars === expressionToFind.length) {
+          return line;
+        }
+
+        if (element === '\n') {
+          line++;
+        }
+      }
+
+      return -1;
     }
 
     return -1;
