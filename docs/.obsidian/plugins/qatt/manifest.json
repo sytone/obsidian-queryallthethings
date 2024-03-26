@@ -1,7 +1,7 @@
 {
   "id": "qatt",
   "name": "Query all the things",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "minAppVersion": "1.2.8",
   "description": "Execute SQL base queries against your data in Obsidian and render it how you want using templates.",
   "author": "Sytone",
@@ -23,6 +23,9 @@
     },
     {
       "0.9.0": "## Features\n- Update markdown table import handling to work with pages with markdown and multiple tables. It will import the first table found on the note.\n- Added do date to task parsing as a column ('💨', 'do::')\n- Added new functions to append to the  the task when called from the `taskCheckboxWithAppend` handlebars helper. Allows done date to be added. \n- Added `flexibleTaskCheckbox` handlebars helper to allow next status to be specified on click.\n- Added more options to the query export feature. Target pages can be updated once, once a day or once a week. \n## Bug Fixes and Changes\n- Changes the DOM changes when the code block is parsed to be more consistent.\n- Updated post rending model to be clearer and allow extensions to it.\n- Separated out all handlebars handlers to be separate files, also fixed casing issues.\n## Documentation\n- Added a TTRPG based example\n- Reordered documentation to be more clear.\n- Created documentation stubs for all handlebars helpers.\n- Added new examples with live versions that work when you open docs as an obsidian vault."
+    },
+    {
+      "0.10.0": "## Features\n\n* Add obsidian handlebars helper and JoinArray SQL function\n* Add settings to disable missing DataView and CustomJS plugins notification\n* Add EXTRACTLINE and LINEINDEX SQL functions\n* Enable processing of DataView Inline fields for us in tasks (`obsidian_markdown_tasks table`), closes [#11](https://github.com/sytone/obsidian-queryallthethings/issues/11)\n\n## Documentation\n\n* Multiple updates to the structure and generated documentation to make it more consistent and to enable live examples if the documentation is opened as an Obsidian vault."
     }
   ]
 }

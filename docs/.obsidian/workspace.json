@@ -4,18 +4,18 @@
     "type": "split",
     "children": [
       {
-        "id": "9286cff9d14b77eb",
+        "id": "a044a2d6158e01ef",
         "type": "tabs",
         "children": [
           {
-            "id": "60c58a9e7d5033ee",
+            "id": "5b296f5322e6c57c",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "index.md",
-                "mode": "preview",
-                "source": false
+                "file": "examples-tutorials/active-tasks-grouped-by-day-live.md",
+                "mode": "source",
+                "source": true
               }
             }
           }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "index.md",
+                "file": "examples-tutorials/active-tasks-grouped-by-day-live.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "index.md",
+                "file": "examples-tutorials/active-tasks-grouped-by-day-live.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "index.md"
+                "file": "examples-tutorials/active-tasks-grouped-by-day-live.md"
               }
             }
           },
@@ -159,26 +159,27 @@
       "qatt:Refresh QATT Tables": false
     }
   },
-  "active": "60c58a9e7d5033ee",
+  "active": "5b296f5322e6c57c",
   "lastOpenFiles": [
-    "examples-tutorials/replace-target-path-example.md",
+    "examples-tutorials/active-tasks-grouped-by-day-live.md",
+    "examples-tutorials/dataview-fields.md",
+    "examples-tutorials/active-tasks-grouped-by-day.md",
     "codeblock.md",
+    "about.md",
+    "output-generation.md",
+    "installation.md",
+    "index.md",
+    "first-query.md",
+    "examples-tutorials/replace-target-path-example.md",
     "examples-tutorials/listing-recently-updated-files.md",
     "examples-tutorials/listing-recently-updated-files-live.md",
     "examples-tutorials/using-pageproperty-simple-live.md",
     "examples-tutorials/generated-top-ten-notes.md",
     "examples-tutorials/using-updatepropertyfromlist.md",
     "examples-tutorials/index.md",
-    "examples-tutorials/dataview-fields.md",
-    "index.md",
-    "examples-tutorials/active-tasks-grouped-by-day.md",
     "data-tables/obsidian-markdown-notes.md",
     "data-tables/obsidian-markdown-lists.md",
     "data-tables/obsidian-markdown-files.md",
-    "about.md",
-    "first-query.md",
-    "installation.md",
-    "output-generation.md",
     "settings.md",
     "data-tables/obsidian-markdown-tasks.md",
     "data-tables/dataview-tasks.md",
@@ -186,7 +187,6 @@
     "data-tables/index.md",
     "data-tables/dataview-pages.md",
     "data-tables/dataview-lists.md",
-    "queries/sql-functions/parsewikilinklocation.md",
     "_site/templates/hb-helpers/taskcheckboxwithappend.html",
     "_site/examples-tutorials/handlebars/taskcheckboxwithappend.html",
     "_site/templates/hb-helpers/taskcheckbox.html",

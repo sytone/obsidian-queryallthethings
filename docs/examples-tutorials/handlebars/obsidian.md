@@ -2,10 +2,10 @@
 layout: default
 parent: Handlebars
 grand_parent: Examples / Tutorials
-title: taskCheckbox Helper
+title: obsidian Helper
 ---
 
-This uses a simple query to help show what the `taskCheckbox`-helper does when rendering.
+This uses a simple query to help show what the `obsidian`-helper does when rendering.
 
 ### Example
 
@@ -13,10 +13,10 @@ This uses a simple query to help show what the `taskCheckbox`-helper does when r
 {% raw %}
 ```qatt
 query: |
-  SELECT 'something to render in a code block. ' AS code
+  SELECT 'This is a **thing** to do' AS code
 template: |
   {{#each result}}
-    {{taskCheckbox 'text'}}
+    {{{#obsidian inline="true"}}}{{{code}}}{{{/obsidian}}}
   {{/each}}
 ```
 {% endraw %}
@@ -26,10 +26,10 @@ template: |
 
 ```qatt
 query: |
-  SELECT 'something to render in a code block. ' AS code
+  SELECT 'This is a **thing** to do' AS code
 template: |
   {{#each result}}
-    {{taskCheckbox 'text'}}
+    {{{#obsidian inline="true"}}}{{{code}}}{{{/obsidian}}}
   {{/each}}
 ```
 
