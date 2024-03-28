@@ -6,10 +6,9 @@ import {fromMarkdown} from 'mdast-util-from-markdown';
 import {toString} from 'mdast-util-to-string';
 import * as wikiLink from 'mdast-util-wiki-link';
 import {type IPostRenderer} from 'PostRender/IPostRenderer';
-import {type Component} from 'obsidian';
 
 export class MicromarkPostRenderer implements IPostRenderer {
-  public async renderMarkdown(renderResults: string, element: HTMLElement, sourcePath: string, component: Component) {
+  public async renderMarkdown(renderResults: string, element: HTMLElement, sourcePath: string) {
     const html = this.markdown2html(renderResults);
     element.innerHTML = html;
     return html;

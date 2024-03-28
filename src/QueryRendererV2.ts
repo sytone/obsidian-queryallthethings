@@ -12,10 +12,10 @@ import {DateTime} from 'luxon';
 import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
 import {MicromarkPostRenderer, markdown2html} from 'PostRender/MicromarkRenderer';
 import {NotesCacheService} from 'NotesCacheService';
-import {ObsidianRenderer} from 'PostRender/ObsidianRenderer';
+import {ObsidianRenderer} from 'PostRender/ObsidianPostRenderer';
 import {type IPostRenderer} from 'PostRender/IPostRenderer';
-import {HtmlRenderer} from 'PostRender/HtmlRenderer';
-import {RawRenderer} from 'PostRender/RawRenderer';
+import {HtmlRenderer} from 'PostRender/HtmlPostRenderer';
+import {RawRenderer} from 'PostRender/RawPostRenderer';
 
 export interface IRenderingSettings {
   postRenderFormat: string;

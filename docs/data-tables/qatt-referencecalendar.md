@@ -30,4 +30,4 @@ The reference calendar is used to help with date based management, you can direc
 | isCurrentWeek    | boolean | date.weekNumber === DateTime.now().weekNumber                             |
 | isCurrentDay     | boolean | date.hasSame(DateTime.now(), 'day')                                       |
 
-%%This file is auto-generated. Do not edit. Generated at: Thu Mar 14 2024%%
+%%This file is auto-generated. Do not edit. Generated at: Thu Mar 28 2024%%

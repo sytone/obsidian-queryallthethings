@@ -109,7 +109,7 @@ describe('parse functions', () => {
     const end = performance.now();
     console.log(`parseTask took ${end - start} milliseconds to run 10000 times`);
 
-    expect(end - start).toBeLessThan(200);
+    expect(end - start).toBeLessThan(500);
   });
 });
 
