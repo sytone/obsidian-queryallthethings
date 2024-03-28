@@ -1,8 +1,11 @@
-/* eslint-disable unicorn/filename-case */
+
 // eslint-disable-next-line import/no-unassigned-import
 import 'jest';
 import {type IQattCodeBlock} from 'QattCodeBlock';
-import {HandlebarsHelpers} from 'Render/HandlebarsHelpers';
+import {capitalize} from 'Render/HandlebarsHelpers/Capitalize';
+import {lowercase} from 'Render/HandlebarsHelpers/Lowercase';
+import {uppercase} from 'Render/HandlebarsHelpers/Uppercase';
+import {stringify} from 'Render/HandlebarsHelpers/Stringify';
 import Handlebars, {type HelperOptions} from 'handlebars';
 
 function generateCodeBlock(template: string): IQattCodeBlock {
@@ -16,19 +19,25 @@ function generateCodeBlock(template: string): IQattCodeBlock {
     postRenderFormat: '',
     logLevel: '',
     codeBlockContent: '',
-    replaceCodeBlock: '',
+    replaceCodeBlock: false,
     queryDataSource: '',
     id: '',
     queryFile: undefined,
     templateFile: undefined,
     replaceTargetPath: undefined,
+    replaceType: undefined,
+    originalCodeBlockContent: '',
   };
 }
 
 describe('handlebars helpers', () => {
+  // For (const handlebarsHelper of Object.entries(handlebarsHelpers)) {
+  //   Handlebars.registerHelper(handlebarsHelper[0], handlebarsHelper[1]);
+  // }
+
   it('capitalize parses correctly', () => {
-    HandlebarsHelpers.registerCapitalize();
     // OLD: const testCodeBlock = generateCodeBlock('{{#each result}}{{#micromark inline="true"}} {{task}} [[{{page}}|📝]] {{/micromark}}{{/each}}');
+    Handlebars.registerHelper('capitalize', capitalize);
     const testCodeBlock = generateCodeBlock('{{capitalize result.0.task}}');
 
     const compliedTemplate = Handlebars.compile(testCodeBlock.template);
@@ -43,8 +52,8 @@ describe('handlebars helpers', () => {
   });
 
   it('lowercase parses correctly', () => {
-    HandlebarsHelpers.registerLowercase();
     // OLD: const testCodeBlock = generateCodeBlock('{{#each result}}{{#micromark inline="true"}} {{task}} [[{{page}}|📝]] {{/micromark}}{{/each}}');
+    Handlebars.registerHelper('lowercase', lowercase);
     const testCodeBlock = generateCodeBlock('{{lowercase result.0.task}}');
 
     const compliedTemplate = Handlebars.compile(testCodeBlock.template);
@@ -59,8 +68,8 @@ describe('handlebars helpers', () => {
   });
 
   it('uppercase parses correctly', () => {
-    HandlebarsHelpers.registerUppercase();
     // OLD: const testCodeBlock = generateCodeBlock('{{#each result}}{{#micromark inline="true"}} {{task}} [[{{page}}|📝]] {{/micromark}}{{/each}}');
+    Handlebars.registerHelper('uppercase', uppercase);
     const testCodeBlock = generateCodeBlock('{{uppercase result.0.task}}');
 
     const compliedTemplate = Handlebars.compile(testCodeBlock.template);
@@ -75,8 +84,8 @@ describe('handlebars helpers', () => {
   });
 
   it('uppercase parses correctly', () => {
-    HandlebarsHelpers.registerStringify();
     // OLD: const testCodeBlock = generateCodeBlock('{{#each result}}{{#micromark inline="true"}} {{task}} [[{{page}}|📝]] {{/micromark}}{{/each}}');
+    Handlebars.registerHelper('stringify', stringify);
     const testCodeBlock = generateCodeBlock('{{stringify result}}');
 
     const compliedTemplate = Handlebars.compile(testCodeBlock.template);

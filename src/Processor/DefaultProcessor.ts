@@ -21,10 +21,6 @@ export class DefaultProcessor {
     public postRenderEngine: IPostRenderer) {
     this.renderId = `${this.codeblockConfiguration.id}:${this.sourcePath}`;
 
-    if (this.codeblockConfiguration.logLevel) {
-      this.logger.setLogLevel(this.codeblockConfiguration.logLevel);
-    }
-
     this.logger.infoWithId(this.renderId, `Processor generated for for data source ${this.codeblockConfiguration.queryDataSource}`);
   }
 
@@ -60,7 +56,7 @@ export class DefaultProcessor {
     return {postRenderElement, postRenderString};
   };
 
-  private logRenderEnd() {
+  public logRenderEnd() {
     const endTime = new Date(Date.now());
     this.logger.infoWithId(this.renderId, `Render End: ${endTime.getTime() - this.startTime.getTime()}ms`);
     this.logger.groupEndId();
@@ -69,11 +65,11 @@ export class DefaultProcessor {
   /**
    * Process the query and return the results.
    *
-   * @private
+   * @public
    * @return {*}
    * @memberof DefaultProcessor
    */
-  private async processQuery(): Promise<any> {
+  public async processQuery(): Promise<any> {
     // --------------------------------------------------
     // Query
     // --------------------------------------------------
@@ -82,7 +78,8 @@ export class DefaultProcessor {
 
     if (this.queryEngine.error) {
       this.hadError = true;
-      this.finalResults = `QATT query error: ${this.queryEngine.error}`;
+      this.finalResults = `QATT query error on ${this.sourcePath}: ${this.queryEngine.error}`;
+      this.logger.errorWithId(this.renderId, this.finalResults);
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
@@ -92,12 +89,12 @@ export class DefaultProcessor {
   /**
    * Process the results from the query and render the output.
    *
-   * @private
+   * @public
    * @param {*} queryResults
    * @return {*}
    * @memberof DefaultProcessor
    */
-  private async processRender(queryResults: any): Promise<string> {
+  public async processRender(queryResults: any): Promise<string> {
     // --------------------------------------------------
     // Render
     // --------------------------------------------------
@@ -110,12 +107,12 @@ export class DefaultProcessor {
   /**
    * Process the results from the query and render the output.
    *
-   * @private
+   * @public
    * @param {*} queryResults
    * @return {*}
    * @memberof DefaultProcessor
    */
-  private async processPostRender(renderResults: string, postRenderElement: HTMLSpanElement): Promise<string> {
+  public async processPostRender(renderResults: string, postRenderElement: HTMLSpanElement): Promise<string> {
     // --------------------------------------------------
     // Post Rendering
     // --------------------------------------------------

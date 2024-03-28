@@ -1,5 +1,6 @@
 /* eslint indent: [2, 2, {"SwitchCase": 1}] */
 import {Service} from '@ophidian/core';
+import {type IQattCodeBlock} from 'QattCodeBlock';
 import {type IPostRenderer} from 'PostRender/IPostRenderer';
 import {MicromarkPostRenderer} from 'PostRender/MicromarkPostRenderer';
 import {ObsidianPostRenderer} from 'PostRender/ObsidianPostRenderer';
@@ -7,9 +8,9 @@ import {HtmlPostRenderer} from 'PostRender/HtmlPostRenderer';
 import {RawPostRenderer} from 'PostRender/RawPostRenderer';
 
 export class PostRendererFactory extends Service {
-  public async getPostRender(postRenderFormat: string): Promise<IPostRenderer> {
+  public async getPostRender(codeblockConfiguration: IQattCodeBlock): Promise<IPostRenderer> {
     let postRenderer: IPostRenderer;
-    switch (postRenderFormat) {
+    switch (codeblockConfiguration.postRenderFormat) {
       case 'markdown': {
         postRenderer = new ObsidianPostRenderer();
         break;

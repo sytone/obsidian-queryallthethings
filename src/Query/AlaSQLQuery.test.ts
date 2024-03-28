@@ -16,6 +16,11 @@ describe('alasql helpers', () => {
   it('parse wiki link with path', () => {
     const re = /\[\[([^\[\]]*?)\]\]/u;
     const result = re.exec('[[Projects/Painting The House]]');
+    if (result === null) {
+      expect(result).not.toBeNull();
+      return;
+    }
+
     console.log(JSON.stringify(result));
     expect(result?.length).toBe(2);
     expect(result[1]).toBe('Projects/Painting The House');
@@ -34,7 +39,11 @@ describe('alasql helpers', () => {
   });
 
   /** Split on unescaped pipes in an inner link. */
-  function splitOnUnescapedPipe(link: string): [string, string | undefined] {
+  function splitOnUnescapedPipe(link: string | undefined): [string, string | undefined] {
+    if (link === undefined) {
+      return ['', undefined];
+    }
+
     let pipe = -1;
     while ((pipe = link.indexOf('|', pipe + 1)) >= 0) {
       if (pipe > 0 && link[pipe - 1] == '\\') {

@@ -12,10 +12,11 @@ import {DateTime} from 'luxon';
 import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
 import {MicromarkPostRenderer, markdown2html} from 'PostRender/MicromarkRenderer';
 import {NotesCacheService} from 'NotesCacheService';
-import {ObsidianRenderer} from 'PostRender/ObsidianPostRenderer';
+import {ObsidianRenderer} from 'PostRender/ObsidianRenderer';
 import {type IPostRenderer} from 'PostRender/IPostRenderer';
-import {HtmlRenderer} from 'PostRender/HtmlPostRenderer';
-import {RawRenderer} from 'PostRender/RawPostRenderer';
+import {HtmlRenderer} from 'PostRender/HtmlRenderer';
+import {RawRenderer} from 'PostRender/RawRenderer';
+import {type PostRendererFactory} from 'PostRender/PostRendererFactory';
 
 export interface IRenderingSettings {
   postRenderFormat: string;
@@ -140,6 +141,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   logger: Logger;
   queryFactory: QueryFactory;
   renderFactory: RenderFactory;
+  postRenderFactory: PostRendererFactory;
   rendering = false;
 
   private renderId: string;

@@ -1,4 +1,4 @@
-import {markdown2html} from 'PostRender/MicromarkRenderer';
+import {markdown2html} from 'PostRender/MicromarkPostRenderer';
 import Handlebars, {type HelperOptions} from 'handlebars';
 /*
 // >> id='docs-handlebars-helper-micromark' options='file=templates/hb-helpers/micromark.md'

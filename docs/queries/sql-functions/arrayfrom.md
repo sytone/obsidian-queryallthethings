@@ -6,4 +6,4 @@ title: arrayfrom(value)
 ---
 The `arrayfrom` function allows the user to map a item to an array, for example a Map via mapname->values()
 
-%%This file is auto-generated. Do not edit. Generated at: Thu Mar 28 2024%%
+%%This file is auto-generated. Do not edit. Generated at: Wed Mar 27 2024%%

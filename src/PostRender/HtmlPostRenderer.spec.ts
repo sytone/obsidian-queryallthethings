@@ -1,4 +1,6 @@
-/* eslint-disable unicorn/filename-case */
+/**
+ * @jest-environment jsdom
+ */
 // eslint-disable-next-line import/no-unassigned-import
 import 'jest';
 import {HtmlPostRenderer} from 'PostRender/HtmlPostRenderer';

@@ -32,4 +32,4 @@ will result in:
 <a data-tooltip-position="top" aria-label="notepages/school/My Cool Page" data-href="notepages/school/My Cool Page" href="notepages/school/My Cool Page" class="internal-link" target="_blank" rel="noopener">My Cool Page is here!</a>
 ```
 
-%%This file is auto-generated. Do not edit. Generated at: Thu Mar 28 2024%%
+%%This file is auto-generated. Do not edit. Generated at: Wed Mar 27 2024%%
