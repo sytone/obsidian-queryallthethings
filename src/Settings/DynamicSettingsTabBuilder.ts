@@ -153,7 +153,7 @@ export class DynamicSettingsTabBuilder extends PluginSettingTab implements Usefu
       });
   }
 
-  addDropdownInput(input: SettingsTabField, onChange: (value: string) => void, parentElement = this.containerEl) {
+  addDropdownInput(input: SettingsTabField, onChange: (value: string | number) => void, parentElement = this.containerEl) {
     const options = input.placeholder as Record<string, string>;
 
     return this.field(parentElement)

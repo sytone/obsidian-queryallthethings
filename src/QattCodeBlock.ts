@@ -362,6 +362,14 @@ export interface IQattCodeBlock {
    * @memberof IQattCodeBlock
    */
   originalCodeBlockContent: string;
+
+  /**
+   * The original codeblock content. This is used internally and not meant to be set by users.
+   *
+   * @type {number}
+   * @memberof IQattCodeBlock
+   */
+  internalQueryRenderChildVersion: number;
 }
 
 /**
@@ -388,6 +396,7 @@ export class QattCodeBlock implements IQattCodeBlock {
   queryDataSource: string;
   id: string;
   originalCodeBlockContent: string;
+  internalQueryRenderChildVersion: number;
 
   /**
    * Creates an instance of QattCodeBlock.
@@ -396,6 +405,7 @@ export class QattCodeBlock implements IQattCodeBlock {
    */
   constructor(
     public codeBlockContent: string,
+    public defaultInternalQueryRenderChildVersion: number = 2,
   ) {
     const parsedCodeBlock = parseYaml(codeBlockContent);
     this.originalCodeBlockContent = codeBlockContent;
@@ -421,11 +431,15 @@ export class QattCodeBlock implements IQattCodeBlock {
 
     if (parsedCodeBlock.replaceCodeBlock === undefined) {
       this.replaceCodeBlock = false;
+    } else if (parsedCodeBlock.replaceCodeBlock === 'true' || parsedCodeBlock.replaceCodeBlock === true) {
+      this.replaceCodeBlock = true;
     }
 
     this.replaceTargetPath = parsedCodeBlock.replaceTargetPath;
 
     this.queryDataSource = this.getParsedQuerySource(this.query ?? 'qatt');
+
+    this.internalQueryRenderChildVersion = parsedCodeBlock.internalQueryRenderChildVersion === undefined ? defaultInternalQueryRenderChildVersion : Number(parsedCodeBlock.internalQueryRenderChildVersion);
   }
 
   /**

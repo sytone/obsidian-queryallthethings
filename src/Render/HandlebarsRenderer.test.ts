@@ -1,4 +1,4 @@
-/* eslint-disable unicorn/filename-case */
+ 
 // eslint-disable-next-line import/no-unassigned-import
 import 'jest';
 import {type IQattCodeBlock} from 'QattCodeBlock';
@@ -16,7 +16,7 @@ function generateCodeBlock(template: string): IQattCodeBlock {
     postRenderFormat: '',
     logLevel: '',
     codeBlockContent: '',
-    replaceCodeBlock: '',
+    replaceCodeBlock: false,
     queryDataSource: '',
     id: '',
     queryFile: undefined,
