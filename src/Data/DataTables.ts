@@ -1,17 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import alasql from 'alasql';
 import {DateTime} from 'luxon';
-import {type PageMetadata} from 'obsidian-dataview';
 import {parseTask} from 'Parse/Parsers';
 import {Plugin} from 'obsidian';
 import {Service} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
 import {DataviewService} from 'Integrations/DataviewService';
 import {MetricsService} from 'lib/MetricsService';
-
-export interface IDataTables {
-  refreshTables (reason: string): void;
-}
 
 export class DataTables extends Service {
   plugin = this.use(Plugin);
