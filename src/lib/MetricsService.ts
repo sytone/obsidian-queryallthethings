@@ -12,6 +12,7 @@ export class MetricsService extends Service {
   tableLoadTimes: Record<string, number> = {};
   pluginLoadTime: number;
   cacheLoadTime: number;
+  measurements: Record<string, number> = {};
 
   constructor() {
     super();
@@ -22,11 +23,29 @@ export class MetricsService extends Service {
     this.tableLoadTimes[tableName] = loadTime;
   }
 
+  public startMeasurement(name: string): void {
+    this.measurements[name] = performance.now();
+  }
+
+  public endMeasurement(name: string): void {
+    this.measurements[name] = performance.now() - this.measurements[name];
+  }
+
   public getPluginMetrics(): string {
     const tableLoadTimes = Object.entries(this.tableLoadTimes)
       .map(([tableName, loadTime]) => `${tableName}: ${loadTime}ms`)
       .join('\n');
 
-    return `\nPlugin Load Time: ${this.pluginLoadTime}ms\nNotes Cache Load Time: ${this.cacheLoadTime}ms\nTable Load Times\n${tableLoadTimes}`;
+    const measurements = Object.entries(this.measurements)
+      .map(([name, time]) => `${name}: ${time}ms`)
+      .join('\n');
+
+    return `
+Plugin Load Time: ${this.pluginLoadTime}ms
+Notes Cache Load Time: ${this.cacheLoadTime}ms
+Table Load Times
+${tableLoadTimes}
+Internal Measurements
+${measurements}`;
   }
 }

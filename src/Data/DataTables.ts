@@ -7,6 +7,7 @@ import {Plugin} from 'obsidian';
 import {Service} from '@ophidian/core';
 import {LoggingService} from 'lib/LoggingService';
 import {DataviewService} from 'Integrations/DataviewService';
+import {MetricsService} from 'lib/MetricsService';
 
 export interface IDataTables {
   refreshTables (reason: string): void;
@@ -15,6 +16,8 @@ export interface IDataTables {
 export class DataTables extends Service {
   plugin = this.use(Plugin);
   logger = this.use(LoggingService).getLogger('Qatt.DataTables');
+  metrics = this.use(MetricsService);
+
   dvService = this.use(DataviewService);
 
   public runAdhocQuery(query: string): any {
@@ -22,6 +25,8 @@ export class DataTables extends Service {
   }
 
   public refreshTables(reason: string): void {
+    this.metrics.startMeasurement('DataTables.refreshTables');
+
     if (alasql('SHOW TABLES FROM alasql LIKE "pagedata"').length === 0) {
       alasql('CREATE TABLE pagedata (name STRING, keyvalue STRING)');
     }
@@ -38,15 +43,16 @@ export class DataTables extends Service {
     }
 
     // UPDATE qatt.ReferenceCalendar SET date = '2000-01-01' WHERE isToday;
-    const start = DateTime.now();
+    this.metrics.startMeasurement('qatt.ReferenceCalendar Refresh Check');
     const referenceCalendarTodayDate = alasql('SELECT date FROM qatt.ReferenceCalendar WHERE isToday');
     if (referenceCalendarTodayDate.length === 0 || referenceCalendarTodayDate[0].date !== DateTime.now().toISODate()) {
       this.refreshCalendarTable(reason);
     }
 
-    this.logger.info(`qatt.ReferenceCalendar check took ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
+    this.metrics.endMeasurement('qatt.ReferenceCalendar Refresh Check');
 
     this.plugin.app.workspace.trigger('qatt:dataview-store-update');
+    this.metrics.endMeasurement('DataTables.refreshTables');
   }
 
   /**
@@ -56,12 +62,12 @@ export class DataTables extends Service {
    * @memberof DataTables
    */
   public refreshCalendarTable(reason: string): void {
+    this.metrics.startMeasurement('DataTables.refreshCalendarTable');
+
     alasql('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Lists Table refreshed: ${reason}`}]]);
 
     alasql('DROP TABLE IF EXISTS qatt.ReferenceCalendar');
     alasql('CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar');
-
-    const start = DateTime.now();
 
     /*
     // >> id='reference-calendar-table-snippet' options='file=data-tables/qatt-referencecalendar.md'
@@ -131,10 +137,12 @@ export class DataTables extends Service {
       }]);
     }
 
-    this.logger.info(`qatt.ReferenceCalendar refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
+    this.metrics.endMeasurement('DataTables.refreshCalendarTable');
   }
 
   public refreshTasksTableFromDataview(reason: string): void {
+    this.metrics.startMeasurement('DataTables.refreshTasksTableFromDataview');
+
     alasql('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Tasks Table refreshed: ${reason}`}]]);
     if (alasql('SHOW TABLES FROM alasql LIKE "dataview_tasks"').length > 0) {
       this.logger.info('Dropping the dataview_tasks table to repopulate.');
@@ -143,7 +151,6 @@ export class DataTables extends Service {
 
     alasql('CREATE TABLE dataview_tasks ');
 
-    const start = DateTime.now();
     const dataviewPages = this.dvService.getDataviewPages();
 
     // Look at forcing a update on page changes.
@@ -192,10 +199,12 @@ export class DataTables extends Service {
       }
     }
 
-    this.logger.info(`Tasks refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
+    this.metrics.endMeasurement('DataTables.refreshTasksTableFromDataview');
   }
 
   public refreshListsTableFromDataview(reason: string): void {
+    this.metrics.startMeasurement('DataTables.refreshListsTableFromDataview');
+
     alasql('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Lists Table refreshed: ${reason}`}]]);
 
     // Temporary tables based on current state to make some queries faster.
@@ -206,7 +215,6 @@ export class DataTables extends Service {
 
     alasql('CREATE TABLE dataview_lists ');
 
-    const start = DateTime.now();
     const dataviewPages = this.dvService.getDataviewPages();
 
     // Look at forcing a update on page changes.
@@ -258,7 +266,7 @@ export class DataTables extends Service {
       }
     }
 
-    this.logger.info(`Lists refreshed in ${DateTime.now().diff(start, 'millisecond').toString() ?? ''}`);
+    this.metrics.endMeasurement('DataTables.refreshListsTableFromDataview');
   }
 
   // Parse a path to return the filename without an extension.
