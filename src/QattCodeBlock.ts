@@ -283,7 +283,7 @@ export interface IQattCodeBlock {
 
    // << docs-codeblock-configuration-replacecodeblock
    */
-  replaceCodeBlock: boolean | undefined;
+  replaceCodeBlock: boolean;
 
   /**
    *
@@ -337,7 +337,7 @@ export interface IQattCodeBlock {
    * @type {string}
    * @memberof IQattCodeBlock
    */
-  codeBlockContent: string;
+  codeBlockContent?: string;
 
   /**
    * The data source that the query is using. Could be qatt or dataview. This is used internally and not meant to be set by users.
@@ -345,7 +345,7 @@ export interface IQattCodeBlock {
    * @type {string}
    * @memberof IQattCodeBlock
    */
-  queryDataSource: string;
+  queryDataSource?: string;
 
   /**
    * The unique ID for the codeblock. This is used internally and not meant to be set by users. If set by user the ID will be shown in the logs.
@@ -353,7 +353,7 @@ export interface IQattCodeBlock {
    * @type {string}
    * @memberof IQattCodeBlock
    */
-  id: string;
+  id?: string;
 
   /**
    * The original codeblock content. This is used internally and not meant to be set by users.
@@ -361,7 +361,7 @@ export interface IQattCodeBlock {
    * @type {string}
    * @memberof IQattCodeBlock
    */
-  originalCodeBlockContent: string;
+  originalCodeBlockContent?: string;
 
   /**
    * The original codeblock content. This is used internally and not meant to be set by users.
@@ -390,12 +390,12 @@ export class QattCodeBlock implements IQattCodeBlock {
   postRenderFormat: string | undefined;
   renderEngine: string | undefined;
   logLevel: string | undefined;
-  replaceCodeBlock: boolean | undefined;
+  replaceCodeBlock: boolean;
   replaceTargetPath: string | undefined;
   replaceType: string | undefined;
-  queryDataSource: string;
-  id: string;
-  originalCodeBlockContent: string;
+  queryDataSource?: string;
+  id?: string;
+  originalCodeBlockContent?: string;
   internalQueryRenderChildVersion: number;
 
   /**
@@ -404,10 +404,10 @@ export class QattCodeBlock implements IQattCodeBlock {
    * @memberof QattCodeBlock
    */
   constructor(
-    public codeBlockContent: string,
-    public defaultInternalQueryRenderChildVersion: number = 2,
+    public codeBlockContent?: string,
+    public defaultInternalQueryRenderChildVersion?: number,
   ) {
-    const parsedCodeBlock = parseYaml(codeBlockContent);
+    const parsedCodeBlock = parseYaml(codeBlockContent ?? '');
     this.originalCodeBlockContent = codeBlockContent;
 
     this.customJSForSql = parsedCodeBlock.customJSForSql;
@@ -439,7 +439,7 @@ export class QattCodeBlock implements IQattCodeBlock {
 
     this.queryDataSource = this.getParsedQuerySource(this.query ?? 'qatt');
 
-    this.internalQueryRenderChildVersion = parsedCodeBlock.internalQueryRenderChildVersion === undefined ? defaultInternalQueryRenderChildVersion : Number(parsedCodeBlock.internalQueryRenderChildVersion);
+    this.internalQueryRenderChildVersion = parsedCodeBlock.internalQueryRenderChildVersion === undefined ? (defaultInternalQueryRenderChildVersion ?? 2) : Number(parsedCodeBlock.internalQueryRenderChildVersion);
   }
 
   /**

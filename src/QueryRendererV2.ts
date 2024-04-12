@@ -1,36 +1,33 @@
 
-import {type MarkdownPostProcessorContext, MarkdownPreviewView, moment, MarkdownRenderChild, Plugin, debounce, TFile} from 'obsidian';
+import {type MarkdownPostProcessorContext, Plugin} from 'obsidian';
 import {QattCodeBlock} from 'QattCodeBlock';
-import {type IRenderer} from 'Render/IRenderer';
-import {RenderFactory} from 'Render/RenderFactory';
-import {QueryFactory} from 'Query/QueryFactory';
-import {type IQuery} from 'Query/IQuery';
 import {Service, useSettings} from '@ophidian/core';
-import {LoggingService, type Logger} from 'lib/LoggingService';
+import {LoggingService} from 'lib/LoggingService';
 import {DateTime} from 'luxon';
 import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
-import {MicromarkPostRenderer, markdown2html} from 'PostRender/MicromarkPostRenderer';
 import {NotesCacheService} from 'NotesCacheService';
-import {ObsidianPostRenderer} from 'PostRender/ObsidianPostRenderer';
-import {type IPostRenderer} from 'PostRender/IPostRenderer';
-import {HtmlPostRenderer} from 'PostRender/HtmlPostRenderer';
-import {RawPostRenderer} from 'PostRender/RawPostRenderer';
 import {QueryRenderChildV2} from 'QueryRenderChildV2';
 import {QueryRenderChildV3} from 'QueryRenderChildV3';
+import {QattCodeBlockSettings} from 'lib/QattCodeBlockSettings';
 
 export interface IRenderingSettings {
   postRenderFormat: string;
   enableExperimentalRender: boolean;
   renderingSettingsOpen: boolean;
   internalQueryRenderChildVersion: number;
-
+  enableCodeBlockEditor: boolean;
+  queryFileRoot: string;
+  templateFileRoot: string;
 }
 
 export const RenderingSettingsDefaults: IRenderingSettings = {
-  postRenderFormat: 'micromark',
+  postRenderFormat: 'markdown',
   enableExperimentalRender: false,
   renderingSettingsOpen: false,
   internalQueryRenderChildVersion: 2,
+  enableCodeBlockEditor: true,
+  queryFileRoot: '',
+  templateFileRoot: '',
 };
 
 /**
@@ -56,20 +53,29 @@ export class QueryRendererV2Service extends Service {
     RenderingSettingsDefaults,
     (settings: IRenderingSettings) => {
       this.logger.info('QueryRendererV2Service Updated Settings');
-      this.postRenderFormat = settings.postRenderFormat;
+      this.postRenderFormat = settings.postRenderFormat ?? 'markdown';
       this.renderingSettingsOpen = settings.renderingSettingsOpen;
       this.internalQueryRenderChildVersion = settings.internalQueryRenderChildVersion;
+      this.enableCodeBlockEditor = settings.enableCodeBlockEditor;
+      this.queryFileRoot = settings.queryFileRoot ?? '';
+      this.templateFileRoot = settings.templateFileRoot ?? '';
     },
     (settings: IRenderingSettings) => {
       this.logger.info('QueryRendererV2Service Initialize Settings');
-      this.postRenderFormat = settings.postRenderFormat;
+      this.postRenderFormat = settings.postRenderFormat ?? 'markdown';
       this.renderingSettingsOpen = settings.renderingSettingsOpen;
       this.internalQueryRenderChildVersion = settings.internalQueryRenderChildVersion;
+      this.enableCodeBlockEditor = settings.enableCodeBlockEditor;
+      this.queryFileRoot = settings.queryFileRoot ?? '';
+      this.templateFileRoot = settings.templateFileRoot ?? '';
     },
   );
 
-  postRenderFormat: string;
-  internalQueryRenderChildVersion: number;
+  postRenderFormat = 'markdown';
+  internalQueryRenderChildVersion = 2;
+  enableCodeBlockEditor = false;
+  queryFileRoot = '';
+  templateFileRoot = '';
 
   constructor() {
     super();
@@ -83,7 +89,7 @@ export class QueryRendererV2Service extends Service {
     const settingsSection = tab.addHeading(
       new SettingsTabHeading({
         open: this.renderingSettingsOpen,
-        text: 'Rendering Settings',
+        text: 'Codeblock Rendering Settings',
         level: 'h2',
         class: 'settings-heading'}),
       async (value: boolean) => {
@@ -111,9 +117,37 @@ export class QueryRendererV2Service extends Service {
       settingsSection,
     );
 
+    const queryFileRootSetting = tab.addTextInput(
+      new SettingsTabField({
+        name: 'Query File Root',
+        description: 'The root directory for the query files. This is the directory where the query files are stored. If this is not set the path must be relative to the root of the vault.',
+        value: this.queryFileRoot,
+      }),
+      async (value: string) => {
+        await settings.update(settings => {
+          settings.queryFileRoot = value;
+        });
+      },
+      settingsSection,
+    );
+
+    const templateFileRootSetting = tab.addTextInput(
+      new SettingsTabField({
+        name: 'Template File Root',
+        description: 'The root directory for the template files. This is the directory where the template files are stored. If this is not set the path must be relative to the root of the vault.',
+        value: this.templateFileRoot,
+      }),
+      async (value: string) => {
+        await settings.update(settings => {
+          settings.templateFileRoot = value;
+        });
+      },
+      settingsSection,
+    );
+
     const internalQueryRenderChildVersionSetting = tab.addDropdownInput(
       new SettingsTabField({
-        name: 'Default Internal Query Render Child Version',
+        name: '🧪 Default Internal Query Render Child Version',
         description: 'This allows use of an alternative way to render the results in Obsidian using a different method. This is experimental and may not work as expected.',
         placeholder: {
           2: 'As child of MarkdownPostProcessorContext',
@@ -128,12 +162,26 @@ export class QueryRendererV2Service extends Service {
       },
       settingsSection,
     );
+
+    const enableCodeBlockEditorSetting = tab.addToggle(
+      new SettingsTabField({
+        name: '🧪 Enable Code Block Editor',
+        description: 'This will enable a button on the code block to allow you to edit the settings for the block. This is experimental and may not work as expected.',
+        value: this.enableCodeBlockEditor,
+      }),
+      async (value: boolean) => {
+        await settings.update(settings => {
+          settings.enableCodeBlockEditor = value;
+        });
+      },
+      settingsSection,
+    );
   }
 
   async onload() {
     this.plugin.registerMarkdownCodeBlockProcessor('qatt', async (source: string, element: HTMLElement, context: MarkdownPostProcessorContext) => {
       this.logger.info(`lastCreation ${this.lastCreation.toISO() ?? ''}`);
-      this.logger.info(`Adding QATT Render for ${source} to context ${context.docId}`);
+      this.logger.debug(`Adding QATT Render for ${source} to context ${context.docId}`);
 
       const codeblockConfiguration = new QattCodeBlock(source);
 
@@ -141,7 +189,36 @@ export class QueryRendererV2Service extends Service {
         codeblockConfiguration.internalQueryRenderChildVersion = Number(this.internalQueryRenderChildVersion);
       }
 
-      this.logger.info('codeblockConfiguration', codeblockConfiguration);
+      // If the queryFile is set then we need to update the path to include the root
+      if (codeblockConfiguration.queryFile !== undefined) {
+        this.logger.debug(`Updating queryFile to set default root. ${this.queryFileRoot}${codeblockConfiguration.queryFile}`);
+        codeblockConfiguration.queryFile = `${this.queryFileRoot}${codeblockConfiguration.queryFile}`;
+      }
+
+      // If the templateFile is set then we need to update the path to include the root
+      if (codeblockConfiguration.templateFile !== undefined) {
+        this.logger.debug(`Updating templateFile to set default root. ${this.templateFileRoot}${codeblockConfiguration.templateFile}`);
+        codeblockConfiguration.templateFile = `${this.templateFileRoot}${codeblockConfiguration.templateFile}`;
+      }
+
+      if (this.enableCodeBlockEditor) {
+        this.logger.debug('codeblockConfiguration', codeblockConfiguration);
+        const observer = new MutationObserver(() => {
+          const editButton = element.parentElement?.childNodes.item(1);
+          if (editButton) {
+            editButton.addEventListener('click', event => {
+              event.stopImmediatePropagation();
+              event.preventDefault();
+              event.stopPropagation();
+              new QattCodeBlockSettings(this.plugin.app, this.plugin, codeblockConfiguration, context, element).open();
+            }, {capture: true});
+          }
+        });
+        observer.observe(element, {
+          childList: true,
+          subtree: true,
+        });
+      }
 
       if (codeblockConfiguration.internalQueryRenderChildVersion === 2) {
         this.logger.info('Rendered as child of MarkdownPostProcessorContext ');
