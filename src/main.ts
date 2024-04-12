@@ -24,6 +24,7 @@ import {UpdateModal} from 'lib/UpdateModal';
 import {use, useSettings} from '@ophidian/core';
 import {EventHandler} from 'handlers/EventHandler';
 import {WindowFunctionsService} from 'lib/WindowFunctionsService';
+import {MetricsService} from 'lib/MetricsService';
 
 export class Note {
   constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
@@ -40,20 +41,10 @@ export interface IGeneralSettings {
   disableCustomJsMissingNotification: boolean;
 }
 
-export const GeneralSettingsDefaults: IGeneralSettings = {
-  onStartSqlQueries: 'CREATE TABLE my_lookup(name,birthday);\nINSERT INTO my_lookup VALUES ("fred", 2000-02-03);',
-  announceUpdates: true,
-  version: '',
-  mainHeadingOpen: true,
-  generalHeadingOpen: false,
-  internalLoggingConsoleLogLimit: 10,
-  disableDataviewMissingNotification: false,
-  disableCustomJsMissingNotification: false,
-};
-
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
   use = use.plugin(this);
   logger = this.use(LoggingService).getLogger('Qatt');
+  metrics = this.use(MetricsService);
   dataTables = this.use(DataTables);
   commandHandler = this.use(CommandHandler);
   eventHandler = this.use(EventHandler);
@@ -67,7 +58,16 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
   settings = useSettings(
     this,
-    GeneralSettingsDefaults,
+    {
+      onStartSqlQueries: 'CREATE TABLE my_lookup(name,birthday);\nINSERT INTO my_lookup VALUES ("fred", 2000-02-03);',
+      announceUpdates: false,
+      version: '',
+      mainHeadingOpen: true,
+      generalHeadingOpen: false,
+      internalLoggingConsoleLogLimit: 10,
+      disableDataviewMissingNotification: false,
+      disableCustomJsMissingNotification: false,
+    } as IGeneralSettings,
     (settings: IGeneralSettings) => {
       // This will run every time the settings are updated.
       this.logger.info('Settings Updated', settings);
@@ -112,7 +112,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   onStartSqlQueries: string;
   announceUpdates: boolean;
   version: string;
-  mainHeadingOpen: boolean;
+  mainHeadingOpen = true;
   generalHeadingOpen: boolean;
   internalLoggingConsoleLogLimit: number;
 
@@ -149,7 +149,8 @@ Query All the Things is a flexible way to query and render data in <a href="http
 <a href='https://github.com/sytone/obsidian-queryallthethings'><img src='https://img.shields.io/github/downloads/sytone/obsidian-queryallthethings/total'></a>
 <a href='https://github.com/sytone/obsidian-queryallthethings/issues'><img src='https://img.shields.io/github/issues/sytone/obsidian-queryallthethings'></a>
 </div>
-
+<br />
+Some settings are experimental, these are indicated by a 🧪 at the start of the name.
 </div>
 `;
 
@@ -179,7 +180,6 @@ Query All the Things is a flexible way to query and render data in <a href="http
       new SettingsTabField({
         name: 'On Start SQL Queries',
         description: 'If you want to create tables and set data so your queries can use it at a later time without having to duplicate the queries enter them here. These will be executed when the plugin is loaded after the data tables have been initialized.',
-        placeholder: GeneralSettingsDefaults.onStartSqlQueries,
         value: this.onStartSqlQueries,
       }),
       onChange,
@@ -244,6 +244,8 @@ Query All the Things is a flexible way to query and render data in <a href="http
   }
 
   async onload() {
+    this.metrics.startMeasurement('plugin onload');
+
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
 
     this.use(QueryFactory).load();
@@ -290,6 +292,10 @@ Query All the Things is a flexible way to query and render data in <a href="http
     });
 
     this.eventHandler.setup();
+    const endTime = new Date(Date.now());
+
+    this.metrics.endMeasurement('plugin onload');
+    this.metrics.pluginLoadTime = this.metrics.getMeasurement('plugin onload');
   }
 
   onunload() {
