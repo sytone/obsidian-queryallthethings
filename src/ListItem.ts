@@ -24,7 +24,7 @@ The list item is parse by the following regular expression to extract informatio
 | column      | number  |                                       |
 | note        | Note    | Note object                           |
 | isTopLevel  | boolean |                                       |
-| page        | string  | Path of the page the list item is on. |
+| path        | string  | Path of the page the list item is on. |
 | text        | string  | The text part of the list.            |
 | checked     | boolean |                                       |
 | status      | string  |                                       |
@@ -43,7 +43,7 @@ export class ListItem {
   private _textMatch: RegExpExecArray | null = null;
 
   /**
-   *
+   * Represents a ListItem object.
    */
   // eslint-disable-next-line max-params
   constructor(
@@ -69,6 +69,10 @@ export class ListItem {
   }
 
   public get page(): string {
+    return this.note.path;
+  }
+
+  public get path(): string {
     return this.note.path;
   }
 
