@@ -40,7 +40,8 @@ declare module 'obsidian' {
     'qatt:dataview-store-update' |
     'qatt:csv-loader-file-update' |
     'qatt:mdtable-loader-file-update' |
-    'qatt:json-loader-file-update', callback: () => void, ctx?: any): EventRef;
+    'qatt:json-loader-file-update' |
+    'qatt:all-notes-loaded', callback: () => void, ctx?: any): EventRef;
   }
 }
 
