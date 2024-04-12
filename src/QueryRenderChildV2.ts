@@ -58,7 +58,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   }
 
   async onload() {
-    this.renderId = `${this.codeblockConfiguration.id}:${this.context.sourcePath}`;
+    this.renderId = `${this.codeblockConfiguration.id ?? ''}:${this.context.sourcePath}`;
     const file = this.plugin.app.vault.getAbstractFileByPath(this.context.sourcePath);
     if (!(file instanceof TFile)) {
       return;
@@ -70,7 +70,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       this.logger.setLogLevel(this.codeblockConfiguration.logLevel);
     }
 
-    this.logger.infoWithId(this.renderId, `Query Render generated for class ${this.container.className} -> ${this.codeblockConfiguration.queryDataSource}`);
+    this.logger.infoWithId(this.renderId, `Query Render generated for class ${this.container.className} -> ${this.codeblockConfiguration.queryDataSource ?? ''}`);
 
     if (this.codeblockConfiguration.queryDataSource === 'qatt') {
       this.registerEvent(this.plugin.app.workspace.on('qatt:notes-store-update', this.render));
@@ -79,6 +79,8 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     if (this.codeblockConfiguration.queryDataSource === 'dataview') {
       this.registerEvent(this.plugin.app.workspace.on('qatt:dataview-store-update', this.render));
     }
+
+    this.registerEvent(this.plugin.app.workspace.on('qatt:all-notes-loaded', this.render));
 
     await this.render();
   }
@@ -389,36 +391,5 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
     const rawPostRenderResult = await postRenderer.renderMarkdown(renderResults, renderedContent, sourcePath, this.plugin);
     return {renderedContent, rawPostRenderResult};
-
-    // Old Approach
-    // const postRenderFunctions: Record<string, () => Promise<HTMLSpanElement>> = {
-    //   markdown: async () => {
-    //     await MarkdownPreviewView.renderMarkdown(renderResults, renderedContent, sourcePath, this.plugin);
-    //     this.logger.debugWithId(this.renderId, 'renderedContent from MarkdownPreviewView.renderMarkdown', renderedContent);
-    //     this.logger.debugWithId(this.renderId, 'renderedContent from MarkdownPreviewView.renderMarkdown', renderedContent.innerHTML);
-
-    //     return renderedContent;
-    //   },
-    //   micromark: async () => {
-    //     const micromarkHtml = markdown2html(renderResults);
-    //     const parentSpan = document.createElement('span');
-    //     parentSpan.innerHTML = micromarkHtml;
-    //     return parentSpan;
-    //   },
-    //   raw: async () => {
-    //     const parentSpan = document.createElement('span');
-    //     parentSpan.innerHTML = renderResults;
-    //     return parentSpan;
-    //   },
-    //   html: async () => {
-    //     const parentSpan = document.createElement('span');
-    //     parentSpan.innerHTML = renderResults;
-    //     return parentSpan;
-    //   },
-    // };
-
-    // const postRenderFunction = postRenderFunctions[postRenderFormat] || (async () => renderResults);
-
-    // return postRenderFunction();
   }
 }
