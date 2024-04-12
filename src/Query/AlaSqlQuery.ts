@@ -314,6 +314,12 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
     return queryResult;
   }
 
+  /**
+   * Retrieves data tables based on the provided query. This will use the arrays in the caches to get data
+   * for the query. In 0.11.x+ there are now tables available as well.
+   * @param query - The query string.
+   * @returns A promise that resolves to an array containing the final query and an array of data tables.
+   */
   private async getDataTables(query: string): Promise<[string, any[]]> {
     let finalQuery = query;
     let tableCount = 0;
