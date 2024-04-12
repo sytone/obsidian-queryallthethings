@@ -1,12 +1,12 @@
 import {Service} from '@ophidian/core';
 import {Plugin} from 'obsidian';
-import {type QattCodeBlock} from 'QattCodeBlock';
-import {LoggingService} from 'lib/LoggingService';
 import {DateTime} from 'luxon';
 
+/**
+ * Service for tracking and measuring metrics related to plugin performance.
+ */
 export class MetricsService extends Service {
   plugin = this.use(Plugin);
-  logger = this.use(LoggingService).getLogger('Qatt.MetricsService');
 
   lastCreation: DateTime;
   tableLoadTimes: Record<string, number> = {};
@@ -19,18 +19,44 @@ export class MetricsService extends Service {
     this.lastCreation = DateTime.now();
   }
 
+  /**
+   * Sets the load time for a specific table.
+   * @param tableName - The name of the table.
+   * @param loadTime - The load time in milliseconds.
+   */
   public setTableLoadTime(tableName: string, loadTime: number): void {
     this.tableLoadTimes[tableName] = loadTime;
   }
 
+  /**
+   * Starts a measurement with the given name.
+   * @param name - The name of the measurement.
+   */
   public startMeasurement(name: string): void {
     this.measurements[name] = performance.now();
   }
 
+  /**
+   * Ends the measurement for the specified metric.
+   * @param name - The name of the metric.
+   */
   public endMeasurement(name: string): void {
     this.measurements[name] = performance.now() - this.measurements[name];
   }
 
+  /**
+   * Retrieves the measurement value for the specified name.
+   * @param name - The name of the measurement.
+   * @returns The measurement value.
+   */
+  public getMeasurement(name: string): number {
+    return this.measurements[name];
+  }
+
+  /**
+   * Retrieves the plugin metrics as a formatted string.
+   * @returns A string containing the plugin metrics.
+   */
   public getPluginMetrics(): string {
     const tableLoadTimes = Object.entries(this.tableLoadTimes)
       .map(([tableName, loadTime]) => `${tableName}: ${loadTime}ms`)
