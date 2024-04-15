@@ -21,3 +21,4 @@ export * from 'Render/HandlebarsHelpers/TaskCheckboxWithAppend';
 export * from 'Render/HandlebarsHelpers/ToInt';
 export * from 'Render/HandlebarsHelpers/Trim';
 export * from 'Render/HandlebarsHelpers/Uppercase';
+export * from 'Render/HandlebarsHelpers/FormatDate';

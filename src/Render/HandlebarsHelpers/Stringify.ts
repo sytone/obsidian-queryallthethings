@@ -4,7 +4,7 @@ import Handlebars, {type HelperOptions} from 'handlebars';
 // >> id='docs-handlebars-helper-stringify' options='file=templates/hb-helpers/stringify.md'
 title: stringify value
 ---
-The `stringify`\-helper will convert the referenced object to a JSON string.
+The `stringify`\-helper will convert the referenced object to a JSON string. If a cyclical object is used the helper will return `[Cyclical]` for the nested instances to prevent infinite recursion.
 
 {% raw %}
 
@@ -47,5 +47,28 @@ will result in:
 // << docs-handlebars-helper-stringify
 */
 export function stringify(value: any) {
-  return new Handlebars.SafeString(JSON.stringify(value, null, 2));
+  const seenObjects: any[] = [];
+  function inspectElement(_key: any, value: any): any {
+    if (detectCycle(value)) {
+      return '[Cyclical]';
+    }
+
+    return value;
+  }
+
+  function detectCycle(object: any): boolean {
+    if (object && (typeof object === 'object')) {
+      for (const r of seenObjects) {
+        if (r === object) {
+          return true;
+        }
+      }
+
+      seenObjects.push(object);
+    }
+
+    return false;
+  }
+
+  return new Handlebars.SafeString(JSON.stringify(value, inspectElement, 2));
 }
