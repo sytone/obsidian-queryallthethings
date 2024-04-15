@@ -25,6 +25,7 @@ import {use, useSettings} from '@ophidian/core';
 import {EventHandler} from 'handlers/EventHandler';
 import {WindowFunctionsService} from 'lib/WindowFunctionsService';
 import {MetricsService} from 'lib/MetricsService';
+import {createEditorMenu} from 'UI/EditorMenu';
 
 export class Note {
   constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
@@ -39,6 +40,7 @@ export interface IGeneralSettings {
   internalLoggingConsoleLogLimit: number;
   disableDataviewMissingNotification: boolean;
   disableCustomJsMissingNotification: boolean;
+  enableEditorRightClickMenu: boolean;
 }
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
@@ -67,6 +69,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       internalLoggingConsoleLogLimit: 10,
       disableDataviewMissingNotification: false,
       disableCustomJsMissingNotification: false,
+      enableEditorRightClickMenu: true,
     } as IGeneralSettings,
     (settings: IGeneralSettings) => {
       // This will run every time the settings are updated.
@@ -77,6 +80,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.mainHeadingOpen = settings.mainHeadingOpen;
       this.generalHeadingOpen = settings.generalHeadingOpen;
       this.internalLoggingConsoleLogLimit = settings.internalLoggingConsoleLogLimit;
+      this.enableEditorRightClickMenu = settings.enableEditorRightClickMenu;
       this.commandHandler.setup(settings.internalLoggingConsoleLogLimit);
     },
     (settings: IGeneralSettings) => {
@@ -88,6 +92,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.mainHeadingOpen = settings.mainHeadingOpen;
       this.generalHeadingOpen = settings.generalHeadingOpen;
       this.internalLoggingConsoleLogLimit = settings.internalLoggingConsoleLogLimit;
+      this.enableEditorRightClickMenu = settings.enableEditorRightClickMenu;
       this.commandHandler.setup(settings.internalLoggingConsoleLogLimit);
 
       if (this.onStartSqlQueries) {
@@ -115,6 +120,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   mainHeadingOpen = true;
   generalHeadingOpen: boolean;
   internalLoggingConsoleLogLimit: number;
+  enableEditorRightClickMenu = true;
 
   // Public inlineRenderer: InlineRenderer | undefined;
   public queryRendererService: QueryRendererV2Service | undefined;
@@ -292,6 +298,15 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
     });
 
     this.eventHandler.setup();
+
+    if (this.enableEditorRightClickMenu) {
+      this.registerEvent(
+        this.app.workspace.on('editor-menu', (menu, editor) => {
+          createEditorMenu(menu, editor);
+        }),
+      );
+    }
+
     const endTime = new Date(Date.now());
 
     this.metrics.endMeasurement('plugin onload');

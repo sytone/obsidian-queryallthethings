@@ -29,6 +29,7 @@ title: Obsidian Markdown Tasks
 | scheduledDate  | string   | When the task is scheduled next ['⏳', 'scheduled::']           |
 | doDate         | string   | When to do the task ['💨', 'do::']           |
 | priority       | number   | Priority of task based on indicator ['⏫🔼🔽', 'priority::']             |
+| cleanTask      | string   | The task string with all metadata removed.            |
 
 // << docs-tables-obsidian-markdown-tasks
 */

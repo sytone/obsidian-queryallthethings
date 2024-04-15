@@ -191,12 +191,30 @@ export class QueryRendererV2Service extends Service {
 
       // If the queryFile is set then we need to update the path to include the root
       if (codeblockConfiguration.queryFile !== undefined) {
+        if (this.queryFileRoot !== '' && !this.queryFileRoot.endsWith('/')) {
+          this.queryFileRoot = `${this.queryFileRoot}/`;
+        }
+
+        // Wild assumption here. If there is no dot in the file name it is missing an extension so adds .md by default.
+        if (!codeblockConfiguration.queryFile.includes('.')) {
+          codeblockConfiguration.queryFile = `${codeblockConfiguration.queryFile}.md`;
+        }
+
         this.logger.debug(`Updating queryFile to set default root. ${this.queryFileRoot}${codeblockConfiguration.queryFile}`);
         codeblockConfiguration.queryFile = `${this.queryFileRoot}${codeblockConfiguration.queryFile}`;
       }
 
       // If the templateFile is set then we need to update the path to include the root
       if (codeblockConfiguration.templateFile !== undefined) {
+        if (this.templateFileRoot !== '' && !this.templateFileRoot.endsWith('/')) {
+          this.templateFileRoot = `${this.templateFileRoot}/`;
+        }
+
+        // Wild assumption here. If there is no dot in the file name it is missing an extension so adds .md by default.
+        if (!codeblockConfiguration.templateFile.includes('.')) {
+          codeblockConfiguration.templateFile = `${codeblockConfiguration.templateFile}.md`;
+        }
+
         this.logger.debug(`Updating templateFile to set default root. ${this.templateFileRoot}${codeblockConfiguration.templateFile}`);
         codeblockConfiguration.templateFile = `${this.templateFileRoot}${codeblockConfiguration.templateFile}`;
       }
