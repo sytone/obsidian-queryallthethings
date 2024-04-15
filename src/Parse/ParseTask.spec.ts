@@ -48,6 +48,23 @@ describe('parse functions', () => {
     expect(parsedDvAltTask.cleanTask).toBe('this is a task');
   });
 
+  test('task parses to create clean string', () => {
+    let parsedTask = parseTask('- [ ] this is a task 📅 2022-03-05 ⏫');
+    expect(parsedTask.cleanTask).toBe('this is a task');
+
+    parsedTask = parseTask('- [ ] this is a task 📅 2022-03-05 🔼');
+    expect(parsedTask.cleanTask).toBe('this is a task');
+
+    parsedTask = parseTask('- [ ] this is a task 📅 2022-03-05 🔽');
+    expect(parsedTask.cleanTask).toBe('this is a task');
+
+    parsedTask = parseTask('- [ ] this is a task 📅 2022-03-05');
+    expect(parsedTask.cleanTask).toBe('this is a task');
+
+    parsedTask = parseTask('- [ ] this is a task #il 📅 2022-03-05');
+    expect(parsedTask.cleanTask).toBe('this is a task');
+  });
+
   test('task parses tasks plugin based priority correctly', () => {
     let parsedTask = parseTask('- [ ] this is a task 📅 2022-03-05 ⏫');
     expect(parsedTask.priority).toBe(1);

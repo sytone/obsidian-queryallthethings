@@ -71,6 +71,12 @@ export const parseTask = (taskString: string) => {
     cleanTask = cleanTask.replace('(priority:: low)', '');
   }
 
+  if (tags.length > 0) {
+    for (const tag of tags) {
+      cleanTask = cleanTask.replace(`#${tag}`, '');
+    }
+  }
+
   cleanTask = cleanTask.trim().slice(6);
 
   return {tags, tagsNormalized, dueDate, doneDate, startDate, createDate, scheduledDate, doDate, priority, cleanTask};
