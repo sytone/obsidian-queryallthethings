@@ -2,15 +2,15 @@
 layout: default
 parent: Handlebars Helpers
 grand_parent: Using Templates
-title: micromark
+title: obsidian
 ---
 
-The `micromark`-helper renders markdown as HTML using the micromark library. It has one setting which will remove the wrapping `<p>` tag from the output if inline is set to true.
+The `obsidian`-helper renders markdown as HTML using the obsidian markdown engine. It has one setting which will remove the wrapping `<p>` tag from the output if inline is set to true.
 
 {% raw %}
 
 ```handlebars
-      {{{#micromark inline="true"}}} {{{task}}} [[{{{page}}}|📝]] {{{/micromark}}}
+      {{{#obsidian inline="true"}}} {{{task}}} [[{{{page}}}|📝]] {{{/obsidian}}}
 ```
 
 {% endraw %}

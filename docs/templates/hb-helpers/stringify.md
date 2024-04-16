@@ -4,7 +4,7 @@ parent: Handlebars Helpers
 grand_parent: Using Templates
 title: stringify value
 ---
-The `stringify`\-helper will convert the referenced object to a JSON string.
+The `stringify`\-helper will convert the referenced object to a JSON string. If a cyclical object is used the helper will return `[Cyclical]` for the nested instances to prevent infinite recursion.
 
 {% raw %}
 
@@ -44,4 +44,4 @@ will result in:
 }
 ```
 
-%%This file is auto-generated. Do not edit. Generated at: Tue Jan 02 2024%%
+%%This file is auto-generated. Do not edit. Generated at: Tue Apr 16 2024%%
