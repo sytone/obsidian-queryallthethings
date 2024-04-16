@@ -17,12 +17,17 @@ All types of contributions are encouraged and valued. See the [Table of Contents
 - [Code of Conduct](#code-of-conduct)
 - [I Have a Question](#i-have-a-question)
 - [I Want To Contribute](#i-want-to-contribute)
-- [Reporting Bugs](#reporting-bugs)
-- [Suggesting Enhancements](#suggesting-enhancements)
-- [Your First Code Contribution](#your-first-code-contribution)
-- [Improving The Documentation](#improving-the-documentation)
+  - [Reporting Bugs](#reporting-bugs)
+  - [Suggesting Enhancements](#suggesting-enhancements)
+  - [Your First Code Contribution](#your-first-code-contribution)
+    - [Tools](#tools)
+    - [Setting up development environment](#setting-up-development-environment)
+    - [Git configuration and LF/CRLF](#git-configuration-and-lfcrlf)
+    - [Dev Container](#dev-container)
+    - [Testing changes](#testing-changes)
+  - [Improving The Documentation](#improving-the-documentation)
 - [Styleguides](#styleguides)
-- [Commit Messages](#commit-messages)
+  - [Commit Messages](#commit-messages)
 - [Join The Project Team](#join-the-project-team)
 
 
@@ -146,7 +151,7 @@ VS Code will work on all operating systems and the configuration will recommend 
 
 #### Setting up development environment
 
-PNPM is used as the package manager, use `npm install -g pnpm` to install. Version 16 of NodeJS is being used for the build process so ensure that is also installed. If you use Node version manager you can run `nvm install 16.20.2` and `nvm use 16.20.2` to install and use the current node version.
+PNPM is used as the package manager, use `npm install -g pnpm@latest-8` to install. Version 16 of NodeJS is being used for the build process so ensure that is also installed. If you use Node version manager you can run `nvm install 16.20.2` and `nvm use 16.20.2` to install and use the current node version.
 
 Run `pnpm install` to ensure dependencies are installed and then `pnpm run build`
 
