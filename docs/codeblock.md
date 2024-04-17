@@ -149,4 +149,4 @@ If you set it to `once` the entire codeblock or target path will be processed an
 If you set it to `always` the rendered output will be placed before the codeblock and in preview and reading view the codeblock will be rendered as a blank string to hide it. It is still there and you can edit it in edit mode. When viewing in a text editor you will see the rendered output and then the codeblock below it. To place the renderers content after the codeblock use `alwaysappend`. You can also use `alwaysprepend` if you want to be explicit.
 %%/snippet%%
 
-%%This file is auto-generated. Do not edit. Generated at: Tue Jan 02 2024%%
+%%This file is auto-generated. Do not edit. Generated at: Tue Apr 16 2024%%

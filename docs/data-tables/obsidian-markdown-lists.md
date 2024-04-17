@@ -20,11 +20,11 @@ The list item is parse by the following regular expression to extract informatio
 | column      | number  |                                       |
 | note        | Note    | Note object                           |
 | isTopLevel  | boolean |                                       |
-| page        | string  | Path of the page the list item is on. |
+| path        | string  | Path of the page the list item is on. |
 | text        | string  | The text part of the list.            |
 | checked     | boolean |                                       |
 | status      | string  |                                       |
 | treePath    | string  |                                       |
 | depth       | number  |                                       |
 
-%%This file is auto-generated. Do not edit. Generated at: Tue Jan 02 2024%%
+%%This file is auto-generated. Do not edit. Generated at: Tue Apr 16 2024%%
