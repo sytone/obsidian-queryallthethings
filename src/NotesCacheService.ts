@@ -36,6 +36,7 @@ export class NotesCacheService extends Service {
   lastUpdate: DateTime;
   notesCacheSettingsOpen: boolean;
   enableAlaSqlTablePopulation = true;
+  public allNotesLoaded = false;
 
   settingsTab = useSettingsTab(this);
   settings = useSettings(
@@ -93,6 +94,11 @@ export class NotesCacheService extends Service {
     } else {
       this.logger.info('In Memory AlaSQL Table Population Disabled');
     }
+
+    this.metrics.addMetric('NotesCacheService.create Event Count', 0, 'count');
+    this.metrics.addMetric('NotesCacheService.update Event Count', 0, 'count');
+    this.metrics.addMetric('NotesCacheService.delete Event Count', 0, 'count');
+    this.metrics.addMetric('NotesCacheService.rename Event Count', 0, 'count');
   }
 
   /**
@@ -167,6 +173,7 @@ export class NotesCacheService extends Service {
           await this.addNote(file.path, n);
         }
 
+        this.metrics.incrementMetric('NotesCacheService.create Event Count');
         this.metrics.startMeasurement('NotesCacheService.create Event');
         this.plugin.app.workspace.trigger('qatt:notes-store-update');
         this.metrics.endMeasurement('NotesCacheService.create Event');
@@ -183,6 +190,7 @@ export class NotesCacheService extends Service {
           return;
         }
 
+        this.metrics.incrementMetric('NotesCacheService.delete Event Count');
         this.metrics.startMeasurement('NotesCacheService.delete Event');
         await this.deleteNote(file.path);
         this.plugin.app.workspace.trigger('qatt:notes-store-update');
@@ -200,6 +208,7 @@ export class NotesCacheService extends Service {
           return;
         }
 
+        this.metrics.incrementMetric('NotesCacheService.rename Event Count');
         this.metrics.startMeasurement('NotesCacheService.rename Event');
         const n = await this.createNoteFromPath(file.path);
         if (n) {
@@ -222,6 +231,7 @@ export class NotesCacheService extends Service {
           return;
         }
 
+        this.metrics.incrementMetric('NotesCacheService.changed Event Count');
         this.metrics.startMeasurement('NotesCacheService.changed Event');
         const startTime = new Date(Date.now());
         const n = await this.createNoteFromFileAndCache(file, cache);
@@ -260,6 +270,12 @@ export class NotesCacheService extends Service {
         await this.addNote(file.path, note);
       }
     }
+
+    this.allNotesLoaded = true;
+
+    this.metrics.addMetric('NotesCacheService Notes Count', alasql('SELECT COUNT(path) AS cached FROM obsidian_notes')[0].cached as number, 'count');
+    this.metrics.addMetric('NotesCacheService Lists Count', alasql('SELECT COUNT(path) AS cached FROM obsidian_lists')[0].cached as number, 'count');
+    this.metrics.addMetric('NotesCacheService Tasks Count', alasql('SELECT COUNT(path) AS cached FROM obsidian_tasks')[0].cached as number, 'count');
 
     this.plugin.app.workspace.trigger('qatt:all-notes-loaded');
     this.metrics.endMeasurement('NotesCacheService.cacheAllNotes');
@@ -560,20 +576,17 @@ export class NotesCacheService extends Service {
    */
   private updateListsTable(li: ListItem, path: string) {
     if (this.enableAlaSqlTablePopulation) {
-      alasql('UPDATE obsidian_lists SET parent = ?, task = ?, content = ?, line = ?, [column] = ?, note = ?, isTopLevel = ?, path = ?, text = ?, checked = ?, status = ?, treePath = ?, depth = ? WHERE path = ? AND line = ?', [
+      alasql('UPDATE obsidian_lists SET parent = ?, task = ?, content = ?, line = ?, [column] = ?, isTopLevel = ?, path = ?, text = ?, checked = ?, status = ? WHERE path = ? AND line = ?', [
         li.parent,
         li.task,
         li.content,
         li.line,
         li.column,
-        li.note,
         li.isTopLevel,
         li.path,
         li.text,
         li.checked,
         li.status,
-        li.treePath,
-        li.depth,
         path,
         li.line,
       ]);
@@ -651,14 +664,11 @@ export class NotesCacheService extends Service {
         content: li.content,
         line: li.line,
         column: li.column,
-        note: li.note.path,
         isTopLevel: li.isTopLevel,
         path: li.path,
         text: li.text,
         checked: li.checked,
         status: li.status,
-        treePath: li.treePath,
-        depth: li.depth,
       }]);
     }
   }

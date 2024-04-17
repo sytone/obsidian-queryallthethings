@@ -52,7 +52,7 @@ export class ListItem {
     public content: string,
     public line: number,
     public column: number,
-    public note: Note,
+    public path: string,
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/ban-types
@@ -69,11 +69,7 @@ export class ListItem {
   }
 
   public get page(): string {
-    return this.note.path;
-  }
-
-  public get path(): string {
-    return this.note.path;
+    return this.path;
   }
 
   public get text(): string {
@@ -108,25 +104,26 @@ export class ListItem {
     return ' ';
   }
 
-  public get treePath(): string {
-    const path = '';
-    // If the number is negative it is the root of a new potential tree. This
-    // does not care about the entire list being collated together at this point.
-    if (this.isTopLevel) {
-      return `${Math.abs(this.line)}`;
-    }
+  // Removing to deal with recursion issues.
+  // public get treePath(): string {
+  //   const path = '';
+  //   // If the number is negative it is the root of a new potential tree. This
+  //   // does not care about the entire list being collated together at this point.
+  //   if (this.isTopLevel) {
+  //     return `${Math.abs(this.line)}`;
+  //   }
 
-    const parentItem = this.note.listItems.find((value, ind, object) => Math.abs(value.line) === this.parent);
+  //   const parentItem = this.note.listItems.find((value, ind, object) => Math.abs(value.line) === this.parent);
 
-    return (parentItem?.treePath ?? '') + '.' + this.line.toString();
-  }
+  //   return (parentItem?.treePath ?? '') + '.' + this.line.toString();
+  // }
 
-  public get depth(): number {
-    if (this.isTopLevel) {
-      return 0;
-    }
+  // public get depth(): number {
+  //   if (this.isTopLevel) {
+  //     return 0;
+  //   }
 
-    const parentItem = this.note.listItems.find((value, ind, object) => Math.abs(value.line) === this.parent);
-    return (parentItem?.depth ?? 0) + 1;
-  }
+  //   const parentItem = this.note.listItems.find((value, ind, object) => Math.abs(value.line) === this.parent);
+  //   return (parentItem?.depth ?? 0) + 1;
+  // }
 }
