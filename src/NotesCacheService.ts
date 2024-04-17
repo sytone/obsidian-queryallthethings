@@ -227,6 +227,8 @@ export class NotesCacheService extends Service {
 
         // Return if the file is in the ignore list and the time has not expired.
         if (this.checkIfFileShouldBeIgnored(file.path)) {
+          this.metrics.incrementMetric('NotesCacheService.changed Ignored Count');
+
           this.logger.info(`skipping update for ${file.path} as it is being ignored for a period.`);
           return;
         }

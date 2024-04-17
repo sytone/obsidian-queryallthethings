@@ -157,7 +157,7 @@ export class Note {
           content.slice(li.position.start.offset, li.position.end.offset),
           li.position.start.line,
           li.position.start.col,
-          n.path,
+          markdownFile.path,
         ),
       );
     }

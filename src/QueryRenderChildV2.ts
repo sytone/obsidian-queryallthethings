@@ -35,6 +35,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   renderFactory: RenderFactory;
   rendering = false;
   file: TFile;
+  notesCacheService: NotesCacheService;
 
   notesCacheService: NotesCacheService;
 
