@@ -196,7 +196,7 @@ function getListItemWithTask(markdownTask: string) {
     markdownTask,
     1,
     1,
-    new Note(),
+    ' ',
   );
 }
 
