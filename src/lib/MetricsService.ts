@@ -13,6 +13,7 @@ export class MetricsService extends Service {
   pluginLoadTime: number;
   cacheLoadTime: number;
   measurements: Record<string, number> = {};
+  metrics: Record<string, [number, string]> = {};
 
   constructor() {
     super();
@@ -26,6 +27,28 @@ export class MetricsService extends Service {
    */
   public setTableLoadTime(tableName: string, loadTime: number): void {
     this.tableLoadTimes[tableName] = loadTime;
+  }
+
+  public addMetric(name: string, value: number, unit: string): void {
+    if (this.metrics[name]) {
+      this.metrics[name][0] = value;
+    } else {
+      this.metrics[name] = [value, unit];
+    }
+  }
+
+  public setMetric(name: string, value: number): void {
+    this.metrics[name][0] = value;
+  }
+
+  public getMetric(name: string): [number, string] {
+    return this.metrics[name];
+  }
+
+  public incrementMetric(name: string): void {
+    if (this.metrics[name]) {
+      this.metrics[name][0] += 1;
+    }
   }
 
   /**
@@ -66,12 +89,21 @@ export class MetricsService extends Service {
       .map(([name, time]) => `${name}: ${time}ms`)
       .join('\n');
 
+    const metrics = Object.entries(this.metrics)
+      .map(([name, [value, unit]]) => `${name}: ${value} ${unit}`)
+      .join('\n');
+
     return `
 Plugin Load Time: ${this.pluginLoadTime}ms
 Notes Cache Load Time: ${this.cacheLoadTime}ms
+
 Table Load Times
 ${tableLoadTimes}
+
 Internal Measurements
-${measurements}`;
+${measurements}
+
+Metrics
+${metrics}`;
   }
 }
