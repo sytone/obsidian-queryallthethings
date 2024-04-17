@@ -297,6 +297,11 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
       this.dataTables?.refreshTables('manual refresh');
     });
 
+    this.addRibbonIcon('ruler', 'Log Metrics', (evt: MouseEvent) => {
+      this.logger.info(`Log Metrics: ${evt.button}`);
+      this.logger.info(this.metrics.getPluginMetrics());
+    });
+
     this.eventHandler.setup();
 
     if (this.enableEditorRightClickMenu) {
