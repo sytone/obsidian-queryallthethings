@@ -56,7 +56,7 @@ export class ListItem {
   ) {}
 
   // eslint-disable-next-line @typescript-eslint/ban-types
-  public get textMatch(): RegExpExecArray | null {
+  private get textMatch(): RegExpExecArray | null {
     if (this._textMatch === null) {
       this._textMatch = this.listMatcher.exec(this.content);
     }

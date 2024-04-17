@@ -99,6 +99,8 @@ export class NotesCacheService extends Service {
     this.metrics.addMetric('NotesCacheService.update Event Count', 0, 'count');
     this.metrics.addMetric('NotesCacheService.delete Event Count', 0, 'count');
     this.metrics.addMetric('NotesCacheService.rename Event Count', 0, 'count');
+
+    this.metrics.addMetric('NotesCacheService.changed Ignored Count', 0, 'count');
   }
 
   /**
@@ -546,16 +548,16 @@ export class NotesCacheService extends Service {
    */
   private updateNotesTable(note: Note, path: string) {
     if (this.enableAlaSqlTablePopulation) {
-      alasql('UPDATE obsidian_notes SET content = ?, internalPath = ?, name = ?, parentFolder = ?, basename = ?, extension = ?, created = ?, modified = ?, size = ?, links = ?, embeds = ?, tags = ?, headings = ?, sections = ?, listItems = ?, frontmatter = ?, blocks = ? WHERE path = ?', [
+      alasql('UPDATE obsidian_notes SET content = ?, internalPath = ?, name = ?, parentFolder = ?, basename = ?, extension = ?, created = ?, modified = ?, size = ?, links = ?, embeds = ?, tags = ?, headings = ?, sections = ?, listItems = ?, frontmatter = ?, blocks = ?, stat = ? WHERE path = ?', [
         note.content,
         note.internalPath,
         note.name,
         note.parentFolder,
         note.basename,
         note.extension,
-        note.stat.ctime,
-        note.stat.mtime,
-        note.stat.size,
+        note.created,
+        note.modified,
+        note.size,
         note.links,
         note.embeds,
         note.tags,
@@ -564,8 +566,41 @@ export class NotesCacheService extends Service {
         note.listItems,
         note.frontmatter,
         note.blocks,
+        note.stat,
         path,
       ]);
+    }
+  }
+
+  /**
+   * Inserts a note into the obsidian_notes table.
+   *
+   * @param note - The note object to be inserted.
+   * @param path - The path of the note.
+   */
+  private insertNotesTable(note: Note, path: string) {
+    if (this.enableAlaSqlTablePopulation) {
+      alasql('INSERT INTO obsidian_notes VALUES ?', [{
+        content: note.content,
+        path,
+        internalPath: note.internalPath,
+        name: note.name,
+        parentFolder: note.parentFolder,
+        basename: note.basename,
+        extension: note.extension,
+        created: note.created,
+        modified: note.modified,
+        size: note.size,
+        links: note.links,
+        embeds: note.embeds,
+        tags: note.tags,
+        headings: note.headings,
+        sections: note.sections,
+        listItems: note.listItems,
+        frontmatter: note.frontmatter,
+        blocks: note.blocks,
+        stat: note.stat,
+      }]);
     }
   }
 
@@ -596,6 +631,28 @@ export class NotesCacheService extends Service {
   }
 
   /**
+   * Inserts a list item into the obsidian_lists table.
+   *
+   * @param li - The list item to insert.
+   */
+  private insertListsTable(li: ListItem) {
+    if (this.enableAlaSqlTablePopulation) {
+      alasql('INSERT INTO obsidian_lists VALUES ?', [{
+        parent: li.parent,
+        task: li.task,
+        content: li.content,
+        line: li.line,
+        column: li.column,
+        isTopLevel: li.isTopLevel,
+        path: li.path,
+        text: li.text,
+        checked: li.checked,
+        status: li.status,
+      }]);
+    }
+  }
+
+  /**
    * Updates the tasks table with the provided task item.
    *
    * @param task - The task item to update.
@@ -604,7 +661,7 @@ export class NotesCacheService extends Service {
    */
   private updateTasksTable(task: TaskItem, path: string, li: ListItem) {
     if (this.enableAlaSqlTablePopulation) {
-      alasql('UPDATE obsidian_tasks SET path = ?, task = ?, status = ?, content = ?, text = ?, line = ?, tags = ?, tagsNormalized = ?, dueDate = ?, doneDate = ?, startDate = ?, createDate = ?, scheduledDate = ?, doDate = ?, priority = ? WHERE path = ? AND line = ?', [
+      alasql('UPDATE obsidian_tasks SET path = ?, task = ?, status = ?, content = ?, text = ?, line = ?, tags = ?, tagsNormalized = ?, dueDate = ?, doneDate = ?, startDate = ?, createDate = ?, scheduledDate = ?, doDate = ?, priority = ?, cleanTask = ? WHERE path = ? AND line = ?', [
         task.path,
         task.task,
         task.status,
@@ -620,6 +677,7 @@ export class NotesCacheService extends Service {
         task.scheduledDate,
         task.doDate,
         task.priority,
+        task.cleanTask,
         path,
         li.line,
       ]);
@@ -649,59 +707,7 @@ export class NotesCacheService extends Service {
         scheduledDate: task.scheduledDate,
         doDate: task.doDate,
         priority: task.priority,
-      }]);
-    }
-  }
-
-  /**
-   * Inserts a list item into the obsidian_lists table.
-   *
-   * @param li - The list item to insert.
-   */
-  private insertListsTable(li: ListItem) {
-    if (this.enableAlaSqlTablePopulation) {
-      alasql('INSERT INTO obsidian_lists VALUES ?', [{
-        parent: li.parent,
-        task: li.task,
-        content: li.content,
-        line: li.line,
-        column: li.column,
-        isTopLevel: li.isTopLevel,
-        path: li.path,
-        text: li.text,
-        checked: li.checked,
-        status: li.status,
-      }]);
-    }
-  }
-
-  /**
-   * Inserts a note into the obsidian_notes table.
-   *
-   * @param note - The note object to be inserted.
-   * @param path - The path of the note.
-   */
-  private insertNotesTable(note: Note, path: string) {
-    if (this.enableAlaSqlTablePopulation) {
-      alasql('INSERT INTO obsidian_notes VALUES ?', [{
-        content: note.content,
-        path,
-        internalPath: note.internalPath,
-        name: note.name,
-        parentFolder: note.parentFolder,
-        basename: note.basename,
-        extension: note.extension,
-        created: note.stat.ctime,
-        modified: note.stat.mtime,
-        size: note.stat.size,
-        links: note.links,
-        embeds: note.embeds,
-        tags: note.tags,
-        headings: note.headings,
-        sections: note.sections,
-        listItems: note.listItems,
-        frontmatter: note.frontmatter,
-        blocks: note.blocks,
+        cleanTask: task.cleanTask,
       }]);
     }
   }

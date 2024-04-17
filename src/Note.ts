@@ -184,23 +184,33 @@ export class Note {
     return n;
   }
 
+  public content: string;
   public path: string;
   public internalPath: string;
   public name: string;
-  public stat: FileStats;
+  public parentFolder: string;
   public basename: string;
   public extension: string;
-  public parentFolder: string;
-
+  public stat: FileStats;
+  public listItems: ListItem[];
+  public frontmatter: FrontMatterCache | undefined;
+  public blocks: Record<string, BlockCache>;
   public links: LinkCache[];
   public embeds: EmbedCache[];
   public tags: string[];
   public headings: HeadingCache[];
   public sections: SectionCache[];
-  public rawListItems: ListItemCache[];
-  public listItems: ListItem[];
-  public frontmatter: FrontMatterCache | undefined;
-  public blocks: Record<string, BlockCache>;
+  private rawListItems: ListItemCache[];
 
-  public content: string;
+  public get created(): number {
+    return this.stat.ctime;
+  }
+
+  public get modified(): number {
+    return this.stat.mtime;
+  }
+
+  public get size(): number {
+    return this.stat.size;
+  }
 }
