@@ -180,7 +180,7 @@ export class QueryRendererV2Service extends Service {
 
   async onload() {
     this.plugin.registerMarkdownCodeBlockProcessor('qatt', async (source: string, element: HTMLElement, context: MarkdownPostProcessorContext) => {
-      this.logger.info(`lastCreation ${this.lastCreation.toISO() ?? ''}`);
+      this.logger.info(`lastCreation ${this.lastCreation.toISO() ?? ''} registring block on ${context.sourcePath}`);
       this.logger.debug(`Adding QATT Render for ${source} to context ${context.docId}`);
 
       const codeblockConfiguration = new QattCodeBlock(source);
