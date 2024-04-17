@@ -13,6 +13,7 @@ import {type IPostRenderer} from 'PostRender/IPostRenderer';
 import {HtmlPostRenderer} from 'PostRender/HtmlPostRenderer';
 import {RawPostRenderer} from 'PostRender/RawPostRenderer';
 import {type QueryRendererV2Service} from 'QueryRendererV2';
+import {NotesCacheService} from 'NotesCacheService';
 
 /**
  * All the rendering logic is handled here. It uses ths configuration to
@@ -35,6 +36,8 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   rendering = false;
   file: TFile;
 
+  notesCacheService: NotesCacheService;
+
   private renderId: string;
 
   public constructor(
@@ -55,6 +58,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     this.logger = service.use(LoggingService).getLogger('Qatt.QueryRenderChildV2');
     this.queryFactory = service.use(QueryFactory);
     this.renderFactory = service.use(RenderFactory);
+    this.notesCacheService = service.use(NotesCacheService);
   }
 
   async onload() {
@@ -72,9 +76,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
     this.logger.infoWithId(this.renderId, `Query Render generated for class ${this.container.className} -> ${this.codeblockConfiguration.queryDataSource ?? ''}`);
 
-    if (this.codeblockConfiguration.queryDataSource === 'qatt') {
-      this.registerEvent(this.plugin.app.workspace.on('qatt:notes-store-update', this.render));
-    }
+    this.registerEvent(this.plugin.app.workspace.on('qatt:notes-store-update', this.render));
 
     if (this.codeblockConfiguration.queryDataSource === 'dataview') {
       this.registerEvent(this.plugin.app.workspace.on('qatt:dataview-store-update', this.render));
@@ -98,6 +100,13 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     this.logger.groupId(this.renderId);
     const startTime = new Date(Date.now());
     this.container.innerHTML = '';
+
+    if (!this.notesCacheService.allNotesLoaded) {
+      const content = this.container.createEl('div');
+      content.setAttr('data-query-id', this.renderId);
+      content.setText('Waiting for all notes to load...');
+      return;
+    }
 
     try {
       // If there is a target replacement file then we need to ignore it for the cache update
@@ -123,7 +132,12 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       // Query
       // --------------------------------------------------
       // Run query and get results to be rendered
-      const queryEngine: IQuery = await this.queryFactory.getQuery(this.codeblockConfiguration, this.context.sourcePath, this.context.frontmatter, this.renderId);
+      let frontMatter = this.context.frontmatter;
+      if (this.file instanceof TFile) {
+        frontMatter = this.plugin.app.metadataCache.getFileCache(this.file)?.frontmatter;
+      }
+
+      const queryEngine: IQuery = await this.queryFactory.getQuery(this.codeblockConfiguration, this.context.sourcePath, frontMatter, this.renderId);
       const results = await queryEngine.applyQuery(this.renderId);
 
       if (queryEngine.error) {
