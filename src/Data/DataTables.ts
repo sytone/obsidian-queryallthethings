@@ -19,16 +19,18 @@ export class DataTables extends Service {
     return alasql(query);
   }
 
-  public refreshTables(reason: string): void {
-    this.metrics.startMeasurement('DataTables.refreshTables');
-
-    if (alasql('SHOW TABLES FROM alasql LIKE "pagedata"').length === 0) {
-      alasql('CREATE TABLE pagedata (name STRING, keyvalue STRING)');
-    }
-
+  public setupLocalDatabase() {
     // Persisted tables, this data will exist between obsidian reloads but is not replicated between machines or vault copies.
     alasql('CREATE localStorage DATABASE IF NOT EXISTS qatt');
     alasql('ATTACH localStorage DATABASE qatt');
+    //Alasql('USE qatt');
+    this.logger.info('Current database:', alasql.useid);
+  }
+
+  public refreshTables(reason: string): void {
+    this.metrics.startMeasurement('DataTables.refreshTables');
+
+    alasql('CREATE TABLE IF NOT EXISTS pagedata (name STRING, keyvalue STRING)');
     alasql('CREATE TABLE IF NOT EXISTS qatt.Events (date DATETIME, event STRING)');
     alasql('CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar');
 

@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {type MarkdownPostProcessorContext, MarkdownRenderChild, Plugin, TFile} from 'obsidian';
@@ -14,6 +15,8 @@ import {HtmlPostRenderer} from 'PostRender/HtmlPostRenderer';
 import {RawPostRenderer} from 'PostRender/RawPostRenderer';
 import {type QueryRendererV2Service} from 'QueryRendererV2';
 import {NotesCacheService} from 'NotesCacheService';
+import {RenderTrackerService} from 'lib/RenderTrackerService';
+import {DateTime} from 'luxon';
 
 /**
  * All the rendering logic is handled here. It uses ths configuration to
@@ -36,6 +39,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   rendering = false;
   file: TFile;
   notesCacheService: NotesCacheService;
+  renderTrackerService: RenderTrackerService;
 
   private renderId: string;
 
@@ -58,6 +62,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     this.queryFactory = service.use(QueryFactory);
     this.renderFactory = service.use(RenderFactory);
     this.notesCacheService = service.use(NotesCacheService);
+    this.renderTrackerService = service.use(RenderTrackerService);
   }
 
   async onload() {
@@ -212,6 +217,18 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       if (replaceType !== 'never' && replaceCodeBlock) {
         this.logger.info('codeblock replacement');
 
+        console.log(this.renderTrackerService.getReplacementDetails());
+
+        if (this.codeblockConfiguration.id === undefined) {
+          this.logger.error('codeblock id is undefined');
+          return;
+        }
+
+        if ((replaceType === 'onceDaily' || replaceType === 'onceDailyAppend' || replaceType === 'onceDailyPrepend') && this.renderTrackerService.updatedToday(this.context.sourcePath, this.codeblockConfiguration.id)) {
+          return;
+        }
+
+        this.renderTrackerService.setReplacementTime(this.context.sourcePath, this.codeblockConfiguration.id, DateTime.now());
         await this.plugin.app.vault.process(this.file, text => {
           const info = this.context.getSectionInfo(this.container);
           this.logger.info('info:', info);
@@ -227,6 +244,13 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
             const lineLength = lineEnd - lineStart;
             const lines = text.split('\n');
+            if (replaceType === 'onceDailyAppend' || replaceType === 'onceWeeklyAppend' || replaceType === 'alwaysAppend') {
+              // Append
+              lines.splice(lineEnd + 1, 0, `%%${this.codeblockConfiguration.id}%%\n${rawPostRenderResult}\n%%${this.codeblockConfiguration.id}%%`);
+              return lines.join('\n');
+            }
+
+            // Replacement
             lines.splice(lineStart, lineLength + 1, `${rawPostRenderResult}`);
             return lines.join('\n');
           }

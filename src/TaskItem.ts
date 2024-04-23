@@ -15,6 +15,7 @@ title: Obsidian Markdown Tasks
 | Column Name    | Type     | Description |
 | -------------- | -------- | ----------- |
 | path           | string   | Full path to the page the task is located on.            |
+| modified       | number  | Time where parent note was last modified. |
 | task           | string   |             |
 | status         | string   | The value of the character between the braces for the checkbox.            |
 | content        | string   | The full tasks string with no parsing or stripping of characters.            |
@@ -37,6 +38,7 @@ title: Obsidian Markdown Tasks
 export class TaskItem {
   public readonly page;
   public readonly path;
+  public readonly modified;
   public readonly task;
   public readonly status;
   public readonly content;
@@ -61,6 +63,7 @@ export class TaskItem {
     this._parsedTask = parseTask(listItem.content);
     this.page = this.listItem.page;
     this.path = this.listItem.page;
+    this.modified = this.listItem.modified;
     this.task = this.listItem.task;
     this.content = this.listItem.content;
     this.text = this.listItem.text;

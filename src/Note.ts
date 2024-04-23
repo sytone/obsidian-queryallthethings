@@ -11,6 +11,7 @@ import {
   type FileStats,
 } from 'obsidian';
 import {ListItem} from 'ListItem';
+import {TaskItem} from 'TaskItem';
 
 /*
 Update the table below when new columns are added so documentation is updated.
@@ -139,7 +140,7 @@ export class Note {
     content: string,
   ): Promise<Note> {
     const n = new Note();
-    n.content = content;
+    n.content = ''; // Old content;
     n.path = markdownFile.path;
     n.name = markdownFile.name;
     n.internalPath = markdownFile.path.replace(`.${markdownFile.extension}`, '');
@@ -149,6 +150,7 @@ export class Note {
     n.extension = markdownFile.extension;
     n.parentFolder = markdownFile.path.replace(markdownFile.name, '');
     n.listItems = [];
+    n.tasks = [];
     if (metadata?.listItems) {
       n.listItems = metadata?.listItems.map(
         li => new ListItem(
@@ -158,8 +160,10 @@ export class Note {
           li.position.start.line,
           li.position.start.col,
           markdownFile.path,
+          markdownFile.stat.mtime,
         ),
       );
+      n.tasks = n.listItems.filter(li => li.isTask).map(li => new TaskItem(li, true));
     }
 
     n.links = metadata?.links ?? ([] as LinkCache[]);
@@ -193,6 +197,7 @@ export class Note {
   public extension: string;
   public stat: FileStats;
   public listItems: ListItem[];
+  public tasks: TaskItem[];
   public frontmatter: FrontMatterCache | undefined;
   public blocks: Record<string, BlockCache>;
   public links: LinkCache[];

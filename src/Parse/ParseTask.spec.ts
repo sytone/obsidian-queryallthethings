@@ -197,6 +197,7 @@ function getListItemWithTask(markdownTask: string) {
     1,
     1,
     ' ',
+    1,
   );
 }
 

@@ -317,7 +317,7 @@ export interface IQattCodeBlock {
    **Pending Feature**
 
    Valid replacement types for the codeblock or target file.
-   ['never', 'once', 'onceDaily', 'onceDailyAppend', 'onceDailyPrepend', 'onceWeekly', 'always', 'alwaysappend', 'alwaysprepend']
+   ['never', 'once', 'onceDaily', 'onceDailyAppend', 'onceDailyPrepend', 'onceWeekly', 'always', 'alwaysAppend', 'alwaysPrepend']
 
    As the results of the query and render are only shown in Obsidian if you look at the markdown file in a text editor you will only see the query and template details. For most situations this would be fine but if you want the results and rendered output to be more permanent you can use this option to write the output to the page directly.
 
