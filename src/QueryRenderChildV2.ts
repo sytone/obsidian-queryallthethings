@@ -42,6 +42,9 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   renderTrackerService: RenderTrackerService;
 
   private renderId: string;
+  private startTime = new Date(Date.now());
+  private queryResults: any;
+  private renderResults: string;
 
   public constructor(
     container: HTMLElement,
@@ -67,6 +70,8 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
   async onload() {
     this.renderId = `${this.codeblockConfiguration.id ?? ''}:${this.context.sourcePath}`;
+
+    // Ensure we have a TFile instance for the query/rendering process.
     const file = this.plugin.app.vault.getAbstractFileByPath(this.context.sourcePath);
     if (!(file instanceof TFile)) {
       return;
@@ -74,12 +79,14 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
     this.file = file;
 
+    // Set the logging to be overriden if the user set the logLevel in the YAML configuration.
     if (this.codeblockConfiguration.logLevel) {
       this.logger.setLogLevel(this.codeblockConfiguration.logLevel);
     }
 
     this.logger.infoWithId(this.renderId, `Query Render generated for class ${this.container.className} -> ${this.codeblockConfiguration.queryDataSource ?? ''}`);
 
+    // Setup callbacks for when the notes store is updated. We should render again.
     this.registerEvent(this.plugin.app.workspace.on('qatt:notes-store-update', this.render));
 
     if (this.codeblockConfiguration.queryDataSource === 'dataview') {
@@ -99,12 +106,13 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   /**
    * Renders the query and displays the results.
    */
-
   render = async () => {
     this.logger.groupId(this.renderId);
-    const startTime = new Date(Date.now());
+    this.startTime = new Date(Date.now());
     this.container.innerHTML = '';
 
+    // If the cache has not been loaded then just put a placeholder message, when
+    // the all loaded event is triggered we will render the content.
     if (!this.notesCacheService.allNotesLoaded) {
       const content = this.container.createEl('div');
       content.setAttr('data-query-id', this.renderId);
@@ -112,55 +120,69 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       return;
     }
 
+    // Setup all the default values based on YAML configuration.
+    const postRenderFormat = this.codeblockConfiguration.postRenderFormat ?? this.service.postRenderFormat;
+    const replaceCodeBlock = this.codeblockConfiguration.replaceCodeBlock ?? false;
+    const replaceType = this.codeblockConfiguration.replaceType ?? 'never';
+
+    // Setup the base div that all the content will be shown in.
+    const content = this.container.createEl('div');
+    content.setAttr('data-query-id', this.renderId);
+
+    // If we are debugging add the render ID to the top of the div to make
+    // tracing simpler.
+    if (this.codeblockConfiguration.logLevel === 'debug') {
+      const debugWrapper = this.container.createEl('sub');
+      debugWrapper.className = 'qatt-render-debugWrapper';
+      debugWrapper.innerHTML = `RenderID: ${this.renderId}<br />`;
+      content.prepend(debugWrapper);
+    }
+
+    // --------------------------------------------------
+    // Query
+    // --------------------------------------------------
+    // Run query and get results to be rendered
     try {
-      // If there is a target replacement file then we need to ignore it for the cache update
-      // otherwise it will trigger a refresh and we will end up in an infinite loop.
-      if (this.codeblockConfiguration.replaceTargetPath) {
-        await this.service.notesCacheService.ignoreFileEventsForPeriod(this.codeblockConfiguration.replaceTargetPath, 1000);
-      }
-
-      // Setup the base div that all the content will be shown in.
-      const content = this.container.createEl('div');
-      content.setAttr('data-query-id', this.renderId);
-
-      // If we are debugging add the render ID to the top of the div to make
-      // tracing simpler.
-      if (this.codeblockConfiguration.logLevel === 'debug') {
-        const debugWrapper = this.container.createEl('sub');
-        debugWrapper.className = 'qatt-render-debugWrapper';
-        debugWrapper.innerHTML = `RenderID: ${this.renderId}<br />`;
-        content.prepend(debugWrapper);
-      }
-
-      // --------------------------------------------------
-      // Query
-      // --------------------------------------------------
-      // Run query and get results to be rendered
+      // Pull the frontmatter from the cache as the one passed in may not
+      // actually have any content. No idea why and do not have time to
+      // debug, assuming it is some race condition.
       let frontMatter = this.context.frontmatter;
       if (this.file instanceof TFile) {
         frontMatter = this.plugin.app.metadataCache.getFileCache(this.file)?.frontmatter;
       }
 
+      // Get the query engine to run the query. Based on codeblock or default which is alasql.
       const queryEngine: IQuery = await this.queryFactory.getQuery(this.codeblockConfiguration, this.context.sourcePath, frontMatter, this.renderId);
-      const results = await queryEngine.applyQuery(this.renderId);
+      this.queryResults = await queryEngine.applyQuery(this.renderId);
 
+      // For a error state, return the query engine error to the user in the codeblock replacement.
       if (queryEngine.error) {
         content.setText(`QATT query error: ${queryEngine.error}`);
-        const endTime = new Date(Date.now());
-        this.logger.infoWithId(this.renderId, `Render End: ${endTime.getTime() - startTime.getTime()}ms`);
-        this.logger.groupEndId();
+        this.logQueryRenderCompletion();
         return;
       }
+    } catch (error) {
+      this.logger.error('Unknown Query Failure', error);
+      this.logQueryRenderCompletion();
+      return;
+    }
 
-      // --------------------------------------------------
-      // Render
-      // --------------------------------------------------
-      // Get the engine to render the results using the specified render engine.
-      const renderEngine: IRenderer = await this.renderFactory.getRenderer(this.codeblockConfiguration);
+    // --------------------------------------------------
+    // Render
+    // --------------------------------------------------
+    // Get the engine to render the results using the specified render engine.
+    const renderEngine: IRenderer = await this.renderFactory.getRenderer(this.codeblockConfiguration);
+    try {
       // Render Engine Execution
-      const renderResults = await renderEngine?.renderTemplate(this.codeblockConfiguration, results) ?? 'Unknown error or exception has occurred.';
-      this.logger.debug('Render Results:', renderResults);
+      this.renderResults = await renderEngine?.renderTemplate(this.codeblockConfiguration, this.queryResults) ?? 'Unknown error or exception has occurred.';
+      this.logger.debug('Render Results:', this.renderResults);
+    } catch (error) {
+      content.setText(`QATT render error: ${JSON.stringify(error)}`);
+      this.logQueryRenderCompletion();
+      return;
+    }
 
+    try {
       // --------------------------------------------------
       // Post Rendering
       // --------------------------------------------------
@@ -170,19 +192,16 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       // markdown - Obsidian internal callback.
       // micromark - parsing use micromark and extensions.
       // raw - return the raw output from the template with no changes from original render.
-      const postRenderFormat = this.codeblockConfiguration.postRenderFormat ?? this.service.postRenderFormat;
       this.logger.debug('postRenderFormat: ', postRenderFormat);
 
       // Content will be inserted into a SPAN element.
       const renderedContentElement = document.createElement('span');
-      const {renderedContent, rawPostRenderResult} = await this.getPostRenderFormat(postRenderFormat, renderResults, renderedContentElement, this.context.sourcePath);
+      const {renderedContent, rawPostRenderResult} = await this.getPostRenderFormat(postRenderFormat, this.renderResults, renderedContentElement, this.context.sourcePath);
       this.logger.debug('postRenderResults:', renderedContent.outerHTML);
       this.logger.debug('rawPostRenderResult:', rawPostRenderResult);
 
       // Determine if we are rendering on this page or to a separate page.
-      const replaceCodeBlock = this.codeblockConfiguration.replaceCodeBlock ?? false;
       this.logger.debug('replaceCodeBlock:', replaceCodeBlock);
-      const replaceType = this.codeblockConfiguration.replaceType ?? 'never';
       this.logger.debug('replaceType:', replaceType);
       this.logger.debug('replaceTargetPath:', this.codeblockConfiguration.replaceTargetPath);
 
@@ -197,7 +216,10 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       // }
 
       // If we have a target path we need to update a external file with the results.
+      // If there is a target replacement file then we need to ignore it for the cache update
+      // otherwise it will trigger a refresh and we will end up in an infinite loop.
       if (replaceType !== 'never' && this.codeblockConfiguration.replaceTargetPath) {
+        await this.service.notesCacheService.ignoreFileEventsForPeriod(this.codeblockConfiguration.replaceTargetPath, 1000);
         await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, rawPostRenderResult, replaceType);
         return;
       }
@@ -217,8 +239,6 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       if (replaceType !== 'never' && replaceCodeBlock) {
         this.logger.info('codeblock replacement');
 
-        console.log(this.renderTrackerService.getReplacementDetails());
-
         if (this.codeblockConfiguration.id === undefined) {
           this.logger.error('codeblock id is undefined');
           return;
@@ -227,6 +247,9 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
         if ((replaceType === 'onceDaily' || replaceType === 'onceDailyAppend' || replaceType === 'onceDailyPrepend') && this.renderTrackerService.updatedToday(this.context.sourcePath, this.codeblockConfiguration.id)) {
           return;
         }
+
+        // Exclude this file from update notifications to stop multiple loops.
+        await this.service.notesCacheService.ignoreFileEventsForPeriod(this.context.sourcePath, 1000);
 
         this.renderTrackerService.setReplacementTime(this.context.sourcePath, this.codeblockConfiguration.id, DateTime.now());
         await this.plugin.app.vault.process(this.file, text => {
@@ -246,7 +269,8 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
             const lines = text.split('\n');
             if (replaceType === 'onceDailyAppend' || replaceType === 'onceWeeklyAppend' || replaceType === 'alwaysAppend') {
               // Append
-              lines.splice(lineEnd + 1, 0, `%%${this.codeblockConfiguration.id}%%\n${rawPostRenderResult}\n%%${this.codeblockConfiguration.id}%%`);
+              const codeblockId = this.codeblockConfiguration.id ?? '';
+              lines.splice(lineEnd + 1, 0, `%%${codeblockId}%%\n${rawPostRenderResult}\n%%${codeblockId}%%`);
               return lines.join('\n');
             }
 
@@ -273,13 +297,19 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       // Replace the content of the container with the new content.
       // this.container.firstChild?.replaceWith(content);
     } catch (error) {
-      this.logger.error('Render Failure', error);
+      this.logger.error('Unknown Render Failure', error);
+      this.logQueryRenderCompletion();
+      return;
     }
 
-    const endTime = new Date(Date.now());
-    this.logger.infoWithId(this.renderId, `Render End: ${endTime.getTime() - startTime.getTime()}ms`);
-    this.logger.groupEndId();
+    this.logQueryRenderCompletion();
   };
+
+  private logQueryRenderCompletion() {
+    const endTime = new Date(Date.now());
+    this.logger.infoWithId(this.renderId, `Render End: ${endTime.getTime() - this.startTime.getTime()}ms`);
+    this.logger.groupEndId();
+  }
 
   private getCodeBlockEndLine(text: string, startLine: number, count = 1) {
     let line = startLine + 1;

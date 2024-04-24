@@ -353,7 +353,6 @@ export class QattCodeBlockSettings extends Modal {
     delete codeblockConfiguration.defaultInternalQueryRenderChildVersion;
 
     let stringCodeblockConfiguration = stringifyYaml(codeblockConfiguration);
-    console.log('stringCodeblockConfiguration', stringCodeblockConfiguration);
     await plugin.app.vault.process(file, text => {
       const info = ctx.getSectionInfo(element);
       // Check if stringCodeblockConfiguration ends with a newline

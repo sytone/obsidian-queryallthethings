@@ -23,16 +23,21 @@ export class DataTables extends Service {
     // Persisted tables, this data will exist between obsidian reloads but is not replicated between machines or vault copies.
     alasql('CREATE localStorage DATABASE IF NOT EXISTS qatt');
     alasql('ATTACH localStorage DATABASE qatt');
-    //Alasql('USE qatt');
-    this.logger.info('Current database:', alasql.useid);
-  }
 
-  public refreshTables(reason: string): void {
-    this.metrics.startMeasurement('DataTables.refreshTables');
+    // To force local storage for all records the following could be uncommented
+    // however performance will tank as local storage is sync and slower.
+    // alasql('USE qatt');
+
+    this.logger.info('Current database:', alasql.useid);
 
     alasql('CREATE TABLE IF NOT EXISTS pagedata (name STRING, keyvalue STRING)');
     alasql('CREATE TABLE IF NOT EXISTS qatt.Events (date DATETIME, event STRING)');
     alasql('CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar');
+    alasql('CREATE TABLE IF NOT EXISTS qatt.RenderTracker (time DATETIME, page STRING, id STRING)');
+  }
+
+  public refreshTables(reason: string): void {
+    this.metrics.startMeasurement('DataTables.refreshTables');
 
     if (this.dvService.dataViewEnabled) {
       this.refreshTasksTableFromDataview(reason);

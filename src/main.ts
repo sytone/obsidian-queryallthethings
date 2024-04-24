@@ -97,7 +97,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
       if (this.onStartSqlQueries) {
         this.logger.info('Running on start SQL queries', this.onStartSqlQueries);
-        const onStartResult = this.dataTables?.runAdhocQuery(this.onStartSqlQueries);
+        const onStartResult = this.dataTables.runAdhocQuery(this.onStartSqlQueries);
         this.logger.info('On start SQL queries result', onStartResult);
       }
 
@@ -254,7 +254,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
 
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
 
-    this.dataTables?.setupLocalDatabase();
+    this.dataTables.setupLocalDatabase();
 
     this.use(QueryFactory).load();
     this.use(RenderFactory).load();
@@ -271,7 +271,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
     this.app.workspace.onLayoutReady(async () => {
       this.logger.info(`Layout is ready for workspace: ${this.app.vault.getName()}`);
 
-      this.dataTables?.refreshTables('layout ready');
+      this.dataTables.refreshTables('layout ready');
 
       this.metrics.startMeasurement('NotesCacheService Use');
       this.notesCacheService = this.use(NotesCacheService);
@@ -303,12 +303,12 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
         // Refresh tables when dataview index is ready.
         this.registerEvent(this.app.metadataCache.on('dataview:index-ready', () => {
           this.logger.info('dataview:index-ready event detected.');
-          this.dataTables?.refreshTables('dataview:index-ready event detected');
+          this.dataTables.refreshTables('dataview:index-ready event detected');
         }));
 
         this.registerEvent(this.app.workspace.on('dataview:refresh-views', () => {
           this.logger.info('dataview:refresh-views event detected.');
-          this.dataTables?.refreshTables('dataview:refresh-views event detected');
+          this.dataTables.refreshTables('dataview:refresh-views event detected');
         }));
       }
     });
@@ -316,7 +316,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
     // Allow user to refresh the tables manually.
     this.addRibbonIcon('refresh-cw', 'Refresh QATT Tables', (evt: MouseEvent) => {
       this.logger.info(`Refresh QATT Tables: ${evt.button}`);
-      this.dataTables?.refreshTables('manual refresh');
+      this.dataTables.refreshTables('manual refresh');
     });
 
     this.addRibbonIcon('ruler', 'Log Metrics', (evt: MouseEvent) => {

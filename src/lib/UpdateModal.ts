@@ -82,7 +82,6 @@ ${addExtraHashToHeadings(releaseNotes)}
 
 `;
 
-    console.log(markdownString);
     const contentDiv = contentEl.createDiv('qatt-update-modal');
 
     void MarkdownRenderer.renderMarkdown(
