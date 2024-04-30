@@ -254,7 +254,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
 
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
 
-    this.dataTables.setupLocalDatabase();
+    await this.dataTables.setupLocalDatabase();
 
     this.use(QueryFactory).load();
     this.use(RenderFactory).load();
@@ -271,7 +271,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
     this.app.workspace.onLayoutReady(async () => {
       this.logger.info(`Layout is ready for workspace: ${this.app.vault.getName()}`);
 
-      this.dataTables.refreshTables('layout ready');
+      await this.dataTables.refreshTables('layout ready');
 
       this.metrics.startMeasurement('NotesCacheService Use');
       this.notesCacheService = this.use(NotesCacheService);
@@ -301,22 +301,22 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
       const dvService = this.use(DataviewService);
       if (dvService.dataViewEnabled) {
         // Refresh tables when dataview index is ready.
-        this.registerEvent(this.app.metadataCache.on('dataview:index-ready', () => {
+        this.registerEvent(this.app.metadataCache.on('dataview:index-ready', async () => {
           this.logger.info('dataview:index-ready event detected.');
-          this.dataTables.refreshTables('dataview:index-ready event detected');
+          await this.dataTables.refreshTables('dataview:index-ready event detected');
         }));
 
-        this.registerEvent(this.app.workspace.on('dataview:refresh-views', () => {
+        this.registerEvent(this.app.workspace.on('dataview:refresh-views', async () => {
           this.logger.info('dataview:refresh-views event detected.');
-          this.dataTables.refreshTables('dataview:refresh-views event detected');
+          await this.dataTables.refreshTables('dataview:refresh-views event detected');
         }));
       }
     });
 
     // Allow user to refresh the tables manually.
-    this.addRibbonIcon('refresh-cw', 'Refresh QATT Tables', (evt: MouseEvent) => {
+    this.addRibbonIcon('refresh-cw', 'Refresh QATT Tables', async (evt: MouseEvent) => {
       this.logger.info(`Refresh QATT Tables: ${evt.button}`);
-      this.dataTables.refreshTables('manual refresh');
+      await this.dataTables.refreshTables('manual refresh');
     });
 
     this.addRibbonIcon('ruler', 'Log Metrics', (evt: MouseEvent) => {

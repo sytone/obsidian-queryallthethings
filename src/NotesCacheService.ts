@@ -4,6 +4,7 @@ import {Note} from 'Note';
 import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
 import {type TaskItem} from 'TaskItem';
 import alasql from 'alasql';
+import {InternalConfigurationService} from 'lib/InternalConfigurationService';
 import {LoggingService} from 'lib/LoggingService';
 import {MetricsService} from 'lib/MetricsService';
 import {DateTime} from 'luxon';
@@ -32,6 +33,7 @@ export class NotesCacheService extends Service {
   plugin = this.use(Plugin);
   logger = this.use(LoggingService).getLogger('Qatt.NotesCacheService');
   metrics = this.use(MetricsService);
+  internalConfig = this.use(InternalConfigurationService);
 
   lastUpdate: DateTime;
   notesCacheSettingsOpen: boolean;
@@ -82,23 +84,24 @@ export class NotesCacheService extends Service {
   public taskItemMap = new Map<string, TaskItem>();
   public ignoredFiles: Record<string, DateTime> = {};
 
+  private get obsidianNotesTableName() {
+    return 'obsidian_notes';
+  }
+
+  private get obsidianListsTableName() {
+    return 'obsidian_lists';
+  }
+
+  private get obsidianTasksTableName() {
+    return 'obsidian_tasks';
+  }
+
   /**
    * Creates an instance of the NotesCacheService class.
    */
   constructor() {
     super();
     this.lastUpdate = DateTime.now();
-    if (this.enableAlaSqlTablePopulation) {
-      this.logger.info('In Memory AlaSQL Table Population Enabled');
-
-      alasql('CREATE TABLE IF NOT EXISTS obsidian_notes');
-      alasql('CREATE TABLE IF NOT EXISTS obsidian_lists');
-      alasql('CREATE TABLE IF NOT EXISTS obsidian_tasks');
-      alasql('CREATE TABLE IF NOT EXISTS last_modified_notes');
-    } else {
-      this.logger.info('In Memory AlaSQL Table Population Disabled');
-    }
-
     this.metrics.addMetric('NotesCacheService.create Event Count', 0, 'count');
     this.metrics.addMetric('NotesCacheService.update Event Count', 0, 'count');
     this.metrics.addMetric('NotesCacheService.delete Event Count', 0, 'count');
@@ -281,15 +284,16 @@ export class NotesCacheService extends Service {
 
     // To increase the speed of loading the collection of tasks and list items
     // is just set as object in alasql.
-    alasql('SELECT * INTO obsidian_notes FROM ?', [await this.getNotes()]);
-    alasql('SELECT * INTO obsidian_lists FROM ?', [await this.getLists()]);
-    alasql('SELECT * INTO obsidian_tasks FROM ?', [await this.getTasks()]);
+
+    await alasql.promise(`SELECT * INTO ${this.obsidianNotesTableName} FROM ?`, [await this.getNotes()]);
+    await alasql.promise(`SELECT * INTO ${this.obsidianListsTableName} FROM ?`, [await this.getLists()]);
+    await alasql.promise(`SELECT * INTO ${this.obsidianTasksTableName} FROM ?`, [await this.getTasks()]);
 
     this.allNotesLoaded = true;
 
-    this.metrics.addMetric('NotesCacheService Notes Count', alasql('SELECT COUNT(path) AS cached FROM obsidian_notes')[0].cached as number, 'count');
-    this.metrics.addMetric('NotesCacheService Lists Count', alasql('SELECT COUNT(path) AS cached FROM obsidian_lists')[0].cached as number, 'count');
-    this.metrics.addMetric('NotesCacheService Tasks Count', alasql('SELECT COUNT(path) AS cached FROM obsidian_tasks')[0].cached as number, 'count');
+    this.metrics.addMetric('NotesCacheService Notes Count', (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianNotesTableName}`))[0].cached as number, 'count');
+    this.metrics.addMetric('NotesCacheService Lists Count', (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianListsTableName}`))[0].cached as number, 'count');
+    this.metrics.addMetric('NotesCacheService Tasks Count', (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianTasksTableName}`))[0].cached as number, 'count');
 
     this.plugin.app.workspace.trigger('qatt:all-notes-loaded');
     this.metrics.endMeasurement('NotesCacheService.cacheAllNotes');
@@ -339,9 +343,9 @@ export class NotesCacheService extends Service {
     this.deleteTasksForPath(path);
 
     if (this.enableAlaSqlTablePopulation) {
-      alasql('DELETE FROM obsidian_notes WHERE path = ?;', [path]);
-      alasql('DELETE FROM obsidian_lists WHERE path = ?;', [path]);
-      alasql('DELETE FROM obsidian_tasks WHERE path = ?;', [path]);
+      await alasql.promise(`DELETE FROM ${this.obsidianNotesTableName} WHERE path = ?;`, [path]);
+      await alasql.promise(`DELETE FROM ${this.obsidianListsTableName} WHERE path = ?;`, [path]);
+      await alasql.promise(`DELETE FROM ${this.obsidianTasksTableName} WHERE path = ?;`, [path]);
     }
   }
 
@@ -470,7 +474,7 @@ export class NotesCacheService extends Service {
    */
   private async upsertTasks(updateTable: boolean, path: string, task: TaskItem) {
     if (updateTable && this.enableAlaSqlTablePopulation) {
-      await this.upsertTable('obsidian_tasks', path, task.modified, task.line, async () => {
+      await this.upsertTable(this.obsidianTasksTableName, path, task.modified, task.line, async () => {
         await this.updateTasksTable(task, path);
       }, async () => {
         await this.insertTasksTable(task);
@@ -487,7 +491,7 @@ export class NotesCacheService extends Service {
    */
   private async upsertLists(updateTable: boolean, path: string, li: ListItem) {
     if (updateTable && this.enableAlaSqlTablePopulation) {
-      await this.upsertTable('obsidian_lists', path, li.modified, li.line, async () => {
+      await this.upsertTable(this.obsidianListsTableName, path, li.modified, li.line, async () => {
         await this.updateListsTable(li, path);
       }, async () => {
         await this.insertListsTable(li);
@@ -504,7 +508,7 @@ export class NotesCacheService extends Service {
    */
   private async upsertNote(updateTable: boolean, path: string, note: Note) {
     if (updateTable && this.enableAlaSqlTablePopulation) {
-      await this.upsertTable('obsidian_notes', path, note.modified, undefined, async () => {
+      await this.upsertTable(this.obsidianNotesTableName, path, note.modified, undefined, async () => {
         await this.updateNotesTable(note, path);
       }, async () => {
         await this.insertNotesTable(note, path);
@@ -526,7 +530,7 @@ export class NotesCacheService extends Service {
     const query = line ? `SELECT path, modified FROM ${tableName} WHERE path = ? AND line = ?` : `SELECT path, modified FROM ${tableName} WHERE path = ?`;
     const parameters = line ? [path, line] : [path];
 
-    const result = await alasql(query, parameters); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+    const result = await alasql.promise(query, parameters); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
     if (result[0] > 0) {
       if (result[0].modified < modified) {
         updateFn();
@@ -577,7 +581,7 @@ export class NotesCacheService extends Service {
    */
   private async updateNotesTable(note: Note, path: string) {
     if (this.enableAlaSqlTablePopulation) {
-      await alasql.promise('UPDATE obsidian_notes SET content = ?, internalPath = ?, name = ?, parentFolder = ?, basename = ?, extension = ?, created = ?, modified = ?, size = ?, links = ?, embeds = ?, tags = ?, headings = ?, sections = ?, listItems = ?, frontmatter = ?, blocks = ?, stat = ? WHERE path = ? AND modified < ?', [
+      await alasql.promise(`UPDATE ${this.obsidianNotesTableName} SET content = ?, internalPath = ?, name = ?, parentFolder = ?, basename = ?, extension = ?, created = ?, modified = ?, size = ?, links = ?, embeds = ?, tags = ?, headings = ?, sections = ?, listItems = ?, frontmatter = ?, blocks = ?, stat = ? WHERE path = ? AND modified < ?`, [
         note.content,
         note.internalPath,
         note.name,
@@ -610,7 +614,7 @@ export class NotesCacheService extends Service {
    */
   private async insertNotesTable(note: Note, path: string) {
     if (this.enableAlaSqlTablePopulation) {
-      await alasql.promise('INSERT INTO obsidian_notes VALUES ?', [{
+      await alasql.promise(`INSERT INTO ${this.obsidianNotesTableName} VALUES ?`, [{
         content: note.content,
         path,
         internalPath: note.internalPath,
@@ -643,7 +647,7 @@ export class NotesCacheService extends Service {
    */
   private async updateListsTable(li: ListItem, path: string) {
     if (this.enableAlaSqlTablePopulation) {
-      await alasql.promise('UPDATE obsidian_lists SET parent = ?, task = ?, content = ?, line = ?, [column] = ?, isTopLevel = ?, path = ?, modified = ?, text = ?, checked = ?, status = ? WHERE path = ? AND line = ? AND modified < ?', [
+      await alasql.promise(`UPDATE ${this.obsidianListsTableName} SET parent = ?, task = ?, content = ?, line = ?, [column] = ?, isTopLevel = ?, path = ?, modified = ?, text = ?, checked = ?, status = ? WHERE path = ? AND line = ? AND modified < ?`, [
         li.parent,
         li.task,
         li.content,
@@ -669,7 +673,7 @@ export class NotesCacheService extends Service {
    */
   private async insertListsTable(li: ListItem) {
     if (this.enableAlaSqlTablePopulation) {
-      await alasql.promise('INSERT INTO obsidian_lists VALUES ?', [{
+      await alasql.promise(`INSERT INTO ${this.obsidianListsTableName} VALUES ?`, [{
         parent: li.parent,
         task: li.task,
         content: li.content,
@@ -694,7 +698,7 @@ export class NotesCacheService extends Service {
    */
   private async updateTasksTable(task: TaskItem, path: string) {
     if (this.enableAlaSqlTablePopulation) {
-      await alasql.promise('UPDATE obsidian_tasks SET path = ?, modified = ?, task = ?, status = ?, content = ?, text = ?, line = ?, tags = ?, tagsNormalized = ?, dueDate = ?, doneDate = ?, startDate = ?, createDate = ?, scheduledDate = ?, doDate = ?, priority = ?, cleanTask = ? WHERE path = ? AND line = ? AND modified < ?', [
+      await alasql.promise(`UPDATE ${this.obsidianTasksTableName} SET path = ?, modified = ?, task = ?, status = ?, content = ?, text = ?, line = ?, tags = ?, tagsNormalized = ?, dueDate = ?, doneDate = ?, startDate = ?, createDate = ?, scheduledDate = ?, doDate = ?, priority = ?, cleanTask = ? WHERE path = ? AND line = ? AND modified < ?`, [
         task.path,
         task.modified,
         task.task,
@@ -726,7 +730,7 @@ export class NotesCacheService extends Service {
    */
   private async insertTasksTable(task: TaskItem) {
     if (this.enableAlaSqlTablePopulation) {
-      await alasql.promise('INSERT INTO obsidian_tasks VALUES ?', [{
+      await alasql.promise(`INSERT INTO ${this.obsidianTasksTableName} VALUES ?`, [{
         path: task.path,
         task: task.task,
         modified: task.modified,

@@ -244,14 +244,14 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
           return;
         }
 
-        if ((replaceType === 'onceDaily' || replaceType === 'onceDailyAppend' || replaceType === 'onceDailyPrepend') && this.renderTrackerService.updatedToday(this.context.sourcePath, this.codeblockConfiguration.id)) {
+        if ((replaceType === 'onceDaily' || replaceType === 'onceDailyAppend' || replaceType === 'onceDailyPrepend') && await this.renderTrackerService.updatedToday(this.context.sourcePath, this.codeblockConfiguration.id)) {
           return;
         }
 
         // Exclude this file from update notifications to stop multiple loops.
         await this.service.notesCacheService.ignoreFileEventsForPeriod(this.context.sourcePath, 1000);
 
-        this.renderTrackerService.setReplacementTime(this.context.sourcePath, this.codeblockConfiguration.id, DateTime.now());
+        await this.renderTrackerService.setReplacementTime(this.context.sourcePath, this.codeblockConfiguration.id, DateTime.now());
         await this.plugin.app.vault.process(this.file, text => {
           const info = this.context.getSectionInfo(this.container);
           this.logger.info('info:', info);

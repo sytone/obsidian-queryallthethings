@@ -72,7 +72,7 @@
     "xo": "^0.54.2"
   },
   "dependencies": {
-    "alasql": "^4.3.2",
+    "alasql": "^4.3.3",
     "eventemitter2": "^6.4.9",
     "handlebars": "^4.7.8",
     "luxon": "^3.4.4",

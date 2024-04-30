@@ -19,24 +19,36 @@ export class DataTables extends Service {
     return alasql(query);
   }
 
-  public setupLocalDatabase() {
+  public async setupLocalDatabase() {
+    alasql.options.cache = true;
     // Persisted tables, this data will exist between obsidian reloads but is not replicated between machines or vault copies.
-    alasql('CREATE localStorage DATABASE IF NOT EXISTS qatt');
-    alasql('ATTACH localStorage DATABASE qatt');
+    await alasql.promise(`
+  CREATE INDEXEDDB DATABASE IF NOT EXISTS qatt;
+  ATTACH INDEXEDDB DATABASE qatt;
+  -- USE qatt;
+  CREATE TABLE IF NOT EXISTS pagedata (name STRING, keyvalue STRING);
+  CREATE TABLE IF NOT EXISTS qatt.Events (date DATETIME, event STRING);
+  CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar;
+  CREATE TABLE IF NOT EXISTS qatt.RenderTracker (time DATETIME, page STRING, id STRING);
+  CREATE TABLE IF NOT EXISTS qatt.Configuration (time DATETIME, configkey STRING, configvalue STRING);
+  CREATE TABLE IF NOT EXISTS obsidian_notes;
+  CREATE TABLE IF NOT EXISTS obsidian_lists;
+  CREATE TABLE IF NOT EXISTS obsidian_tasks;
+  CREATE TABLE IF NOT EXISTS last_modified_notes;
+`);
 
     // To force local storage for all records the following could be uncommented
     // however performance will tank as local storage is sync and slower.
     // alasql('USE qatt');
-
     this.logger.info('Current database:', alasql.useid);
 
-    alasql('CREATE TABLE IF NOT EXISTS pagedata (name STRING, keyvalue STRING)');
-    alasql('CREATE TABLE IF NOT EXISTS qatt.Events (date DATETIME, event STRING)');
-    alasql('CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar');
-    alasql('CREATE TABLE IF NOT EXISTS qatt.RenderTracker (time DATETIME, page STRING, id STRING)');
+    // Await alasql('CREATE TABLE IF NOT EXISTS pagedata (name STRING, keyvalue STRING)');
+    // await alasql('CREATE TABLE IF NOT EXISTS qatt.Events (date DATETIME, event STRING)');
+    // await alasql('CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar');
+    // await alasql('CREATE TABLE IF NOT EXISTS qatt.RenderTracker (time DATETIME, page STRING, id STRING)');
   }
 
-  public refreshTables(reason: string): void {
+  public async refreshTables(reason: string): Promise<void> {
     this.metrics.startMeasurement('DataTables.refreshTables');
 
     if (this.dvService.dataViewEnabled) {
@@ -46,9 +58,9 @@ export class DataTables extends Service {
 
     // UPDATE qatt.ReferenceCalendar SET date = '2000-01-01' WHERE isToday;
     this.metrics.startMeasurement('qatt.ReferenceCalendar Refresh Check');
-    const referenceCalendarTodayDate = alasql('SELECT date FROM qatt.ReferenceCalendar WHERE isToday');
+    const referenceCalendarTodayDate = await alasql.promise('SELECT date FROM qatt.ReferenceCalendar WHERE isToday');
     if (referenceCalendarTodayDate.length === 0 || referenceCalendarTodayDate[0].date !== DateTime.now().toISODate()) {
-      this.refreshCalendarTable(reason);
+      await this.refreshCalendarTable(reason);
     }
 
     this.metrics.endMeasurement('qatt.ReferenceCalendar Refresh Check');
@@ -63,13 +75,13 @@ export class DataTables extends Service {
    * @param {string} reason
    * @memberof DataTables
    */
-  public refreshCalendarTable(reason: string): void {
+  public async refreshCalendarTable(reason: string): Promise<void> {
     this.metrics.startMeasurement('DataTables.refreshCalendarTable');
 
-    alasql('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Lists Table refreshed: ${reason}`}]]);
+    await alasql.promise('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Lists Table refreshed: ${reason}`}]]);
 
-    alasql('DROP TABLE IF EXISTS qatt.ReferenceCalendar');
-    alasql('CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar');
+    await alasql.promise('DROP TABLE IF EXISTS qatt.ReferenceCalendar');
+    await alasql.promise('CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar');
 
     /*
     // >> id='reference-calendar-table-snippet' options='file=data-tables/qatt-referencecalendar.md'
@@ -116,7 +128,8 @@ export class DataTables extends Service {
 
     for (let i = 1; i <= (daysInPreviousYear + daysInCurrentYear + daysInNextYear); i++) {
       const date = DateTime.local(DateTime.now().year - 1, 1, 1).plus({days: i - 1});
-      alasql('INSERT INTO qatt.ReferenceCalendar VALUES ?', [{
+      // eslint-disable-next-line no-await-in-loop
+      await alasql.promise('INSERT INTO qatt.ReferenceCalendar VALUES ?', [{
         date: date.toISODate(),
         day: date.day,
         month: date.month,
