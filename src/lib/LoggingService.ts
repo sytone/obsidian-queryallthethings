@@ -98,13 +98,6 @@ export class LoggingService extends Service {
 }
 
 export class Logger {
-  private readonly options: ILogOptions = {
-    minLevels: {
-      '': 'info',
-      Qatt: 'info',
-    },
-  };
-
   private minLevel: number;
   private readonly levels: Record<string, number> = {
     trace: 1,
@@ -180,15 +173,9 @@ export class Logger {
       return;
     }
 
-    let displayMessage = `[${DateTime.now().toFormat('yyyyLLddHHmmss') ?? ''}][${logEntry.level}]`;
-
-    displayMessage += logEntry.module === undefined ? `[${this.loggerName}]` : `[${logEntry.module}]`;
-
-    if (logEntry.traceId !== '' && logEntry.traceId !== undefined) {
-      displayMessage += `[${logEntry.traceId ?? ''}]`;
-    }
-
-    displayMessage += ` ${logEntry.message}`;
+    const logTime = ''; // `[${DateTime.now().toFormat('yyyyLLddHHmmss') ?? ''}]`;
+    const logModule = logEntry.module === undefined ? `[${this.loggerName}]` : `[${logEntry.module}]`;
+    const logTraceId = logEntry.traceId === undefined ? '' : `[${logEntry.traceId ?? ''}]`;
 
     if (logEntry.objects === undefined) {
       logEntry.objects = '';
@@ -196,31 +183,37 @@ export class Logger {
 
     switch (logEntry.level) {
       case 'trace': {
+        const displayMessage = `\u001B[96m${logTime}[${logEntry.level}]${logModule}${logTraceId} ${logEntry.message}\u001B[m`;
         console.trace(displayMessage, logEntry.objects);
         break;
       }
 
       case 'debug': {
+        const displayMessage = `\u001B[31m${logTime}[${logEntry.level}]${logModule}${logTraceId} ${logEntry.message}\u001B[m`;
         console.debug(displayMessage, logEntry.objects);
         break;
       }
 
       case 'info': {
+        const displayMessage = `${logTime}[${logEntry.level}]${logModule}${logTraceId} ${logEntry.message}`;
         console.info(displayMessage, logEntry.objects);
         break;
       }
 
       case 'warn': {
+        const displayMessage = `${logTime}[${logEntry.level}]${logModule}${logTraceId} ${logEntry.message}`;
         console.warn(displayMessage, logEntry.objects);
         break;
       }
 
       case 'error': {
+        const displayMessage = `${logTime}[${logEntry.level}]${logModule}${logTraceId} ${logEntry.message}`;
         console.error(displayMessage, logEntry.objects);
         break;
       }
 
       default: {
+        const displayMessage = `${logTime}[${logEntry.level}]${logModule}${logTraceId} ${logEntry.message}`;
         console.log(`{${logEntry.level}} ${displayMessage}`, logEntry.objects);
       }
     }

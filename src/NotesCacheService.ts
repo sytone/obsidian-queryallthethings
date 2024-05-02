@@ -272,6 +272,7 @@ export class NotesCacheService extends Service {
    */
   async cacheAllNotes(app: App): Promise<void> {
     this.metrics.startMeasurement('NotesCacheService.cacheAllNotes');
+    this.logger.debug('Caching all notes');
 
     for (const file of app.vault.getMarkdownFiles()) {
       // eslint-disable-next-line no-await-in-loop

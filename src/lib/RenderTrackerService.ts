@@ -41,13 +41,11 @@ export class RenderTrackerService extends Service {
 
   public async updatedToday(page: string, id: string): Promise<boolean> {
     if (await this.hasReplacementTime(page, id)) {
-      const replacementTime = this.getReplacementTime(page, id);
+      const replacementTime = await this.getReplacementTime(page, id);
 
-      // Tried hasSame as an approach but did not work, no idea why
-      // and do not have time to debug. This is simple and works.
-      if (DateTime.fromISO(replacementTime).year === DateTime.now().year
-      && DateTime.fromISO(replacementTime).month === DateTime.now().month
-      && DateTime.fromISO(replacementTime).day === DateTime.now().day) {
+      if (replacementTime && replacementTime.year === DateTime.now().year
+      && replacementTime.month === DateTime.now().month
+      && replacementTime.day === DateTime.now().day) {
         return true;
       }
     }

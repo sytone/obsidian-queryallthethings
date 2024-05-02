@@ -45,7 +45,8 @@ export interface IGeneralSettings {
 
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
   use = use.plugin(this);
-  logger = this.use(LoggingService).getLogger('Qatt');
+  loggingService = this.use(LoggingService);
+  logger = this.loggingService.getLogger('Qatt');
   metrics = this.use(MetricsService);
   dataTables = this.use(DataTables);
   commandHandler = this.use(CommandHandler);
@@ -253,6 +254,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
     this.metrics.startMeasurement('plugin onload');
 
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
+    this.logger.debug(`debug level enabled "${this.manifest.name}" v${this.manifest.version}`);
 
     await this.dataTables.setupLocalDatabase();
 
@@ -317,6 +319,11 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
     this.addRibbonIcon('refresh-cw', 'Refresh QATT Tables', async (evt: MouseEvent) => {
       this.logger.info(`Refresh QATT Tables: ${evt.button}`);
       await this.dataTables.refreshTables('manual refresh');
+    });
+
+    this.addRibbonIcon('list-restart', 'Refresh Views', async (evt: MouseEvent) => {
+      this.logger.info(`Refresh all Views: ${evt.button}`);
+      this.app.workspace.trigger('qatt:all-notes-loaded');
     });
 
     this.addRibbonIcon('ruler', 'Log Metrics', (evt: MouseEvent) => {

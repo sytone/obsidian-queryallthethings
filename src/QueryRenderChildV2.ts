@@ -114,6 +114,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     // If the cache has not been loaded then just put a placeholder message, when
     // the all loaded event is triggered we will render the content.
     if (!this.notesCacheService.allNotesLoaded) {
+      this.logger.debugWithId(this.renderId, 'Waiting for all notes to load...');
       const content = this.container.createEl('div');
       content.setAttr('data-query-id', this.renderId);
       content.setText('Waiting for all notes to load...');
@@ -175,7 +176,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     try {
       // Render Engine Execution
       this.renderResults = await renderEngine?.renderTemplate(this.codeblockConfiguration, this.queryResults) ?? 'Unknown error or exception has occurred.';
-      this.logger.debug('Render Results:', this.renderResults);
+      this.logger.debugWithId(this.renderId, 'Render Results:', this.renderResults);
     } catch (error) {
       content.setText(`QATT render error: ${JSON.stringify(error)}`);
       this.logQueryRenderCompletion();
@@ -192,18 +193,18 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       // markdown - Obsidian internal callback.
       // micromark - parsing use micromark and extensions.
       // raw - return the raw output from the template with no changes from original render.
-      this.logger.debug('postRenderFormat: ', postRenderFormat);
+      this.logger.debugWithId(this.renderId, 'postRenderFormat: ', postRenderFormat);
 
       // Content will be inserted into a SPAN element.
       const renderedContentElement = document.createElement('span');
       const {renderedContent, rawPostRenderResult} = await this.getPostRenderFormat(postRenderFormat, this.renderResults, renderedContentElement, this.context.sourcePath);
-      this.logger.debug('postRenderResults:', renderedContent.outerHTML);
-      this.logger.debug('rawPostRenderResult:', rawPostRenderResult);
+      this.logger.debugWithId(this.renderId, 'postRenderResults:', renderedContent);
+      this.logger.debugWithId(this.renderId, 'rawPostRenderResult:', rawPostRenderResult);
 
       // Determine if we are rendering on this page or to a separate page.
-      this.logger.debug('replaceCodeBlock:', replaceCodeBlock);
-      this.logger.debug('replaceType:', replaceType);
-      this.logger.debug('replaceTargetPath:', this.codeblockConfiguration.replaceTargetPath);
+      this.logger.debugWithId(this.renderId, 'replaceCodeBlock:', replaceCodeBlock);
+      this.logger.debugWithId(this.renderId, 'replaceType:', replaceType);
+      this.logger.debugWithId(this.renderId, 'replaceTargetPath:', this.codeblockConfiguration.replaceTargetPath);
 
       // Pull out this code block.
       // This is TBD work and not production ready.
@@ -218,7 +219,11 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       // If we have a target path we need to update a external file with the results.
       // If there is a target replacement file then we need to ignore it for the cache update
       // otherwise it will trigger a refresh and we will end up in an infinite loop.
+      this.logger.debugWithId(this.renderId, 'Checking for output file update', replaceCodeBlock);
+
       if (replaceType !== 'never' && this.codeblockConfiguration.replaceTargetPath) {
+        this.logger.debugWithId(this.renderId, 'rendering to output file:', this.codeblockConfiguration.replaceTargetPath);
+
         await this.service.notesCacheService.ignoreFileEventsForPeriod(this.codeblockConfiguration.replaceTargetPath, 1000);
         await this.writeRenderedOutputToFile(this.codeblockConfiguration.replaceTargetPath, rawPostRenderResult, replaceType);
         return;
@@ -236,11 +241,14 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
         {{stringify result}}
       ```
       */
+
+      this.logger.debugWithId(this.renderId, 'Checking for inline codeblock replacement', replaceCodeBlock);
+
       if (replaceType !== 'never' && replaceCodeBlock) {
-        this.logger.info('codeblock replacement');
+        this.logger.infoWithId(this.renderId, 'codeblock replacement');
 
         if (this.codeblockConfiguration.id === undefined) {
-          this.logger.error('codeblock id is undefined');
+          this.logger.errorWithId(this.renderId, 'codeblock id is undefined');
           return;
         }
 
@@ -254,10 +262,8 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
         await this.renderTrackerService.setReplacementTime(this.context.sourcePath, this.codeblockConfiguration.id, DateTime.now());
         await this.plugin.app.vault.process(this.file, text => {
           const info = this.context.getSectionInfo(this.container);
-          this.logger.info('info:', info);
 
           if (info) {
-            this.logger.info('info:', info);
             // OLD
             const {lineStart} = info;
             const lineEnd = this.getCodeBlockEndLine(text, lineStart);
@@ -284,6 +290,8 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
         return;
       }
+
+      this.logger.infoWithId(this.renderId, 'update fragment');
 
       // Update the element with the rendered content.
       const docFrag = document.createDocumentFragment();

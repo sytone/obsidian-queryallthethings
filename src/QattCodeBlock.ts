@@ -423,7 +423,7 @@ export class QattCodeBlock implements IQattCodeBlock {
 
     // Set to info by default.
     const validLogLevels = ['trace', 'debug', 'info', 'warn', 'error'];
-    this.logLevel = validLogLevels.includes(parsedCodeBlock.logLevel as string) ? parsedCodeBlock.logLevel : 'info';
+    this.logLevel = validLogLevels.includes(parsedCodeBlock.logLevel as string) ? parsedCodeBlock.logLevel : undefined;
 
     // Set to never by default.
     const validReplaceTypes = ['never', 'once', 'onceDaily', 'onceDailyAppend', 'onceDailyPrepend', 'onceWeekly', 'always', 'alwaysappend', 'alwaysprepend'];
