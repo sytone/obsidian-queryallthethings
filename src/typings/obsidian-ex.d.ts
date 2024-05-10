@@ -52,9 +52,6 @@ declare module 'obsidian' {
     'dataview:refresh-views' |
     'qatt:notes-store-update' |
     'qatt:dataview-store-update' |
-    'qatt:csv-loader-file-update' |
-    'qatt:mdtable-loader-file-update' |
-    'qatt:json-loader-file-update' |
     'qatt:all-notes-loaded', callback: () => void, ctx?: any): EventRef;
   }
 }

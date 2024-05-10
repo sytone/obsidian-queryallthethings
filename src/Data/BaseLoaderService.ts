@@ -20,7 +20,6 @@ export class BaseLoaderService extends Service {
         if (this.fileInImportList(file)) {
           this.logger.info(`metadataCache changed event detected for ${file.path}`, file);
           await this.importArrayToTableFromFile(file, this.importCallback);
-          this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
         }
       }),
     );
@@ -112,6 +111,7 @@ export class BaseLoaderService extends Service {
     const importedRowCount: number = alasql(`SELECT COUNT(*) AS ImportedRows FROM  ${tableName}`)[0].ImportedRows;
     const endTime = new Date(Date.now());
     this.logger.info(`Imported ${importedRowCount} rows to ${tableName} in ${endTime.getTime() - startTime.getTime()}ms`);
+    this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');
   }
 }
 

@@ -60,10 +60,10 @@ export class NotesCacheService extends Service {
       this.notesCacheSettingsOpen = settings.notesCacheSettingsOpen;
       this.enableAlaSqlTablePopulation = settings.enableAlaSqlTablePopulation;
 
-      this.logger.info('NotesCacheService cacheAllNotes from settings');
-      this.metrics.startMeasurement('cacheAllNotes from settings');
-      await this.cacheAllNotes(app);
-      this.metrics.endMeasurement('cacheAllNotes from settings');
+      // This.logger.info('NotesCacheService cacheAllNotes from settings');
+      // this.metrics.startMeasurement('cacheAllNotes from settings');
+      // await this.cacheAllNotes(app);
+      // this.metrics.endMeasurement('cacheAllNotes from settings');
     },
   );
 
@@ -159,14 +159,7 @@ export class NotesCacheService extends Service {
     );
   }
 
-  /**
-   * Handles the onload event for the NotesCacheService.
-   * This method registers event listeners for various file-related events such as create, delete, rename, and metadataCache changes.
-   * When these events occur, the corresponding callback functions are executed to update the notes cache and trigger a workspace update.
-   */
-  async onload() {
-    this.logger.info(`NotesCacheService Last Update: ${this.lastUpdate.toISO() ?? ''}`);
-
+  async layoutReady() {
     this.registerEvent(
       this.plugin.app.vault.on('create', async file => {
         this.logger.info(`create event detected for ${file.path}`);
@@ -254,6 +247,15 @@ export class NotesCacheService extends Service {
         this.metrics.endMeasurement('NotesCacheService.changed Event');
       }),
     );
+  }
+
+  /**
+   * Handles the onload event for the NotesCacheService.
+   * This method registers event listeners for various file-related events such as create, delete, rename, and metadataCache changes.
+   * When these events occur, the corresponding callback functions are executed to update the notes cache and trigger a workspace update.
+   */
+  async onload() {
+    this.logger.info(`NotesCacheService Last Update: ${this.lastUpdate.toISO() ?? ''}`);
   }
 
   /**

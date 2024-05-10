@@ -88,12 +88,15 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
     // Setup callbacks for when the notes store is updated. We should render again.
     this.registerEvent(this.plugin.app.workspace.on('qatt:notes-store-update', this.render));
+    // Render all the codeblock when the inital loaD of notes is completed.
+    this.registerEvent(this.plugin.app.workspace.on('qatt:all-notes-loaded', this.render));
+    // Refresh the codeblocks when the refresh event is triggered. This is user or from other stores like
+    // CSV, JSON, etc.
+    this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', this.render));
 
     if (this.codeblockConfiguration.queryDataSource === 'dataview') {
       this.registerEvent(this.plugin.app.workspace.on('qatt:dataview-store-update', this.render));
     }
-
-    this.registerEvent(this.plugin.app.workspace.on('qatt:all-notes-loaded', this.render));
 
     await this.render();
   }
@@ -114,10 +117,10 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     // If the cache has not been loaded then just put a placeholder message, when
     // the all loaded event is triggered we will render the content.
     if (!this.notesCacheService.allNotesLoaded) {
-      this.logger.debugWithId(this.renderId, 'Waiting for all notes to load...');
+      this.logger.infoWithId(this.renderId, 'Waiting for all notes to load');
       const content = this.container.createEl('div');
       content.setAttr('data-query-id', this.renderId);
-      content.setText('Waiting for all notes to load...');
+      content.className = 'qatt-loader';
       return;
     }
 

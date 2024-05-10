@@ -269,6 +269,10 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
 
     confirmObjectPath('_qatt.ui.promptWithSuggestions', promptWithSuggestions);
 
+    this.metrics.startMeasurement('QueryRendererV2Service Use');
+    this.queryRendererService = this.use(QueryRendererV2Service);
+    this.metrics.endMeasurement('QueryRendererV2Service Use');
+
     // When layout is ready we can refresh tables and register the query renderer.
     this.app.workspace.onLayoutReady(async () => {
       this.logger.info(`Layout is ready for workspace: ${this.app.vault.getName()}`);
@@ -278,6 +282,9 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
       this.metrics.startMeasurement('NotesCacheService Use');
       this.notesCacheService = this.use(NotesCacheService);
       this.metrics.endMeasurement('NotesCacheService Use');
+
+      await this.notesCacheService.layoutReady();
+      await this.notesCacheService.cacheAllNotes(this.app);
 
       this.metrics.startMeasurement('CsvLoaderService Use');
       this.csvLoaderService = this.use(CsvLoaderService);
@@ -294,10 +301,6 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
       this.metrics.startMeasurement('SqlLoaderService Use');
       this.sqlLoaderService = this.use(SqlLoaderService);
       this.metrics.endMeasurement('SqlLoaderService Use');
-
-      this.metrics.startMeasurement('QueryRendererV2Service Use');
-      this.queryRendererService = this.use(QueryRendererV2Service);
-      this.metrics.endMeasurement('QueryRendererV2Service Use');
 
       /* ------------------------- DataView based support ------------------------- */
       const dvService = this.use(DataviewService);
