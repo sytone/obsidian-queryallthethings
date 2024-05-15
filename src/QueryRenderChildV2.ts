@@ -294,7 +294,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
         return;
       }
 
-      this.logger.infoWithId(this.renderId, 'update fragment');
+      this.logger.debugWithId(this.renderId, 'update fragment');
 
       // Update the element with the rendered content.
       const docFrag = document.createDocumentFragment();
