@@ -20,5 +20,3 @@ will result in:
 ````markdown
 ```text
 ````
-
-%%This file is auto-generated. Do not edit. Generated at: Tue Apr 16 2024%%

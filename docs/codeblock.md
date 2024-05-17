@@ -138,7 +138,7 @@ If this is defined the `replaceCodeBlock` option is ignored and the page with th
 **Pending Feature**
 
 Valid replacement types for the codeblock or target file.
-['never', 'once', 'onceDaily', 'onceDailyAppend', 'onceDailyPrepend', 'onceWeekly', 'always', 'alwaysappend', 'alwaysprepend']
+['never', 'once', 'onceDaily', 'onceDailyAppend', 'onceDailyPrepend', 'onceWeekly', 'always', 'alwaysAppend', 'alwaysPrepend']
 
 As the results of the query and render are only shown in Obsidian if you look at the markdown file in a text editor you will only see the query and template details. For most situations this would be fine but if you want the results and rendered output to be more permanent you can use this option to write the output to the page directly.
 
@@ -148,5 +148,3 @@ If you set it to `once` the entire codeblock or target path will be processed an
 
 If you set it to `always` the rendered output will be placed before the codeblock and in preview and reading view the codeblock will be rendered as a blank string to hide it. It is still there and you can edit it in edit mode. When viewing in a text editor you will see the rendered output and then the codeblock below it. To place the renderers content after the codeblock use `alwaysappend`. You can also use `alwaysprepend` if you want to be explicit.
 %%/snippet%%
-
-%%This file is auto-generated. Do not edit. Generated at: Tue Apr 16 2024%%

@@ -32,5 +32,3 @@ template: |
     {{htmlTaskList 'text'}}
   {{/each}}
 ```
-
-%%This file is auto-generated. Do not edit. Generated at: Tue Apr 16 2024%%

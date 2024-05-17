@@ -34,5 +34,3 @@ The page property 'task_status' is set to x
 ```
 
 Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simple-live.md' for a live example.
-
-%%This file is auto-generated. Do not edit. Generated at: Tue Apr 16 2024%%

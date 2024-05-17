@@ -23,5 +23,3 @@ will result in:
 ```text
 <a onclick="const fun = async() => { let newValue = (await _qatt.ui.promptWithSuggestions(['1', '2', '3'],['1', '2', '3']));if(newValue !== null) {app.fileManager.processFrontMatter(app.vault.getAbstractFileByPath('2 Projects/ProjectX.md'), (f) => { f.priority = newValue; });}}; fun();">3</a>
 ```
-
-%%This file is auto-generated. Do not edit. Generated at: Tue Apr 16 2024%%

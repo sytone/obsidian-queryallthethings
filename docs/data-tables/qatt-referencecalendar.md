@@ -29,5 +29,3 @@ The reference calendar is used to help with date based management, you can direc
 | isCurrentQuarter | boolean | Math.ceil(date.month / 3) === Math.ceil(DateTime.now().month / 3)         |
 | isCurrentWeek    | boolean | date.weekNumber === DateTime.now().weekNumber                             |
 | isCurrentDay     | boolean | date.hasSame(DateTime.now(), 'day')                                       |
-
-%%This file is auto-generated. Do not edit. Generated at: Tue Apr 16 2024%%

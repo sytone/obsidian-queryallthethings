@@ -38,7 +38,7 @@
     "@rollup/plugin-commonjs": "25.0.2",
     "@rollup/plugin-node-resolve": "15.1.0",
     "@rollup/plugin-typescript": "11.1.1",
-    "@sytone/markdown-snippet-injector": "^2.1.6",
+    "@sytone/markdown-snippet-injector": "^2.2.0",
     "@types/codemirror": "^5.60.15",
     "@types/jest": "^29.5.12",
     "@types/luxon": "^3.4.2",

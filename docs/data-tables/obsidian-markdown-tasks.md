@@ -10,6 +10,7 @@ title: Obsidian Markdown Tasks
 | Column Name    | Type     | Description |
 | -------------- | -------- | ----------- |
 | path           | string   | Full path to the page the task is located on.            |
+| modified       | number  | Time where parent note was last modified. |
 | task           | string   |             |
 | status         | string   | The value of the character between the braces for the checkbox.            |
 | content        | string   | The full tasks string with no parsing or stripping of characters.            |
@@ -25,5 +26,3 @@ title: Obsidian Markdown Tasks
 | doDate         | string   | When to do the task ['💨', 'do::']           |
 | priority       | number   | Priority of task based on indicator ['⏫🔼🔽', 'priority::']             |
 | cleanTask      | string   | The task string with all metadata removed.            |
-
-%%This file is auto-generated. Do not edit. Generated at: Tue Apr 16 2024%%

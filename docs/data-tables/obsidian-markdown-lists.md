@@ -18,13 +18,9 @@ The list item is parse by the following regular expression to extract informatio
 | content     | string  |                                       |
 | line        | number  |                                       |
 | column      | number  |                                       |
-| note        | Note    | Note object                           |
 | isTopLevel  | boolean |                                       |
 | path        | string  | Path of the page the list item is on. |
+| modified    | number  | Time where parent note was last modified. |
 | text        | string  | The text part of the list.            |
 | checked     | boolean |                                       |
 | status      | string  |                                       |
-| treePath    | string  |                                       |
-| depth       | number  |                                       |
-
-%%This file is auto-generated. Do not edit. Generated at: Tue Apr 16 2024%%

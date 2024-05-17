@@ -38,5 +38,3 @@ will result in:
 ```text
 [ { "HasDisplay": true, "HasNoDisplay": false, "HasDisplayIf": "Painting The House", "HasNoDisplayIf": "Projects/Painting The House" } ]
 ```
-
-%%This file is auto-generated. Do not edit. Generated at: Tue Apr 16 2024%%

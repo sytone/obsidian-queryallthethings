@@ -35,5 +35,3 @@ will result in:
 ```text
 [ { "Display": "Painting The House" } ]
 ```
-
-%%This file is auto-generated. Do not edit. Generated at: Tue Apr 16 2024%%

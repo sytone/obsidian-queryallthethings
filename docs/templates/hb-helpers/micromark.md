@@ -35,5 +35,3 @@ If the inline property is not set, then the output will be wrapped in a `<p>` ta
 ```
 <p>This is a <strong>thing</strong> to do</p>
 ```
-
-%%This file is auto-generated. Do not edit. Generated at: Tue Apr 16 2024%%
