@@ -1,18 +1,4 @@
 {
-  "typedocOptions": {
-    "entryPoints": [
-      "src/main.ts"
-    ],
-    "out": "docs/typedoc",
-    "plugin": "typedoc-plugin-markdown",
-    "entryDocument": "index.md",
-    "githubPages": false,
-    "readme": "none"
-  },
-  // "ts-node": {
-  //   "esm": true,
-  //   "experimentalSpecifierResolution": "node"
-  // },
   "compilerOptions": {
     "outDir": "./dist", // target for compiled files
     "baseUrl": "./src",
@@ -20,47 +6,27 @@
     "inlineSourceMap": true,
     "inlineSources": true,
     "module": "ESNext",
-    "target": "es2020",
+    "target": "ES6",
     "allowJs": true,
     "noImplicitAny": true,
-    "composite": true,
-    "declaration": true,
-    "declarationMap": true,
-    "incremental": true,
     "moduleResolution": "node",
     "importHelpers": true,
     "isolatedModules": true,
     "strictNullChecks": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "experimentalDecorators": true,
+    "lib": [
+      "DOM",
+      "ES5",
+      "ES6",
+      "ES7"
+    ],
     "paths": {
       "src/*": [
         "src/*"
-      ],
-      "tests/*": [
-        "__tests__/*"
       ]
     },
-    "typeRoots": [
-      "./node_modules/@types",
-      "./src/typings"
-    ],
-    "lib": [
-      "DOM",
-      "es2020"
-    ],
-    "types": [
-      "jest",
-      "node",
-      "@types/jest"
-    ]
   },
   "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules/*"
+    "**/*.ts"
   ]
 }
