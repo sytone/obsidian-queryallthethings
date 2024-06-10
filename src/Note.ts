@@ -146,6 +146,9 @@ export class Note {
     n.internalPath = markdownFile.path.replace(`.${markdownFile.extension}`, '');
 
     n.stat = markdownFile.stat;
+    n.created = markdownFile.stat.ctime;
+    n.modified = markdownFile.stat.mtime;
+    n.size = markdownFile.stat.size;
     n.basename = markdownFile.basename;
     n.extension = markdownFile.extension;
     n.parentFolder = markdownFile.path.replace(markdownFile.name, '');
@@ -161,8 +164,16 @@ export class Note {
           li.position.start.col,
           markdownFile.path,
           markdownFile.stat.mtime,
-        ),
-      );
+          // Find the nearest heading to the list item using metadata.headings
+          metadata?.headings?.reduce(
+            (closest, heading) => {
+              if (heading.position.start.line <= li.position.start.line && heading.position.start.line > closest.position.start.line) {
+                return heading;
+              }
+
+              return closest;
+            }, {heading: '', position: {start: {line: 0, col: 0, offset: 0}, end: {line: 0, col: 0, offset: 0}}}).heading ?? '',
+        ));
       n.tasks = n.listItems.filter(li => li.isTask).map(li => new TaskItem(li, true));
     }
 
@@ -205,17 +216,10 @@ export class Note {
   public tags: string[];
   public headings: HeadingCache[];
   public sections: SectionCache[];
+
+  public created: number;
+  public modified: number;
+  public size: number;
+
   private rawListItems: ListItemCache[];
-
-  public get created(): number {
-    return this.stat.ctime;
-  }
-
-  public get modified(): number {
-    return this.stat.mtime;
-  }
-
-  public get size(): number {
-    return this.stat.size;
-  }
 }

@@ -103,12 +103,13 @@ export class BaseLoaderService extends Service {
 
     this.logger.info(`Loaded to table '${tableName}'`, parsedArray);
 
-    alasql(`DROP TABLE IF EXISTS ${tableName}`);
-    alasql(`CREATE TABLE IF NOT EXISTS ${tableName}`);
+    await alasql.promise(`DROP TABLE IF EXISTS ${tableName}`);
+    await alasql.promise(`CREATE TABLE IF NOT EXISTS ${tableName}`);
     alasql.tables[tableName].data = parsedArray;
 
+    const rowsQuery = await alasql.promise(`SELECT COUNT(*) AS ImportedRows FROM  ${tableName}`); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const importedRowCount: number = alasql(`SELECT COUNT(*) AS ImportedRows FROM  ${tableName}`)[0].ImportedRows;
+    const importedRowCount: number = rowsQuery[0].ImportedRows;
     const endTime = new Date(Date.now());
     this.logger.info(`Imported ${importedRowCount} rows to ${tableName} in ${endTime.getTime() - startTime.getTime()}ms`);
     this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');

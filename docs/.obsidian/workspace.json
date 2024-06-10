@@ -13,8 +13,8 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "index.md",
-                "mode": "preview",
+                "file": "verfication/tables.md",
+                "mode": "source",
                 "source": false
               }
             }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "index.md",
+                "file": "verfication/tables.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "index.md",
+                "file": "verfication/tables.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "index.md"
+                "file": "verfication/tables.md"
               }
             }
           },
@@ -150,43 +150,46 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "switcher:Open quick switcher": false,
-      "command-palette:Open command palette": false,
       "cmdr:Shell commands: Execute: Build QATT Documentation with snippets": false,
       "cmdr:Shell commands: Execute: Install Project Packages": false,
       "cmdr:Shell commands: Execute: Build and install plugin": false,
       "obsidian-5e-statblocks:Open Creature Pane": false,
-      "qatt:Refresh QATT Tables": false
+      "switcher:Open quick switcher": false,
+      "command-palette:Open command palette": false,
+      "qatt:Refresh QATT Tables": false,
+      "qatt:Refresh Views": false,
+      "qatt:Log Metrics": false
     }
   },
   "active": "60c58a9e7d5033ee",
   "lastOpenFiles": [
-    "examples-tutorials/replace-target-path-example.md",
-    "codeblock.md",
-    "examples-tutorials/listing-recently-updated-files.md",
-    "examples-tutorials/listing-recently-updated-files-live.md",
-    "examples-tutorials/using-pageproperty-simple-live.md",
-    "examples-tutorials/generated-top-ten-notes.md",
-    "examples-tutorials/using-updatepropertyfromlist.md",
-    "examples-tutorials/index.md",
-    "examples-tutorials/dataview-fields.md",
-    "index.md",
-    "examples-tutorials/active-tasks-grouped-by-day.md",
-    "data-tables/obsidian-markdown-notes.md",
-    "data-tables/obsidian-markdown-lists.md",
-    "data-tables/obsidian-markdown-files.md",
-    "about.md",
-    "first-query.md",
-    "installation.md",
-    "output-generation.md",
+    "verfication/simple-queries.md",
+    "verfication/tables.md",
+    "verfication/handlebars.md",
+    "verfication/readme.md",
+    "templates/index.md",
+    "templates/hb-helpers/taskcheckboxwithappend.md",
     "settings.md",
-    "data-tables/obsidian-markdown-tasks.md",
-    "data-tables/dataview-tasks.md",
+    "verfication",
+    "output-generation.md",
+    "installation.md",
+    "index.md",
+    "first-query.md",
+    "codeblock.md",
+    "about.md",
     "data-tables/qatt-referencecalendar.md",
+    "data-tables/obsidian-markdown-tasks.md",
+    "data-tables/obsidian-markdown-lists.md",
     "data-tables/index.md",
+    "data-tables/dataview-tasks.md",
     "data-tables/dataview-pages.md",
     "data-tables/dataview-lists.md",
-    "queries/sql-functions/parsewikilinklocation.md",
+    "contributing/index.md",
+    "contributing/documentation.md",
+    "contributing/development.md",
+    "examples-tutorials/replace-target-path-example.md",
+    "examples-tutorials/listing-recently-updated-files.md",
+    "examples-tutorials/listing-recently-updated-files-live.md",
     "_site/templates/hb-helpers/taskcheckboxwithappend.html",
     "_site/examples-tutorials/handlebars/taskcheckboxwithappend.html",
     "_site/templates/hb-helpers/taskcheckbox.html",
@@ -196,7 +199,6 @@
     "_site/templates/hb-helpers/flexibletaskcheckbox.html",
     "_site/examples-tutorials/handlebars/flexibletaskcheckbox.html",
     "_site/templates/hb-helpers/codeblockheader.html",
-    "_site/examples-tutorials/handlebars/codeblockheader.html",
     "_site/assets/images/small-image.jpg",
     "_site/assets/images/large-image.jpg"
   ]

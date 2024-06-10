@@ -15,37 +15,34 @@ export class DataTables extends Service {
 
   dvService = this.use(DataviewService);
 
-  public runAdhocQuery(query: string): any {
-    return alasql(query);
+  public async runAdhocQuery(query: string): Promise<any> {
+    const result = await alasql.promise(query);
+    return result; // eslint-disable-line @typescript-eslint/no-unsafe-return
   }
 
   public async setupLocalDatabase() {
     alasql.options.cache = true;
     // Persisted tables, this data will exist between obsidian reloads but is not replicated between machines or vault copies.
+
     await alasql.promise(`
-  CREATE INDEXEDDB DATABASE IF NOT EXISTS qatt;
-  ATTACH INDEXEDDB DATABASE qatt;
-  -- USE qatt;
-  CREATE TABLE IF NOT EXISTS pagedata (name STRING, keyvalue STRING);
-  CREATE TABLE IF NOT EXISTS qatt.Events (date DATETIME, event STRING);
-  CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar;
-  CREATE TABLE IF NOT EXISTS qatt.RenderTracker (time DATETIME, page STRING, id STRING);
-  CREATE TABLE IF NOT EXISTS qatt.Configuration (time DATETIME, configkey STRING, configvalue STRING);
-  CREATE TABLE IF NOT EXISTS obsidian_notes;
-  CREATE TABLE IF NOT EXISTS obsidian_lists;
-  CREATE TABLE IF NOT EXISTS obsidian_tasks;
-  CREATE TABLE IF NOT EXISTS last_modified_notes;
-`);
+      CREATE INDEXEDDB DATABASE IF NOT EXISTS qatt;
+      ATTACH INDEXEDDB DATABASE qatt;
+      -- USE qatt;
+      CREATE TABLE IF NOT EXISTS pagedata (name STRING, keyvalue STRING);
+      CREATE TABLE IF NOT EXISTS qatt.Events (date DATETIME, event STRING);
+      CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar;
+      CREATE TABLE IF NOT EXISTS qatt.RenderTracker (time DATETIME, page STRING, id STRING);
+      CREATE TABLE IF NOT EXISTS qatt.Configuration (time DATETIME, configkey STRING, configvalue STRING);
+      CREATE TABLE IF NOT EXISTS obsidian_notes;
+      CREATE TABLE IF NOT EXISTS obsidian_lists;
+      CREATE TABLE IF NOT EXISTS obsidian_tasks;
+      CREATE TABLE IF NOT EXISTS last_modified_notes;
+      CREATE TABLE IF NOT EXISTS configuration (config_key STRING, config_value STRING);
+    `);
 
     // To force local storage for all records the following could be uncommented
     // however performance will tank as local storage is sync and slower.
-    // alasql('USE qatt');
     this.logger.info('Current database:', alasql.useid);
-
-    // Await alasql('CREATE TABLE IF NOT EXISTS pagedata (name STRING, keyvalue STRING)');
-    // await alasql('CREATE TABLE IF NOT EXISTS qatt.Events (date DATETIME, event STRING)');
-    // await alasql('CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar');
-    // await alasql('CREATE TABLE IF NOT EXISTS qatt.RenderTracker (time DATETIME, page STRING, id STRING)');
   }
 
   public async refreshTables(reason: string): Promise<void> {
@@ -155,16 +152,17 @@ export class DataTables extends Service {
     this.metrics.endMeasurement('DataTables.refreshCalendarTable');
   }
 
-  public refreshTasksTableFromDataview(reason: string): void {
+  public async refreshTasksTableFromDataview(reason: string): void {
     this.metrics.startMeasurement('DataTables.refreshTasksTableFromDataview');
 
-    alasql('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Tasks Table refreshed: ${reason}`}]]);
-    if (alasql('SHOW TABLES FROM alasql LIKE "dataview_tasks"').length > 0) {
+    await alasql.promise('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Tasks Table refreshed: ${reason}`}]]);
+    const dataviewTasksTable = await alasql.promise('SHOW TABLES FROM alasql LIKE "dataview_tasks"');
+    if (dataviewTasksTable.length > 0) {
       this.logger.info('Dropping the dataview_tasks table to repopulate.');
-      alasql('DROP TABLE dataview_tasks ');
+      await alasql.promise('DROP TABLE dataview_tasks ');
     }
 
-    alasql('CREATE TABLE dataview_tasks ');
+    await alasql.promise('CREATE TABLE dataview_tasks ');
 
     const dataviewPages = this.dvService.getDataviewPages();
 
@@ -196,7 +194,7 @@ export class DataTables extends Service {
 
           // << tasks-table-snippet
           */
-          alasql('INSERT INTO dataview_tasks VALUES ?', [{
+          await alasql.promise('INSERT INTO dataview_tasks VALUES ?', [{ // eslint-disable-line no-await-in-loop
             page: p[1].path,
             task: l.text,
             status: l.task?.status,
@@ -217,18 +215,20 @@ export class DataTables extends Service {
     this.metrics.endMeasurement('DataTables.refreshTasksTableFromDataview');
   }
 
-  public refreshListsTableFromDataview(reason: string): void {
+  public async refreshListsTableFromDataview(reason: string): void {
     this.metrics.startMeasurement('DataTables.refreshListsTableFromDataview');
 
-    alasql('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Lists Table refreshed: ${reason}`}]]);
+    await alasql.promise('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Lists Table refreshed: ${reason}`}]]);
+
+    const dataviewListsTable = await alasql.promise('SHOW TABLES FROM alasql LIKE "dataview_lists"');
 
     // Temporary tables based on current state to make some queries faster.
-    if (alasql('SHOW TABLES FROM alasql LIKE "dataview_lists"').length > 0) {
+    if (dataviewListsTable.length > 0) {
       this.logger.info('Dropping the tasks table to repopulate.');
-      alasql('DROP TABLE dataview_lists ');
+      await alasql.promise('DROP TABLE dataview_lists ');
     }
 
-    alasql('CREATE TABLE dataview_lists ');
+    await alasql.promise('CREATE TABLE dataview_lists ');
 
     const dataviewPages = this.dvService.getDataviewPages();
 
@@ -264,7 +264,7 @@ export class DataTables extends Service {
 
         // << lists-table-snippet
         */
-        alasql('INSERT INTO dataview_lists VALUES ?', [{
+        await alasql.promise('INSERT INTO dataview_lists VALUES ?', [{ // eslint-disable-line no-await-in-loop
           symbol: l.symbol,
           path: p[1].path,
           pageName: this.parsePathFilenameNoExt(p[1].path),

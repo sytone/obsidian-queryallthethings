@@ -9,6 +9,7 @@ import {LoggingService} from 'lib/LoggingService';
 import {MetricsService} from 'lib/MetricsService';
 import {DateTime} from 'luxon';
 import {
+  Notice,
   Plugin,
   type App,
   type CachedMetadata,
@@ -39,6 +40,7 @@ export class NotesCacheService extends Service {
   notesCacheSettingsOpen: boolean;
   enableAlaSqlTablePopulation = true;
   public allNotesLoaded = false;
+  public cachingNotes = false;
 
   settingsTab = useSettingsTab(this);
   settings = useSettings(
@@ -103,7 +105,7 @@ export class NotesCacheService extends Service {
     super();
     this.lastUpdate = DateTime.now();
     this.metrics.addMetric('NotesCacheService.create Event Count', 0, 'count');
-    this.metrics.addMetric('NotesCacheService.update Event Count', 0, 'count');
+    this.metrics.addMetric('NotesCacheService.changed Event Count', 0, 'count');
     this.metrics.addMetric('NotesCacheService.delete Event Count', 0, 'count');
     this.metrics.addMetric('NotesCacheService.rename Event Count', 0, 'count');
 
@@ -160,9 +162,14 @@ export class NotesCacheService extends Service {
   }
 
   async layoutReady() {
+    this.logger.info('Layout ready, registering for vault events');
+
     this.registerEvent(
       this.plugin.app.vault.on('create', async file => {
         this.logger.info(`create event detected for ${file.path}`);
+        if (!this.allNotesLoaded) {
+          return;
+        }
 
         // Return if the file is in the ignore list and the time has not expired.
         if (this.checkIfFileShouldBeIgnored(file.path)) {
@@ -185,6 +192,9 @@ export class NotesCacheService extends Service {
     this.registerEvent(
       this.plugin.app.vault.on('delete', async file => {
         this.logger.info(`delete event detected for ${file.path}`);
+        if (!this.allNotesLoaded) {
+          return;
+        }
 
         // Return if the file is in the ignore list and the time has not expired.
         if (this.checkIfFileShouldBeIgnored(file.path)) {
@@ -203,6 +213,9 @@ export class NotesCacheService extends Service {
     this.registerEvent(
       this.plugin.app.vault.on('rename', async (file, oldPath) => {
         this.logger.info(`rename event detected for ${file.path}`);
+        if (!this.allNotesLoaded) {
+          return;
+        }
 
         // Return if the file is in the ignore list and the time has not expired.
         if (this.checkIfFileShouldBeIgnored(file.path)) {
@@ -226,6 +239,9 @@ export class NotesCacheService extends Service {
     this.registerEvent(
       this.plugin.app.metadataCache.on('changed', async (file, data, cache) => {
         this.logger.info(`metadataCache changed event detected for ${file.path}`);
+        if (!this.allNotesLoaded) {
+          return;
+        }
 
         // Return if the file is in the ignore list and the time has not expired.
         if (this.checkIfFileShouldBeIgnored(file.path)) {
@@ -276,14 +292,35 @@ export class NotesCacheService extends Service {
     this.metrics.startMeasurement('NotesCacheService.cacheAllNotes');
     this.logger.debug('Caching all notes');
 
+    // Const lastUpdate = await alasql.promise('SELECT config_value FROM configuration WHERE config_key =\'lastUpdate\' ');
+
+    // this.logger.info(`Value: '${lastUpdate}'`);
+
+    let fileCount = 0;
+    const files = app.vault.getMarkdownFiles();
+    // Find the file with the largest modified time.
+    // This is the most recent file in the vault.
+    // const maxModifiedValue = Math.max(...files.map(item => item.stat.mtime));
+    // await alasql.promise('UPDATE configuration SET config_value = ? WHERE config_key = ?', [maxModifiedValue, 'lastUpdate']);
+    const indexingNotice = new Notice(`Indexing notes...0/${files.length}`, 0);
+
+    const noteAdditions = [];
+
     for (const file of app.vault.getMarkdownFiles()) {
+      fileCount++;
+      indexingNotice.setMessage(`Indexing notes for Query All The Things...\n${fileCount}/${files.length}`);
       // eslint-disable-next-line no-await-in-loop
       const note = await this.createNoteFromFile(file);
+      this.logger.debug('Caching:', file.path);
+      this.logger.debug('Caching:', this.notesMap);
+
       if (note) {
-        // eslint-disable-next-line no-await-in-loop
-        await this.addNote(file.path, note, false);
+        noteAdditions.push(this.addNote(file.path, note, false));
+        // Old: await this.addNote(file.path, note, true); // eslint-disable-line no-await-in-loop
       }
     }
+
+    await Promise.all(noteAdditions);
 
     // To increase the speed of loading the collection of tasks and list items
     // is just set as object in alasql.
@@ -293,6 +330,9 @@ export class NotesCacheService extends Service {
     await alasql.promise(`SELECT * INTO ${this.obsidianTasksTableName} FROM ?`, [await this.getTasks()]);
 
     this.allNotesLoaded = true;
+    indexingNotice.hide();
+
+    // Loop through all notes and insert them in the database if missing, update if the modified date is larger.
 
     this.metrics.addMetric('NotesCacheService Notes Count', (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianNotesTableName}`))[0].cached as number, 'count');
     this.metrics.addMetric('NotesCacheService Lists Count', (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianListsTableName}`))[0].cached as number, 'count');
@@ -301,6 +341,7 @@ export class NotesCacheService extends Service {
     this.plugin.app.workspace.trigger('qatt:all-notes-loaded');
     this.metrics.endMeasurement('NotesCacheService.cacheAllNotes');
     this.metrics.cacheLoadTime = this.metrics.getMeasurement('NotesCacheService.cacheAllNotes');
+    this.cachingNotes = false;
   }
 
   /**
@@ -529,17 +570,18 @@ export class NotesCacheService extends Service {
    * @param insertFn - The function to execute when the query does not return any matching rows.
    */
   // eslint-disable-next-line max-params
-  private async upsertTable(tableName: string, path: string, modified: number, line: number | undefined, updateFn: () => void, insertFn: () => void) {
+  private async upsertTable(tableName: string, path: string, modified: number, line: number | undefined, updateFn: () => Promise<void>, insertFn: () => Promise<void>) {
     const query = line ? `SELECT path, modified FROM ${tableName} WHERE path = ? AND line = ?` : `SELECT path, modified FROM ${tableName} WHERE path = ?`;
     const parameters = line ? [path, line] : [path];
 
     const result = await alasql.promise(query, parameters); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-    if (result[0] > 0) {
-      if (result[0].modified < modified) {
-        updateFn();
-      }
-    } else {
-      insertFn();
+
+    if (result.length > 0 && result[0].modified < modified) {
+      await updateFn();
+    }
+
+    if (result.length === 0) {
+      await insertFn();
     }
   }
 
@@ -650,7 +692,7 @@ export class NotesCacheService extends Service {
    */
   private async updateListsTable(li: ListItem, path: string) {
     if (this.enableAlaSqlTablePopulation) {
-      await alasql.promise(`UPDATE ${this.obsidianListsTableName} SET parent = ?, task = ?, content = ?, line = ?, [column] = ?, isTopLevel = ?, path = ?, modified = ?, text = ?, checked = ?, status = ? WHERE path = ? AND line = ? AND modified < ?`, [
+      await alasql.promise(`UPDATE ${this.obsidianListsTableName} SET parent = ?, task = ?, content = ?, line = ?, [column] = ?, isTopLevel = ?, path = ?, modified = ?, text = ?, checked = ?, status = ?, heading = ?, isTask = ? WHERE path = ? AND line = ? AND modified < ?`, [
         li.parent,
         li.task,
         li.content,
@@ -662,6 +704,8 @@ export class NotesCacheService extends Service {
         li.text,
         li.checked,
         li.status,
+        li.heading,
+        li.isTask,
         path,
         li.line,
         li.modified,
@@ -688,6 +732,8 @@ export class NotesCacheService extends Service {
         text: li.text,
         checked: li.checked,
         status: li.status,
+        heading: li.heading,
+        isTask: li.isTask,
       }]);
     }
   }
@@ -701,7 +747,7 @@ export class NotesCacheService extends Service {
    */
   private async updateTasksTable(task: TaskItem, path: string) {
     if (this.enableAlaSqlTablePopulation) {
-      await alasql.promise(`UPDATE ${this.obsidianTasksTableName} SET path = ?, modified = ?, task = ?, status = ?, content = ?, text = ?, line = ?, tags = ?, tagsNormalized = ?, dueDate = ?, doneDate = ?, startDate = ?, createDate = ?, scheduledDate = ?, doDate = ?, priority = ?, cleanTask = ? WHERE path = ? AND line = ? AND modified < ?`, [
+      await alasql.promise(`UPDATE ${this.obsidianTasksTableName} SET path = ?, modified = ?, task = ?, status = ?, content = ?, text = ?, line = ?, tags = ?, tagsNormalized = ?, dueDate = ?, doneDate = ?, startDate = ?, createDate = ?, scheduledDate = ?, doDate = ?, priority = ?, cleanTask = ?, heading = ? WHERE path = ? AND line = ? AND modified < ?`, [
         task.path,
         task.modified,
         task.task,
@@ -719,6 +765,7 @@ export class NotesCacheService extends Service {
         task.doDate,
         task.priority,
         task.cleanTask,
+        task.heading,
         path,
         task.line,
         task.modified,
@@ -751,6 +798,7 @@ export class NotesCacheService extends Service {
         doDate: task.doDate,
         priority: task.priority,
         cleanTask: task.cleanTask,
+        heading: task.heading,
       }]);
     }
   }

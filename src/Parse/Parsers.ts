@@ -180,7 +180,7 @@ function parseDate(tokens: string[], index: number, prefixes: string[]) {
   const nextToken = tokens[index + 1];
 
   for (const prefix of prefixes) {
-    if (token.startsWith(prefix)) {
+    if (token.startsWith(prefix) && nextToken) {
       const endIndex = nextToken.endsWith(']') || nextToken.endsWith(')') ? nextToken.length - 1 : nextToken.length;
       return nextToken.slice(0, endIndex);
     }

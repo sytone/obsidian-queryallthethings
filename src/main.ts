@@ -72,7 +72,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       disableCustomJsMissingNotification: false,
       enableEditorRightClickMenu: true,
     } as IGeneralSettings,
-    (settings: IGeneralSettings) => {
+    async (settings: IGeneralSettings) => {
       // This will run every time the settings are updated.
       this.logger.info('Settings Updated', settings);
       this.onStartSqlQueries = settings.onStartSqlQueries;
@@ -84,7 +84,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.enableEditorRightClickMenu = settings.enableEditorRightClickMenu;
       this.commandHandler.setup(settings.internalLoggingConsoleLogLimit);
     },
-    (settings: IGeneralSettings) => {
+    async (settings: IGeneralSettings) => {
       // This will run when the settings are first loaded.
       this.logger.info('Settings Initialize', settings);
       this.onStartSqlQueries = settings.onStartSqlQueries;
@@ -96,9 +96,11 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.enableEditorRightClickMenu = settings.enableEditorRightClickMenu;
       this.commandHandler.setup(settings.internalLoggingConsoleLogLimit);
 
+      await this.dataTables.setupLocalDatabase();
+
       if (this.onStartSqlQueries) {
         this.logger.info('Running on start SQL queries', this.onStartSqlQueries);
-        const onStartResult = this.dataTables.runAdhocQuery(this.onStartSqlQueries);
+        const onStartResult = await this.dataTables.runAdhocQuery(this.onStartSqlQueries);
         this.logger.info('On start SQL queries result', onStartResult);
       }
 
@@ -122,6 +124,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   generalHeadingOpen: boolean;
   internalLoggingConsoleLogLimit: number;
   enableEditorRightClickMenu = true;
+  enableAlaSqlIndexedDbUse: boolean;
 
   // Public inlineRenderer: InlineRenderer | undefined;
   public queryRendererService: QueryRendererV2Service | undefined;
@@ -255,8 +258,6 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
 
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
     this.logger.debug(`debug level enabled "${this.manifest.name}" v${this.manifest.version}`);
-
-    await this.dataTables.setupLocalDatabase();
 
     this.use(QueryFactory).load();
     this.use(RenderFactory).load();

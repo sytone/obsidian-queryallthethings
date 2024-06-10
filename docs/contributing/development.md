@@ -17,6 +17,11 @@ PNPM is used as the package manager, use `npm install -g pnpm@latest-8` to insta
 
 Run `pnpm install` to ensure dependencies are installed and then `pnpm run build`
 
+I run everything in PowerShell Core. The following set the shell to use it and not cmd/bash
+
+`npm config set script-shell "$env:USERPROFILE\scoop\apps\pwsh\current\pwsh.exe"`
+
+
 ## Git configuration and LF/CRLF
 
 If you are using Obsidian it converts all files to LF by default, which means git will say there are modifications on windows where there are no changes, just the LF/CRLF difference. To work in LF only in windows do the following:

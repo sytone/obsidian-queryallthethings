@@ -17,6 +17,10 @@ import {type QueryRendererV2Service} from 'QueryRendererV2';
 import {NotesCacheService} from 'NotesCacheService';
 import {RenderTrackerService} from 'lib/RenderTrackerService';
 import {DateTime} from 'luxon';
+import {CsvLoaderService} from 'Data/CsvLoaderService';
+import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
+import {JsonLoaderService} from 'Data/JsonLoaderService';
+import {SqlLoaderService} from 'Data/SqlLoaderService';
 
 /**
  * All the rendering logic is handled here. It uses ths configuration to
@@ -40,6 +44,11 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   file: TFile;
   notesCacheService: NotesCacheService;
   renderTrackerService: RenderTrackerService;
+
+  csvLoaderService: CsvLoaderService | undefined;
+  markdownTableLoaderService: MarkdownTableLoaderService | undefined;
+  jsonLoaderService: JsonLoaderService | undefined;
+  sqlLoaderService: SqlLoaderService | undefined;
 
   private renderId: string;
   private startTime = new Date(Date.now());
@@ -66,6 +75,10 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     this.renderFactory = service.use(RenderFactory);
     this.notesCacheService = service.use(NotesCacheService);
     this.renderTrackerService = service.use(RenderTrackerService);
+    this.csvLoaderService = service.use(CsvLoaderService);
+    this.markdownTableLoaderService = service.use(MarkdownTableLoaderService);
+    this.jsonLoaderService = service.use(JsonLoaderService);
+    this.sqlLoaderService = service.use(SqlLoaderService);
   }
 
   async onload() {
@@ -116,7 +129,11 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
     // If the cache has not been loaded then just put a placeholder message, when
     // the all loaded event is triggered we will render the content.
-    if (!this.notesCacheService.allNotesLoaded) {
+    if (!this.notesCacheService.allNotesLoaded
+      || !this.csvLoaderService?.initialImportCompleted
+      || !this.markdownTableLoaderService?.initialImportCompleted
+      || !this.jsonLoaderService?.initialImportCompleted
+      || !this.sqlLoaderService?.initialImportCompleted) {
       this.logger.infoWithId(this.renderId, 'Waiting for all notes to load');
       const content = this.container.createEl('div');
       content.setAttr('data-query-id', this.renderId);

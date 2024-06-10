@@ -368,9 +368,11 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
   nav_order: 3
   layout: default
   parent: Data Tables
-  title: Obsidian Markdown Files
+  title: REMOVED - Obsidian Markdown Files
   ---
   ## Obsidian Markdown Files (obsidian_markdown_files)
+
+  This has been removed, please use obsidian_notes instead.
 
   If you need to reference a property of a object do not forget to use `->` and not `.`
 

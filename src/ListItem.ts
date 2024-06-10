@@ -33,12 +33,18 @@ The list item is parse by the following regular expression to extract informatio
 */
 
 export class ListItem {
+  public readonly _textMatch: RegExpExecArray | null = this.listMatcher.exec(this.content); // eslint-disable-line @typescript-eslint/ban-types
+
+  public isTopLevel: boolean = this.parent < 0;
+  public page: string = this.path;
+  public text: string = this._textMatch === null ? '' : this._textMatch[5];
+  public isTask: boolean = this._textMatch === null ? false : this._textMatch[4] !== undefined;
+  public checked: boolean = this._textMatch === null ? false : this._textMatch[4] !== undefined;
+  public status: string = this._textMatch === null ? ' ' : this._textMatch[4];
+
   private get listMatcher() {
     return /^([\s\t>]*)([-*+]|\d+\.)? *(\[(.)])? *(.*)/gm;
   }
-
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  private _textMatch: RegExpExecArray | null = null;
 
   /**
    * Represents a ListItem object.
@@ -52,56 +58,8 @@ export class ListItem {
     public column: number,
     public path: string,
     public modified: number,
+    public heading: string,
   ) {}
-
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  private get textMatch(): RegExpExecArray | null {
-    if (this._textMatch === null) {
-      this._textMatch = this.listMatcher.exec(this.content);
-    }
-
-    return this._textMatch;
-  }
-
-  public get isTopLevel(): boolean {
-    return this.parent < 0;
-  }
-
-  public get page(): string {
-    return this.path;
-  }
-
-  public get text(): string {
-    if (this.textMatch !== null) {
-      return this.textMatch[5];
-    }
-
-    return '';
-  }
-
-  public get isTask(): boolean {
-    if (this.textMatch !== null) {
-      return this.textMatch[4] !== undefined;
-    }
-
-    return false;
-  }
-
-  public get checked(): boolean {
-    if (this.textMatch !== null) {
-      return this.textMatch[4] === 'x';
-    }
-
-    return false;
-  }
-
-  public get status(): string {
-    if (this.textMatch !== null) {
-      return this.textMatch[4];
-    }
-
-    return ' ';
-  }
 
   // Removing to deal with recursion issues.
   // public get treePath(): string {

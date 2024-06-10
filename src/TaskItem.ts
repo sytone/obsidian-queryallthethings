@@ -44,6 +44,7 @@ export class TaskItem {
   public readonly content;
   public readonly text;
   public readonly line;
+  public readonly heading;
   public readonly tags;
   public readonly tagsNormalized;
   public readonly dueDate;
@@ -69,6 +70,7 @@ export class TaskItem {
     this.text = this.listItem.text;
     this.status = this.listItem.status;
     this.line = this.listItem.line;
+    this.heading = this.listItem.heading;
     this.tags = this._parsedTask.tags;
     this.tagsNormalized = this._parsedTask.tagsNormalized;
     this.dueDate = this._parsedTask.dueDate;
