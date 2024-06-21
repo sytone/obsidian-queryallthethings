@@ -190,7 +190,8 @@ describe('parseDataViewProperty', () => {
 });
 
 function getTaskItem(markdownTask: string) {
-  return new TaskItem(getListItemWithTask(markdownTask));
+  const newTask = new TaskItem();
+  return newTask.updateTaskItem(getListItemWithTask(markdownTask));
 }
 
 function getListItemWithTask(markdownTask: string) {
@@ -201,6 +202,8 @@ function getListItemWithTask(markdownTask: string) {
     1,
     ' ',
     1,
+    'heading',
+    ' ',
   );
 }
 

@@ -14,6 +14,8 @@ export class DataTables extends Service {
   metrics = this.use(MetricsService);
 
   dvService = this.use(DataviewService);
+  public setupLocalDatabasesCompleted = false;
+  public refreshTablesCompleted = false;
 
   public async runAdhocQuery(query: string): Promise<any> {
     const result = await alasql.promise(query);
@@ -24,25 +26,26 @@ export class DataTables extends Service {
     alasql.options.cache = true;
     // Persisted tables, this data will exist between obsidian reloads but is not replicated between machines or vault copies.
 
-    await alasql.promise(`
-      CREATE INDEXEDDB DATABASE IF NOT EXISTS qatt;
-      ATTACH INDEXEDDB DATABASE qatt;
-      -- USE qatt;
-      CREATE TABLE IF NOT EXISTS pagedata (name STRING, keyvalue STRING);
-      CREATE TABLE IF NOT EXISTS qatt.Events (date DATETIME, event STRING);
-      CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar;
-      CREATE TABLE IF NOT EXISTS qatt.RenderTracker (time DATETIME, page STRING, id STRING);
-      CREATE TABLE IF NOT EXISTS qatt.Configuration (time DATETIME, configkey STRING, configvalue STRING);
-      CREATE TABLE IF NOT EXISTS obsidian_notes;
-      CREATE TABLE IF NOT EXISTS obsidian_lists;
-      CREATE TABLE IF NOT EXISTS obsidian_tasks;
-      CREATE TABLE IF NOT EXISTS last_modified_notes;
-      CREATE TABLE IF NOT EXISTS configuration (config_key STRING, config_value STRING);
-    `);
+    await alasql.promise([
+      'CREATE INDEXEDDB DATABASE IF NOT EXISTS qatt',
+      'ATTACH INDEXEDDB DATABASE qatt',
+      // 'USE qatt',
+      'CREATE TABLE IF NOT EXISTS pagedata (name STRING, keyvalue STRING)',
+      'CREATE TABLE IF NOT EXISTS qatt.Events (date DATETIME, event STRING)',
+      'CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar',
+      'CREATE TABLE IF NOT EXISTS qatt.RenderTracker (time DATETIME, page STRING, id STRING)',
+      'CREATE TABLE IF NOT EXISTS qatt.Configuration (time DATETIME, configkey STRING, configvalue STRING)',
+      'CREATE TABLE IF NOT EXISTS obsidian_notes',
+      'CREATE TABLE IF NOT EXISTS obsidian_lists',
+      'CREATE TABLE IF NOT EXISTS obsidian_tasks',
+      'CREATE TABLE IF NOT EXISTS last_modified_notes',
+    ]);
 
     // To force local storage for all records the following could be uncommented
     // however performance will tank as local storage is sync and slower.
     this.logger.info('Current database:', alasql.useid);
+    this.setupLocalDatabasesCompleted = true;
+    this.plugin.app.workspace.trigger('qatt:data-localdbsetup-completed');
   }
 
   public async refreshTables(reason: string): Promise<void> {
@@ -62,7 +65,10 @@ export class DataTables extends Service {
 
     this.metrics.endMeasurement('qatt.ReferenceCalendar Refresh Check');
 
+    this.refreshTablesCompleted = true;
     this.plugin.app.workspace.trigger('qatt:dataview-store-update');
+    this.plugin.app.workspace.trigger('qatt:data-refreshtables-completed');
+
     this.metrics.endMeasurement('DataTables.refreshTables');
   }
 

@@ -59,6 +59,7 @@ export class ListItem {
     public path: string,
     public modified: number,
     public heading: string,
+    public note_name: string,
   ) {}
 
   // Removing to deal with recursion issues.

@@ -41,6 +41,7 @@ export class NotesCacheService extends Service {
   enableAlaSqlTablePopulation = true;
   public allNotesLoaded = false;
   public cachingNotes = false;
+  notesDb: any;
 
   settingsTab = useSettingsTab(this);
   settings = useSettings(
@@ -108,7 +109,6 @@ export class NotesCacheService extends Service {
     this.metrics.addMetric('NotesCacheService.changed Event Count', 0, 'count');
     this.metrics.addMetric('NotesCacheService.delete Event Count', 0, 'count');
     this.metrics.addMetric('NotesCacheService.rename Event Count', 0, 'count');
-
     this.metrics.addMetric('NotesCacheService.changed Ignored Count', 0, 'count');
   }
 
@@ -238,7 +238,6 @@ export class NotesCacheService extends Service {
 
     this.registerEvent(
       this.plugin.app.metadataCache.on('changed', async (file, data, cache) => {
-        this.logger.info(`metadataCache changed event detected for ${file.path}`);
         if (!this.allNotesLoaded) {
           return;
         }
@@ -254,7 +253,12 @@ export class NotesCacheService extends Service {
         this.metrics.incrementMetric('NotesCacheService.changed Event Count');
         this.metrics.startMeasurement('NotesCacheService.changed Event');
         const startTime = new Date(Date.now());
-        const n = await this.createNoteFromFileAndCache(file, cache);
+        const n = await Note.createNewNote(
+          file,
+          cache,
+          data,
+        );
+
         if (n) {
           await this.replaceNote(file.path, n);
         }
@@ -309,6 +313,7 @@ export class NotesCacheService extends Service {
     for (const file of app.vault.getMarkdownFiles()) {
       fileCount++;
       indexingNotice.setMessage(`Indexing notes for Query All The Things...\n${fileCount}/${files.length}`);
+
       // eslint-disable-next-line no-await-in-loop
       const note = await this.createNoteFromFile(file);
       this.logger.debug('Caching:', file.path);
@@ -500,7 +505,6 @@ export class NotesCacheService extends Service {
     // This will slow down the process of caching all notes. It is needed
     // for the creation of list items.
     const notesContent = await this.plugin.app.vault.cachedRead(file);
-
     return Note.createNewNote(
       file,
       cache,

@@ -154,6 +154,7 @@ export class Note {
     n.parentFolder = markdownFile.path.replace(markdownFile.name, '');
     n.listItems = [];
     n.tasks = [];
+
     if (metadata?.listItems) {
       n.listItems = metadata?.listItems.map(
         li => new ListItem(
@@ -173,9 +174,15 @@ export class Note {
 
               return closest;
             }, {heading: '', position: {start: {line: 0, col: 0, offset: 0}, end: {line: 0, col: 0, offset: 0}}}).heading ?? '',
+          markdownFile.basename,
         ));
-      n.tasks = n.listItems.filter(li => li.isTask).map(li => new TaskItem(li, true));
+      n.tasks = n.listItems.filter(li => li.isTask).map(li => {
+        const newTask = new TaskItem();
+        return newTask.updateTaskItem(li, true);
+      });
     }
+
+    const newTask = new TaskItem();
 
     n.links = metadata?.links ?? ([] as LinkCache[]);
     n.embeds = metadata?.embeds ?? ([] as EmbedCache[]);

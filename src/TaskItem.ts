@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {type ListItem} from 'ListItem';
 import {parseDataViewProperty, parseTask} from 'Parse/Parsers';
 
@@ -36,41 +37,33 @@ title: Obsidian Markdown Tasks
 */
 
 export class TaskItem {
-  public readonly page;
-  public readonly path;
-  public readonly modified;
-  public readonly task;
-  public readonly status;
-  public readonly content;
-  public readonly text;
-  public readonly line;
-  public readonly heading;
-  public readonly tags;
-  public readonly tagsNormalized;
-  public readonly dueDate;
-  public readonly doneDate;
-  public readonly startDate;
-  public readonly createDate;
-  public readonly scheduledDate;
-  public readonly doDate;
-  public readonly priority;
-  public readonly cleanTask: string;
-  private readonly _parsedTask;
+  public page: string;
+  public path: string;
+  public note_name: string;
+  public modified: number;
+  public task: string;
+  public status: string;
+  public content: string;
+  public text: string;
+  public line: number;
+  public heading: string;
+  public tags: string[];
+  public tagsNormalized: string[];
+  public dueDate: string;
+  public doneDate: string;
+  public startDate: string;
+  public createDate: string;
+  public scheduledDate: string;
+  public doDate: string;
+  public priority: number;
+  public cleanTask: string;
+  public listItem: ListItem;
 
-  constructor(
-    public listItem: ListItem,
-    public enableDataViewInlineFieldParsing: boolean = false,
-  ) {
+  private _parsedTask: any;
+
+  public updateTaskItem(listItem: ListItem, enableDataViewInlineFieldParsing = false) {
     this._parsedTask = parseTask(listItem.content);
-    this.page = this.listItem.page;
-    this.path = this.listItem.page;
-    this.modified = this.listItem.modified;
-    this.task = this.listItem.task;
-    this.content = this.listItem.content;
-    this.text = this.listItem.text;
-    this.status = this.listItem.status;
-    this.line = this.listItem.line;
-    this.heading = this.listItem.heading;
+
     this.tags = this._parsedTask.tags;
     this.tagsNormalized = this._parsedTask.tagsNormalized;
     this.dueDate = this._parsedTask.dueDate;
@@ -82,10 +75,23 @@ export class TaskItem {
     this.priority = this._parsedTask.priority;
     this.cleanTask = this._parsedTask.cleanTask;
 
-    if (this.enableDataViewInlineFieldParsing) {
+    this.page = listItem.path;
+    this.path = listItem.path;
+    this.note_name = listItem.note_name;
+    this.modified = listItem.modified;
+    this.task = listItem.task;
+    this.content = listItem.content;
+    this.text = listItem.text;
+    this.status = listItem.status;
+    this.line = listItem.line;
+    this.heading = listItem.heading;
+
+    if (enableDataViewInlineFieldParsing) {
       this.cleanTask = parseDataViewProperty(this);
     }
 
     this.cleanTask = this.cleanTask.trim();
+
+    return this;
   }
 }

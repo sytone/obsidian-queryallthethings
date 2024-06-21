@@ -259,6 +259,11 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
     this.logger.debug(`debug level enabled "${this.manifest.name}" v${this.manifest.version}`);
 
+    this.registerEvent(this.app.workspace.on('qatt:data-localdbsetup-completed', async () => {
+      this.logger.info('qatt:data-localdbsetup-completed event detected.');
+      await this.dataTables.refreshTables('qatt:data-localdbsetup-completed event detected');
+    }));
+
     this.use(QueryFactory).load();
     this.use(RenderFactory).load();
     this.use(HandlebarsRenderer).load();
@@ -278,14 +283,29 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
     this.app.workspace.onLayoutReady(async () => {
       this.logger.info(`Layout is ready for workspace: ${this.app.vault.getName()}`);
 
-      await this.dataTables.refreshTables('layout ready');
+      // Await this.dataTables.refreshTables('layout ready');
 
       this.metrics.startMeasurement('NotesCacheService Use');
       this.notesCacheService = this.use(NotesCacheService);
       this.metrics.endMeasurement('NotesCacheService Use');
 
       await this.notesCacheService.layoutReady();
-      await this.notesCacheService.cacheAllNotes(this.app);
+
+      // Cache if all notes have been loaded.
+      if (this.dataTables.refreshTablesCompleted && this.dataTables.setupLocalDatabasesCompleted) {
+        await this.notesCacheService.cacheAllNotes(this.app);
+
+        // Refresh all notes on a datatables update ?
+        // this.registerEvent(this.app.workspace.on('qatt:data-refreshtables-completed', async () => {
+        //   this.logger.info('qatt:data-refreshtables-completed event detected.');
+        //   await this.notesCacheService.cacheAllNotes(this.app);
+        // }));
+      } else {
+        this.registerEvent(this.app.workspace.on('qatt:data-refreshtables-completed', async () => {
+          this.logger.info('qatt:data-refreshtables-completed event detected.');
+          await this.notesCacheService.cacheAllNotes(this.app);
+        }));
+      }
 
       this.metrics.startMeasurement('CsvLoaderService Use');
       this.csvLoaderService = this.use(CsvLoaderService);
