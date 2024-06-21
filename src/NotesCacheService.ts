@@ -338,10 +338,13 @@ export class NotesCacheService extends Service {
     indexingNotice.hide();
 
     // Loop through all notes and insert them in the database if missing, update if the modified date is larger.
+    const notesTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianNotesTableName}`)); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+    const listsTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianListsTableName}`)); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+    const tasksTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianTasksTableName}`)); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
 
-    this.metrics.addMetric('NotesCacheService Notes Count', (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianNotesTableName}`))[0].cached as number, 'count');
-    this.metrics.addMetric('NotesCacheService Lists Count', (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianListsTableName}`))[0].cached as number, 'count');
-    this.metrics.addMetric('NotesCacheService Tasks Count', (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianTasksTableName}`))[0].cached as number, 'count');
+    this.metrics.addMetric('NotesCacheService Notes Count', notesTable[0].cached as number, 'count');
+    this.metrics.addMetric('NotesCacheService Lists Count', listsTable[0].cached as number, 'count');
+    this.metrics.addMetric('NotesCacheService Tasks Count', tasksTable[0].cached as number, 'count');
 
     this.plugin.app.workspace.trigger('qatt:all-notes-loaded');
     this.metrics.endMeasurement('NotesCacheService.cacheAllNotes');
