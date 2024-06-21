@@ -2,6 +2,97 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.0.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.9.0...1.0.0) (2024-06-21)
+
+This is a larger release, it may cause your queries to break as there are column and table changes. It is recommended to use the obsidian_notes, obsidian_lists and obsidian_tasks tables. These have been improved and are the primary way to query Obsidian using SQL based queries. This will also allow the tables to be accessed via JS script in other plugins. It also opens up better integration in the future.
+
+On load you will also see status on the caching progress, I have worked to make this as fast as possible and will be looking at caching in the future, at the moment around 2000 files takes a few seconds on a desktop, on iOS it is pretty much instantaneous.
+
+### Features
+
+* Add 'qatt:all-notes-loaded' event to obsidian-ex.d.ts ([4542b0c](https://github.com/sytone/obsidian-queryallthethings/commits/4542b0c207861d3b99238bb91d1345f7ec365e2e))
+* add ability to get measurement and code and comment cleanup ([1cdee59](https://github.com/sytone/obsidian-queryallthethings/commits/1cdee59399a3509f7991a0ae879a77bbca5fdb6a))
+* add button to push metrics to console ([dcd62f9](https://github.com/sytone/obsidian-queryallthethings/commits/dcd62f9924489b715fda78f036a84ee0a224736d))
+* add editor menu ([ad8e475](https://github.com/sytone/obsidian-queryallthethings/commits/ad8e475772fcf68bd2667c38ef3fe99bbecd4d90))
+* add message while cache populates ([723fcd5](https://github.com/sytone/obsidian-queryallthethings/commits/723fcd5e131278021d207fa06f56e7b9acfd1069))
+* add metrics service to collect plugin metrics to a single location ([b1745eb](https://github.com/sytone/obsidian-queryallthethings/commits/b1745eb92f46b41c98ef694c593089a8f83a7f73))
+* add obsidian help and joinarray sql function ([98a3774](https://github.com/sytone/obsidian-queryallthethings/commits/98a3774157970fb5363499fb82cb978cf96e8959))
+* add path as a property of list items and task items ([1c34ce8](https://github.com/sytone/obsidian-queryallthethings/commits/1c34ce8f1a34ae914214915905d5f4f1c46a9ea9))
+* add prototype of UI to edit codeblcoks and queries ([cefb036](https://github.com/sytone/obsidian-queryallthethings/commits/cefb036a8684bb93d4466954775e44d8ca122ae6))
+* add settings to disable missing dv and cjs plugins ([ba74125](https://github.com/sytone/obsidian-queryallthethings/commits/ba741259488d6285381610ea2aa9d9e63f6f47c7))
+* add simple metrics ([b4c5694](https://github.com/sytone/obsidian-queryallthethings/commits/b4c56946f039d301a3387ce1a00fc800ba19b75d))
+* add two sql functions for line based search ([56543b3](https://github.com/sytone/obsidian-queryallthethings/commits/56543b36767e61c81814ff0ae9f4d1eb6ba71cf8))
+* add types for menus ([5f60a7c](https://github.com/sytone/obsidian-queryallthethings/commits/5f60a7cb50d25aed6eaa0fc65d0959a27a733ae7))
+* added command to show metrics to console ([329c391](https://github.com/sytone/obsidian-queryallthethings/commits/329c391b18e51017536181e41e728943558ac9f1))
+* additional query loading message and fixed frontmatter loading ([b2dc0f4](https://github.com/sytone/obsidian-queryallthethings/commits/b2dc0f4131a197a0f44d80b3570a85aa600b3630))
+* cleanup new tables in default database ([58605d0](https://github.com/sytone/obsidian-queryallthethings/commits/58605d01588d3ffa035517c02ed6734c61ef7f81))
+* enable daily codeblock replacement ([8d1e01f](https://github.com/sytone/obsidian-queryallthethings/commits/8d1e01f5d57472452e4a744ddda454a0e3f46091))
+* enable default folders for query and template files and enable UI for editing codeblock ([37e467d](https://github.com/sytone/obsidian-queryallthethings/commits/37e467deea852f247142925814e751a02b331e32))
+* enable partial append ([8261886](https://github.com/sytone/obsidian-queryallthethings/commits/826188605254d01a1afc5a5188b066754ae90fef))
+* enable processing of DataView Inline tasks ([2db62a8](https://github.com/sytone/obsidian-queryallthethings/commits/2db62a8772b263def0934d9f9c62cc3f85eeb493)), closes [#11](https://github.com/sytone/obsidian-queryallthethings/issues/11)
+* enable tables to be natively available in the alasql database ([b11d752](https://github.com/sytone/obsidian-queryallthethings/commits/b11d7527f50256e6b644ffa5a3939861a1e549e8))
+* move data table functions to use metrics and add measurement to metrics service ([e94898d](https://github.com/sytone/obsidian-queryallthethings/commits/e94898da570abe19819b610373ee90773d04991f))
+* notice on indexing ([f23d965](https://github.com/sytone/obsidian-queryallthethings/commits/f23d96506c167f5388f17763b092f7828377bcd5))
+* register for all notes loaded event to force update on data population ([106296b](https://github.com/sytone/obsidian-queryallthethings/commits/106296b724355fbc01706748e7657d80634bb1e3))
+* simplify notes cache ([ecca054](https://github.com/sytone/obsidian-queryallthethings/commits/ecca05474f97f88d73ddbf59b1d6d7673994d7a7))
+* test additional internal render child approach ([17feaf7](https://github.com/sytone/obsidian-queryallthethings/commits/17feaf7931d1b1c3f6e269d52006c8ede8ec0147))
+* update handlebars helpers ([7c14bc2](https://github.com/sytone/obsidian-queryallthethings/commits/7c14bc29f9b1195baac38b1dab4543a1735beb6c))
+* update settings text and enable metrics collection ([9e6cdc6](https://github.com/sytone/obsidian-queryallthethings/commits/9e6cdc6f622b54924ee2a520b1a41d0d0a79aaea))
+* update to use indexed tables properly ([5d1c7a8](https://github.com/sytone/obsidian-queryallthethings/commits/5d1c7a82ed977533bf942a33ae8eafc381282789))
+
+
+### Documentation
+
+* ad cleanTask to docs on tasks object ([3b76cb9](https://github.com/sytone/obsidian-queryallthethings/commits/3b76cb962e383729bbf5e930deab0428094594a9))
+* added example for replaceTargetPath ([88fde46](https://github.com/sytone/obsidian-queryallthethings/commits/88fde46e211ff3961aee1e5d708880d61ed7ee33))
+* change injection newline option ([194a79c](https://github.com/sytone/obsidian-queryallthethings/commits/194a79c2c64dbe1a06f63cf65f20e84a8c5f3821))
+* clarified the live example part ([b90e7bd](https://github.com/sytone/obsidian-queryallthethings/commits/b90e7bd328027cd805c5504f9e9a082500fb2b9f))
+* Create CODE_OF_CONDUCT.md ([4877e8a](https://github.com/sytone/obsidian-queryallthethings/commits/4877e8ad01953d81730c6a6b18342fdd8e6db003))
+* Create CONTRIBUTING.md ([a42e842](https://github.com/sytone/obsidian-queryallthethings/commits/a42e842b617d67f659a6dd4e63ad1cb2024b588d))
+* Create pull_request_template.md ([a493730](https://github.com/sytone/obsidian-queryallthethings/commits/a4937306558b9dcc39b71a2cf1ef18ebea0cc884))
+* Create SECURITY.md ([9b1d697](https://github.com/sytone/obsidian-queryallthethings/commits/9b1d697a8d03b84cbe775251f5c3b9be521c76a3))
+* regenerated docs with new snippet injector version ([e5836b2](https://github.com/sytone/obsidian-queryallthethings/commits/e5836b24d6a0c9e386c67adfc88349b9eb5675dc))
+* set obsidian selected page to index ([8bf235c](https://github.com/sytone/obsidian-queryallthethings/commits/8bf235cb461335e1d1b3f47ed91ed33b12940312))
+* switch from source and make it reading ([fb92b2c](https://github.com/sytone/obsidian-queryallthethings/commits/fb92b2c5cbb26c62ff82b0128fb6be258f43162b))
+* update all documentation ([f52c67d](https://github.com/sytone/obsidian-queryallthethings/commits/f52c67daff09f9b74177bd6ec59e091fcf503ffc))
+* update build instructions ([6012eeb](https://github.com/sytone/obsidian-queryallthethings/commits/6012eebff46e33ab49884f2de834612f720c53c1))
+* update generated to be just date ([21c18c9](https://github.com/sytone/obsidian-queryallthethings/commits/21c18c9757c1e4574643bd34c57318263bc1be36))
+* update joinarray documentation ([641ebe6](https://github.com/sytone/obsidian-queryallthethings/commits/641ebe636e95ded407b76b25fa63db569cacd7c1))
+* update plugins and codeblock structure ([6268e11](https://github.com/sytone/obsidian-queryallthethings/commits/6268e1113d53d000414ef6dc6dbe2997cfe6ad18))
+
+
+### Internal
+
+* added comments on new tables ([ca98c01](https://github.com/sytone/obsidian-queryallthethings/commits/ca98c01cf38e7dbaec3e8d9f37995dd58041eb71))
+* beta release pipeline ([528d8f6](https://github.com/sytone/obsidian-queryallthethings/commits/528d8f6ab9d235eb8ac573988ccf1f2445d66e8e))
+* **deps-dev:** bump @babel/traverse from 7.23.0 to 7.23.9 ([#12](https://github.com/sytone/obsidian-queryallthethings/issues/12)) ([647d88f](https://github.com/sytone/obsidian-queryallthethings/commits/647d88f82a6419afd1c7ba6865d8de56a825dd65))
+* fix tag filter for release build ([6bc404e](https://github.com/sytone/obsidian-queryallthethings/commits/6bc404e18a7bf2c92e10477f381ed58baa19cc5b))
+* move to node test runner and node v20 ([7c21ecc](https://github.com/sytone/obsidian-queryallthethings/commits/7c21ecc9aa49b6143953467bf5ff55477caccd12))
+* moving to LF only in windows due to Obsidan defaults ([f114437](https://github.com/sytone/obsidian-queryallthethings/commits/f11443778342c9d8137ba1d74c76d186b28887ac))
+* **release:** 0.10.0 ([6e0ac71](https://github.com/sytone/obsidian-queryallthethings/commits/6e0ac71fc59e5bc74df6da77c6a6dc288abde6b2))
+* remove non used references ([83b22cf](https://github.com/sytone/obsidian-queryallthethings/commits/83b22cf0a06bdd110972d4bdae49d3dc08184f0e))
+* Update dependencies in tsconfig.json and package.json ([568fa04](https://github.com/sytone/obsidian-queryallthethings/commits/568fa04c35d54fb9ce03309afd367e7b4b6de013))
+* update dev container ([cfae98c](https://github.com/sytone/obsidian-queryallthethings/commits/cfae98c02f142a53dca68211dd7f9f9a124982f4))
+* Update issue templates ([1cb2c89](https://github.com/sytone/obsidian-queryallthethings/commits/1cb2c8964c8405cb33d76d2a7826c87c87b03377))
+* update markdown snippet injector ([71e8d28](https://github.com/sytone/obsidian-queryallthethings/commits/71e8d284a115b1dd2506f0904d70d9b515df1226))
+* update snippet injector version ([121a621](https://github.com/sytone/obsidian-queryallthethings/commits/121a6213ba955410f2ee66057b1ca6cd1a2da986))
+* update snippet injector with LF base generation notice ([4451317](https://github.com/sytone/obsidian-queryallthethings/commits/4451317c8e0cdca89010c05725c681302800c64a))
+
+
+### Bug Fixes and Changes
+
+* load order and event notifications ([7027050](https://github.com/sytone/obsidian-queryallthethings/commits/7027050b1753be3c499cebc71a8b7b224142affd))
+* merge of stash ([07888ed](https://github.com/sytone/obsidian-queryallthethings/commits/07888edd126a5021b7252730ab9fa81f500436c4))
+* parsing of inline values to handle braces as well ([66d604a](https://github.com/sytone/obsidian-queryallthethings/commits/66d604af04f012320a03099b5e6edc1a681c7be3))
+* reduce logging output ([cb770c4](https://github.com/sytone/obsidian-queryallthethings/commits/cb770c4149ceba11bd1201a8baef6c121a0fccde))
+* remove direct async call ([bd40252](https://github.com/sytone/obsidian-queryallthethings/commits/bd4025204a5d5b4163ba4730dafbb9f6cb4cdadf))
+* remove duplicate cache declaration ([2fca160](https://github.com/sytone/obsidian-queryallthethings/commits/2fca1608168126292455b70c4294e9a390bd361f))
+* remove tags from clean task string and update docs ([83f3609](https://github.com/sytone/obsidian-queryallthethings/commits/83f3609cd9f095cd3b3ef90553f0c473997f3cfa))
+* task item update from db ([86f984f](https://github.com/sytone/obsidian-queryallthethings/commits/86f984f90120137c1e28eae68eec54a1579ed10b))
+* update LINEINDEX sql function to handle emoji characters ([b9f5ce2](https://github.com/sytone/obsidian-queryallthethings/commits/b9f5ce20b3be126fe3d9809f49bc80da1b744316))
+* update logging display and entries ([6117841](https://github.com/sytone/obsidian-queryallthethings/commits/6117841e95d386a29d019661835a53be3abbe029))
+* updated test for new list constructor ([1d0674a](https://github.com/sytone/obsidian-queryallthethings/commits/1d0674a5f2e8065f277620f3565bc25d5a929016))
+
 ## [0.10.0](https://github.com/sytone/obsidian-queryallthethings/compare/0.9.0...0.10.0) (2024-02-02)
 
 
