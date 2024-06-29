@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.2](https://github.com/sytone/obsidian-queryallthethings/compare/1.0.1...1.0.2) (2024-06-29)
+
+
+### Bug Fixes and Changes
+
+* upsert to task and list on note change and add content back to note ([9be7463](https://github.com/sytone/obsidian-queryallthethings/commits/9be7463ed8e9043074ecbfcf032355f49245b6e6))
+
 ### [1.0.1](https://github.com/sytone/obsidian-queryallthethings/compare/0.9.0...1.0.1) (2024-06-21)
 
 
