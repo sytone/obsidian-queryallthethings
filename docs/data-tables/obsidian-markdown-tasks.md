@@ -7,6 +7,8 @@ title: Obsidian Markdown Tasks
 
 ## Obsidian Markdown Tasks (obsidian_markdown_tasks)
 
+Please use [obsidian_tasks](obsidian-tasks) going forward, this table will be eventually removed.
+
 | Column Name    | Type     | Description |
 | -------------- | -------- | ----------- |
 | path           | string   | Full path to the page the task is located on.            |

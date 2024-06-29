@@ -11,6 +11,8 @@ title: Obsidian Markdown Lists
 
 ## Obsidian Markdown Lists (obsidian_markdown_lists)
 
+Please use [obsidian_lists](obsidian-lists) going forward, this table will be eventually removed.
+
 The list item is parse by the following regular expression to extract information about it, if you encounter issues you can use this to help debug.
 
 `/^([\s\t>]*)([-*+]|\d+\.)? *(\[(.)])? *(.*)/gm`
@@ -32,6 +34,37 @@ The list item is parse by the following regular expression to extract informatio
 // << docs-tables-obsidian-markdown-lists
 */
 
+/*
+// >> id='docs-tables-obsidian-lists' options='file=data-tables/obsidian-lists.md'
+---
+nav_order: 4
+layout: default
+parent: Data Tables
+title: Obsidian Lists
+---
+
+## Obsidian Lists (obsidian_lists)
+
+| Column Name | Type    | Description                                                                   |
+| ----------- | ------- | ----------------------------------------------------------------------------- |
+| parent      | number  | The ID of the parent list item, negative if at root of note and same as line. |
+| task        | string  | Value between the square braces if the list item is a task.                   |
+| content     | string  | The full content of the line including the list indicator ('-','*')           |
+| line        | number  | The line that the list is found on the note.                                  |
+| column      | number  | The column that the list item starts on.                                      |
+| path        | string  | Path of the page the list item is on.                                         |
+| modified    | number  | Time where parent note was last modified.                                     |
+| heading     | string  | The heading that the task is under on the page.                               |
+| note_name   | string  | The name of the not the task is located on.                                   |
+| isTopLevel  | boolean | If true it is a top level list item and not nested.                           |
+| text        | string  | The text part of the list minus the list indicator.                           |
+| isTask      | boolean | If it has the braces for a markdown task this will be true.                   |
+| checked     | boolean | If the tasks has a value between braces this is true.                         |
+| status      | string  | Value between the square braces if the list item is a task.                   |
+
+// << docs-tables-obsidian-lists
+*/
+
 export class ListItem {
   public readonly _textMatch: RegExpExecArray | null = this.listMatcher.exec(this.content); // eslint-disable-line @typescript-eslint/ban-types
 
@@ -40,7 +73,7 @@ export class ListItem {
   public text: string = this._textMatch === null ? '' : this._textMatch[5];
   public isTask: boolean = this._textMatch === null ? false : this._textMatch[4] !== undefined;
   public checked: boolean = this._textMatch === null ? false : this._textMatch[4] !== undefined;
-  public status: string = this._textMatch === null ? ' ' : this._textMatch[4];
+  public status: string = this.isTask && this._textMatch !== null ? this._textMatch[4] : '';
 
   private get listMatcher() {
     return /^([\s\t>]*)([-*+]|\d+\.)? *(\[(.)])? *(.*)/gm;

@@ -419,7 +419,7 @@ export class NotesCacheService extends Service {
     const listUpdates = [];
     for (const li of note.listItems) {
       this.listItemsMap.set(`${path}:${li.line}`, li);
-      listUpdates.push(this.updateListsTable(li, path));
+      listUpdates.push(this.upsertLists(true, path, li));
     }
 
     await Promise.all(listUpdates);
@@ -427,7 +427,7 @@ export class NotesCacheService extends Service {
     const taskUpdates = [];
     for (const task of note.tasks) {
       this.taskItemMap.set(`${path}:${task.line}`, task);
-      taskUpdates.push(this.updateTasksTable(task, path));
+      taskUpdates.push(this.upsertTasks(true, path, task));
     }
 
     await Promise.all(taskUpdates);
