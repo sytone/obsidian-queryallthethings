@@ -13,8 +13,8 @@ This site uses Jekyll with some pre-processing, if you are making example markdo
 ```qatt
 query: |
   SELECT TOP 1 *
-  FROM obsidian_markdown_files
-  ORDER BY stat->ctime DESC
+  FROM obsidian_notes
+  ORDER BY created DESC
 template: |
       {{#each result}}
         [[{{path}}\|{{basename}}]]

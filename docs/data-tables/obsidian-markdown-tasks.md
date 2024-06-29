@@ -1,5 +1,5 @@
 ---
-nav_order: 5
+nav_order: 92
 layout: default
 parent: Data Tables
 title: Obsidian Markdown Tasks

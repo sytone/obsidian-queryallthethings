@@ -5,7 +5,7 @@ import {parseDataViewProperty, parseTask} from 'Parse/Parsers';
 /*
 // >> id='docs-tables-obsidian-markdown-tasks' options='file=data-tables/obsidian-markdown-tasks.md'
 ---
-nav_order: 5
+nav_order: 92
 layout: default
 parent: Data Tables
 title: Obsidian Markdown Tasks
@@ -41,7 +41,7 @@ Please use [obsidian_tasks](obsidian-tasks) going forward, this table will be ev
 /*
 // >> id='docs-tables-obsidian-tasks' options='file=data-tables/obsidian-tasks.md'
 ---
-nav_order: 5
+nav_order: 12
 layout: default
 parent: Data Tables
 title: Obsidian Tasks

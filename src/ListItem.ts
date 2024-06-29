@@ -3,7 +3,7 @@ import {type Note} from 'Note';
 /*
 // >> id='docs-tables-obsidian-markdown-lists' options='file=data-tables/obsidian-markdown-lists.md'
 ---
-nav_order: 4
+nav_order: 91
 layout: default
 parent: Data Tables
 title: Obsidian Markdown Lists
@@ -37,7 +37,7 @@ The list item is parse by the following regular expression to extract informatio
 /*
 // >> id='docs-tables-obsidian-lists' options='file=data-tables/obsidian-lists.md'
 ---
-nav_order: 4
+nav_order: 11
 layout: default
 parent: Data Tables
 title: Obsidian Lists

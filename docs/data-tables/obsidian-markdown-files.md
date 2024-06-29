@@ -1,12 +1,12 @@
 ---
-nav_order: 3
+nav_order: 100
 layout: default
 parent: Data Tables
-title: REMOVED - Obsidian Markdown Files
+title: RETIRED - Obsidian Markdown Files
 ---
 ## Obsidian Markdown Files (obsidian_markdown_files)
 
-This has been removed, please use obsidian_notes instead.
+This has been retired, please use obsidian_notes instead.
 
 If you need to reference a property of a object do not forget to use `->` and not `.`
 

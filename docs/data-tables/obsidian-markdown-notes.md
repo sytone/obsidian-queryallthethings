@@ -1,10 +1,12 @@
 ---
-nav_order: 2
+nav_order: 90
 layout: default
 parent: Data Tables
 title: Obsidian Markdown Notes
 ---
 ## Obsidian Markdown Notes (obsidian_markdown_notes)
+
+Please use [obsidian_notes](obsidian-notes) going forward, this table will be eventually removed.
 
 If you need to reference a property of a object do not forget to use `->` and not `.`
 
