@@ -44,7 +44,7 @@ This is related to [[Project One]]
 ```qatt
 query: |
   SELECT path, getNoteName(path) AS name, moment(stat->mtime).format('YYYY-MM-DD') AS LastUpdate
-  FROM obsidian_markdown_notes
+  FROM obsidian_notes
   WHERE content LIKE '%'+noteFileName()+'%' AND getNoteName(path) <> noteFileName()
 template: |
   | File | Last Modified |

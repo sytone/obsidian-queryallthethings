@@ -12,7 +12,7 @@ In this example it takes the `stat` property of the first note found and renders
 
 ````markdown
 ```qatt
-query: SELECT TOP 1 stringify(stat) AS statPropertyAsJsonString FROM obsidian_markdown_notes
+query: SELECT TOP 1 stringify(stat) AS statPropertyAsJsonString FROM obsidian_notes
 template: |
   {{#each result}}{{statPropertyAsJsonString}}{{/each}}
 ```

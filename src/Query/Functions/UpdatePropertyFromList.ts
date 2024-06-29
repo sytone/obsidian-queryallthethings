@@ -10,7 +10,7 @@ The `updatePropertyFromList` function will return a link that when clicked will 
 
 ````markdown
 ```qatt
-query: SELECT TOP 1 updatePropertyFromList(frontmatter->priority, path, @[1, 2, 3], 'priority') AS updatePriority FROM obsidian_markdown_notes
+query: SELECT TOP 1 updatePropertyFromList(frontmatter->priority, path, @[1, 2, 3], 'priority') AS updatePriority FROM obsidian_notes
 template: |
   {{#each result}}{{updatePriority}}{{/each}}
 ```

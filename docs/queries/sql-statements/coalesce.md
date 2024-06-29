@@ -9,7 +9,7 @@ Show first NON NULL and non-NaN parameter:
 
 ```sql
 SELECT path, COALESCE(frontmatter->area, frontmatter->Area, '') AS Area
-FROM obsidian_markdown_notes
+FROM obsidian_notes
 ```
 
 ```sql

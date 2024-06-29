@@ -16,7 +16,7 @@ Syntax:
 AlaSQL supports ```IN``` operation:
 
 ```sql
-    SELECT path FROM obsidian_markdown_notes WHERE 'project' IN tags
+    SELECT path FROM obsidian_notes WHERE 'project' IN tags
     SELECT a FROM one WHERE b IN (1,2,3)
     SELECT a FROM one WHERE b IN (SELECT b FROM two)
     SELECT a FROM one WHERE b IN ?
@@ -31,7 +31,7 @@ AlaSQL supports ```IN``` operation:
 like:
 
 ```sql
-    SELECT path FROM obsidian_markdown_notes WHERE frontmatter->area IN @('area1','area2')
+    SELECT path FROM obsidian_notes WHERE frontmatter->area IN @('area1','area2')
     10 IN @(?)
     @a IN @(@b)
     20 IN @(@[10,20,30])

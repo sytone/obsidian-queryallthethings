@@ -16,7 +16,7 @@ Obsidian Example:
 ```sql
     SELECT
       IIF( frontmatter->status = 'Done', '✔️', '⏹️') AS StatusEmoji
-      FROM obsidian_markdown_notes WHERE
+      FROM obsidian_notes WHERE
 ```
 
 For example:

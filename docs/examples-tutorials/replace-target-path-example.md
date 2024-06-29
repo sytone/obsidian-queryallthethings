@@ -13,7 +13,7 @@ As all output is converted to HTML so Obsidian will render it we need to make su
 query: |
   SELECT TOP 10
     basename
-  FROM obsidian_markdown_notes
+  FROM obsidian_notes
   ORDER BY stat->mtime DESC
 template: |
   {{#each result}}
@@ -35,7 +35,7 @@ View this page in source mode to see the code block below this line that generat
 query: |
   SELECT TOP 10
     basename
-  FROM obsidian_markdown_notes
+  FROM obsidian_notes
   ORDER BY stat->mtime DESC
 template: |
   {{#each result}}

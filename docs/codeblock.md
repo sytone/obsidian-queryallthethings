@@ -18,7 +18,7 @@ customJSForHandlebars: ['MyCoolClass MyHandlebarsHelper']
 query: |
   SELECT TOP 10
     basename
-  FROM obsidian_markdown_notes
+  FROM obsidian_notes
 queryFile: qatt/queries/GetTop10Notes.md
 queryEngine: alasql
 template: |

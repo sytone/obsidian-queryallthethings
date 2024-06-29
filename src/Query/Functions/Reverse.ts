@@ -23,7 +23,7 @@ The following example returns the frontmatter->status value reversed.
 query: |
   SELECT TOP 2 path AS Path,
     REVERSE(frontmatter->status) AS Status
-  FROM obsidian_markdown_notes
+  FROM obsidian_notes
   WHERE frontmatter->status
 template: |
   {{stringify result}}

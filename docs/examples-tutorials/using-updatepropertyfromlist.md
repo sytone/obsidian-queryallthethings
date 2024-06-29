@@ -23,7 +23,7 @@ SELECT
   updatePropertyFromList(frontmatter->status, path, @['Active','Done','Todo','In Progress','Waiting','Archive'], 'status') AS updateStatus,
   updatePropertyFromList(frontmatter->area, path, @['Health', 'Family', 'Fun', 'Social', 'Career', 'Financial', 'Learning'], 'area') AS updateArea,
   updatePropertyFromList(frontmatter->priority, path, @[1, 2, 3], 'priority') AS updatePriority
-FROM obsidian_markdown_notes
+FROM obsidian_notes
 WHERE frontmatter->notetype = 'project'
   AND path NOT LIKE '%9 DataStores/Templates%'
   AND frontmatter->status <> 'Archive'
@@ -63,7 +63,7 @@ query: |
     updatePropertyFromList(frontmatter->status, path, @['Active','Done','Todo','In Progress','Waiting','Archive'], 'status') AS updateStatus,
     updatePropertyFromList(frontmatter->area, path, @['Health', 'Family', 'Fun', 'Social', 'Career', 'Financial', 'Learning'], 'area') AS updateArea,
     updatePropertyFromList(frontmatter->priority, path, @[1, 2, 3], 'priority') AS updatePriority
-  FROM obsidian_markdown_notes
+  FROM obsidian_notes
   WHERE frontmatter->notetype = 'project'
     AND path NOT LIKE '%9 DataStores/Templates%'
     AND frontmatter->status <> 'Archive'

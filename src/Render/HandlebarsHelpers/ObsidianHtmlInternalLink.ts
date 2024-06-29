@@ -46,7 +46,7 @@ This uses a simple query to help show what the obsidianHtmlInternalLink helper d
 {% raw %}
 ```qatt
 query: |
-  SELECT TOP 1 path, basename FROM obsidian_markdown_notes
+  SELECT TOP 1 path, basename FROM obsidian_notes
 template: |
   {{#each result}}
     {{obsidianHtmlInternalLink path basename}}
@@ -59,7 +59,7 @@ template: |
 
 ```qatt
 query: |
-  SELECT TOP 1 path, basename FROM obsidian_markdown_notes
+  SELECT TOP 1 path, basename FROM obsidian_notes
 template: |
   {{#each result}}
     {{obsidianHtmlInternalLink path basename}}

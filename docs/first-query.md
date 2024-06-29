@@ -16,7 +16,7 @@ In the example below you have the `query`, as noted this is based off SQL so sit
 ```qatt
 query: |
   SELECT TOP 5 *
-  FROM obsidian_markdown_notes
+  FROM obsidian_notes
   ORDER BY stat->mtime DESC
 template: |
   {{#each result}}
@@ -36,7 +36,7 @@ Once a query result has been rendered by the template and backing template engin
 ```qatt
 query: |
   SELECT TOP 5 *
-  FROM obsidian_markdown_notes
+  FROM obsidian_notes
   ORDER BY stat->mtime DESC
 template: |
   {{#each result}}
