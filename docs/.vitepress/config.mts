@@ -20,6 +20,7 @@ export default defineConfig({
   description: "Obsidian plugin to allow you to query your notes, lists, tasks and more using SQL and render using handlebars",
   cleanUrls: true,
   base: '/obsidian-queryallthethings/',
+  appearance: 'dark',
   markdown: {
     config(md) {
       const defaultCodeInline = md.renderer.rules.code_inline!
@@ -37,7 +38,7 @@ export default defineConfig({
     }
   },
   themeConfig: {
-    logo: '/qatt_logo_v1.png',
+    logo: '/qatt_logo_v2.png',
     sidebar: generateSidebar(vitepressSidebarOptions),
     // https://vitepress.dev/reference/default-theme-config
     nav: [
