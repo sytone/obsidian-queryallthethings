@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitepress'
 import { generateSidebar } from 'vitepress-sidebar';
+import pkg from '../../package.json';
 
 const vitepressSidebarOptions = {
   /* Options... */
@@ -44,7 +45,20 @@ export default defineConfig({
       { text: 'Tables', link: '/data-tables' },
       { text: 'Examples', link: '/examples-tutorials' },
       { text: 'Query Reference', link: '/queries' },
-      { text: 'Render Reference', link: '/templates' }
+      { text: 'Render Reference', link: '/templates' },
+      {
+        text: pkg.version,
+        items: [
+          {
+            text: 'Changelog',
+            link: 'https://github.com/sytone/obsidian-queryallthethings/blob/main/CHANGELOG.md'
+          },
+          {
+            text: 'Contributing',
+            link: 'https://github.com/sytone/obsidian-queryallthethings/blob/main/CONTRIBUTING.md'
+          }
+        ]
+      }
 
     ],
 
@@ -59,7 +73,7 @@ export default defineConfig({
     // ],
 
     socialLinks: [
-      { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
+      { icon: 'github', link: 'https://github.com/sytone/obsidian-queryallthethings' }
     ]
   }
 })
