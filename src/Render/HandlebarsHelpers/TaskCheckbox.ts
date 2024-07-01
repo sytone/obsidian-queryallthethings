@@ -3,16 +3,13 @@ import Handlebars, {type HelperOptions} from 'handlebars';
 // >> id='docs-handlebars-helper-taskcheckbox' options='file=templates/hb-helpers/taskcheckbox.md'
 title: taskCheckbox
 ---
+# {{ $frontmatter.title }}
 
 The `taskCheckbox`-helper will ...
-
-{% raw %}
 
 ```handlebars
   {{taskCheckbox}}
 ```
-
-{% endraw %}
 
 when used with this context:
 
@@ -41,7 +38,6 @@ This uses a simple query to help show what the `taskCheckbox`-helper does when r
 ### Example
 
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT 'something to render in a code block. ' AS code
@@ -50,7 +46,6 @@ template: |
     {{taskCheckbox 'text'}}
   {{/each}}
 ```
-{% endraw %}
 ````
 
 ### Live in Vault

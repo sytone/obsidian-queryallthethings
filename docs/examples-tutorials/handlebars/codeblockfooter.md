@@ -1,5 +1,5 @@
 ---
-layout: default
+
 parent: Handlebars
 grand_parent: Examples / Tutorials
 title: codeBlockFooter Helper
@@ -9,7 +9,6 @@ This uses a simple query to help show what the codeBlockFooter helper does when 
 
 ### Example
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT 'something to render in a code block. ' AS code
@@ -20,7 +19,6 @@ template: |
     {{codeBlockFooter}}
   {{/each}}
 ```
-{% endraw %}
 ````
 ### Live in Vault
 ```qatt

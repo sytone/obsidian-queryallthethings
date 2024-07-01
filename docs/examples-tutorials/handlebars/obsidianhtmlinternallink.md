@@ -1,16 +1,16 @@
 ---
-layout: default
+
 parent: Handlebars
 grand_parent: Examples / Tutorials
 title: obsidianHtmlInternalLink Helper
 ---
+# {{ $frontmatter.title }}
 
 This uses a simple query to help show what the obsidianHtmlInternalLink helper does when rendering.
 
 ### Example
 
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT TOP 1 path, basename FROM obsidian_notes
@@ -19,7 +19,6 @@ template: |
     {{obsidianHtmlInternalLink path basename}}
   {{/each}}
 ```
-{% endraw %}
 ````
 
 ### Live in Vault

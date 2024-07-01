@@ -1,18 +1,16 @@
 ---
-layout: default
+
 parent: Handlebars Helpers
 grand_parent: Using Templates
 title: stringify value
 ---
-The `stringify`\-helper will convert the referenced object to a JSON string. If a cyclical object is used the helper will return `[Cyclical]` for the nested instances to prevent infinite recursion.
+# {{ $frontmatter.title }}
 
-{% raw %}
+The `stringify`\-helper will convert the referenced object to a JSON string. If a cyclical object is used the helper will return `[Cyclical]` for the nested instances to prevent infinite recursion.
 
 ```handlebars
   {{{stringify complexObject}}}
 ```
-
-{% endraw %}
 
 when used with this context:
 

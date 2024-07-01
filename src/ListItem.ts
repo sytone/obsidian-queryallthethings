@@ -1,49 +1,17 @@
 import {type Note} from 'Note';
 
 /*
-// >> id='docs-tables-obsidian-markdown-lists' options='file=data-tables/obsidian-markdown-lists.md'
----
-nav_order: 91
-layout: default
-parent: Data Tables
-title: Obsidian Markdown Lists
----
-
-## Obsidian Markdown Lists (obsidian_markdown_lists)
-
-Please use [obsidian_lists](obsidian-lists) going forward, this table will be eventually removed.
-
-The list item is parse by the following regular expression to extract information about it, if you encounter issues you can use this to help debug.
-
-`/^([\s\t>]*)([-*+]|\d+\.)? *(\[(.)])? *(.*)/gm`
-
-| Column Name | Type    | Description                           |
-| ----------- | ------- | ------------------------------------- |
-| parent      | number  |                                       |
-| task        | string  |                                       |
-| content     | string  |                                       |
-| line        | number  |                                       |
-| column      | number  |                                       |
-| isTopLevel  | boolean |                                       |
-| path        | string  | Path of the page the list item is on. |
-| modified    | number  | Time where parent note was last modified. |
-| text        | string  | The text part of the list.            |
-| checked     | boolean |                                       |
-| status      | string  |                                       |
-
-// << docs-tables-obsidian-markdown-lists
-*/
-
-/*
 // >> id='docs-tables-obsidian-lists' options='file=data-tables/obsidian-lists.md'
 ---
-nav_order: 11
-layout: default
+order: 11
+
 parent: Data Tables
 title: Obsidian Lists
 ---
 
-## Obsidian Lists (obsidian_lists)
+# Obsidian Lists Table
+
+Table Name: `obsidian_lists`
 
 | Column Name | Type    | Description                                                                   |
 | ----------- | ------- | ----------------------------------------------------------------------------- |

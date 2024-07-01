@@ -1,11 +1,13 @@
 ---
-nav_order: 11
-layout: default
+order: 11
+
 parent: Data Tables
 title: Obsidian Lists
 ---
 
-## Obsidian Lists (obsidian_lists)
+# Obsidian Lists Table
+
+Table Name: `obsidian_lists`
 
 | Column Name | Type    | Description                                                                   |
 | ----------- | ------- | ----------------------------------------------------------------------------- |

@@ -3,16 +3,13 @@ import Handlebars, {type HelperOptions} from 'handlebars';
 // >> id='docs-handlebars-helper-flexibletaskcheckbox' options='file=templates/hb-helpers/flexibletaskcheckbox.md'
 title: flexibleTaskCheckbox
 ---
+# {{ $frontmatter.title }}
 
 The `flexibleTaskCheckbox`-helper will ...
-
-{% raw %}
 
 ```handlebars
   {{flexibleTaskCheckbox}}
 ```
-
-{% endraw %}
 
 when used with this context:
 
@@ -41,7 +38,6 @@ This uses a simple query to help show what the `flexibleTaskCheckbox`-helper doe
 ### Example
 
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT 'something to render in a code block. ' AS code
@@ -50,7 +46,6 @@ template: |
     {{flexibleTaskCheckbox 'text'}}
   {{/each}}
 ```
-{% endraw %}
 ````
 
 ### Live in Vault

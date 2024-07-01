@@ -1,3 +1,6 @@
+---
+exclude: true
+---
 
 **SELECT TOP 5 * FROM obsidian_notes ORDER BY modified DESC**
 ```qatt
@@ -22,7 +25,7 @@ template: |
   Result[1]
   {{#each result.[1]}}
   [[{{basename}}]] - Last Updated: {{formatDate modified}}
-  {{/each}}  
+  {{/each}}
 ```
 
 

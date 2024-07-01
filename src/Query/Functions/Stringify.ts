@@ -4,11 +4,11 @@ import alasql from 'alasql';
 // >> id='alasql-function-stringify-snippet' options='file=queries/sql-functions/stringify.md'
 title: stringify(value)
 ---
+# {{ $frontmatter.title }}
+
 The `stringify` function will convert the provided value to a JSON string.
 
 In this example it takes the `stat` property of the first note found and renders it as a JSON blob. This can be handy to explore objects if you are not sure what is available.
-
-{% raw %}
 
 ````markdown
 ```qatt
@@ -17,8 +17,6 @@ template: |
   {{#each result}}{{statPropertyAsJsonString}}{{/each}}
 ```
 ````
-
-{% endraw %}
 
 will result in:
 

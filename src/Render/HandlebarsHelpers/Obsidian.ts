@@ -4,16 +4,13 @@ import Handlebars, {type HelperOptions} from 'handlebars';
 // >> id='docs-handlebars-helper-obsidian' options='file=templates/hb-helpers/obsidian.md'
 title: obsidian
 ---
+# {{ $frontmatter.title }}
 
 The `obsidian`-helper renders markdown as HTML using the obsidian markdown engine. It has one setting which will remove the wrapping `<p>` tag from the output if inline is set to true.
-
-{% raw %}
 
 ```handlebars
       {{{#obsidian inline="true"}}} {{{task}}} [[{{{page}}}|📝]] {{{/obsidian}}}
 ```
-
-{% endraw %}
 
 when used with this context:
 
@@ -48,7 +45,6 @@ This uses a simple query to help show what the `obsidian`-helper does when rende
 ### Example
 
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT 'This is a **thing** to do' AS code
@@ -57,7 +53,6 @@ template: |
     {{{#obsidian inline="true"}}}{{{code}}}{{{/obsidian}}}
   {{/each}}
 ```
-{% endraw %}
 ````
 
 ### Live in Vault

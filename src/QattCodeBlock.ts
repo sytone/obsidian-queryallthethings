@@ -10,8 +10,8 @@ import {parseYaml} from 'obsidian';
 * Published documentation:
 // >> id='docs-codeblock-configuration' options='file=codeblock.md'
 ---
-nav_order: 4
-layout: default
+order: 4
+
 title: Codeblock Configuration
 ---
 
@@ -20,8 +20,6 @@ When you create the query and template to render the results if the query the co
 The configuration is YAML based and support the following properties. As it is YAML you can use the `|` symbol after the key name and enter your values on multiple lines which are indented.
 
 Here is an example of all codeblock configurations
-
-{% raw %}
 
 ```yaml
 customJSForSql: ['MyCoolClass ConvertWordsToEmoji','MyCoolClass AnotherSQLFunction']
@@ -44,8 +42,6 @@ replaceCodeBlock: true | false
 replaceTargetPath: notes/topten.md
 replaceType: never | once | onceDaily | onceDailyAppend | onceDailyPrepend | onceWeekly | always | alwaysappend | alwaysprepend
 ```
-
-{% endraw %}
 
 %%snippet id='docs-codeblock-configuration-customjsforsql' options='nocodeblock'%%
 %%/snippet%%

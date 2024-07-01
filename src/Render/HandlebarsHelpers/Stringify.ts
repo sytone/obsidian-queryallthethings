@@ -4,15 +4,13 @@ import Handlebars, {type HelperOptions} from 'handlebars';
 // >> id='docs-handlebars-helper-stringify' options='file=templates/hb-helpers/stringify.md'
 title: stringify value
 ---
-The `stringify`\-helper will convert the referenced object to a JSON string. If a cyclical object is used the helper will return `[Cyclical]` for the nested instances to prevent infinite recursion.
+# {{ $frontmatter.title }}
 
-{% raw %}
+The `stringify`\-helper will convert the referenced object to a JSON string. If a cyclical object is used the helper will return `[Cyclical]` for the nested instances to prevent infinite recursion.
 
 ```handlebars
   {{{stringify complexObject}}}
 ```
-
-{% endraw %}
 
 when used with this context:
 

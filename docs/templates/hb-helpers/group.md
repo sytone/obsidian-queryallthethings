@@ -1,13 +1,12 @@
 ---
-layout: default
+
 parent: Handlebars Helpers
 grand_parent: Using Templates
 title: group
 ---
+# {{ $frontmatter.title }}
 
 The `group`\-helper will group the result by the specified column.
-
-{% raw %}
 
 ```handlebars
 {{{#group result by="column_name"}}}
@@ -15,7 +14,5 @@ The `group`\-helper will group the result by the specified column.
   collection of items in the group is specified by {{items}}
 {{/group}}
 ```
-
-{% endraw %}
 
 See the [group](../../examples-tutorials/handlebars/group) page for a full example.

@@ -1,19 +1,16 @@
 ---
-layout: default
+
 parent: Handlebars Helpers
 grand_parent: Using Templates
 title: htmlTaskList
 ---
+# {{ $frontmatter.title }}
 
 The `htmlTaskList`-helper will ...
-
-{% raw %}
 
 ```handlebars
   {{htmlTaskList}}
 ```
-
-{% endraw %}
 
 when used with this context:
 

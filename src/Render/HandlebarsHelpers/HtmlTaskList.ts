@@ -5,16 +5,13 @@ import {Component, MarkdownRenderer} from 'obsidian';
 // >> id='docs-handlebars-helper-htmltasklist' options='file=templates/hb-helpers/htmltasklist.md'
 title: htmlTaskList
 ---
+# {{ $frontmatter.title }}
 
 The `htmlTaskList`-helper will ...
-
-{% raw %}
 
 ```handlebars
   {{htmlTaskList}}
 ```
-
-{% endraw %}
 
 when used with this context:
 
@@ -43,7 +40,6 @@ This uses a simple query to help show what the `htmlTaskList`-helper does when r
 ### Example
 
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT 'something to render in a code block. ' AS code
@@ -52,7 +48,6 @@ template: |
     {{htmlTaskList 'text'}}
   {{/each}}
 ```
-{% endraw %}
 ````
 
 ### Live in Vault

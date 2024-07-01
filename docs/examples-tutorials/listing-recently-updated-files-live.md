@@ -1,9 +1,10 @@
 ---
-layout: default
+
 parent: Examples / Tutorials
 title: Listing recently updated files
-published: false
+exclude: true
 ---
+# {{ $frontmatter.title }}
 
 This example will walk you though making a codeblock that lists the 10 most recently modified files.
 

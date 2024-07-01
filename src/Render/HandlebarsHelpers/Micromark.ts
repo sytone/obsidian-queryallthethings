@@ -4,16 +4,13 @@ import Handlebars, {type HelperOptions} from 'handlebars';
 // >> id='docs-handlebars-helper-micromark' options='file=templates/hb-helpers/micromark.md'
 title: micromark
 ---
+# {{ $frontmatter.title }}
 
 The `micromark`-helper renders markdown as HTML using the micromark library. It has one setting which will remove the wrapping `<p>` tag from the output if inline is set to true.
-
-{% raw %}
 
 ```handlebars
       {{{#micromark inline="true"}}} {{{task}}} [[{{{page}}}|📝]] {{{/micromark}}}
 ```
-
-{% endraw %}
 
 when used with this context:
 
@@ -48,7 +45,6 @@ This uses a simple query to help show what the `micromark`-helper does when rend
 ### Example
 
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT 'This is a **thing** to do' AS code
@@ -57,7 +53,6 @@ template: |
     {{{#micromark inline="true"}}}{{{code}}}{{{/micromark}}}
   {{/each}}
 ```
-{% endraw %}
 ````
 
 ### Live in Vault

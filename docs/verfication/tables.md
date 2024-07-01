@@ -1,3 +1,6 @@
+---
+exclude: true
+---
 
 ### New Tables - Note these will be the main validation and target moving forward.
 #### obsidian_notes
@@ -53,7 +56,7 @@ query: |
   SELECT TOP 5 * FROM qatt.ReferenceCalendar
 template: |
   | Date | dayOfWeek | weekOfYear |
-  | --- | --- | ---|
+  | ---- | --------- | ---------- |
   {{#each result}}
   | {{date}} | {{dayOfWeek}} | {{weekOfYear}} |
   {{/each}}

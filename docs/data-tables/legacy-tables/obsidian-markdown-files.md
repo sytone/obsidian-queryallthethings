@@ -1,6 +1,6 @@
 ---
-nav_order: 100
-layout: default
+order: 100
+
 parent: Data Tables
 title: RETIRED - Obsidian Markdown Files
 ---

@@ -1,11 +1,13 @@
 ---
-nav_order: 12
-layout: default
+order: 12
+
 parent: Data Tables
 title: Obsidian Tasks
 ---
 
-## Obsidian Tasks (obsidian_tasks)
+# Obsidian Tasks Table
+
+Table Name: `obsidian_tasks`
 
 | Column Name    | Type     | Description                                                       |
 | -------------- | -------- | ----------------------------------------------------------------- |

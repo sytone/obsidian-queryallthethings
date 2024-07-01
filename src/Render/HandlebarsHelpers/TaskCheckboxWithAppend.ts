@@ -3,16 +3,13 @@ import Handlebars, {type HelperOptions} from 'handlebars';
 // >> id='docs-handlebars-helper-taskcheckboxwithappend' options='file=templates/hb-helpers/taskcheckboxwithappend.md'
 title: taskCheckboxWithAppend
 ---
+# {{ $frontmatter.title }}
 
 The `taskCheckboxWithAppend`-helper will ...
-
-{% raw %}
 
 ```handlebars
   {{taskCheckboxWithAppend}}
 ```
-
-{% endraw %}
 
 when used with this context:
 
@@ -41,7 +38,6 @@ This uses a simple query to help show what the `taskCheckboxWithAppend`-helper d
 ### Example
 
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT 'something to render in a code block. ' AS code
@@ -50,7 +46,6 @@ template: |
     {{taskCheckboxWithAppend 'text'}}
   {{/each}}
 ```
-{% endraw %}
 ````
 
 ### Live in Vault

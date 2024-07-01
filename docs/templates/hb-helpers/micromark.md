@@ -1,19 +1,16 @@
 ---
-layout: default
+
 parent: Handlebars Helpers
 grand_parent: Using Templates
 title: micromark
 ---
+# {{ $frontmatter.title }}
 
 The `micromark`-helper renders markdown as HTML using the micromark library. It has one setting which will remove the wrapping `<p>` tag from the output if inline is set to true.
-
-{% raw %}
 
 ```handlebars
       {{{#micromark inline="true"}}} {{{task}}} [[{{{page}}}|📝]] {{{/micromark}}}
 ```
-
-{% endraw %}
 
 when used with this context:
 

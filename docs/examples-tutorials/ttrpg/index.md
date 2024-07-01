@@ -1,6 +1,6 @@
 ---
-nav_order: 20
-layout: default
+order: 20
+
 title: TTRPG Examples
 has_children: true
 parent: Examples / Tutorials

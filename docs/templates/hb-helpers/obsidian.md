@@ -1,19 +1,16 @@
 ---
-layout: default
+
 parent: Handlebars Helpers
 grand_parent: Using Templates
 title: obsidian
 ---
+# {{ $frontmatter.title }}
 
 The `obsidian`-helper renders markdown as HTML using the obsidian markdown engine. It has one setting which will remove the wrapping `<p>` tag from the output if inline is set to true.
-
-{% raw %}
 
 ```handlebars
       {{{#obsidian inline="true"}}} {{{task}}} [[{{{page}}}|📝]] {{{/obsidian}}}
 ```
-
-{% endraw %}
 
 when used with this context:
 

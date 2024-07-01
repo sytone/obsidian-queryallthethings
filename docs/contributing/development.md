@@ -1,6 +1,6 @@
 ---
-nav_order: 3
-layout: default
+order: 3
+
 parent: Contributing
 title: Development
 ---

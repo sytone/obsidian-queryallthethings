@@ -1,19 +1,16 @@
 ---
-layout: default
+
 parent: Handlebars Helpers
 grand_parent: Using Templates
 title: taskCheckboxWithAppend
 ---
+# {{ $frontmatter.title }}
 
 The `taskCheckboxWithAppend`-helper will ...
-
-{% raw %}
 
 ```handlebars
   {{taskCheckboxWithAppend}}
 ```
-
-{% endraw %}
 
 when used with this context:
 

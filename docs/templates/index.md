@@ -1,9 +1,10 @@
 ---
-nav_order: 16
-layout: default
+order: 16
+
 title: Using Templates
 has_children: true
 ---
+# {{ $frontmatter.title }}
 
 The main engine used to render the results of a query uses the handlebars syntax. This allows you to create a flexible template to render the results.
 

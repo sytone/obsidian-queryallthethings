@@ -1,5 +1,5 @@
 ---
-layout: default
+
 parent: SQL Functions
 grand_parent: Writing Queries
 title: parseWikiLinkDisplayName(string)
@@ -16,8 +16,6 @@ In this example it takes the string containing the wiki link and calls the diffe
 Need to work on [[Projects/Painting The House|Painting The House]] soon.
 ```
 
-{% raw %}
-
 ````markdown
 ```qatt
 query: |
@@ -27,8 +25,6 @@ template: |
   {{stringify result}}
 ```
 ````
-
-{% endraw %}
 
 will result in:
 

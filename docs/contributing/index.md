@@ -1,6 +1,6 @@
 ---
-nav_order: 50
-layout: default
+order: 50
+
 title: Contributing
 has_children: true
 ---

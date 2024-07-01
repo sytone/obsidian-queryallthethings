@@ -1,3 +1,7 @@
+---
+exclude: true
+---
+
 #### capitalize
 
 ```qatt
@@ -75,8 +79,8 @@ query: |
 template: |
   {{#each result}}
     Pri 1: {{isHighPriority pri1}}
-    Pri 2: {{isHighPriority pri2}}    
-    Pri 3: {{isHighPriority pri3}}        
+    Pri 2: {{isHighPriority pri2}}
+    Pri 3: {{isHighPriority pri3}}
   {{/each}}
 ```
 #### isLowPriority
@@ -86,8 +90,8 @@ query: |
 template: |
   {{#each result}}
     Pri 1: {{isLowPriority pri1}}
-    Pri 2: {{isLowPriority pri2}}    
-    Pri 3: {{isLowPriority pri3}}        
+    Pri 2: {{isLowPriority pri2}}
+    Pri 3: {{isLowPriority pri3}}
   {{/each}}
 ```
 #### isMediumPriority
@@ -97,8 +101,8 @@ query: |
 template: |
   {{#each result}}
     Pri 1: {{isMediumPriority pri1}}
-    Pri 2: {{isMediumPriority pri2}}    
-    Pri 3: {{isMediumPriority pri3}}        
+    Pri 2: {{isMediumPriority pri2}}
+    Pri 3: {{isMediumPriority pri3}}
   {{/each}}
 ```
 #### lowercase

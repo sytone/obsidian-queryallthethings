@@ -1,10 +1,10 @@
 ---
-nav_order: 25
-layout: default
+order: 25
+
 parent: Data Tables
 title: Dataview Tasks
 ---
-## Dataview Tasks (dataview_tasks)
+# Dataview Tasks (dataview_tasks)
 
 If a property is not found in the task body it will be set to undefined. This table
 is backed by Dataview and will be refreshed when Dataview is refreshed.

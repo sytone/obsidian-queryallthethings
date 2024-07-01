@@ -1,19 +1,16 @@
 ---
-layout: default
+
 parent: Handlebars Helpers
 grand_parent: Using Templates
 title: flexibleTaskCheckbox
 ---
+# {{ $frontmatter.title }}
 
 The `flexibleTaskCheckbox`-helper will ...
-
-{% raw %}
 
 ```handlebars
   {{flexibleTaskCheckbox}}
 ```
-
-{% endraw %}
 
 when used with this context:
 

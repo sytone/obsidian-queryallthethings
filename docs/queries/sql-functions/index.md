@@ -1,6 +1,6 @@
 ---
-nav_order: 30
-layout: default
+order: 30
+
 title: SQL Functions
 has_children: true
 parent: Writing Queries

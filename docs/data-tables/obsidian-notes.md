@@ -1,10 +1,12 @@
 ---
-nav_order: 10
-layout: default
+order: 10
 parent: Data Tables
 title: Obsidian Notes
 ---
-## Obsidian Notes (obsidian_notes)
+
+# Obsidian Notes Table
+
+Table Name: `obsidian_notes`
 
 If you need to reference a property of a object do not forget to use `->` and not `.`
 
@@ -30,7 +32,7 @@ If you need to reference a property of a object do not forget to use `->` and no
 | listItems    | object                                            | See the obsidian_lists table for the structure of the object |
 | tasks        | object                                            | See the obsidian_tasks table for the structure of the object |
 
-### LinkCache structure
+## LinkCache structure
 
 ```text
 {
@@ -42,7 +44,7 @@ If you need to reference a property of a object do not forget to use `->` and no
 }
 ```
 
-### Pos structure
+## Pos structure
 
 ```text
 Pos {
@@ -51,7 +53,7 @@ Pos {
 }
 ```
 
-### Loc structure
+## Loc structure
 
 ```text
 Loc {
@@ -61,7 +63,7 @@ Loc {
 }
 ```
 
-### EmbedCache structure
+## EmbedCache structure
 
 ```text
 {
@@ -73,7 +75,7 @@ Loc {
 }
 ```
 
-### HeadingCache structure
+## HeadingCache structure
 
 ```text
 {
@@ -83,7 +85,7 @@ Loc {
 }
 ```
 
-### SectionCache structure
+## SectionCache structure
 
 ```text
 {
@@ -95,7 +97,7 @@ Loc {
 }
 ```
 
-### FrontMatterCache structure
+## FrontMatterCache structure
 
 ```text
 {

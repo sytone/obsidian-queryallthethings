@@ -1,5 +1,5 @@
 ---
-layout: default
+
 parent: Handlebars Helpers
 grand_parent: Using Templates
 title: obsidianHtmlInternalLink
@@ -9,13 +9,9 @@ The `obsidianHtmlInternalLink` helper takes a path and a label and returns a lin
 matches the default HTML that obsidian uses for internal links. If ths files ends
 in `.md` then the extension is removed from the link.
 
-{% raw %}
-
 ```handlebars
   {{{obsidianHtmlInternalLink internalPath basename}}}
 ```
-
-{% endraw %}
 
 when used with this context:
 

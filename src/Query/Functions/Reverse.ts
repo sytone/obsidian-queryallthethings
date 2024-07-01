@@ -4,6 +4,7 @@ import alasql from 'alasql';
 // >> id='docs-sql-statements-reverse' options='file=queries/sql-statements/reverse.md'
 title: REVERSE
 ---
+# {{ $frontmatter.title }}
 
 ## Syntax
 

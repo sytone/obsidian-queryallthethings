@@ -1,8 +1,9 @@
 ---
-nav_order: 6
-layout: default
+order: 6
+
 title: Output Generation
 ---
+# {{ $frontmatter.title }}
 
 This page is to help you understand the process the plugin uses to generate the rendered output using the configuration in the code block.
 

@@ -5,15 +5,13 @@ import Handlebars, {type HelperOptions} from 'handlebars';
 title: codeBlockFooter
 ---
 
-The `codeBlockFooter`\-helper will insert the three back ticks into the resulting markdown.
+# {{ $frontmatter.title }}
 
-{% raw %}
+The `codeBlockFooter`\-helper will insert the three back ticks into the resulting markdown.
 
 ```handlebars
   {{codeBlockFooter}}
 ```
-
-{% endraw %}
 
 will result in:
 
@@ -32,7 +30,6 @@ This uses a simple query to help show what the codeBlockFooter helper does when 
 
 ### Example
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT 'something to render in a code block. ' AS code
@@ -43,7 +40,6 @@ template: |
     {{codeBlockFooter}}
   {{/each}}
 ```
-{% endraw %}
 ````
 ### Live in Vault
 ```qatt

@@ -4,6 +4,7 @@ import alasql from 'alasql';
 // >> id='docs-sql-statements-lineindex' options='file=queries/sql-statements/lineindex.md'
 title: LINEINDEX
 ---
+# {{ $frontmatter.title }}
 
 ## Syntax
 

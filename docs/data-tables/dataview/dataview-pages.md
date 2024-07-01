@@ -1,10 +1,10 @@
 ---
-nav_order: 24
-layout: default
+order: 24
+
 parent: Data Tables
 title: Dataview Pages
 ---
-## Dataview Pages (dataview_pages)
+# Dataview Pages (dataview_pages)
 
 This is similar to calling the dv.pages() function in Dataview. Each pages that is returned by this table has the fields as top level properties. So if you have `myfield:: fred` on the page then there will be a colum called myfield available for you to query against. Also at the top level you have tags and aliases. To get to the file details you need to drop into the `file` object. So to access the file path property you use file->path.
 

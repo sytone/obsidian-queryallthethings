@@ -1,7 +1,7 @@
 ---
-layout: default
+
 title: Custom Functions
-nav_order: 7
+order: 7
 nav_exclude: true
 ---
 
@@ -27,5 +27,5 @@ When called from the query the status object is passed to the function as a prop
 
  ```qatt
  query: SELECT * FROM tasks WHERE SuperImportant(status)
- customJSForSql: ['MyTaskFunctions SuperImportant'] 
+ customJSForSql: ['MyTaskFunctions SuperImportant']
  ```

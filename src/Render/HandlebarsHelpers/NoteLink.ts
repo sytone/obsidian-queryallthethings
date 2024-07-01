@@ -3,16 +3,13 @@ import Handlebars, {type HelperOptions} from 'handlebars';
 // >> id='docs-handlebars-helper-notelink' options='file=templates/hb-helpers/notelink.md'
 title: noteLink
 ---
+# {{ $frontmatter.title }}
 
 The `noteLink`-helper will ...
-
-{% raw %}
 
 ```handlebars
   {{noteLink path}}
 ```
-
-{% endraw %}
 
 when used with this context:
 
@@ -41,7 +38,6 @@ This uses a simple query to help show what the `noteLink`-helper does when rende
 ### Example
 
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT 'notepages/school/My Cool Page' AS link
@@ -50,7 +46,6 @@ template: |
     {{noteLink link}}
   {{/each}}
 ```
-{% endraw %}
 ````
 
 ### Live in Vault

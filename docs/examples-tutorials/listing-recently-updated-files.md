@@ -1,8 +1,9 @@
 ---
-layout: default
+
 parent: Examples / Tutorials
 title: Listing recently updated files
 ---
+# {{ $frontmatter.title }}
 
 This example will walk you though making a codeblock that lists the 10 most recently modified files.
 
@@ -10,7 +11,6 @@ The query below will return the top 10 notes from the `obsidian_notes` table, it
 
 If you are using javascript objects instead of using the `.` when calling functions/properties off classes you use a `->` to address the function or property.
 
-{% raw %}
 ````markdown
 ```qatt
 query: |
@@ -23,4 +23,3 @@ template: |
   {{/each}}
 ```
 ````
-{% endraw %}

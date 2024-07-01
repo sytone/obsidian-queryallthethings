@@ -1,9 +1,11 @@
 ---
-layout: default
+
 parent: SQL Functions
 grand_parent: Writing Queries
 title: parseWikiLinkLocation(string)
 ---
+# {{ $frontmatter.title }}
+
 There are multiple functions to help with the parsing of the wiki links in a string.
 
 This is the signature of the function you can use to extract the location from the wiki link.
@@ -16,8 +18,6 @@ In this example it takes the string containing the wiki link and calls the diffe
 Need to work on [[Projects/Painting The House|Painting The House]] soon.
 ```
 
-{% raw %}
-
 ````markdown
 ```qatt
 query: |
@@ -27,8 +27,6 @@ template: |
   {{stringify result}}
 ```
 ````
-
-{% endraw %}
 
 will result in:
 

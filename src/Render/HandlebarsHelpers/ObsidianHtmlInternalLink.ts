@@ -8,13 +8,9 @@ The `obsidianHtmlInternalLink` helper takes a path and a label and returns a lin
 matches the default HTML that obsidian uses for internal links. If ths files ends
 in `.md` then the extension is removed from the link.
 
-{% raw %}
-
 ```handlebars
   {{{obsidianHtmlInternalLink internalPath basename}}}
 ```
-
-{% endraw %}
 
 when used with this context:
 
@@ -37,13 +33,13 @@ will result in:
 // >> id='docs-examples-handlebars-obsidianhtmlinternallink' options='file=examples-tutorials/handlebars/obsidianhtmlinternallink.md'
 title: obsidianHtmlInternalLink Helper
 ---
+# {{ $frontmatter.title }}
 
 This uses a simple query to help show what the obsidianHtmlInternalLink helper does when rendering.
 
 ### Example
 
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT TOP 1 path, basename FROM obsidian_notes
@@ -52,7 +48,6 @@ template: |
     {{obsidianHtmlInternalLink path basename}}
   {{/each}}
 ```
-{% endraw %}
 ````
 
 ### Live in Vault

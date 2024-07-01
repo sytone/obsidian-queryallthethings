@@ -1,6 +1,6 @@
 ---
-nav_order: 3
-layout: default
+order: 3
+
 parent: Contributing
 title: Documentation
 ---
@@ -8,7 +8,6 @@ title: Documentation
 This site uses Jekyll with some pre-processing, if you are making example markdown blocks with templates you need to make sure it is set to raw in the page, use this example as a basis for any other examples you are planning to make.
 
 `````markdown
-{% raw %}
 ````markdown
 ```qatt
 query: |
@@ -21,7 +20,6 @@ template: |
       {{/each}}
 ```
 ````
-{% endraw %}
 `````
 
 You will also see lines looking like this `%%snippet id='alasql-function-stringify-snippet' options='nocodeblock'%%` in the code. The pre-processor for the documentation pulls contents from the code to place in the documentation. This means that when code changes re made the documentation can be updated at the same time.

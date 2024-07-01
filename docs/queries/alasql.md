@@ -1,16 +1,16 @@
 ---
-layout: default
+
 title: AlaSQL Queries
-nav_order: 1
+order: 1
 parent: Writing Queries
 ---
-## Writing queries and using the features of AlaSQL
+# Writing queries and using the features of AlaSQL
 
 AlaSQL support most normal SQL queries, including the creation of tables and insertion of data. As this is in memory you need to ensure you keep a copy of this data and execute it during the startup of the plugin using the settings or store the information in local storage.
 
 The plugin already has a database in local storage called `qatt` that has the event log as well as the reference calendar for your convenience. See [Adding tables to the local storage database](#Adding%20tables%20to%20the%20local%20storage%20database) for more details.
 
-When writing queries you can use the inbuilt tables documented on [Data Tables](data-tables.md) to search for data. These are all based on your notes and metadata in them.
+When writing queries you can use the inbuilt tables documented on [Data Tables](../data-tables/index) to search for data. These are all based on your notes and metadata in them.
 
 
 ## Adding tables to the local storage database

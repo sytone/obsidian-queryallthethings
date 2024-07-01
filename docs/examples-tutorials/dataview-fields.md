@@ -1,8 +1,9 @@
 ---
-layout: default
+
 parent: Examples / Tutorials
 title: Dataview Fields
 ---
+# {{ $frontmatter.title }}
 
 The fields in Dataview are stored in a JavaScript Map. So if you have the following content and wanted to extract `author` you can use this example below.
 
@@ -21,7 +22,6 @@ Over many a quaint and curious volume of forgotten lore—
 
 In this query we are using `fields->get('author')` to return the value in the Map the corresponds to the `author` key. This is the same as JavaScript, just replace the `.` in the normal JavaScript approach with the `->`.
 
-{% raw %}
 
 ````markdown
 ```qatt
@@ -36,7 +36,6 @@ template: |
 ```
 ````
 
-{% endraw %}
 
 ## Rendered Output
 

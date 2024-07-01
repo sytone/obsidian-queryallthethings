@@ -4,13 +4,9 @@ title: lowercase value
 ---
 The `lowercase`\-helper will convert the entire string to lowercase.
 
-{% raw %}
-
 ```handlebars
 {{{lowercase sentence}}}
 ```
-
-{% endraw %}
 
 when used with this context:
 

@@ -1,6 +1,6 @@
 This note contains live examples of:
 
-- [using-updatepropertyfromlist](using-updatepropertyfromlist.md)
+- [using-updatepropertyfromlist](../using-updatepropertyfromlist.md)
 
 
 ## Project list

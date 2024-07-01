@@ -1,45 +1,31 @@
 ---
-nav_order: 1
+# https://vitepress.dev/reference/default-theme-home-page
 layout: home
+
+hero:
+  name: "Query All The Things"
+  text: ""
+  tagline: Obsidian plugin to allow you to query your notes, lists, tasks and more using SQL and render using handlebars
+  image:
+    src: /qatt_logo_v1.png
+    alt: VitePress
+  actions:
+    - theme: brand
+      text: Getting Started
+      link: /first-query
+    - theme: brand
+      text: Examples
+      link: /examples-tutorials
+    - theme: alt
+      text: Codeblock Reference
+      link: /codeblock
+
+features:
+  - title: Query Note, Lists and Tasks
+    details: Use the standard SQL query language to query your notes for information, you vault becomes a database.
+  - title: Render Your Way
+    details: Using Handlebars you can render the results of your queries how you want, even to separate files for long term retention outside of Obsidian.
+  - title: Query Markdown Tables, CSV and JSON
+    details: Via the configuration you can local local or remote Markdown files with tables, CSV files or full JSON object to query and join alongside your data.
 ---
-
-# Query All The Things
-
-[![releases](https://img.shields.io/github/manifest-json/v/sytone/obsidian-queryallthethings?color=blue)](https://github.com/sytone/obsidian-queryallthethings/releases/latest) [![release date](https://img.shields.io/github/release-date/sytone/obsidian-queryallthethings)](https://github.com/sytone/obsidian-queryallthethings/releases/latest) [![license](https://img.shields.io/github/license/sytone/obsidian-queryallthethings)](https://github.com/sytone/obsidian-queryallthethings/blob/main/LICENSE) [![downloads](https://img.shields.io/github/downloads/sytone/obsidian-queryallthethings/total)](https://github.com/sytone/obsidian-queryallthethings) [![issues](https://img.shields.io/github/issues/sytone/obsidian-queryallthethings)](https://github.com/sytone/obsidian-queryallthethings/issues)
-
-<div align="center">
-
-Query All the Things is a flexible way to query and render data in <a href="https://obsidian.md">Obsidian</a> and from other Obsidian plugins
-</div>
-
----
-
-### Features
-
-- Use SQL based queries that are extensible and handle JSON and objects.
-- Query any data collection found in the Obsidian API.
-- Query data stored in [Dataview](https://blacksmithgu.github.io/obsidian-dataview/) as well as cached view of [Dataview](https://blacksmithgu.github.io/obsidian-dataview/) Data like tasks.
-- Render using [Handlebars](https://handlebarsjs.com/) templates in HTML or Markdown
-- Use custom [Handlebars](https://handlebarsjs.com/) helpers and/or provide your own.
-- Extend the SQL engine with custom functions.
-- Extend the [Handlebars](https://handlebarsjs.com/) rendered with customer helpers
-
----
-
-## History
-
-This stared as a fork of tasks focused on making queries against tasks more flexible in Obsidian, I wanted to be able to query more than this. This is similar to the amazing [Dataview](https://blacksmithgu.github.io/obsidian-dataview/) but I did not want to have to drop into JavaScript so much. This plugin has a dependency on [Dataview](https://blacksmithgu.github.io/obsidian-dataview/) for the data it stores on pages, it uses this to pull out the different tables of data to speed up running queries. This was done so I did not have to duplicate the work already done in [Dataview](https://blacksmithgu.github.io/obsidian-dataview/).
-
----
-
-### Getting started
-
-- 🚀 [Install the Plugin](installation.md)
-- 🐣 [Your First Query](first-query.md)
-
----
-
-## Development
-
-If you want to help out go ahead and fork and push back changes, more details on the [development](development.md) page.
 

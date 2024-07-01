@@ -4,6 +4,7 @@ import alasql from 'alasql';
 // >> id='docs-sql-statements-charindex' options='file=queries/sql-statements/charindex.md'
 title: CHARINDEX
 ---
+# {{ $frontmatter.title }}
 
 ## Syntax
 

@@ -1,8 +1,8 @@
 ---
-layout: default
 parent: Examples / Tutorials
 title: Using updatePropertyFromList
 ---
+# {{ $frontmatter.title }}
 
 The updatePropertyFromList SQL function generates a HTML link that has a onclick command that when clicked will update a property on a specified note. It will prompt the user with a list of options. This is good for handling note properties in a consistent way.
 
@@ -34,7 +34,6 @@ ORDER BY status
 
 To render the output the following template can be used, note that the update columns with the HTML in them have three (3) braces either side. This is to ensure the handlebars renderer does not process the HTML already created.
 
-{% raw %}
 
 ```handlebars
 | Project | Status | Priority | Area |
@@ -45,11 +44,9 @@ To render the output the following template can be used, note that the update co
 
 ```
 
-{% endraw %}
 
 The complete codeblock looks like this.
 
-{% raw %}
 
 ````markdown
 ```qatt
@@ -79,6 +76,5 @@ template: |
 ```
 ````
 
-{% endraw %}
 
 When the page is rendered you will see a list of all the notes marked with a type called `project` and in the Status, Priority and Area fields a HTML link that when clicked will show a prompt with the possible options.

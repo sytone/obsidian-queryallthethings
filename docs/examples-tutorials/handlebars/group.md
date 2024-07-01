@@ -1,5 +1,5 @@
 ---
-layout: default
+
 parent: Handlebars
 grand_parent: Examples / Tutorials
 title: Group Helper
@@ -13,7 +13,6 @@ The items in the group are then available via the `items` property. Below this i
 
 ### Example
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT *
@@ -32,7 +31,6 @@ template: |
   {{/each}}
   {{/group}}
 ```
-{% endraw %}
 ````
 ### Live in Vault
 ```qatt

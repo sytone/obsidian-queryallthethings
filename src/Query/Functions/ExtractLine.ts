@@ -4,6 +4,7 @@ import alasql from 'alasql';
 // >> id='docs-sql-statements-extractline' options='file=queries/sql-statements/extractline.md'
 title: EXTRACTLINE
 ---
+# {{ $frontmatter.title }}
 
 ## Syntax
 

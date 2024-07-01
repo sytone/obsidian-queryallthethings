@@ -4,6 +4,7 @@ import alasql from 'alasql';
 // >> id='docs-sql-statements-joinarray' options='file=queries/sql-statements/joinarray.md'
 title: JoinArray
 ---
+# {{ $frontmatter.title }}
 
 ## Syntax
 

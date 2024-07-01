@@ -1,5 +1,5 @@
 ---
-layout: default
+
 parent: Handlebars
 grand_parent: Examples / Tutorials
 title: pad Helper
@@ -10,7 +10,6 @@ This uses a simple query to help show what the pad helper does when rendering.
 ### Example
 
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT 'something to render in a code block. ' AS code
@@ -19,7 +18,6 @@ template: |
     {{pad 'text'}}
   {{/each}}
 ```
-{% endraw %}
 ````
 
 ### Live in Vault

@@ -5,10 +5,9 @@ type IMap = Record<string, {value: string; items: Array<Record<string, any>>}>;
 // >> id='docs-handlebars-helpers-group' options='file=templates/hb-helpers/group.md'
 title: group
 ---
+# {{ $frontmatter.title }}
 
 The `group`\-helper will group the result by the specified column.
-
-{% raw %}
 
 ```handlebars
 {{{#group result by="column_name"}}}
@@ -16,8 +15,6 @@ The `group`\-helper will group the result by the specified column.
   collection of items in the group is specified by {{items}}
 {{/group}}
 ```
-
-{% endraw %}
 
 See the [group](../../examples-tutorials/handlebars/group) page for a full example.
 
@@ -37,7 +34,6 @@ The items in the group are then available via the `items` property. Below this i
 
 ### Example
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT *
@@ -56,7 +52,6 @@ template: |
   {{/each}}
   {{/group}}
 ```
-{% endraw %}
 ````
 ### Live in Vault
 ```qatt

@@ -1,8 +1,9 @@
 ---
-layout: default
+
 parent: Examples / Tutorials
 title: Replace target path example
 ---
+# {{ $frontmatter.title }}
 
 This example shows how the replace target path function works.
 

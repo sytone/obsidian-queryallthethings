@@ -3,16 +3,13 @@ import Handlebars, {type HelperOptions} from 'handlebars';
 // >> id='docs-handlebars-helper-pad' options='file=templates/hb-helpers/pad.md'
 title: pad
 ---
+# {{ $frontmatter.title }}
 
 The `pad`-helper will pad a string with the specified character the specified number of times. By default the character is a space ' '.
-
-{% raw %}
 
 ```handlebars
   {{pad}}
 ```
-
-{% endraw %}
 
 when used with this context:
 
@@ -41,7 +38,6 @@ This uses a simple query to help show what the pad helper does when rendering.
 ### Example
 
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT 'something to render in a code block. ' AS code
@@ -50,7 +46,6 @@ template: |
     {{pad 'text'}}
   {{/each}}
 ```
-{% endraw %}
 ````
 
 ### Live in Vault

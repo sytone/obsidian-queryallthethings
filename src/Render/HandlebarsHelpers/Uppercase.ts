@@ -2,15 +2,13 @@
 // >> id='docs-handlebars-helper-lowercase' options='file=templates/hb-helpers/lowercase.md'
 title: lowercase value
 ---
-The `lowercase`\-helper will convert the entire string to lowercase.
+# {{ $frontmatter.title }}
 
-{% raw %}
+The `lowercase`\-helper will convert the entire string to lowercase.
 
 ```handlebars
 {{{lowercase sentence}}}
 ```
-
-{% endraw %}
 
 when used with this context:
 

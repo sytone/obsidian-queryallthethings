@@ -1,5 +1,6 @@
 ---
 task_status: x
+exclude: true
 ---
 
 - [ ] Not Done
@@ -21,7 +22,7 @@ template: |
 ```qatt
 query: |
   SELECT TOP 5 *
-  FROM obsidian_markdown_tasks 
+  FROM obsidian_markdown_tasks
   WHERE status = pageProperty('task_status')
 template: |
   {{#each result}}

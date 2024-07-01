@@ -1,10 +1,10 @@
 ---
-nav_order: 26
-layout: default
+order: 26
+
 parent: Data Tables
 title: Dataview Lists
 ---
-## Dataview Lists (dataview_lists)
+# Dataview Lists (dataview_lists)
 
 If a property is not found in the task body it will be set to undefined. This table
 is backed by Dataview and will be refreshed when Dataview is refreshed.

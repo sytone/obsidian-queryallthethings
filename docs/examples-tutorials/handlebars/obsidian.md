@@ -1,5 +1,5 @@
 ---
-layout: default
+
 parent: Handlebars
 grand_parent: Examples / Tutorials
 title: obsidian Helper
@@ -10,7 +10,6 @@ This uses a simple query to help show what the `obsidian`-helper does when rende
 ### Example
 
 ````markdown
-{% raw %}
 ```qatt
 query: |
   SELECT 'This is a **thing** to do' AS code
@@ -19,7 +18,6 @@ template: |
     {{{#obsidian inline="true"}}}{{{code}}}{{{/obsidian}}}
   {{/each}}
 ```
-{% endraw %}
 ````
 
 ### Live in Vault

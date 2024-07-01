@@ -1,8 +1,9 @@
 ---
-nav_order: 6
-layout: default
+order: 6
+
 title: Settings
 ---
+# {{ $frontmatter.title }}
 
 The plugin has multiple settings, there are descriptions in the settings to help you out and some more details here.
 

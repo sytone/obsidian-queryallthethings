@@ -1,9 +1,10 @@
 ---
-layout: default
+
 parent: Examples / Tutorials
 title: Active tasks grouped by day
-published: false
+exclude: true
 ---
+# {{ $frontmatter.title }}
 
 This example uses the `obsidian_markdown_tasks` table to get all the tasks that have a due date and then uses the `#group` helper in handlebars to render the results.
 

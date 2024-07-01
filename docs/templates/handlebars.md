@@ -1,9 +1,10 @@
 ---
-nav_order: 4
-layout: default
+order: 4
+
 parent: Using Templates
 title: Default Helpers
 ---
+# {{ $frontmatter.title }}
 
 This page is based off <https://handlebarsjs.com/guide/builtin-helpers.html> and contains details on the built in helpers.
 
@@ -11,7 +12,6 @@ This page is based off <https://handlebarsjs.com/guide/builtin-helpers.html> and
 
 You can use the `if` helper to conditionally render a block. If its argument returns `false`, `undefined`, `null`, `""`, `0`, or `[]`, Handlebars will not render the block.
 
-{% raw %}
 
 ```text
 <div class="entry">
@@ -21,7 +21,6 @@ You can use the `if` helper to conditionally render a block. If its argument ret
 </div>
 ```
 
-{% endraw %}
 
 When you pass the following input to the above template
 
@@ -48,7 +47,6 @@ If the input is an empty JSONObject `{}`, then `author` will become `undefined` 
 ```
 
 When using a block expression, you can specify a template section to run if the expression returns a falsy value. The section, marked by `else` is called an "else section".
-{% raw %}
 
 ```text
 <div class="entry">
@@ -60,12 +58,10 @@ When using a block expression, you can specify a template section to run if the 
 </div>
 ```
 
-{% endraw %}
 
 ### includeZero
 
 The `includeZero=true` option may be set to treat the conditional as not empty. This effectively determines if `0` is handled by the positive or negative path.
-{% raw %}
 
 ```text
 {{#if 0 includeZero=true}}
@@ -73,7 +69,6 @@ The `includeZero=true` option may be set to treat the conditional as not empty. 
 {{/if}}
 ```
 
-{% endraw %}
 
 ### Sub-Expressions
 
@@ -90,19 +85,16 @@ Handlebars.registerHelper('isdefined', function (value) {
 ```
 
 Then use your helper as a sub-expression:
-{% raw %}
 
 ```text
 {{#if (isdefined value1)}}true{{else}}false{{/if}}
 {{#if (isdefined value2)}}true{{else}}false{{/if}}
 ```
 
-{% endraw %}
 
 ## #unless
 
 You can use the `unless` helper as the inverse of the `if` helper. Its block will be rendered if the expression returns a falsy value.
-{% raw %}
 
 ```text
 <div class="entry">
@@ -112,13 +104,11 @@ You can use the `unless` helper as the inverse of the `if` helper. Its block wil
 </div>
 ```
 
-{% endraw %}
 If looking up `license` under the current context returns a falsy value, Handlebars will render the warning. Otherwise, it will render nothing.
 
 ## #each
 
 You can iterate over a list using the built-in `each` helper. Inside the block, you can use `this` to reference the element being iterated over.
-{% raw %}
 
 ```text
 <ul class="people_list">
@@ -128,7 +118,6 @@ You can iterate over a list using the built-in `each` helper. Inside the block, 
 </ul>
 ```
 
-{% endraw %}
 when used with this context:
 
 ```text
@@ -154,7 +143,6 @@ will result in:
 You can use the `this` expression in any context to reference the current context.
 
 You can optionally provide an `else` section which will display only when the list is empty.
-{% raw %}
 
 ```text
 {{#each paragraphs}}
@@ -164,23 +152,18 @@ You can optionally provide an `else` section which will display only when the li
 {{/each}}
 ```
 
-{% endraw %}
 When looping through items in `each`, you can optionally reference the current loop index via `{% raw %}{{@index}}{% endraw %}`.
-{% raw %}
 
 ```text
 {{#each array}} {{@index}}: {{this}} {{/each}}
 ```
 
-{% endraw %}
 Additionally for object iteration, `{% raw %}{{@key}}{% endraw %}` references the current key name:
-{% raw %}
 
 ```text
 {{#each object}} {{@key}}: {{this}} {{/each}}
 ```
 
-{% endraw %}
 The first and last steps of iteration are noted via the [`@first`](https://handlebarsjs.com/api-reference/data-variables.html#first) and [`@last`](https://handlebarsjs.com/api-reference/data-variables.html#last) variables when iterating over an array.
 
 Nested `each` blocks may access the iteration variables via depth based paths. To access the parent index, for example, `{% raw %}{{@../index}}{% endraw %}` can be used.
@@ -188,7 +171,6 @@ Nested `each` blocks may access the iteration variables via depth based paths. T
 ## #with
 
 The `with`\-helper allows you to change the evaluation context of template-part.
-{% raw %}
 
 ```text
 {{#with person}}
@@ -196,7 +178,6 @@ The `with`\-helper allows you to change the evaluation context of template-part.
 {{/with}}
 ```
 
-{% endraw %}
 when used with this context:
 
 ```text
@@ -215,7 +196,6 @@ Yehuda Katz
 ```
 
 `with` can also be used with block parameters to define known references in the current block. The example above can be converted to
-{% raw %}
 
 ```text
 {{#with city as | city |}}
@@ -225,11 +205,9 @@ Yehuda Katz
 {{/with}}
 ```
 
-{% endraw %}
 Which allows for complex templates to potentially provide clearer code than `../` depthed references allow for.
 
 You can optionally provide an `{% raw %}{{else}}{% endraw %}` section which will display only when the passed value is empty.
-{% raw %}
 
 ```text
 {{#with city}}
@@ -239,7 +217,6 @@ No city found
 {{/with}}
 ```
 
-{% endraw %}
 
 ```text
 {
@@ -255,7 +232,6 @@ No city found
 The `lookup` helper allows for dynamic parameter resolution using Handlebars variables.
 
 This is useful for resolving values for array indexes.
-{% raw %}
 
 ```text
 {{#each people}}
@@ -263,10 +239,8 @@ This is useful for resolving values for array indexes.
 {{/each}}
 ```
 
-{% endraw %}
 
 It can also be used to lookup properties of object based on data from the input. The following is a more complex example that uses `lookup` in a sub-expression to change the evaluation context to another object based on a property-value.
-{% raw %}
 
 ```text
 {{#each persons as | person |}}
@@ -276,4 +250,3 @@ It can also be used to lookup properties of object based on data from the input.
 {{/each}}
 ```
 
-{% endraw %}

@@ -1,6 +1,6 @@
 ---
-nav_order: 40
-layout: default
+order: 40
+
 title: Handlebars Helpers
 has_children: true
 parent: Using Templates

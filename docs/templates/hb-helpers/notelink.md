@@ -1,19 +1,16 @@
 ---
-layout: default
+
 parent: Handlebars Helpers
 grand_parent: Using Templates
 title: noteLink
 ---
+# {{ $frontmatter.title }}
 
 The `noteLink`-helper will ...
-
-{% raw %}
 
 ```handlebars
   {{noteLink path}}
 ```
-
-{% endraw %}
 
 when used with this context:
 
