@@ -357,6 +357,11 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
 
     this.eventHandler.setup();
 
+    this.registerEvent(this.app.workspace.on('qatt:force-cache-reload', async () => {
+      this.logger.info('qatt:force-cache-reload event detected.');
+      await this.notesCacheService.cacheAllNotes(this.app);
+    }));
+
     if (this.enableEditorRightClickMenu) {
       this.registerEvent(
         this.app.workspace.on('editor-menu', (menu, editor) => {
