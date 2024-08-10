@@ -20,6 +20,7 @@ export interface INotesCacheServiceSettings {
   enableDataViewInlineFieldParsingForTasks: boolean;
   notesCacheSettingsOpen: boolean;
   enableAlaSqlTablePopulation: boolean;
+  disableContinualIndexNotifications: boolean;
 }
 
 /**
@@ -39,6 +40,7 @@ export class NotesCacheService extends Service {
   lastUpdate: DateTime;
   notesCacheSettingsOpen: boolean;
   enableAlaSqlTablePopulation = true;
+  disableContinualIndexNotifications = false;
   public allNotesLoaded = false;
   public cachingNotes = false;
   notesDb: any;
@@ -50,18 +52,21 @@ export class NotesCacheService extends Service {
       enableDataViewInlineFieldParsingForTasks: false,
       notesCacheSettingsOpen: false,
       enableAlaSqlTablePopulation: true,
+      disableContinualIndexNotifications: false,
     } as INotesCacheServiceSettings,
     async (settings: INotesCacheServiceSettings) => {
       this.logger.info('NotesCacheService Updated Settings');
       this.enableDataViewInlineFieldParsingForTasks = settings.enableDataViewInlineFieldParsingForTasks;
       this.notesCacheSettingsOpen = settings.notesCacheSettingsOpen;
       this.enableAlaSqlTablePopulation = settings.enableAlaSqlTablePopulation;
+      this.disableContinualIndexNotifications = settings.disableContinualIndexNotifications;
     },
     async (settings: INotesCacheServiceSettings) => {
       this.logger.info('NotesCacheService Initialize Settings');
       this.enableDataViewInlineFieldParsingForTasks = settings.enableDataViewInlineFieldParsingForTasks;
       this.notesCacheSettingsOpen = settings.notesCacheSettingsOpen;
       this.enableAlaSqlTablePopulation = settings.enableAlaSqlTablePopulation;
+      this.disableContinualIndexNotifications = settings.disableContinualIndexNotifications;
 
       // This.logger.info('NotesCacheService cacheAllNotes from settings');
       // this.metrics.startMeasurement('cacheAllNotes from settings');
@@ -155,6 +160,20 @@ export class NotesCacheService extends Service {
       async (value: boolean) => {
         await settings.update(settings => {
           settings.enableAlaSqlTablePopulation = value;
+        });
+      },
+      settingsSection,
+    );
+
+    const toggleDisableContinualIndexNotifications = tab.addToggle(
+      new SettingsTabField({
+        name: 'Disable continual index notifications',
+        description: 'Disables the continual notifications that the index is being updated. Only two messages will be created, one on start and one on end.',
+        value: this.disableContinualIndexNotifications,
+      }),
+      async (value: boolean) => {
+        await settings.update(settings => {
+          settings.disableContinualIndexNotifications = value;
         });
       },
       settingsSection,
@@ -306,13 +325,17 @@ export class NotesCacheService extends Service {
     // This is the most recent file in the vault.
     // const maxModifiedValue = Math.max(...files.map(item => item.stat.mtime));
     // await alasql.promise('UPDATE configuration SET config_value = ? WHERE config_key = ?', [maxModifiedValue, 'lastUpdate']);
-    const indexingNotice = new Notice(`Indexing notes...0/${files.length}`, 0);
+    let indexingNotice = this.disableContinualIndexNotifications ? new Notice('Indexing notes for Query All The Things...', 5000) : new Notice('Indexing notes for Query All The Things...', 0);
 
+    const cachingStartTime = performance.now();
     const noteAdditions = [];
 
     for (const file of app.vault.getMarkdownFiles()) {
       fileCount++;
-      indexingNotice.setMessage(`Indexing notes for Query All The Things...\n${fileCount}/${files.length}`);
+      // Show the update of the indexing process if not disabled.
+      if (!this.disableContinualIndexNotifications) {
+        indexingNotice.setMessage(`Indexing notes for Query All The Things...\n${fileCount}/${files.length}`);
+      }
 
       // eslint-disable-next-line no-await-in-loop
       const note = await this.createNoteFromFile(file);
@@ -335,7 +358,13 @@ export class NotesCacheService extends Service {
     await alasql.promise(`SELECT * INTO ${this.obsidianTasksTableName} FROM ?`, [await this.getTasks()]);
 
     this.allNotesLoaded = true;
-    indexingNotice.hide();
+    const cachingEndTime = performance.now();
+    const executionDuration = (cachingEndTime - cachingStartTime) / 1000;
+    indexingNotice = new Notice(`Indexing notes for Query All The Things took ${executionDuration.toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})}s`, 5000);
+
+    if (!this.disableContinualIndexNotifications) {
+      indexingNotice.hide();
+    }
 
     // Loop through all notes and insert them in the database if missing, update if the modified date is larger.
     const notesTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianNotesTableName}`)); // eslint-disable-line @typescript-eslint/no-unsafe-assignment

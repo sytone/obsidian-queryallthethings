@@ -30,6 +30,14 @@ export class CommandHandler extends Service {
         },
       },
       {
+        id: 'force-cache-reload',
+        name: 'Force the notes cache to be reloaded',
+        callback: () => {
+          this.plugin.app.workspace.trigger('qatt:force-cache-reload');
+        },
+      },
+
+      {
         id: 'push-internal-events-to-console',
         name: 'Will push all the internal events to the console for debugging.',
         callback: async () => {
