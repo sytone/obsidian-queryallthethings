@@ -1,14 +1,14 @@
 
-import {type MarkdownPostProcessorContext, Plugin} from 'obsidian';
-import {QattCodeBlock} from 'QattCodeBlock';
-import {Service, useSettings} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
-import {DateTime} from 'luxon';
-import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
-import {NotesCacheService} from 'NotesCacheService';
-import {QueryRenderChildV2} from 'QueryRenderChildV2';
-import {QueryRenderChildV3} from 'QueryRenderChildV3';
-import {QattCodeBlockSettings} from 'lib/QattCodeBlockSettings';
+import { type MarkdownPostProcessorContext, Plugin } from 'obsidian';
+import { QattCodeBlock } from 'QattCodeBlock';
+import { Service, useSettings } from '@ophidian/core';
+import { LoggingService } from 'lib/LoggingService';
+import { DateTime } from 'luxon';
+import { SettingsTabField, SettingsTabHeading, useSettingsTab } from 'Settings/DynamicSettingsTabBuilder';
+import { NotesCacheService } from 'NotesCacheService';
+import { QueryRenderChildV2 } from 'QueryRenderChildV2';
+import { QueryRenderChildV3 } from 'QueryRenderChildV3';
+import { QattCodeBlockSettings } from 'lib/QattCodeBlockSettings';
 
 export interface IRenderingSettings {
   postRenderFormat: string;
@@ -77,21 +77,22 @@ export class QueryRendererV2Service extends Service {
   queryFileRoot = '';
   templateFileRoot = '';
 
-  constructor() {
+  constructor () {
     super();
     this.lastCreation = DateTime.now();
   }
 
-  showSettings() {
+  showSettings () {
     const tab = this.settingsTab;
-    const {settings} = this;
+    const { settings } = this;
 
     const settingsSection = tab.addHeading(
       new SettingsTabHeading({
         open: this.renderingSettingsOpen,
         text: 'Codeblock Rendering Settings',
         level: 'h2',
-        class: 'settings-heading'}),
+        class: 'settings-heading'
+      }),
       async (value: boolean) => {
         await settings.update(settings => {
           settings.renderingSettingsOpen = value;
@@ -178,7 +179,7 @@ export class QueryRendererV2Service extends Service {
     );
   }
 
-  async onload() {
+  async onload () {
     this.plugin.registerMarkdownCodeBlockProcessor('qatt', async (source: string, element: HTMLElement, context: MarkdownPostProcessorContext) => {
       this.logger.info(`lastCreation ${this.lastCreation.toISO() ?? ''} registring block on ${context.sourcePath}`);
       this.logger.debug(`Adding QATT Render for ${source} to context ${context.docId}`);
@@ -229,7 +230,7 @@ export class QueryRendererV2Service extends Service {
               event.preventDefault();
               event.stopPropagation();
               new QattCodeBlockSettings(this.plugin.app, this.plugin, codeblockConfiguration, context, element).open();
-            }, {capture: true});
+            }, { capture: true });
           }
         });
         observer.observe(element, {
@@ -258,6 +259,7 @@ export class QueryRendererV2Service extends Service {
         await queryRenderChild.create(source, element, context);
       }
     });
+    this.logger.info('QueryRendererV2Service loaded');
   }
 }
 

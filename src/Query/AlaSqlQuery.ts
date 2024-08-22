@@ -1,13 +1,13 @@
 
 import alasql from 'alasql';
-import {type FrontMatterCache, Plugin, type TFile} from 'obsidian';
-import {type QattCodeBlock} from 'QattCodeBlock';
-import {type IQuery} from 'Query/IQuery';
-import {Service} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
-import {NotesCacheService} from 'NotesCacheService';
-import {DataviewService} from 'Integrations/DataviewService';
-import {confirmObjectPath} from 'Internal';
+import { type FrontMatterCache, Plugin, type TFile } from 'obsidian';
+import { type QattCodeBlock } from 'QattCodeBlock';
+import { type IQuery } from 'Query/IQuery';
+import { Service } from '@ophidian/core';
+import { LoggingService } from 'lib/LoggingService';
+import { NotesCacheService } from 'NotesCacheService';
+import { DataviewService } from 'Integrations/DataviewService';
+import { confirmObjectPath } from 'Internal';
 import * as alasqlFunctions from 'Query/Functions';
 
 declare global {
@@ -25,7 +25,7 @@ export class AlaSqlQuery extends Service implements IQuery {
    * @static
    * @memberof QuerySql
    */
-  public static initialize() {
+  public static initialize () {
     // Add the alasql engine to the exposed API. Thi
     // will allow the user to use the full power of AlaSQL.
     confirmObjectPath('_qatt.query.alasql', alasql);
@@ -44,6 +44,7 @@ export class AlaSqlQuery extends Service implements IQuery {
       debugger;
     };
 
+    // Load all the functions referenced in the Functions folder.
     for (const alasqlFunction of Object.entries(alasqlFunctions)) {
       alasqlFunction[1]();
     }
@@ -78,7 +79,7 @@ export class AlaSqlQuery extends Service implements IQuery {
 
   private _sqlQuery: string;
 
-  public async setupQuery(
+  public async setupQuery (
     codeblockConfiguration: QattCodeBlock,
     sourcePath: string,
     // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
@@ -148,7 +149,7 @@ export class AlaSqlQuery extends Service implements IQuery {
    * @type {(string | undefined)}
    * @memberof QuerySql
    */
-  public get error(): string | undefined {
+  public get error (): string | undefined {
     return this._error;
   }
 
@@ -159,7 +160,7 @@ export class AlaSqlQuery extends Service implements IQuery {
    * @type {(string | undefined)}
    * @memberof QuerySql
    */
-  public get name(): string | undefined {
+  public get name (): string | undefined {
     return this._name;
   }
 
@@ -170,7 +171,7 @@ export class AlaSqlQuery extends Service implements IQuery {
    * @type {(string | undefined)}
    * @memberof QuerySql
    */
-  public get queryId(): string | undefined {
+  public get queryId (): string | undefined {
     return this._queryId;
   }
 
@@ -180,7 +181,7 @@ export class AlaSqlQuery extends Service implements IQuery {
    * @return {*}  {*}
    * @memberof QuerySql
    */
-  public async query(): Promise<any> {
+  public async query (): Promise<any> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias, unicorn/no-this-assignment
     const currentQuery = this;
     this.logger.groupId(this._queryId);
@@ -291,7 +292,7 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
           // Old const dataTable: any[] = this.getDataTable(v);
 
           this.logger.debugWithId(this._queryId, 'Data Tables:', dataTables);
-          this.logger.debugWithId(this._queryId, 'Executing Query:', {originalQuery: this.codeblockConfiguration.query, parsedQuery});
+          this.logger.debugWithId(this._queryId, 'Executing Query:', { originalQuery: this.codeblockConfiguration.query, parsedQuery });
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, no-await-in-loop
           queryResult = await alasql.promise(parsedQuery, dataTables);
           resultArray.push(queryResult);
@@ -320,7 +321,7 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
    * @param query - The query string.
    * @returns A promise that resolves to an array containing the final query and an array of data tables.
    */
-  private async getDataTables(query: string): Promise<[string, any[]]> {
+  private async getDataTables (query: string): Promise<[string, any[]]> {
     let finalQuery = query;
     let tableCount = 0;
     const dataArrays = [];
@@ -369,7 +370,7 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
    * @memberof QuerySql
    */
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  public async applyQuery(): Promise<any> {
+  public async applyQuery (): Promise<any> {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const queryResult: any = await this.query();
 
