@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import alasql from 'alasql';
+import { AlaSqlQuery } from 'Query/AlaSqlQuery';
 import { DateTime } from 'luxon';
 import { parseTask } from 'Parse/Parsers';
 import { Plugin } from 'obsidian';
@@ -23,6 +24,13 @@ export class DataTables extends Service {
   }
 
   public async setupLocalDatabase () {
+
+    // Setup ALASQL and all custom functions.
+    this.metrics.startMeasurement('AlaSqlQuery.initialize');
+    AlaSqlQuery.initialize();
+    this.logger.info('AlaSqlQuery Initialized');
+    this.metrics.endMeasurement('AlaSqlQuery.initialize');
+
     alasql.options.cache = true;
     // Persisted tables, this data will exist between obsidian reloads but is not replicated between machines or vault copies.
 

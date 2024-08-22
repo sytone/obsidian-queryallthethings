@@ -1,6 +1,5 @@
 /* eslint-disable unicorn/filename-case */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { AlaSqlQuery } from 'Query/AlaSqlQuery';
 import { CommandHandler } from 'handlers/CommandHandler';
 import { confirmObjectPath, promptWithSuggestions } from 'Internal';
 import { CsvLoaderService } from 'Data/CsvLoaderService';
@@ -59,6 +58,8 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   eventHandler = this.use(EventHandler);
   releaseNotes = this.use(ReleaseNotes);
   windowFunctions = this.use(WindowFunctionsService);
+  coreSystemInitialized = false;
+  layoutReady = false;
 
   // Public inlineRenderer: InlineRenderer | undefined;
   public queryRendererService: QueryRendererV2Service | undefined;
@@ -268,88 +269,57 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
     this.logger.debug(`debug level enabled "${this.manifest.name}" v${this.manifest.version}`);
 
-    // Once all the base db and tables are created refresh the inbuilt tables. Also dataview if enabled.
-    // Will fire qatt:data-local-database-setup-completed when completed.
-    this.registerEvent(this.app.workspace.on('qatt:data-local-database-setup-completed', async () => {
-      this.logger.info('qatt:data-local-database-setup-completed event detected.');
-      await this.dataTables.refreshTables('qatt:data-local-database-setup-completed event detected');
-
-      // Run any on start SQL queries once the tables are setup.
-      if (this.onStartSqlQueries) {
-        this.logger.info('Running on start SQL queries', this.onStartSqlQueries);
-        const onStartResult = await this.dataTables.runAdhocQuery(this.onStartSqlQueries);
-        this.logger.info('On start SQL queries result', onStartResult);
-      }
-    }));
-
     // Load up the services to be used later.
     this.use(QueryFactory).load();
     this.use(RenderFactory).load();
     this.use(HandlebarsRenderer).load();
     this.use(DataviewService).load();
 
-    // Setup ALASQL and all custom functions.
-    this.metrics.startMeasurement('AlaSqlQuery.initialize');
-    AlaSqlQuery.initialize();
-    this.logger.info('AlaSqlQuery Initialized');
-    this.metrics.endMeasurement('AlaSqlQuery.initialize');
-
     // Make custom functions available to the window object.
     confirmObjectPath('_qatt.ui.promptWithSuggestions', promptWithSuggestions);
 
-    this.metrics.startMeasurement('QueryRendererV2Service Use');
-    this.queryRendererService = this.use(QueryRendererV2Service);
-    this.metrics.endMeasurement('QueryRendererV2Service Use');
 
-    /* ------------------------- Pull in the CVS, Markdown or JSON data ------------------------- */
-    this.metrics.startMeasurement('CsvLoaderService Use');
-    this.csvLoaderService = this.use(CsvLoaderService);
-    this.metrics.endMeasurement('CsvLoaderService Use');
 
-    this.metrics.startMeasurement('MarkdownTableLoaderService Use');
-    this.markdownTableLoaderService = this.use(MarkdownTableLoaderService);
-    this.metrics.endMeasurement('MarkdownTableLoaderService Use');
+    // Once all the base db and tables are created refresh the inbuilt tables. Also dataview if enabled.
+    // Will fire qatt:data-local-database-setup-completed when completed.
+    this.registerEvent(this.app.workspace.on('qatt:data-local-database-setup-completed', async () => {
+      await this.initializeCoreServices();
 
-    this.metrics.startMeasurement('JsonLoaderService Use');
-    this.jsonLoaderService = this.use(JsonLoaderService);
-    this.metrics.endMeasurement('JsonLoaderService Use');
+      // Wait until layout ready has been fired before we start the cache loading.
+      // This is to ensure that all notes are loaded.
+
+      let checkInterval = setInterval(async () => {
+        if (this.layoutReady && this.coreSystemInitialized) {
+          clearInterval(checkInterval);
+          this.logger.info('Layout is ready, starting cache loading.');
+          /* ------------------------- Setup and prepare the notes caching service ------------------------- */
+          this.metrics.startMeasurement('NotesCacheService Use');
+          this.notesCacheService = this.use(NotesCacheService);
+          this.metrics.endMeasurement('NotesCacheService Use');
+          await this.notesCacheService.layoutReady();
+
+          await this.notesCacheService.cacheAllNotes(this.app);
+
+        }
+      }, 500);
+
+    }));
+
+    this.registerEvent(this.app.workspace.on('qatt:all-notes-loaded', async () => {
+      /* ------------------------- Register for cache load callback to run SQL ------------------------- */
+      // After all notes are cached the qatt:all-notes-loaded event is triggered. We should always run the SQL
+      // based loader service as it may query data in the notes.
+      this.logger.info('qatt:all-notes-loaded event detected.');
+      this.metrics.startMeasurement('SqlLoaderService Use');
+      this.sqlLoaderService = this.use(SqlLoaderService);
+      this.metrics.endMeasurement('SqlLoaderService Use');
+    }));
 
     // When layout is ready we can refresh tables and register the query renderer.
     this.app.workspace.onLayoutReady(async () => {
       this.logger.info(`onLayoutReady fired for workspace: ${this.app.vault.getName()}`);
 
-      /* ------------------------- Setup and prepare the notes caching service ------------------------- */
-      this.metrics.startMeasurement('NotesCacheService Use');
-      this.notesCacheService = this.use(NotesCacheService);
-      this.metrics.endMeasurement('NotesCacheService Use');
-      await this.notesCacheService.layoutReady();
-
-      /* ------------------------- Register for cache load callback to run SQL ------------------------- */
-      // After all notes are cached the qatt:all-notes-loaded event is triggered. We should always run the SQL
-      // based loader service ad it may query data in the notes.
-      this.registerEvent(this.app.workspace.on('qatt:all-notes-loaded', async () => {
-        this.logger.info('qatt:all-notes-loaded event detected.');
-        this.metrics.startMeasurement('SqlLoaderService Use');
-        this.sqlLoaderService = this.use(SqlLoaderService);
-        this.metrics.endMeasurement('SqlLoaderService Use');
-      }));
-
-      /* ------------------------- Setup or trigger the cache load ------------------------- */
-      // Cache if all notes have been loaded.
-      if (this.dataTables.refreshTablesCompleted && this.dataTables.setupLocalDatabasesCompleted) {
-        await this.notesCacheService.cacheAllNotes(this.app);
-
-        // Refresh all notes on a datatables update ?
-        // this.registerEvent(this.app.workspace.on('qatt:data-refreshtables-completed', async () => {
-        //   this.logger.info('qatt:data-refreshtables-completed event detected.');
-        //   await this.notesCacheService.cacheAllNotes(this.app);
-        // }));
-      } else {
-        this.registerEvent(this.app.workspace.on('qatt:data-refreshtables-completed', async () => {
-          this.logger.info('qatt:data-refreshtables-completed event detected.');
-          await this.notesCacheService.cacheAllNotes(this.app);
-        }));
-      }
+      this.layoutReady = true;
 
       /* ------------------------- DataView based support ------------------------- */
       const dvService = this.use(DataviewService);
@@ -406,8 +376,53 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
 
   }
 
+
+
   onunload () {
     this.logger.info(`unloading plugin "${this.manifest.name}" v${this.manifest.version}`);
+  }
+
+  /**
+   * Initializes the core services.
+   * This method performs the following tasks:
+   * 1. Refreshes the tables internally used.
+   * 2. Runs any on start SQL queries once the tables are setup.
+   * 3. Pulls in the CVS, Markdown, or JSON data.
+   * 4. Uses the CsvLoaderService, MarkdownTableLoaderService, JsonLoaderService, and QueryRendererV2Service.
+   *
+   * @returns {Promise<void>} A promise that resolves once the core services are initialized.
+   */
+  private async initializeCoreServices () {
+    this.logger.info('qatt:data-local-database-setup-completed event detected.');
+
+    // Refresh the tables internally used.
+    await this.dataTables.refreshTables('qatt:data-local-database-setup-completed event detected');
+
+    // Run any on start SQL queries once the tables are setup.
+    if (this.onStartSqlQueries) {
+      this.logger.info('Running on start SQL queries', this.onStartSqlQueries);
+      const onStartResult = await this.dataTables.runAdhocQuery(this.onStartSqlQueries);
+      this.logger.info('On start SQL queries result', onStartResult);
+    }
+
+    /* ------------------------- Pull in the CVS, Markdown or JSON data ------------------------- */
+    this.metrics.startMeasurement('CsvLoaderService Use');
+    this.csvLoaderService = this.use(CsvLoaderService);
+    this.metrics.endMeasurement('CsvLoaderService Use');
+
+    this.metrics.startMeasurement('MarkdownTableLoaderService Use');
+    this.markdownTableLoaderService = this.use(MarkdownTableLoaderService);
+    this.metrics.endMeasurement('MarkdownTableLoaderService Use');
+
+    this.metrics.startMeasurement('JsonLoaderService Use');
+    this.jsonLoaderService = this.use(JsonLoaderService);
+    this.metrics.endMeasurement('JsonLoaderService Use');
+
+    this.metrics.startMeasurement('QueryRendererV2Service Use');
+    this.queryRendererService = this.use(QueryRendererV2Service);
+    this.metrics.endMeasurement('QueryRendererV2Service Use');
+
+    this.coreSystemInitialized = true;
   }
 
   /**
