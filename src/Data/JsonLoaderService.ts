@@ -1,8 +1,8 @@
 
-import {useSettings} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
-import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
-import {BaseLoaderService} from 'Data/BaseLoaderService';
+import { useSettings } from '@ophidian/core';
+import { LoggingService } from 'lib/LoggingService';
+import { SettingsTabField, SettingsTabHeading, useSettingsTab } from 'Settings/DynamicSettingsTabBuilder';
+import { BaseLoaderService } from 'Data/BaseLoaderService';
 
 export interface IJsonLoaderSettings {
   jsonFiles: string;
@@ -33,9 +33,9 @@ export class JsonLoaderService extends BaseLoaderService {
     },
   );
 
-  showSettings() {
+  showSettings () {
     const tab = this.settingsTab;
-    const {settings} = this;
+    const { settings } = this;
 
     const onToggle = async (value: boolean) => {
       await settings.update(settings => {
@@ -43,7 +43,7 @@ export class JsonLoaderService extends BaseLoaderService {
       });
     };
 
-    const settingsSection = tab.addHeading(new SettingsTabHeading({open: this.jsonLoaderSettingsOpen, text: 'JSON Loader Settings', level: 'h2', class: 'settings-heading'}), onToggle);
+    const settingsSection = tab.addHeading(new SettingsTabHeading({ open: this.jsonLoaderSettingsOpen, text: 'JSON Loader Settings', level: 'h2', class: 'settings-heading' }), onToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {
@@ -63,5 +63,5 @@ export class JsonLoaderService extends BaseLoaderService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  public importCallback = (content: string, tableName: string) => JSON.parse(content) as any[];
+  public importCallback = async (content: string, tableName: string) => JSON.parse(content) as any[];
 }

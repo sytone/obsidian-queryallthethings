@@ -1,8 +1,8 @@
 
-import {useSettings} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
-import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
-import {BaseLoaderService} from 'Data/BaseLoaderService';
+import { useSettings } from '@ophidian/core';
+import { LoggingService } from 'lib/LoggingService';
+import { SettingsTabField, SettingsTabHeading, useSettingsTab } from 'Settings/DynamicSettingsTabBuilder';
+import { BaseLoaderService } from 'Data/BaseLoaderService';
 
 export interface IMarkdownTableLoaderSettings {
   markdownTableFiles: string;
@@ -32,9 +32,9 @@ export class MarkdownTableLoaderService extends BaseLoaderService {
     },
   );
 
-  showSettings() {
+  showSettings () {
     const tab = this.settingsTab;
-    const {settings} = this;
+    const { settings } = this;
 
     const onToggle = async (value: boolean) => {
       await settings.update(settings => {
@@ -42,7 +42,7 @@ export class MarkdownTableLoaderService extends BaseLoaderService {
       });
     };
 
-    const settingsSection = tab.addHeading(new SettingsTabHeading({open: this.markdownLoaderSettingsOpen, text: 'Markdown Table Loader Settings', level: 'h2', class: 'settings-heading'}), onToggle);
+    const settingsSection = tab.addHeading(new SettingsTabHeading({ open: this.markdownLoaderSettingsOpen, text: 'Markdown Table Loader Settings', level: 'h2', class: 'settings-heading' }), onToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {
@@ -61,7 +61,7 @@ export class MarkdownTableLoaderService extends BaseLoaderService {
     );
   }
 
-  public getFirstLineNumberWithContent(content: string): number {
+  public getFirstLineNumberWithContent (content: string): number {
     const lines = content.split('\n');
     let lineNumber = 0;
     for (const line of lines) {
@@ -75,7 +75,7 @@ export class MarkdownTableLoaderService extends BaseLoaderService {
     return lineNumber;
   }
 
-  public importCallback = (content: string, tableName: string) => {
+  public importCallback = async (content: string, tableName: string) => {
     // Get the first row with content and the pipe.
     const headerLine = this.getFirstLineNumberWithContent(content);
     const header = content.split('\n')[headerLine].split('|').filter(Boolean);

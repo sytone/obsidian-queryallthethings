@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "build:dev": "node ophidian.config.mjs dev",
-    "build": "node ophidian.config.mjs production && mdinject --root=./src --docs-root=./docs --wrap",
+    "build": "node ophidian.config.mjs production",
     "build:docs": "mdinject --root=./src --docs-root=./docs --wrap",
     "opendocs": "start obsidian://open?vault=docs",
     "lint": "xo --fix",

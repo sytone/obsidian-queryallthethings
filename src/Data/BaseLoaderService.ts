@@ -3,7 +3,7 @@ import { Service } from '@ophidian/core';
 import { LoggingService } from 'lib/LoggingService';
 import alasql from 'alasql';
 
-type GetDataArrayFromFileCallback = (content: string, tableName: string) => any[];
+type GetDataArrayFromFileCallback = (content: string, tableName: string) => Promise<any[]>;
 
 export class BaseLoaderService extends Service {
   plugin = this.use(Plugin);

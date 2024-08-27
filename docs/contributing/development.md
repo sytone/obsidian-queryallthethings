@@ -13,7 +13,7 @@ VS Code will work on all operating systems and the configuration will recommend 
 
 ## Setting up development environment
 
-PNPM is used as the package manager, use `npm install -g pnpm@latest-8` to install. Version 20.15.1 of NodeJS is being used for the build process so ensure that is also installed. If you use Node version manager you can run `nvm install 20.15.1` and `nvm use 20.15.1` to install and use the current node version.
+PNPM is used as the package manager, use `npm install -g pnpm@latest-9` to install. Version 20.15.1 of NodeJS is being used for the build process so ensure that is also installed. If you use Node version manager you can run `nvm install 20.15.1` and `nvm use 20.15.1` to install and use the current node version.
 
 Run `pnpm install` to ensure dependencies are installed and then `pnpm run build`
 

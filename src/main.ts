@@ -73,10 +73,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   public jsonLoaderService: JsonLoaderService | undefined;
   public sqlLoaderService: SqlLoaderService | undefined;
 
-  //#region Plugin Settings
-  /* -------------------------------------------------------------------------- */
-  /*                            Plugin wide settings                            */
-  /* -------------------------------------------------------------------------- */
+
   settingsTab = useSettingsTab(this);
 
   settings = useSettings(
@@ -116,7 +113,8 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.enableEditorRightClickMenu = settings.enableEditorRightClickMenu;
       this.commandHandler.setup(settings.internalLoggingConsoleLogLimit);
 
-      // This is the start of all the events that need to be run to get the system into the correct state.
+      // This is the start of all the events that need to be run to get the system into the correct state. The
+      // event qatt:data-local-database-setup-completed is fired when completed.
       await this.dataTables.setupLocalDatabase();
 
       if (!app.plugins.enabledPlugins.has('dataview') && !settings.disableDataviewMissingNotification) {
@@ -131,6 +129,11 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       void this.announceUpdate();
     },
   );
+  //#region Plugin Settings UI
+  /* -------------------------------------------------------------------------- */
+  /*                            Plugin wide settings                            */
+  /* -------------------------------------------------------------------------- */
+
 
   onStartSqlQueries: string;
   announceUpdates: boolean;
@@ -278,15 +281,20 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
     // Make custom functions available to the window object.
     confirmObjectPath('_qatt.ui.promptWithSuggestions', promptWithSuggestions);
 
-
-
     // Once all the base db and tables are created refresh the inbuilt tables. Also dataview if enabled.
     // Will fire qatt:data-local-database-setup-completed when completed.
     this.registerEvent(this.app.workspace.on('qatt:data-local-database-setup-completed', async () => {
-      await this.initializeCoreServices();
+      this.logger.info('qatt:data-local-database-setup-completed event detected.');
 
       // Wait until layout ready has been fired before we start the cache loading.
       // This is to ensure that all notes are loaded.
+      let checkCoreSetupInterval = setInterval(async () => {
+        if (this.layoutReady) {
+          clearInterval(checkCoreSetupInterval);
+          this.logger.info('Layout is ready, starting core setup.');
+          await this.initializeCoreServices();
+        }
+      }, 500);
 
       let checkInterval = setInterval(async () => {
         if (this.layoutReady && this.coreSystemInitialized) {
@@ -302,7 +310,6 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
 
         }
       }, 500);
-
     }));
 
     this.registerEvent(this.app.workspace.on('qatt:all-notes-loaded', async () => {
@@ -310,9 +317,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
       // After all notes are cached the qatt:all-notes-loaded event is triggered. We should always run the SQL
       // based loader service as it may query data in the notes.
       this.logger.info('qatt:all-notes-loaded event detected.');
-      this.metrics.startMeasurement('SqlLoaderService Use');
-      this.sqlLoaderService = this.use(SqlLoaderService);
-      this.metrics.endMeasurement('SqlLoaderService Use');
+      this.initializeSqlLoaderService();
     }));
 
     // When layout is ready we can refresh tables and register the query renderer.
@@ -378,6 +383,12 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
 
 
 
+  private initializeSqlLoaderService () {
+    this.metrics.startMeasurement('SqlLoaderService Use');
+    this.sqlLoaderService = this.use(SqlLoaderService);
+    this.metrics.endMeasurement('SqlLoaderService Use');
+  }
+
   onunload () {
     this.logger.info(`unloading plugin "${this.manifest.name}" v${this.manifest.version}`);
   }
@@ -393,10 +404,9 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
    * @returns {Promise<void>} A promise that resolves once the core services are initialized.
    */
   private async initializeCoreServices () {
-    this.logger.info('qatt:data-local-database-setup-completed event detected.');
 
     // Refresh the tables internally used.
-    await this.dataTables.refreshTables('qatt:data-local-database-setup-completed event detected');
+    await this.dataTables.refreshTables('called by initializeCoreServices');
 
     // Run any on start SQL queries once the tables are setup.
     if (this.onStartSqlQueries) {
