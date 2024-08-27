@@ -1,14 +1,14 @@
 
-import { type MarkdownPostProcessorContext, Plugin } from 'obsidian';
-import { QattCodeBlock } from 'QattCodeBlock';
-import { Service, useSettings } from '@ophidian/core';
-import { LoggingService } from 'lib/LoggingService';
-import { DateTime } from 'luxon';
-import { SettingsTabField, SettingsTabHeading, useSettingsTab } from 'Settings/DynamicSettingsTabBuilder';
-import { NotesCacheService } from 'NotesCacheService';
-import { QueryRenderChildV2 } from 'QueryRenderChildV2';
-import { QueryRenderChildV3 } from 'QueryRenderChildV3';
-import { QattCodeBlockSettings } from 'lib/QattCodeBlockSettings';
+import {type MarkdownPostProcessorContext, Plugin} from 'obsidian';
+import {QattCodeBlock} from 'QattCodeBlock';
+import {Service, useSettings} from '@ophidian/core';
+import {LoggingService} from 'lib/LoggingService';
+import {DateTime} from 'luxon';
+import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
+import {NotesCacheService} from 'NotesCacheService';
+import {QueryRenderChildV2} from 'QueryRenderChildV2';
+import {QueryRenderChildV3} from 'QueryRenderChildV3';
+import {QattCodeBlockSettings} from 'lib/QattCodeBlockSettings';
 
 export interface IRenderingSettings {
   postRenderFormat: string;
@@ -18,6 +18,7 @@ export interface IRenderingSettings {
   enableCodeBlockEditor: boolean;
   queryFileRoot: string;
   templateFileRoot: string;
+  debounceWindow: number;
 }
 
 export const RenderingSettingsDefaults: IRenderingSettings = {
@@ -28,6 +29,7 @@ export const RenderingSettingsDefaults: IRenderingSettings = {
   enableCodeBlockEditor: true,
   queryFileRoot: '',
   templateFileRoot: '',
+  debounceWindow: 5000,
 };
 
 /**
@@ -59,6 +61,7 @@ export class QueryRendererV2Service extends Service {
       this.enableCodeBlockEditor = settings.enableCodeBlockEditor;
       this.queryFileRoot = settings.queryFileRoot ?? '';
       this.templateFileRoot = settings.templateFileRoot ?? '';
+      this.debounceWindow = settings.debounceWindow;
     },
     (settings: IRenderingSettings) => {
       this.logger.info('QueryRendererV2Service Initialize Settings');
@@ -68,6 +71,7 @@ export class QueryRendererV2Service extends Service {
       this.enableCodeBlockEditor = settings.enableCodeBlockEditor;
       this.queryFileRoot = settings.queryFileRoot ?? '';
       this.templateFileRoot = settings.templateFileRoot ?? '';
+      this.debounceWindow = settings.debounceWindow;
     },
   );
 
@@ -76,22 +80,23 @@ export class QueryRendererV2Service extends Service {
   enableCodeBlockEditor = false;
   queryFileRoot = '';
   templateFileRoot = '';
+  debounceWindow = 5000;
 
-  constructor () {
+  constructor() {
     super();
     this.lastCreation = DateTime.now();
   }
 
-  showSettings () {
+  showSettings() {
     const tab = this.settingsTab;
-    const { settings } = this;
+    const {settings} = this;
 
     const settingsSection = tab.addHeading(
       new SettingsTabHeading({
         open: this.renderingSettingsOpen,
         text: 'Codeblock Rendering Settings',
         level: 'h2',
-        class: 'settings-heading'
+        class: 'settings-heading',
       }),
       async (value: boolean) => {
         await settings.update(settings => {
@@ -146,6 +151,20 @@ export class QueryRendererV2Service extends Service {
       settingsSection,
     );
 
+    const debounceWindow = tab.addTextInput(
+      new SettingsTabField({
+        name: 'Debounce Window',
+        description: 'The time to wait until queries will run while a user is updating the vault.',
+        value: this.debounceWindow.toString(), // Convert the value to a string
+      }),
+      async (value: string) => {
+        await settings.update(settings => {
+          settings.debounceWindow = Number.parseInt(value, 10); // Convert the value to a number
+        });
+      },
+      settingsSection,
+    );
+
     const internalQueryRenderChildVersionSetting = tab.addDropdownInput(
       new SettingsTabField({
         name: '🧪 Default Internal Query Render Child Version',
@@ -179,7 +198,7 @@ export class QueryRendererV2Service extends Service {
     );
   }
 
-  async onload () {
+  async onload() {
     this.plugin.registerMarkdownCodeBlockProcessor('qatt', async (source: string, element: HTMLElement, context: MarkdownPostProcessorContext) => {
       this.logger.info(`lastCreation ${this.lastCreation.toISO() ?? ''} registring block on ${context.sourcePath}`);
       this.logger.debug(`Adding QATT Render for ${source} to context ${context.docId}`);
@@ -230,7 +249,7 @@ export class QueryRendererV2Service extends Service {
               event.preventDefault();
               event.stopPropagation();
               new QattCodeBlockSettings(this.plugin.app, this.plugin, codeblockConfiguration, context, element).open();
-            }, { capture: true });
+            }, {capture: true});
           }
         });
         observer.observe(element, {
@@ -248,6 +267,7 @@ export class QueryRendererV2Service extends Service {
             codeblockConfiguration,
             context,
             this,
+            this.debounceWindow,
           ),
         );
       }

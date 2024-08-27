@@ -1,26 +1,27 @@
 /* eslint-disable complexity */
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { type MarkdownPostProcessorContext, MarkdownRenderChild, Plugin, TFile } from 'obsidian';
-import { type QattCodeBlock } from 'QattCodeBlock';
-import { type IRenderer } from 'Render/IRenderer';
-import { RenderFactory } from 'Render/RenderFactory';
-import { QueryFactory } from 'Query/QueryFactory';
-import { type IQuery } from 'Query/IQuery';
-import { LoggingService, type Logger } from 'lib/LoggingService';
-import { MicromarkPostRenderer } from 'PostRender/MicromarkPostRenderer';
-import { ObsidianPostRenderer } from 'PostRender/ObsidianPostRenderer';
-import { type IPostRenderer } from 'PostRender/IPostRenderer';
-import { HtmlPostRenderer } from 'PostRender/HtmlPostRenderer';
-import { RawPostRenderer } from 'PostRender/RawPostRenderer';
-import { type QueryRendererV2Service } from 'QueryRendererV2Service';
-import { NotesCacheService } from 'NotesCacheService';
-import { RenderTrackerService } from 'lib/RenderTrackerService';
-import { DateTime } from 'luxon';
-import { CsvLoaderService } from 'Data/CsvLoaderService';
-import { MarkdownTableLoaderService } from 'Data/MarkdownTableLoaderService';
-import { JsonLoaderService } from 'Data/JsonLoaderService';
-import { SqlLoaderService } from 'Data/SqlLoaderService';
+import {type MarkdownPostProcessorContext, MarkdownRenderChild, Plugin, TFile} from 'obsidian';
+import {type QattCodeBlock} from 'QattCodeBlock';
+import {type IRenderer} from 'Render/IRenderer';
+import {RenderFactory} from 'Render/RenderFactory';
+import {QueryFactory} from 'Query/QueryFactory';
+import {type IQuery} from 'Query/IQuery';
+import {LoggingService, type Logger} from 'lib/LoggingService';
+import {MicromarkPostRenderer} from 'PostRender/MicromarkPostRenderer';
+import {ObsidianPostRenderer} from 'PostRender/ObsidianPostRenderer';
+import {type IPostRenderer} from 'PostRender/IPostRenderer';
+import {HtmlPostRenderer} from 'PostRender/HtmlPostRenderer';
+import {RawPostRenderer} from 'PostRender/RawPostRenderer';
+import {type QueryRendererV2Service} from 'QueryRendererV2Service';
+import {NotesCacheService} from 'NotesCacheService';
+import {RenderTrackerService} from 'lib/RenderTrackerService';
+import {DateTime} from 'luxon';
+import {CsvLoaderService} from 'Data/CsvLoaderService';
+import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
+import {JsonLoaderService} from 'Data/JsonLoaderService';
+import {SqlLoaderService} from 'Data/SqlLoaderService';
+import {debounce, type IDebouncedFunction} from 'lib/Debounce';
 
 /**
  * All the rendering logic is handled here. It uses ths configuration to
@@ -50,21 +51,29 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   jsonLoaderService: JsonLoaderService | undefined;
   sqlLoaderService: SqlLoaderService | undefined;
 
+  throttledRender: () => Promise<void>;
+  debouncedRender: IDebouncedFunction<any[], () => Promise<void>>;
+
   private renderId: string;
   private startTime = new Date(Date.now());
   private queryResults: any;
   private renderResults: string;
+  private readonly debounceWindow: number;
 
-  public constructor (
+  // eslint-disable-next-line max-params
+  public constructor(
     container: HTMLElement,
     codeblockConfiguration: QattCodeBlock,
     context: MarkdownPostProcessorContext,
-    service: QueryRendererV2Service) {
+    service: QueryRendererV2Service,
+    debounceWindow = 5000) {
     super(container);
     this.container = container;
     this.codeblockConfiguration = codeblockConfiguration;
     this.context = context;
     this.service = service;
+
+    this.debounceWindow = debounceWindow;
 
     // If I use 'use' at the top of this class then it throws
     // an error that there is no context available. This class
@@ -81,7 +90,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     this.sqlLoaderService = service.use(SqlLoaderService);
   }
 
-  async onload () {
+  async onload() {
     this.renderId = `${this.codeblockConfiguration.id ?? ''}:${this.context.sourcePath}`;
 
     // Ensure we have a TFile instance for the query/rendering process.
@@ -92,7 +101,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
     this.file = file;
 
-    // Set the logging to be overriden if the user set the logLevel in the YAML configuration.
+    // Set the logging to be overridden if the user set the logLevel in the YAML configuration.
     if (this.codeblockConfiguration.logLevel) {
       this.logger.setLogLevel(this.codeblockConfiguration.logLevel);
     }
@@ -100,22 +109,36 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     this.logger.infoWithId(this.renderId, `Query Render generated for class ${this.container.className} -> ${this.codeblockConfiguration.queryDataSource ?? ''}`);
 
     // Setup callbacks for when the notes store is updated. We should render again.
-    this.registerEvent(this.plugin.app.workspace.on('qatt:notes-store-update', this.render));
+    this.registerEvent(this.plugin.app.workspace.on('qatt:notes-store-update', async () => {
+      await this.debouncedRender();
+    }));
     // Render all the codeblock when the inital loaD of notes is completed.
-    this.registerEvent(this.plugin.app.workspace.on('qatt:all-notes-loaded', this.render));
+    this.registerEvent(this.plugin.app.workspace.on('qatt:all-notes-loaded', async () => {
+      await this.debouncedRender();
+    }));
     // Refresh the codeblocks when the refresh event is triggered. This is user or from other stores like
     // CSV, JSON, etc.
-    this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', this.render));
+    this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', async () => {
+      await this.debouncedRender();
+    }));
 
     if (this.codeblockConfiguration.queryDataSource === 'dataview') {
-      this.registerEvent(this.plugin.app.workspace.on('qatt:dataview-store-update', this.render));
+      this.registerEvent(this.plugin.app.workspace.on('qatt:dataview-store-update', async () => {
+        await this.debouncedRender();
+      }));
     }
 
-    await this.render();
+    // Run once and then wait for the debounce window to pass before running again. This will
+    // mean the UI will not update while the user is typing or making changes. The value
+    // can be set in the settings UI and defaults to 5000 milliseconds.
+    this.debouncedRender = debounce(this.render, this.debounceWindow, {isImmediate: true});
+
+    await this.debouncedRender();
   }
 
-  onunload () {
+  onunload() {
     // Unload resources
+    this.debouncedRender.cancel();
     this.logger.infoWithId(this.renderId, `QueryRenderChild unloaded for ${this.renderId}`);
   }
 
@@ -217,7 +240,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
       // Content will be inserted into a SPAN element.
       const renderedContentElement = document.createElement('span');
-      const { renderedContent, rawPostRenderResult } = await this.getPostRenderFormat(postRenderFormat, this.renderResults, renderedContentElement, this.context.sourcePath);
+      const {renderedContent, rawPostRenderResult} = await this.getPostRenderFormat(postRenderFormat, this.renderResults, renderedContentElement, this.context.sourcePath);
       this.logger.debugWithId(this.renderId, 'postRenderResults:', renderedContent);
       this.logger.debugWithId(this.renderId, 'rawPostRenderResult:', rawPostRenderResult);
 
@@ -285,7 +308,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
           if (info) {
             // OLD
-            const { lineStart } = info;
+            const {lineStart} = info;
             const lineEnd = this.getCodeBlockEndLine(text, lineStart);
             if (lineEnd === -1 || !lineEnd) {
               return text;
@@ -333,13 +356,13 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     this.logQueryRenderCompletion();
   };
 
-  private logQueryRenderCompletion () {
+  private logQueryRenderCompletion() {
     const endTime = new Date(Date.now());
     this.logger.infoWithId(this.renderId, `Render End: ${endTime.getTime() - this.startTime.getTime()}ms`);
     this.logger.groupEndId();
   }
 
-  private getCodeBlockEndLine (text: string, startLine: number, count = 1) {
+  private getCodeBlockEndLine(text: string, startLine: number, count = 1) {
     let line = startLine + 1;
     const lines = text.split('\n');
     while (line < lines.length) {
@@ -365,7 +388,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
    * @param postRenderResults - The rendered output to be written to the file.
    * @param replaceCodeBlock - Determines whether to append or prepend the rendered output to the existing file content.
    */
-  private async writeRenderedOutputToFile (targetPath: string, postRenderResults: string, replaceCodeBlock: string) {
+  private async writeRenderedOutputToFile(targetPath: string, postRenderResults: string, replaceCodeBlock: string) {
     this.logger.infoWithId(this.renderId, `writeRenderedOutputToFile: ${targetPath}`);
 
     const targetFile = this.getTargetFile(targetPath);
@@ -412,7 +435,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
    * @param postRenderResults - The post-render results to be written to the new file.
    * @returns A Promise that resolves with the newly created file.
    */
-  private async createFile (targetPath: string, postRenderResults: string) {
+  private async createFile(targetPath: string, postRenderResults: string) {
     await this.service.notesCacheService.ignoreFileEventsForPeriod(targetPath, 1000);
     return this.plugin.app.vault.create(targetPath, postRenderResults);
   }
@@ -423,7 +446,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
    * @param postRenderResults - The post-render results to use for modification.
    * @returns A promise that resolves with the modified file contents.
    */
-  private async modifyFile (targetFile: TFile, postRenderResults: string) {
+  private async modifyFile(targetFile: TFile, postRenderResults: string) {
     await this.service.notesCacheService.ignoreFileEventsForPeriod(targetFile.path, 1000);
 
     return this.plugin.app.vault.modify(targetFile, postRenderResults);
@@ -434,7 +457,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
    * @param targetFile - The file to retrieve the cached content for.
    * @returns A promise that resolves with the cached content of the target file.
    */
-  private async getCachedContent (targetFile: TFile): Promise<string> {
+  private async getCachedContent(targetFile: TFile): Promise<string> {
     return this.plugin.app.vault.cachedRead(targetFile);
   }
 
@@ -443,7 +466,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
    * @param targetPath - The path of the target file.
    * @returns The TFile object for the file located at the specified target path, or undefined if the file is not found.
    */
-  private getTargetFile (targetPath: string): TFile | undefined {
+  private getTargetFile(targetPath: string): TFile | undefined {
     targetPath = targetPath.replace(/\\/g, '/');
     return this.plugin.app.vault.getFiles().find(file => file.path === targetPath);
   }
@@ -455,7 +478,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
    * @param renderedContent - The HTML element where the content will be rendered.
    * @returns The rendered content.
    */
-  private async getPostRenderFormat (postRenderFormat: string, renderResults: string, renderedContent: HTMLSpanElement, sourcePath: string) {
+  private async getPostRenderFormat(postRenderFormat: string, renderResults: string, renderedContent: HTMLSpanElement, sourcePath: string) {
     let postRenderer: IPostRenderer;
     switch (postRenderFormat) {
       case 'markdown': {
@@ -485,6 +508,6 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     }
 
     const rawPostRenderResult = await postRenderer.renderMarkdown(renderResults, renderedContent, sourcePath, this.plugin);
-    return { renderedContent, rawPostRenderResult };
+    return {renderedContent, rawPostRenderResult};
   }
 }
