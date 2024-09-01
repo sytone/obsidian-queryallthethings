@@ -147,10 +147,12 @@ export class Note {
 
     n.links = metadata?.links ?? ([] as LinkCache[]);
     n.embeds = metadata?.embeds ?? ([] as EmbedCache[]);
+
     if (metadata?.tags) {
       n.tags = metadata?.tags.map(t => t.tag);
     } else if (metadata?.frontmatter?.tags) {
-      n.tags = metadata?.frontmatter?.tags as string[];
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      n.tags = metadata?.frontmatter?.tags.constructor === Array ? metadata?.frontmatter?.tags as string[] : [metadata?.frontmatter?.tags];
     } else {
       n.tags = [];
     }

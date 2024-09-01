@@ -57,3 +57,7 @@ Symlink Example:
 ```powershell
 New-Item -ItemType Junction -Target ".\dist" -Path "C:\obsidian\brainstore\.obsidian\plugins\qatt\"
 ```
+## Releasing
+
+In main run `pnpm run release:minor:dry` to see what the changes look like, if happy then run `pnpm run release:minor` followed by `git push --follow-tags origin main`. This will push the changes up and the build system will generate a draft release. You can then go to github and update the release as needed and move it out of draft.
+
