@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/sytone/obsidian-queryallthethings/compare/1.0.2...1.1.0) (2024-09-01)
+
+
+### Features
+
+* allow index updating notice to be disabled ([#21](https://github.com/sytone/obsidian-queryallthethings/issues/21)) ([4750ea3](https://github.com/sytone/obsidian-queryallthethings/commits/4750ea3cbef82f1da91d6aa9984e642057b35d7d)), closes [#20](https://github.com/sytone/obsidian-queryallthethings/issues/20)
+
+
+### Bug Fixes and Changes
+
+* add pnpm version to vitepress publish ([40b31fd](https://github.com/sytone/obsidian-queryallthethings/commits/40b31fdaaa5427a94d50d186d1535cc9ec091156))
+
+
+### Documentation
+
+* cleanup obsidian_markdown_notes references ([f1eadc2](https://github.com/sytone/obsidian-queryallthethings/commits/f1eadc2ac82126113821c3e9454cb7dc2328b9bf))
+* cleanup ordering and retire notices ([2e5144a](https://github.com/sytone/obsidian-queryallthethings/commits/2e5144abc5982771446c68dc06ed9794b2e0995a))
+* correct links and add version ([963c7ce](https://github.com/sytone/obsidian-queryallthethings/commits/963c7ceeac01353789da904042ed2b9c8d4e47f3))
+* move logo to public folder ([55677c4](https://github.com/sytone/obsidian-queryallthethings/commits/55677c429dfd6e1d3c3b4d6ce551bba666d49a30))
+* move to vitepress ([e065eab](https://github.com/sytone/obsidian-queryallthethings/commits/e065eabdd51acdbd7b47fe9b5af0eb7717cb4f5f))
+* update logo and homepage links and information ([190949d](https://github.com/sytone/obsidian-queryallthethings/commits/190949df9e3de992ebe2b3262606e45a7ab5b4d1))
+
+
+### Internal
+
+* package updates ([4d7522b](https://github.com/sytone/obsidian-queryallthethings/commits/4d7522b7f4f1048f01c8c0c237d9817cb0adb313))
+* remove old jekyll files ([d9cbd41](https://github.com/sytone/obsidian-queryallthethings/commits/d9cbd41a72f651540083bbc1677af421a8263bf0))
+* rename action for beta release ([5ca0dfa](https://github.com/sytone/obsidian-queryallthethings/commits/5ca0dfa9822dbdf56b882a355352d078ed5cc00c))
+
 ### [1.0.2](https://github.com/sytone/obsidian-queryallthethings/compare/1.0.1...1.0.2) (2024-06-29)
 
 
