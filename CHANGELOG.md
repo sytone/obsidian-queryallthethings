@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/sytone/obsidian-queryallthethings/compare/1.1.0...1.1.1) (2024-09-01)
+
+
+### Bug Fixes and Changes
+
+* ensure single tags are treated as an array and not a string. ([7114ba2](https://github.com/sytone/obsidian-queryallthethings/commits/7114ba27d75cd1c978462db7d53ff44fc6056b8c))
+
 ## [1.1.0](https://github.com/sytone/obsidian-queryallthethings/compare/1.0.2...1.1.0) (2024-09-01)
 
 
