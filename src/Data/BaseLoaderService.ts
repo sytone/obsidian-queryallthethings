@@ -1,9 +1,9 @@
-import {Plugin, type TFile} from 'obsidian';
-import {Service} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
+import { Plugin, type TFile } from 'obsidian';
+import { Service } from '@ophidian/core';
+import { LoggingService } from 'lib/LoggingService';
 import alasql from 'alasql';
 
-type GetDataArrayFromFileCallback = (content: string, tableName: string) => any[];
+type GetDataArrayFromFileCallback = (content: string, tableName: string) => Promise<any[]>;
 
 export class BaseLoaderService extends Service {
   plugin = this.use(Plugin);
@@ -13,7 +13,7 @@ export class BaseLoaderService extends Service {
   importFiles: string;
   initialImportCompleted = false;
 
-  onload(): void {
+  onload (): void {
     // If a imported file is changed, re-import it.
     this.registerEvent(
       this.plugin.app.metadataCache.on('changed', async (file, data, cache) => {
@@ -25,7 +25,7 @@ export class BaseLoaderService extends Service {
     );
   }
 
-  public fileInImportList(file: TFile): boolean {
+  public fileInImportList (file: TFile): boolean {
     if (!this.importFiles) {
       return false;
     }
@@ -33,14 +33,14 @@ export class BaseLoaderService extends Service {
     return this.importFiles.split('\n').filter(Boolean).includes(file.path);
   }
 
-  public async settingsInitialLoad(fileList: string) {
+  public async settingsInitialLoad (fileList: string) {
     this.logger.info('Initialize Settings');
     this.importFiles = fileList;
     await this.importAllFiles();
     this.initialImportCompleted = true;
   }
 
-  public async settingsUpdateLoad(fileList: string) {
+  public async settingsUpdateLoad (fileList: string) {
     if (this.initialImportCompleted) {
       this.logger.info('Updated Settings');
       this.importFiles = fileList;
@@ -48,7 +48,7 @@ export class BaseLoaderService extends Service {
     }
   }
 
-  public async importAllFiles() {
+  public async importAllFiles () {
     if (!this.importFiles) {
       return;
     }
@@ -79,13 +79,13 @@ export class BaseLoaderService extends Service {
     }
   }
 
-  public async importArrayToTableFromUrl(url: URL, tableName: string, parseToArrayCallback: GetDataArrayFromFileCallback) {
+  public async importArrayToTableFromUrl (url: URL, tableName: string, parseToArrayCallback: GetDataArrayFromFileCallback) {
     const response = await fetch(url);
     const content = await response.text();
     await this.importArrayToTable(content, tableName, parseToArrayCallback);
   }
 
-  public async importArrayToTableFromFile(file: TFile, parseToArrayCallback: GetDataArrayFromFileCallback) {
+  public async importArrayToTableFromFile (file: TFile, parseToArrayCallback: GetDataArrayFromFileCallback) {
     const tableName = file.basename;
     this.logger.info(`Loading '${file.path}' as table '${tableName}'`);
     const content = (await this.plugin.app.vault.cachedRead(file));
@@ -93,7 +93,7 @@ export class BaseLoaderService extends Service {
     await this.importArrayToTable(content, tableName, parseToArrayCallback);
   }
 
-  public async importArrayToTable(content: string, tableName: string, parseToArrayCallback: GetDataArrayFromFileCallback) {
+  public async importArrayToTable (content: string, tableName: string, parseToArrayCallback: GetDataArrayFromFileCallback) {
     const startTime = new Date(Date.now());
 
     const parsedArray = parseToArrayCallback(content, tableName);
@@ -101,7 +101,7 @@ export class BaseLoaderService extends Service {
       return;
     }
 
-    this.logger.info(`Loaded to table '${tableName}'`, parsedArray);
+    this.logger.debug(`Loaded to table '${tableName}'`, parsedArray);
 
     await alasql.promise(`DROP TABLE IF EXISTS ${tableName}`);
     await alasql.promise(`CREATE TABLE IF NOT EXISTS ${tableName}`);

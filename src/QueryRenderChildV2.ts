@@ -13,7 +13,7 @@ import {ObsidianPostRenderer} from 'PostRender/ObsidianPostRenderer';
 import {type IPostRenderer} from 'PostRender/IPostRenderer';
 import {HtmlPostRenderer} from 'PostRender/HtmlPostRenderer';
 import {RawPostRenderer} from 'PostRender/RawPostRenderer';
-import {type QueryRendererV2Service} from 'QueryRendererV2';
+import {type QueryRendererV2Service} from 'QueryRendererV2Service';
 import {NotesCacheService} from 'NotesCacheService';
 import {RenderTrackerService} from 'lib/RenderTrackerService';
 import {DateTime} from 'luxon';
@@ -21,6 +21,7 @@ import {CsvLoaderService} from 'Data/CsvLoaderService';
 import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
 import {JsonLoaderService} from 'Data/JsonLoaderService';
 import {SqlLoaderService} from 'Data/SqlLoaderService';
+import {debounce, type IDebouncedFunction} from 'lib/Debounce';
 
 /**
  * All the rendering logic is handled here. It uses ths configuration to
@@ -50,21 +51,29 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   jsonLoaderService: JsonLoaderService | undefined;
   sqlLoaderService: SqlLoaderService | undefined;
 
+  throttledRender: () => Promise<void>;
+  debouncedRender: IDebouncedFunction<any[], () => Promise<void>>;
+
   private renderId: string;
   private startTime = new Date(Date.now());
   private queryResults: any;
   private renderResults: string;
+  private readonly debounceWindow: number;
 
+  // eslint-disable-next-line max-params
   public constructor(
     container: HTMLElement,
     codeblockConfiguration: QattCodeBlock,
     context: MarkdownPostProcessorContext,
-    service: QueryRendererV2Service) {
+    service: QueryRendererV2Service,
+    debounceWindow = 5000) {
     super(container);
     this.container = container;
     this.codeblockConfiguration = codeblockConfiguration;
     this.context = context;
     this.service = service;
+
+    this.debounceWindow = debounceWindow;
 
     // If I use 'use' at the top of this class then it throws
     // an error that there is no context available. This class
@@ -92,7 +101,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
     this.file = file;
 
-    // Set the logging to be overriden if the user set the logLevel in the YAML configuration.
+    // Set the logging to be overridden if the user set the logLevel in the YAML configuration.
     if (this.codeblockConfiguration.logLevel) {
       this.logger.setLogLevel(this.codeblockConfiguration.logLevel);
     }
@@ -100,22 +109,36 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     this.logger.infoWithId(this.renderId, `Query Render generated for class ${this.container.className} -> ${this.codeblockConfiguration.queryDataSource ?? ''}`);
 
     // Setup callbacks for when the notes store is updated. We should render again.
-    this.registerEvent(this.plugin.app.workspace.on('qatt:notes-store-update', this.render));
+    this.registerEvent(this.plugin.app.workspace.on('qatt:notes-store-update', async () => {
+      await this.debouncedRender();
+    }));
     // Render all the codeblock when the inital loaD of notes is completed.
-    this.registerEvent(this.plugin.app.workspace.on('qatt:all-notes-loaded', this.render));
+    this.registerEvent(this.plugin.app.workspace.on('qatt:all-notes-loaded', async () => {
+      await this.debouncedRender();
+    }));
     // Refresh the codeblocks when the refresh event is triggered. This is user or from other stores like
     // CSV, JSON, etc.
-    this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', this.render));
+    this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', async () => {
+      await this.debouncedRender();
+    }));
 
     if (this.codeblockConfiguration.queryDataSource === 'dataview') {
-      this.registerEvent(this.plugin.app.workspace.on('qatt:dataview-store-update', this.render));
+      this.registerEvent(this.plugin.app.workspace.on('qatt:dataview-store-update', async () => {
+        await this.debouncedRender();
+      }));
     }
 
-    await this.render();
+    // Run once and then wait for the debounce window to pass before running again. This will
+    // mean the UI will not update while the user is typing or making changes. The value
+    // can be set in the settings UI and defaults to 5000 milliseconds.
+    this.debouncedRender = debounce(this.render, this.debounceWindow, {isImmediate: true});
+
+    await this.debouncedRender();
   }
 
   onunload() {
     // Unload resources
+    this.debouncedRender.cancel();
     this.logger.infoWithId(this.renderId, `QueryRenderChild unloaded for ${this.renderId}`);
   }
 

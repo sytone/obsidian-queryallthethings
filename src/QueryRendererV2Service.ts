@@ -18,6 +18,7 @@ export interface IRenderingSettings {
   enableCodeBlockEditor: boolean;
   queryFileRoot: string;
   templateFileRoot: string;
+  debounceWindow: number;
 }
 
 export const RenderingSettingsDefaults: IRenderingSettings = {
@@ -28,6 +29,7 @@ export const RenderingSettingsDefaults: IRenderingSettings = {
   enableCodeBlockEditor: true,
   queryFileRoot: '',
   templateFileRoot: '',
+  debounceWindow: 5000,
 };
 
 /**
@@ -59,6 +61,7 @@ export class QueryRendererV2Service extends Service {
       this.enableCodeBlockEditor = settings.enableCodeBlockEditor;
       this.queryFileRoot = settings.queryFileRoot ?? '';
       this.templateFileRoot = settings.templateFileRoot ?? '';
+      this.debounceWindow = settings.debounceWindow;
     },
     (settings: IRenderingSettings) => {
       this.logger.info('QueryRendererV2Service Initialize Settings');
@@ -68,6 +71,7 @@ export class QueryRendererV2Service extends Service {
       this.enableCodeBlockEditor = settings.enableCodeBlockEditor;
       this.queryFileRoot = settings.queryFileRoot ?? '';
       this.templateFileRoot = settings.templateFileRoot ?? '';
+      this.debounceWindow = settings.debounceWindow;
     },
   );
 
@@ -76,6 +80,7 @@ export class QueryRendererV2Service extends Service {
   enableCodeBlockEditor = false;
   queryFileRoot = '';
   templateFileRoot = '';
+  debounceWindow = 5000;
 
   constructor() {
     super();
@@ -91,7 +96,8 @@ export class QueryRendererV2Service extends Service {
         open: this.renderingSettingsOpen,
         text: 'Codeblock Rendering Settings',
         level: 'h2',
-        class: 'settings-heading'}),
+        class: 'settings-heading',
+      }),
       async (value: boolean) => {
         await settings.update(settings => {
           settings.renderingSettingsOpen = value;
@@ -140,6 +146,20 @@ export class QueryRendererV2Service extends Service {
       async (value: string) => {
         await settings.update(settings => {
           settings.templateFileRoot = value;
+        });
+      },
+      settingsSection,
+    );
+
+    const debounceWindow = tab.addTextInput(
+      new SettingsTabField({
+        name: 'Debounce Window',
+        description: 'The time to wait until queries will run while a user is updating the vault.',
+        value: this.debounceWindow.toString(), // Convert the value to a string
+      }),
+      async (value: string) => {
+        await settings.update(settings => {
+          settings.debounceWindow = Number.parseInt(value, 10); // Convert the value to a number
         });
       },
       settingsSection,
@@ -247,6 +267,7 @@ export class QueryRendererV2Service extends Service {
             codeblockConfiguration,
             context,
             this,
+            this.debounceWindow,
           ),
         );
       }
@@ -258,6 +279,7 @@ export class QueryRendererV2Service extends Service {
         await queryRenderChild.create(source, element, context);
       }
     });
+    this.logger.info('QueryRendererV2Service loaded');
   }
 }
 

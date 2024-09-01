@@ -1,34 +1,34 @@
 /* eslint-disable unicorn/filename-case */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {AlaSqlQuery} from 'Query/AlaSqlQuery';
-import {CommandHandler} from 'handlers/CommandHandler';
-import {confirmObjectPath, promptWithSuggestions} from 'Internal';
-import {CsvLoaderService} from 'Data/CsvLoaderService';
-import {DataTables} from 'Data/DataTables';
-import {DataviewService} from 'Integrations/DataviewService';
-import {HandlebarsRenderer} from 'Render/HandlebarsRenderer';
-import {JsonLoaderService} from 'Data/JsonLoaderService';
-import {LoggingService} from 'lib/LoggingService';
-import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
-import {NotesCacheService} from 'NotesCacheService';
-import {QueryFactory} from 'Query/QueryFactory';
-import {QueryRendererV2Service} from 'QueryRendererV2';
-import {ReleaseNotes} from 'ReleaseNotes';
-import {RenderFactory} from 'Render/RenderFactory';
-import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
-import {SqlLoaderService} from 'Data/SqlLoaderService';
-import {type CachedMetadata, Notice, Plugin, type TFile} from 'obsidian';
-import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
-import {type SettingsManager} from 'Settings/SettingsManager';
-import {UpdateModal} from 'lib/UpdateModal';
-import {use, useSettings} from '@ophidian/core';
-import {EventHandler} from 'handlers/EventHandler';
-import {WindowFunctionsService} from 'lib/WindowFunctionsService';
-import {MetricsService} from 'lib/MetricsService';
-import {createEditorMenu} from 'UI/EditorMenu';
+import { CommandHandler } from 'handlers/CommandHandler';
+import { confirmObjectPath, promptWithSuggestions } from 'Internal';
+import { CsvLoaderService } from 'Data/CsvLoaderService';
+import { DataTables } from 'Data/DataTables';
+import { DataviewService } from 'Integrations/DataviewService';
+import { HandlebarsRenderer } from 'Render/HandlebarsRenderer';
+import { JsonLoaderService } from 'Data/JsonLoaderService';
+import { LoggingService } from 'lib/LoggingService';
+import { MarkdownTableLoaderService } from 'Data/MarkdownTableLoaderService';
+import { NotesCacheService } from 'NotesCacheService';
+import { QueryFactory } from 'Query/QueryFactory';
+import { QueryRendererV2Service } from 'QueryRendererV2Service';
+import { ReleaseNotes } from 'ReleaseNotes';
+import { RenderFactory } from 'Render/RenderFactory';
+import { SettingsTabField, SettingsTabHeading, useSettingsTab } from 'Settings/DynamicSettingsTabBuilder';
+import { SqlLoaderService } from 'Data/SqlLoaderService';
+import { type CachedMetadata, Notice, Plugin, type TFile } from 'obsidian';
+import { type IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
+import { type SettingsManager } from 'Settings/SettingsManager';
+import { UpdateModal } from 'lib/UpdateModal';
+import { use, useSettings } from '@ophidian/core';
+import { EventHandler } from 'handlers/EventHandler';
+import { WindowFunctionsService } from 'lib/WindowFunctionsService';
+import { MetricsService } from 'lib/MetricsService';
+import { createEditorMenu } from 'UI/EditorMenu';
+
 
 export class Note {
-  constructor(public markdownFile: TFile, public metadata: CachedMetadata | undefined) {}
+  constructor (public markdownFile: TFile, public metadata: CachedMetadata | undefined) { }
 }
 
 export interface IGeneralSettings {
@@ -43,6 +43,11 @@ export interface IGeneralSettings {
   enableEditorRightClickMenu: boolean;
 }
 
+/**
+ * Represents the QueryAllTheThingsPlugin class.
+ * This class extends the Plugin class and implements the IQueryAllTheThingsPlugin interface.
+ * It provides functionality for querying and rendering data in Obsidian and from other Obsidian plugins.
+ */
 export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAllTheThingsPlugin {
   use = use.plugin(this);
   loggingService = this.use(LoggingService);
@@ -53,10 +58,22 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   eventHandler = this.use(EventHandler);
   releaseNotes = this.use(ReleaseNotes);
   windowFunctions = this.use(WindowFunctionsService);
+  coreSystemInitialized = false;
+  layoutReady = false;
 
-  /* -------------------------------------------------------------------------- */
-  /*                            Plugin wide settings                            */
-  /* -------------------------------------------------------------------------- */
+  // Public inlineRenderer: InlineRenderer | undefined;
+  public queryRendererService: QueryRendererV2Service | undefined;
+  public settingsManager: SettingsManager | undefined;
+  public notesCacheService: NotesCacheService | undefined;
+  public handlebarsRenderer: HandlebarsRenderer | undefined;
+
+  // Loading services
+  public csvLoaderService: CsvLoaderService | undefined;
+  public markdownTableLoaderService: MarkdownTableLoaderService | undefined;
+  public jsonLoaderService: JsonLoaderService | undefined;
+  public sqlLoaderService: SqlLoaderService | undefined;
+
+
   settingsTab = useSettingsTab(this);
 
   settings = useSettings(
@@ -96,13 +113,9 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.enableEditorRightClickMenu = settings.enableEditorRightClickMenu;
       this.commandHandler.setup(settings.internalLoggingConsoleLogLimit);
 
+      // This is the start of all the events that need to be run to get the system into the correct state. The
+      // event qatt:data-local-database-setup-completed is fired when completed.
       await this.dataTables.setupLocalDatabase();
-
-      if (this.onStartSqlQueries) {
-        this.logger.info('Running on start SQL queries', this.onStartSqlQueries);
-        const onStartResult = await this.dataTables.runAdhocQuery(this.onStartSqlQueries);
-        this.logger.info('On start SQL queries result', onStartResult);
-      }
 
       if (!app.plugins.enabledPlugins.has('dataview') && !settings.disableDataviewMissingNotification) {
         const dvNotInstalledNotice = new Notice('Dataview plugin is not installed. Dataview backed tables will be empty.');
@@ -116,6 +129,11 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       void this.announceUpdate();
     },
   );
+  //#region Plugin Settings UI
+  /* -------------------------------------------------------------------------- */
+  /*                            Plugin wide settings                            */
+  /* -------------------------------------------------------------------------- */
+
 
   onStartSqlQueries: string;
   announceUpdates: boolean;
@@ -126,23 +144,11 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   enableEditorRightClickMenu = true;
   enableAlaSqlIndexedDbUse: boolean;
 
-  // Public inlineRenderer: InlineRenderer | undefined;
-  public queryRendererService: QueryRendererV2Service | undefined;
-  public settingsManager: SettingsManager | undefined;
-  public notesCacheService: NotesCacheService | undefined;
-  public handlebarsRenderer: HandlebarsRenderer | undefined;
-
-  // Loading services
-  public csvLoaderService: CsvLoaderService | undefined;
-  public markdownTableLoaderService: MarkdownTableLoaderService | undefined;
-  public jsonLoaderService: JsonLoaderService | undefined;
-  public sqlLoaderService: SqlLoaderService | undefined;
-
   // Settings are rendered in the settings via this. Need to
   // refactor this to use the SettingsTab approach I had.
-  showSettings() {
+  showSettings () {
     const tab = this.settingsTab;
-    const {settings} = this;
+    const { settings } = this;
     this.logger.info('Settings Updated', settings);
 
     tab.initializeTab();
@@ -170,7 +176,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
       });
     };
 
-    tab.addHeading(new SettingsTabHeading({open: this.mainHeadingOpen, text: `Query All The Things (v${this.manifest.version})`, level: 'h1', noticeHtml: settingMainBlockText}), onToggle);
+    tab.addHeading(new SettingsTabHeading({ open: this.mainHeadingOpen, text: `Query All The Things (v${this.manifest.version})`, level: 'h1', noticeHtml: settingMainBlockText }), onToggle);
 
     const onGeneralHeadingToggle = async (value: boolean) => {
       await settings.update(settings => {
@@ -178,7 +184,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
       });
     };
 
-    const generalSettingsSection = tab.addHeading(new SettingsTabHeading({open: this.generalHeadingOpen, text: 'General Settings', level: 'h2', class: 'settings-heading'}), onGeneralHeadingToggle);
+    const generalSettingsSection = tab.addHeading(new SettingsTabHeading({ open: this.generalHeadingOpen, text: 'General Settings', level: 'h2', class: 'settings-heading' }), onGeneralHeadingToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {
@@ -252,76 +258,73 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
       generalSettingsSection,
     );
   }
+  //#endregion
 
-  async onload() {
+  /**
+   * Initializes the plugin when the application loads.
+   * This function sets up various services, registers event listeners, and performs necessary setup tasks.
+   * It also adds ribbon icons for manual table refresh, view refresh, and logging metrics.
+   * @returns {Promise<void>} A promise that resolves once the plugin is loaded.
+   */
+  async onload () {
     this.metrics.startMeasurement('plugin onload');
 
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
     this.logger.debug(`debug level enabled "${this.manifest.name}" v${this.manifest.version}`);
 
-    this.registerEvent(this.app.workspace.on('qatt:data-localdbsetup-completed', async () => {
-      this.logger.info('qatt:data-localdbsetup-completed event detected.');
-      await this.dataTables.refreshTables('qatt:data-localdbsetup-completed event detected');
-    }));
-
+    // Load up the services to be used later.
     this.use(QueryFactory).load();
     this.use(RenderFactory).load();
     this.use(HandlebarsRenderer).load();
     this.use(DataviewService).load();
 
-    this.metrics.startMeasurement('AlaSqlQuery.initialize');
-    AlaSqlQuery.initialize();
-    this.metrics.endMeasurement('AlaSqlQuery.initialize');
-
+    // Make custom functions available to the window object.
     confirmObjectPath('_qatt.ui.promptWithSuggestions', promptWithSuggestions);
 
-    this.metrics.startMeasurement('QueryRendererV2Service Use');
-    this.queryRendererService = this.use(QueryRendererV2Service);
-    this.metrics.endMeasurement('QueryRendererV2Service Use');
+    // Once all the base db and tables are created refresh the inbuilt tables. Also dataview if enabled.
+    // Will fire qatt:data-local-database-setup-completed when completed.
+    this.registerEvent(this.app.workspace.on('qatt:data-local-database-setup-completed', async () => {
+      this.logger.info('qatt:data-local-database-setup-completed event detected.');
+
+      // Wait until layout ready has been fired before we start the cache loading.
+      // This is to ensure that all notes are loaded.
+      let checkCoreSetupInterval = setInterval(async () => {
+        if (this.layoutReady) {
+          clearInterval(checkCoreSetupInterval);
+          this.logger.info('Layout is ready, starting core setup.');
+          await this.initializeCoreServices();
+        }
+      }, 500);
+
+      let checkInterval = setInterval(async () => {
+        if (this.layoutReady && this.coreSystemInitialized) {
+          clearInterval(checkInterval);
+          this.logger.info('Layout is ready, starting cache loading.');
+          /* ------------------------- Setup and prepare the notes caching service ------------------------- */
+          this.metrics.startMeasurement('NotesCacheService Use');
+          this.notesCacheService = this.use(NotesCacheService);
+          this.metrics.endMeasurement('NotesCacheService Use');
+          await this.notesCacheService.layoutReady();
+
+          await this.notesCacheService.cacheAllNotes(this.app);
+
+        }
+      }, 500);
+    }));
+
+    this.registerEvent(this.app.workspace.on('qatt:all-notes-loaded', async () => {
+      /* ------------------------- Register for cache load callback to run SQL ------------------------- */
+      // After all notes are cached the qatt:all-notes-loaded event is triggered. We should always run the SQL
+      // based loader service as it may query data in the notes.
+      this.logger.info('qatt:all-notes-loaded event detected.');
+      this.initializeSqlLoaderService();
+    }));
 
     // When layout is ready we can refresh tables and register the query renderer.
     this.app.workspace.onLayoutReady(async () => {
-      this.logger.info(`Layout is ready for workspace: ${this.app.vault.getName()}`);
+      this.logger.info(`onLayoutReady fired for workspace: ${this.app.vault.getName()}`);
 
-      // Await this.dataTables.refreshTables('layout ready');
-
-      this.metrics.startMeasurement('NotesCacheService Use');
-      this.notesCacheService = this.use(NotesCacheService);
-      this.metrics.endMeasurement('NotesCacheService Use');
-
-      await this.notesCacheService.layoutReady();
-
-      // Cache if all notes have been loaded.
-      if (this.dataTables.refreshTablesCompleted && this.dataTables.setupLocalDatabasesCompleted) {
-        await this.notesCacheService.cacheAllNotes(this.app);
-
-        // Refresh all notes on a datatables update ?
-        // this.registerEvent(this.app.workspace.on('qatt:data-refreshtables-completed', async () => {
-        //   this.logger.info('qatt:data-refreshtables-completed event detected.');
-        //   await this.notesCacheService.cacheAllNotes(this.app);
-        // }));
-      } else {
-        this.registerEvent(this.app.workspace.on('qatt:data-refreshtables-completed', async () => {
-          this.logger.info('qatt:data-refreshtables-completed event detected.');
-          await this.notesCacheService.cacheAllNotes(this.app);
-        }));
-      }
-
-      this.metrics.startMeasurement('CsvLoaderService Use');
-      this.csvLoaderService = this.use(CsvLoaderService);
-      this.metrics.endMeasurement('CsvLoaderService Use');
-
-      this.metrics.startMeasurement('MarkdownTableLoaderService Use');
-      this.markdownTableLoaderService = this.use(MarkdownTableLoaderService);
-      this.metrics.endMeasurement('MarkdownTableLoaderService Use');
-
-      this.metrics.startMeasurement('JsonLoaderService Use');
-      this.jsonLoaderService = this.use(JsonLoaderService);
-      this.metrics.endMeasurement('JsonLoaderService Use');
-
-      this.metrics.startMeasurement('SqlLoaderService Use');
-      this.sqlLoaderService = this.use(SqlLoaderService);
-      this.metrics.endMeasurement('SqlLoaderService Use');
+      this.layoutReady = true;
 
       /* ------------------------- DataView based support ------------------------- */
       const dvService = this.use(DataviewService);
@@ -337,6 +340,9 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
           await this.dataTables.refreshTables('dataview:refresh-views event detected');
         }));
       }
+
+      this.logger.info(`onLayoutReady completed for workspace: ${this.app.vault.getName()}`);
+
     });
 
     // Allow user to refresh the tables manually.
@@ -372,10 +378,61 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
 
     this.metrics.endMeasurement('plugin onload');
     this.metrics.pluginLoadTime = this.metrics.getMeasurement('plugin onload');
+
   }
 
-  onunload() {
+
+
+  private initializeSqlLoaderService () {
+    this.metrics.startMeasurement('SqlLoaderService Use');
+    this.sqlLoaderService = this.use(SqlLoaderService);
+    this.metrics.endMeasurement('SqlLoaderService Use');
+  }
+
+  onunload () {
     this.logger.info(`unloading plugin "${this.manifest.name}" v${this.manifest.version}`);
+  }
+
+  /**
+   * Initializes the core services.
+   * This method performs the following tasks:
+   * 1. Refreshes the tables internally used.
+   * 2. Runs any on start SQL queries once the tables are setup.
+   * 3. Pulls in the CVS, Markdown, or JSON data.
+   * 4. Uses the CsvLoaderService, MarkdownTableLoaderService, JsonLoaderService, and QueryRendererV2Service.
+   *
+   * @returns {Promise<void>} A promise that resolves once the core services are initialized.
+   */
+  private async initializeCoreServices () {
+
+    // Refresh the tables internally used.
+    await this.dataTables.refreshTables('called by initializeCoreServices');
+
+    // Run any on start SQL queries once the tables are setup.
+    if (this.onStartSqlQueries) {
+      this.logger.info('Running on start SQL queries', this.onStartSqlQueries);
+      const onStartResult = await this.dataTables.runAdhocQuery(this.onStartSqlQueries);
+      this.logger.info('On start SQL queries result', onStartResult);
+    }
+
+    /* ------------------------- Pull in the CVS, Markdown or JSON data ------------------------- */
+    this.metrics.startMeasurement('CsvLoaderService Use');
+    this.csvLoaderService = this.use(CsvLoaderService);
+    this.metrics.endMeasurement('CsvLoaderService Use');
+
+    this.metrics.startMeasurement('MarkdownTableLoaderService Use');
+    this.markdownTableLoaderService = this.use(MarkdownTableLoaderService);
+    this.metrics.endMeasurement('MarkdownTableLoaderService Use');
+
+    this.metrics.startMeasurement('JsonLoaderService Use');
+    this.jsonLoaderService = this.use(JsonLoaderService);
+    this.metrics.endMeasurement('JsonLoaderService Use');
+
+    this.metrics.startMeasurement('QueryRendererV2Service Use');
+    this.queryRendererService = this.use(QueryRendererV2Service);
+    this.metrics.endMeasurement('QueryRendererV2Service Use');
+
+    this.coreSystemInitialized = true;
   }
 
   /**
@@ -384,7 +441,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
    * @return {*}
    * @memberof QueryAllTheThingsPlugin
    */
-  public async announceUpdate() {
+  public async announceUpdate () {
     const currentVersion = this.manifest.version;
     const knownVersion = this.version;
     this.logger.info(`Current version: ${currentVersion}, Known version: ${knownVersion}`);

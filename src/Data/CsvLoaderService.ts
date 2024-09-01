@@ -1,10 +1,10 @@
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {useSettings} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
-import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
-import {BaseLoaderService} from 'Data/BaseLoaderService';
-import {parse} from 'papaparse';
+import { useSettings } from '@ophidian/core';
+import { LoggingService } from 'lib/LoggingService';
+import { SettingsTabField, SettingsTabHeading, useSettingsTab } from 'Settings/DynamicSettingsTabBuilder';
+import { BaseLoaderService } from 'Data/BaseLoaderService';
+import { parse } from 'papaparse';
 
 export interface ICsvLoaderSettings {
   csvFiles: string;
@@ -35,9 +35,9 @@ export class CsvLoaderService extends BaseLoaderService {
     },
   );
 
-  showSettings() {
+  showSettings () {
     const tab = this.settingsTab;
-    const {settings} = this;
+    const { settings } = this;
 
     const onToggle = async (value: boolean) => {
       await settings.update(settings => {
@@ -45,7 +45,7 @@ export class CsvLoaderService extends BaseLoaderService {
       });
     };
 
-    const settingsSection = tab.addHeading(new SettingsTabHeading({open: this.csvLoaderSettingsOpen, text: 'CSV Loader Settings', level: 'h2', class: 'settings-heading'}), onToggle);
+    const settingsSection = tab.addHeading(new SettingsTabHeading({ open: this.csvLoaderSettingsOpen, text: 'CSV Loader Settings', level: 'h2', class: 'settings-heading' }), onToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {
@@ -64,7 +64,7 @@ export class CsvLoaderService extends BaseLoaderService {
     );
   }
 
-  public importCallback = (content: string, tableName: string) => {
+  public importCallback = async (content: string, tableName: string) => {
     const tr = parse(content, {
       header: true,
       dynamicTyping: true,

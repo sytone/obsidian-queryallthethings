@@ -1,18 +1,18 @@
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {type MarkdownPostProcessorContext, Plugin, TFile} from 'obsidian';
-import {type QattCodeBlock} from 'QattCodeBlock';
-import {type IRenderer} from 'Render/IRenderer';
-import {RenderFactory} from 'Render/RenderFactory';
-import {QueryFactory} from 'Query/QueryFactory';
-import {type IQuery} from 'Query/IQuery';
-import {LoggingService, type Logger} from 'lib/LoggingService';
-import {MicromarkPostRenderer} from 'PostRender/MicromarkPostRenderer';
-import {ObsidianPostRenderer} from 'PostRender/ObsidianPostRenderer';
-import {type IPostRenderer} from 'PostRender/IPostRenderer';
-import {HtmlPostRenderer} from 'PostRender/HtmlPostRenderer';
-import {RawPostRenderer} from 'PostRender/RawPostRenderer';
-import {type QueryRendererV2Service} from 'QueryRendererV2';
+import { type MarkdownPostProcessorContext, Plugin, TFile } from 'obsidian';
+import { type QattCodeBlock } from 'QattCodeBlock';
+import { type IRenderer } from 'Render/IRenderer';
+import { RenderFactory } from 'Render/RenderFactory';
+import { QueryFactory } from 'Query/QueryFactory';
+import { type IQuery } from 'Query/IQuery';
+import { LoggingService, type Logger } from 'lib/LoggingService';
+import { MicromarkPostRenderer } from 'PostRender/MicromarkPostRenderer';
+import { ObsidianPostRenderer } from 'PostRender/ObsidianPostRenderer';
+import { type IPostRenderer } from 'PostRender/IPostRenderer';
+import { HtmlPostRenderer } from 'PostRender/HtmlPostRenderer';
+import { RawPostRenderer } from 'PostRender/RawPostRenderer';
+import { type QueryRendererV2Service } from 'QueryRendererV2Service';
 
 /**
  * All the rendering logic is handled here. It uses ths configuration to
@@ -32,7 +32,7 @@ export class QueryRenderChildV3 {
 
   private renderId: string;
 
-  public constructor(
+  public constructor (
     public container: HTMLElement,
     public codeblockConfiguration: QattCodeBlock,
     public context: MarkdownPostProcessorContext,
@@ -46,7 +46,7 @@ export class QueryRenderChildV3 {
     this.renderFactory = service.use(RenderFactory);
   }
 
-  public async create(source: string, element: HTMLElement, ctx: MarkdownPostProcessorContext) {
+  public async create (source: string, element: HTMLElement, ctx: MarkdownPostProcessorContext) {
     element.empty();
     this.logger.infoWithId('Source:', source);
 
@@ -127,7 +127,7 @@ export class QueryRenderChildV3 {
 
       // Content will be inserted into a SPAN element.
       const renderedContentElement = document.createElement('span');
-      const {renderedContent, rawPostRenderResult} = await this.getPostRenderFormat(postRenderFormat, renderResults, renderedContentElement, ctx.sourcePath);
+      const { renderedContent, rawPostRenderResult } = await this.getPostRenderFormat(postRenderFormat, renderResults, renderedContentElement, ctx.sourcePath);
       this.logger.debug('postRenderResults:', renderedContent.outerHTML);
       this.logger.debug('rawPostRenderResult:', rawPostRenderResult);
 
@@ -176,7 +176,7 @@ export class QueryRenderChildV3 {
           if (info) {
             this.logger.info('info:', info);
             // OLD
-            const {lineStart} = info;
+            const { lineStart } = info;
             const lineEnd = this.getCodeBlockEndLine(text, lineStart);
             if (lineEnd === -1 || !lineEnd) {
               return text;
@@ -214,7 +214,7 @@ export class QueryRenderChildV3 {
     this.logger.groupEndId();
   }
 
-  private getCodeBlockEndLine(text: string, startLine: number, count = 1) {
+  private getCodeBlockEndLine (text: string, startLine: number, count = 1) {
     let line = startLine + 1;
     const lines = text.split('\n');
     while (line < lines.length) {
@@ -240,7 +240,7 @@ export class QueryRenderChildV3 {
    * @param postRenderResults - The rendered output to be written to the file.
    * @param replaceCodeBlock - Determines whether to append or prepend the rendered output to the existing file content.
    */
-  private async writeRenderedOutputToFile(targetPath: string, postRenderResults: string, replaceCodeBlock: string) {
+  private async writeRenderedOutputToFile (targetPath: string, postRenderResults: string, replaceCodeBlock: string) {
     this.logger.infoWithId(this.renderId, `writeRenderedOutputToFile: ${targetPath}`);
 
     const targetFile = this.getTargetFile(targetPath);
@@ -287,7 +287,7 @@ export class QueryRenderChildV3 {
    * @param postRenderResults - The post-render results to be written to the new file.
    * @returns A Promise that resolves with the newly created file.
    */
-  private async createFile(targetPath: string, postRenderResults: string) {
+  private async createFile (targetPath: string, postRenderResults: string) {
     await this.service.notesCacheService.ignoreFileEventsForPeriod(targetPath, 1000);
     return this.plugin.app.vault.create(targetPath, postRenderResults);
   }
@@ -298,7 +298,7 @@ export class QueryRenderChildV3 {
    * @param postRenderResults - The post-render results to use for modification.
    * @returns A promise that resolves with the modified file contents.
    */
-  private async modifyFile(targetFile: TFile, postRenderResults: string) {
+  private async modifyFile (targetFile: TFile, postRenderResults: string) {
     await this.service.notesCacheService.ignoreFileEventsForPeriod(targetFile.path, 1000);
 
     return this.plugin.app.vault.modify(targetFile, postRenderResults);
@@ -309,7 +309,7 @@ export class QueryRenderChildV3 {
    * @param targetFile - The file to retrieve the cached content for.
    * @returns A promise that resolves with the cached content of the target file.
    */
-  private async getCachedContent(targetFile: TFile): Promise<string> {
+  private async getCachedContent (targetFile: TFile): Promise<string> {
     return this.plugin.app.vault.cachedRead(targetFile);
   }
 
@@ -318,7 +318,7 @@ export class QueryRenderChildV3 {
    * @param targetPath - The path of the target file.
    * @returns The TFile object for the file located at the specified target path, or undefined if the file is not found.
    */
-  private getTargetFile(targetPath: string): TFile | undefined {
+  private getTargetFile (targetPath: string): TFile | undefined {
     targetPath = targetPath.replace(/\\/g, '/');
     return this.plugin.app.vault.getFiles().find(file => file.path === targetPath);
   }
@@ -330,7 +330,7 @@ export class QueryRenderChildV3 {
    * @param renderedContent - The HTML element where the content will be rendered.
    * @returns The rendered content.
    */
-  private async getPostRenderFormat(postRenderFormat: string, renderResults: string, renderedContent: HTMLSpanElement, sourcePath: string) {
+  private async getPostRenderFormat (postRenderFormat: string, renderResults: string, renderedContent: HTMLSpanElement, sourcePath: string) {
     let postRenderer: IPostRenderer;
     switch (postRenderFormat) {
       case 'markdown': {
@@ -360,7 +360,7 @@ export class QueryRenderChildV3 {
     }
 
     const rawPostRenderResult = await postRenderer.renderMarkdown(renderResults, renderedContent, sourcePath, this.plugin);
-    return {renderedContent, rawPostRenderResult};
+    return { renderedContent, rawPostRenderResult };
 
     // Old Approach
     // const postRenderFunctions: Record<string, () => Promise<HTMLSpanElement>> = {

@@ -1,9 +1,9 @@
 
-import {useSettings} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
-import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
-import {BaseLoaderService} from 'Data/BaseLoaderService';
-import {DataTables} from 'Data/DataTables';
+import { useSettings } from '@ophidian/core';
+import { LoggingService } from 'lib/LoggingService';
+import { SettingsTabField, SettingsTabHeading, useSettingsTab } from 'Settings/DynamicSettingsTabBuilder';
+import { BaseLoaderService } from 'Data/BaseLoaderService';
+import { DataTables } from 'Data/DataTables';
 
 export interface ISqlLoaderSettings {
   sqlFiles: string;
@@ -34,9 +34,9 @@ export class SqlLoaderService extends BaseLoaderService {
     },
   );
 
-  showSettings() {
+  showSettings () {
     const tab = this.settingsTab;
-    const {settings} = this;
+    const { settings } = this;
 
     const onToggle = async (value: boolean) => {
       await settings.update(settings => {
@@ -44,7 +44,7 @@ export class SqlLoaderService extends BaseLoaderService {
       });
     };
 
-    const settingsSection = tab.addHeading(new SettingsTabHeading({open: this.sqlLoaderSettingsOpen, text: 'SQL Loader Settings', level: 'h2', class: 'settings-heading'}), onToggle);
+    const settingsSection = tab.addHeading(new SettingsTabHeading({ open: this.sqlLoaderSettingsOpen, text: 'SQL Loader Settings', level: 'h2', class: 'settings-heading' }), onToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {
@@ -63,9 +63,9 @@ export class SqlLoaderService extends BaseLoaderService {
     );
   }
 
-  public importCallback = (content: string, tableName: string) => {
+  public importCallback = async (content: string, tableName: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const sqlQueryResult = this.dataTables?.runAdhocQuery(content);
+    const sqlQueryResult = await this.dataTables?.runAdhocQuery(content);
     this.logger.info('SQL query result', sqlQueryResult);
     return [];
   };
