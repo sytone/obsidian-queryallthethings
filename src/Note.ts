@@ -32,6 +32,7 @@ If you need to reference a property of a object do not forget to use `->` and no
 | ------------ | ------------------------------------------------- | ------------------------------------------------------------ |
 | path         | string                                            | Full path to the markdown note                               |
 | name         | string                                            | The name of the note including the extension                 |
+| content      | string                                            | The raw content of the markdown file                         |
 | internalPath | string                                            | Full path to the markdown note minus the extension           |
 | parentFolder | string                                            | The path of the parent folder for this note                  |
 | basename     | number                                            | Just the name of the note                                    |
