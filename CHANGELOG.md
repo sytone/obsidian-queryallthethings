@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.2](https://github.com/sytone/obsidian-queryallthethings/compare/1.1.1...1.1.2) (2024-10-02)
+
+
+### Bug Fixes and Changes
+
+* allow the debounce to be disabled as it is not working on page renames correctly ([700b6e3](https://github.com/sytone/obsidian-queryallthethings/commits/700b6e3036c3c63614d684ccbcd9e626dbf6d8ea))
+
 ### [1.1.1](https://github.com/sytone/obsidian-queryallthethings/compare/1.1.0...1.1.1) (2024-09-01)
 
 
