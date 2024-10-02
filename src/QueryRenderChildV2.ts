@@ -137,9 +137,10 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     // Run once and then wait for the debounce window to pass before running again. This will
     // mean the UI will not update while the user is typing or making changes. The value
     // can be set in the settings UI and defaults to 5000 milliseconds.
-    this.debouncedRender = pDebounce(this.render, 200); // Old debounce(this.render, this.debounceWindow, {isImmediate: true});
+    this.debouncedRender = pDebounce(this.render, this.debounceWindow); // Old debounce(this.render, this.debounceWindow, {isImmediate: true});
 
-    await (this.disableDebounce ? this.render() : this.debouncedRender());
+    // On first load do not wait for the debounce window.
+    await this.render();
   }
 
   onunload() {
