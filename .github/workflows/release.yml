@@ -64,26 +64,16 @@ jobs:
           cp -R docs/. ${{ github.event.repository.name }}/vault
           zip -r ${{ github.event.repository.name }}.vault.zip ${{ github.event.repository.name }}/vault
 
-      - name: Build Changelog
-        id: github_release
-        uses: mikepenz/release-changelog-builder-action@v5
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Changelog 🚀
+        id: get_release_notes
+        uses: yashanand1910/standard-release-notes@v1.2.1
         with:
-          configurationJson: |
-            {
-              "template": "# Query All The Things (qatt) v${{ github.ref_name }} Release :tada:\n\nYou can download the documentation and example vault to open in obsidian to see the queries in action <A href='https://github.com/sytone/obsidian-queryallthethings/releases/latest/download/obsidian-queryallthethings.vault.zip'>here</a>.\n\n#{{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n#{{UNCATEGORIZED}}\n</details>",
-              "categories": [
-                {
-                  "title": "## 🚀 Features",
-                  "labels": ["feature","feat"]
-                },              
-                {
-                  "title": "## 📖 Documentation",
-                  "labels": ["docs"]
-                }
-              ]
-            }                
+          changelog_path: ./CHANGELOG.md # Optional
+          version: ${{ github.ref }} # Required
+
+      - name: Show Release Notes 🏷️
+        run: |
+          echo "${{ steps.get_release_notes.outputs.release_notes }}"
 
       - name: Release Plugin 🚀
         uses: ncipollo/release-action@v1
@@ -92,6 +82,11 @@ jobs:
           artifacts: './${{ github.event.repository.name }}.zip,./${{ github.event.repository.name }}.vault.zip,./dist/main.js,./dist/manifest.json,./dist/styles.css'
           name: ${{ github.ref_name }}
           draft: true
-          body: ${{steps.github_release.outputs.changelog}}
+          body: |
+            # Query All The Things (qatt) v${{ github.ref_name }} Release :tada:
+            
+            You can download the documentation and example vault to open in obsidian to see the queries in action <A href='https://github.com/sytone/obsidian-queryallthethings/releases/latest/download/obsidian-queryallthethings.vault.zip'>here</a>.
+            
+            ${{ steps.get_release_notes.outputs.release_notes }}
           generateReleaseNotes: true
           discussionCategory: announcements
