@@ -92,6 +92,7 @@
     "micromark-util-combine-extensions": "^1.1.0",
     "micromark-util-types": "^1.1.0",
     "obsidian-dataview": "0.5.56",
+    "p-debounce": "^4.0.0",
     "papaparse": "^5.4.1"
   },
   "xo": {

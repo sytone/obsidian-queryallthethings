@@ -21,7 +21,7 @@ import {CsvLoaderService} from 'Data/CsvLoaderService';
 import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
 import {JsonLoaderService} from 'Data/JsonLoaderService';
 import {SqlLoaderService} from 'Data/SqlLoaderService';
-import {debounce, type IDebouncedFunction} from 'lib/Debounce';
+import pDebounce from 'p-debounce';
 
 /**
  * All the rendering logic is handled here. It uses ths configuration to
@@ -52,7 +52,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   sqlLoaderService: SqlLoaderService | undefined;
 
   throttledRender: () => Promise<void>;
-  debouncedRender: IDebouncedFunction<any[], () => Promise<void>>;
+  debouncedRender: () => Promise<void>; // IDebouncedFunction<any[], () => Promise<void>>;
 
   private renderId: string;
   private startTime = new Date(Date.now());
@@ -137,14 +137,14 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     // Run once and then wait for the debounce window to pass before running again. This will
     // mean the UI will not update while the user is typing or making changes. The value
     // can be set in the settings UI and defaults to 5000 milliseconds.
-    this.debouncedRender = debounce(this.render, this.debounceWindow, {isImmediate: true});
+    this.debouncedRender = pDebounce(this.render, 200); // Old debounce(this.render, this.debounceWindow, {isImmediate: true});
 
     await (this.disableDebounce ? this.render() : this.debouncedRender());
   }
 
   onunload() {
     // Unload resources
-    this.debouncedRender.cancel();
+    // this.debouncedRender.cancel();
     this.logger.infoWithId(this.renderId, `QueryRenderChild unloaded for ${this.renderId}`);
   }
 
@@ -154,6 +154,8 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   render = async () => {
     this.logger.groupId(this.renderId);
     this.startTime = new Date(Date.now());
+    this.logger.infoWithId(this.renderId, 'Render Start');
+
     this.container.innerHTML = '';
 
     // If the cache has not been loaded then just put a placeholder message, when
