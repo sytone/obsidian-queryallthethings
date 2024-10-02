@@ -1,7 +1,7 @@
 {
   "id": "qatt",
   "name": "Query all the things",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "minAppVersion": "1.2.8",
   "description": "Execute SQL base queries against your data in Obsidian and render it how you want using templates.",
   "author": "Sytone",

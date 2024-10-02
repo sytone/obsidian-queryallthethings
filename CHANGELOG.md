@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.3](https://github.com/sytone/obsidian-queryallthethings/compare/1.1.2...1.1.3) (2024-10-02)
+
+
+### Documentation
+
+* add content field to the obsidian_notes reference ([30086c6](https://github.com/sytone/obsidian-queryallthethings/commits/30086c67e4b4d58873364db925cee6a9c768f6ae))
+
+
+### Bug Fixes and Changes
+
+* make first load just run and then the debounce use the debounce window. ([e575bc3](https://github.com/sytone/obsidian-queryallthethings/commits/e575bc3821b4d69f88e4042c16069e6a3f5c9eef))
+* use p-debounce to handle delayed cache updates ([2d39823](https://github.com/sytone/obsidian-queryallthethings/commits/2d398236a3cb3d953a59ad3adbfe2bb56cf0e362))
+
 ### [1.1.2](https://github.com/sytone/obsidian-queryallthethings/compare/1.1.1...1.1.2) (2024-10-02)
 
 
