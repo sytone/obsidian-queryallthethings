@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/sytone/obsidian-queryallthethings/compare/1.1.3...1.2.0) (2024-10-02)
+
+
+### Features
+
+* **render:** add relational operators to handlebars requested in [#25](https://github.com/sytone/obsidian-queryallthethings/issues/25) ([7a4da44](https://github.com/sytone/obsidian-queryallthethings/commits/7a4da44286fd36e81389d96d6675016d110cda0d))
+
 ### [1.1.3](https://github.com/sytone/obsidian-queryallthethings/compare/1.1.2...1.1.3) (2024-10-02)
 
 
