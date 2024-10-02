@@ -90,6 +90,8 @@ export class NotesCacheService extends Service {
   public notesMap = new Map<string, Note>();
   public listItemsMap = new Map<string, ListItem>();
   public taskItemMap = new Map<string, TaskItem>();
+  // Map of Page to tag, used for quick lookup of tags.
+  public tagsNoteMap = new Map<string, string>();
   public ignoredFiles: Record<string, DateTime> = {};
 
   private get obsidianNotesTableName() {
@@ -231,7 +233,7 @@ export class NotesCacheService extends Service {
 
     this.registerEvent(
       this.plugin.app.vault.on('rename', async (file, oldPath) => {
-        this.logger.info(`rename event detected for ${file.path}`);
+        this.logger.info(`rename event detected for ${file.path} it was ${oldPath}`);
         if (!this.allNotesLoaded) {
           return;
         }

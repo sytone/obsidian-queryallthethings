@@ -59,6 +59,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   private queryResults: any;
   private renderResults: string;
   private readonly debounceWindow: number;
+  private readonly disableDebounce: boolean;
 
   // eslint-disable-next-line max-params
   public constructor(
@@ -66,7 +67,8 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     codeblockConfiguration: QattCodeBlock,
     context: MarkdownPostProcessorContext,
     service: QueryRendererV2Service,
-    debounceWindow = 5000) {
+    debounceWindow = 5000,
+    disableDebounce = false) {
     super(container);
     this.container = container;
     this.codeblockConfiguration = codeblockConfiguration;
@@ -74,6 +76,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     this.service = service;
 
     this.debounceWindow = debounceWindow;
+    this.disableDebounce = disableDebounce;
 
     // If I use 'use' at the top of this class then it throws
     // an error that there is no context available. This class
@@ -110,21 +113,24 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
     // Setup callbacks for when the notes store is updated. We should render again.
     this.registerEvent(this.plugin.app.workspace.on('qatt:notes-store-update', async () => {
-      await this.debouncedRender();
+      this.logger.infoWithId(this.renderId, 'qatt:notes-store-update event triggered');
+      await (this.disableDebounce ? this.render() : this.debouncedRender());
     }));
-    // Render all the codeblock when the inital loaD of notes is completed.
+
+    // Render all the codeblock when the initial load of notes is completed.
     this.registerEvent(this.plugin.app.workspace.on('qatt:all-notes-loaded', async () => {
-      await this.debouncedRender();
+      await (this.disableDebounce ? this.render() : this.debouncedRender());
     }));
+
     // Refresh the codeblocks when the refresh event is triggered. This is user or from other stores like
     // CSV, JSON, etc.
     this.registerEvent(this.plugin.app.workspace.on('qatt:refresh-codeblocks', async () => {
-      await this.debouncedRender();
+      await (this.disableDebounce ? this.render() : this.debouncedRender());
     }));
 
     if (this.codeblockConfiguration.queryDataSource === 'dataview') {
       this.registerEvent(this.plugin.app.workspace.on('qatt:dataview-store-update', async () => {
-        await this.debouncedRender();
+        await (this.disableDebounce ? this.render() : this.debouncedRender());
       }));
     }
 
@@ -133,7 +139,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     // can be set in the settings UI and defaults to 5000 milliseconds.
     this.debouncedRender = debounce(this.render, this.debounceWindow, {isImmediate: true});
 
-    await this.debouncedRender();
+    await (this.disableDebounce ? this.render() : this.debouncedRender());
   }
 
   onunload() {

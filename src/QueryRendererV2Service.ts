@@ -19,6 +19,7 @@ export interface IRenderingSettings {
   queryFileRoot: string;
   templateFileRoot: string;
   debounceWindow: number;
+  disableDebounce: boolean;
 }
 
 export const RenderingSettingsDefaults: IRenderingSettings = {
@@ -30,6 +31,7 @@ export const RenderingSettingsDefaults: IRenderingSettings = {
   queryFileRoot: '',
   templateFileRoot: '',
   debounceWindow: 5000,
+  disableDebounce: false,
 };
 
 /**
@@ -62,6 +64,7 @@ export class QueryRendererV2Service extends Service {
       this.queryFileRoot = settings.queryFileRoot ?? '';
       this.templateFileRoot = settings.templateFileRoot ?? '';
       this.debounceWindow = settings.debounceWindow;
+      this.disableDebounce = settings.disableDebounce;
     },
     (settings: IRenderingSettings) => {
       this.logger.info('QueryRendererV2Service Initialize Settings');
@@ -72,6 +75,7 @@ export class QueryRendererV2Service extends Service {
       this.queryFileRoot = settings.queryFileRoot ?? '';
       this.templateFileRoot = settings.templateFileRoot ?? '';
       this.debounceWindow = settings.debounceWindow;
+      this.disableDebounce = settings.disableDebounce;
     },
   );
 
@@ -81,6 +85,7 @@ export class QueryRendererV2Service extends Service {
   queryFileRoot = '';
   templateFileRoot = '';
   debounceWindow = 5000;
+  disableDebounce = false;
 
   constructor() {
     super();
@@ -146,6 +151,20 @@ export class QueryRendererV2Service extends Service {
       async (value: string) => {
         await settings.update(settings => {
           settings.templateFileRoot = value;
+        });
+      },
+      settingsSection,
+    );
+
+    const debounceDisable = tab.addToggle(
+      new SettingsTabField({
+        name: 'Disable Query Debounce',
+        description: 'This disables the debounce on query execution, queries will run more often.',
+        value: this.disableDebounce,
+      }),
+      async (value: boolean) => {
+        await settings.update(settings => {
+          settings.disableDebounce = value;
         });
       },
       settingsSection,
@@ -268,6 +287,7 @@ export class QueryRendererV2Service extends Service {
             context,
             this,
             this.debounceWindow,
+            this.disableDebounce,
           ),
         );
       }
