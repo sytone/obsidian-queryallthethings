@@ -8,6 +8,7 @@ import {lowercase} from 'Render/HandlebarsHelpers/Lowercase';
 import {uppercase} from 'Render/HandlebarsHelpers/Uppercase';
 import {stringify} from 'Render/HandlebarsHelpers/Stringify';
 import Handlebars from 'handlebars';
+import {eq, ge, gt, le, lt, ne} from 'Render/HandlebarsHelpers/RelationalOperators';
 
 function generateCodeBlock(template: string): IQattCodeBlock {
   return {
@@ -99,5 +100,102 @@ describe('handlebars helpers', () => {
     "page": "folder/SomePage.md"
   }
 ]`);
+  });
+
+  // Relational Operators
+  it('eq parses correctly', () => {
+    Handlebars.registerHelper('eq', eq);
+
+    const testCodeBlock = generateCodeBlock('{{#eq \'test string\' \'test string\'}}equal{{else}}ERROR{{/eq}}');
+
+    const compliedTemplate = Handlebars.compile(testCodeBlock.template);
+    const result = [{}];
+    const output = compliedTemplate({result});
+
+    assert.strictEqual(output, 'equal');
+  });
+
+  it('ne parses correctly', () => {
+    Handlebars.registerHelper('ne', ne);
+
+    const testCodeBlock = generateCodeBlock('{{#ne \'test string one\' \'test string two\'}}notequal{{else}}ERROR{{/ne}}');
+
+    const compliedTemplate = Handlebars.compile(testCodeBlock.template);
+    const result = [{}];
+    const output = compliedTemplate({result});
+
+    assert.strictEqual(output, 'notequal');
+  });
+
+  it('ge parses greater than correctly', () => {
+    Handlebars.registerHelper('ge', ge);
+
+    const testCodeBlock = generateCodeBlock('{{#ge 23 20}}greaterthan{{else}}ERROR{{/ge}}');
+
+    const compliedTemplate = Handlebars.compile(testCodeBlock.template);
+    const result = [{}];
+    const output = compliedTemplate({result});
+
+    assert.strictEqual(output, 'greaterthan');
+  });
+
+  it('ge parses equal correctly', () => {
+    Handlebars.registerHelper('ge', ge);
+
+    const testCodeBlock = generateCodeBlock('{{#ge 23 23}}equal{{else}}ERROR{{/ge}}');
+
+    const compliedTemplate = Handlebars.compile(testCodeBlock.template);
+    const result = [{}];
+    const output = compliedTemplate({result});
+
+    assert.strictEqual(output, 'equal');
+  });
+
+  it('gt parses greater than correctly', () => {
+    Handlebars.registerHelper('gt', gt);
+
+    const testCodeBlock = generateCodeBlock('{{#gt 23 20}}greaterthan{{else}}ERROR{{/gt}}');
+
+    const compliedTemplate = Handlebars.compile(testCodeBlock.template);
+    const result = [{}];
+    const output = compliedTemplate({result});
+
+    assert.strictEqual(output, 'greaterthan');
+  });
+
+  it('le parses less than correctly', () => {
+    Handlebars.registerHelper('le', le);
+
+    const testCodeBlock = generateCodeBlock('{{#le 20 23}}less than{{else}}ERROR{{/le}}');
+
+    const compliedTemplate = Handlebars.compile(testCodeBlock.template);
+    const result = [{}];
+    const output = compliedTemplate({result});
+
+    assert.strictEqual(output, 'less than');
+  });
+
+  it('le parses equal correctly', () => {
+    Handlebars.registerHelper('le', le);
+
+    const testCodeBlock = generateCodeBlock('{{#le 20 20}}equal{{else}}ERROR{{/le}}');
+
+    const compliedTemplate = Handlebars.compile(testCodeBlock.template);
+    const result = [{}];
+    const output = compliedTemplate({result});
+
+    assert.strictEqual(output, 'equal');
+  });
+
+  it('lt parses less than correctly', () => {
+    Handlebars.registerHelper('lt', lt);
+
+    const testCodeBlock = generateCodeBlock('{{#lt 20 23}}less than{{else}}ERROR{{/lt}}');
+
+    const compliedTemplate = Handlebars.compile(testCodeBlock.template);
+    const result = [{}];
+    const output = compliedTemplate({result});
+
+    assert.strictEqual(output, 'less than');
   });
 });

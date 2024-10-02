@@ -22,3 +22,4 @@ export * from 'Render/HandlebarsHelpers/ToInt';
 export * from 'Render/HandlebarsHelpers/Trim';
 export * from 'Render/HandlebarsHelpers/Uppercase';
 export * from 'Render/HandlebarsHelpers/FormatDate';
+export * from 'Render/HandlebarsHelpers/RelationalOperators';

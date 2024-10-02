@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { Service } from '@ophidian/core';
-import { Plugin, type TFile } from 'obsidian';
+import {Service} from '@ophidian/core';
+import {Plugin, type TFile} from 'obsidian';
 import Handlebars from 'handlebars';
-import { LoggingService } from 'lib/LoggingService';
-import { type QattCodeBlock } from 'QattCodeBlock';
-import { type IRenderer } from 'Render/IRenderer';
+import {LoggingService} from 'lib/LoggingService';
+import {type QattCodeBlock} from 'QattCodeBlock';
+import {type IRenderer} from 'Render/IRenderer';
 import * as handlebarsHelpers from 'Render/HandlebarsHelpers';
 
 export class HandlebarsRenderer extends Service implements IRenderer {
@@ -19,17 +19,18 @@ export class HandlebarsRenderer extends Service implements IRenderer {
    * @return {*}  {void}
    * @memberof HandlebarsRenderer
    */
-  onload (): void {
+  onload(): void {
     this.logger.info('Setting up inbuilt Handlebars helpers');
 
     // Iterate through all the exported helpers in the HandlebarsHelpers/index.ts file
     for (const handlebarsHelper of Object.entries(handlebarsHelpers)) {
       Handlebars.registerHelper(handlebarsHelper[0], handlebarsHelper[1]);
     }
+
     this.logger.info('HandlebarsRenderer loaded');
   }
 
-  public async renderTemplate (codeblockConfiguration: QattCodeBlock, result: any) {
+  public async renderTemplate(codeblockConfiguration: QattCodeBlock, result: any) {
     if (codeblockConfiguration.logLevel) {
       this.logger.setLogLevel(codeblockConfiguration.logLevel);
     }
@@ -47,7 +48,7 @@ export class HandlebarsRenderer extends Service implements IRenderer {
     this.logger.debug('rendering compiled template:', template);
     const compliedTemplate = Handlebars.compile(template);
 
-    return compliedTemplate({ result });
+    return compliedTemplate({result});
   }
 }
 
