@@ -65,7 +65,7 @@
     "nyc": "^15.1.0",
     "obsidian": "1.2.8",
     "prettier": "2.8.8",
-    "rollup": "^3.29.4",
+    "rollup": "^3.29.5",
     "shiki": "^1.10.0",
     "standard-version": "^9.5.0",
     "ts-node": "^10.9.2",
