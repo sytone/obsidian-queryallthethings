@@ -1,9 +1,9 @@
 
-import { useSettings } from '@ophidian/core';
-import { LoggingService } from 'lib/LoggingService';
-import { SettingsTabField, SettingsTabHeading, useSettingsTab } from 'Settings/DynamicSettingsTabBuilder';
-import { BaseLoaderService } from 'Data/BaseLoaderService';
-import { DataTables } from 'Data/DataTables';
+import {useSettings} from '@ophidian/core';
+import {LoggingService} from 'lib/LoggingService';
+import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
+import {BaseLoaderService} from 'Data/BaseLoaderService';
+import {DataTables} from 'Data/DataTables';
 
 export interface ISqlLoaderSettings {
   sqlFiles: string;
@@ -34,9 +34,9 @@ export class SqlLoaderService extends BaseLoaderService {
     },
   );
 
-  showSettings () {
+  showSettings() {
     const tab = this.settingsTab;
-    const { settings } = this;
+    const {settings} = this;
 
     const onToggle = async (value: boolean) => {
       await settings.update(settings => {
@@ -44,7 +44,7 @@ export class SqlLoaderService extends BaseLoaderService {
       });
     };
 
-    const settingsSection = tab.addHeading(new SettingsTabHeading({ open: this.sqlLoaderSettingsOpen, text: 'SQL Loader Settings', level: 'h2', class: 'settings-heading' }), onToggle);
+    const settingsSection = tab.addHeading(new SettingsTabHeading({open: this.sqlLoaderSettingsOpen, text: 'SQL Loader Settings', level: 'h2', class: 'settings-heading'}), onToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {
@@ -63,6 +63,15 @@ export class SqlLoaderService extends BaseLoaderService {
     );
   }
 
+  /**
+   * Asynchronously executes an ad-hoc SQL query returns a empty array. This
+   * is used to execute the SQL query in the settings. Unlike the other loaders
+   * in the plugin, this one is not used to import data into a table.
+   *
+   * @param content - The SQL query to be executed.
+   * @param tableName - The name of the table (currently unused).
+   * @returns A promise that resolves to an empty array.
+   */
   public importCallback = async (content: string, tableName: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const sqlQueryResult = await this.dataTables?.runAdhocQuery(content);

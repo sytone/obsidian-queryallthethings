@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint indent: [2, 2, {"SwitchCase": 1}] */
-import { DateTime } from 'luxon';
-import { type ILogOptions } from 'Interfaces/Settings';
-import { Service } from '@ophidian/core';
-import { Plugin } from 'obsidian';
+import {DateTime} from 'luxon';
+import {type ILogOptions} from 'Interfaces/Settings';
+import {Service} from '@ophidian/core';
+import {Plugin} from 'obsidian';
 
 /**
  * All possible log levels
@@ -55,7 +55,7 @@ export class LoggingService extends Service {
     error: 5,
   };
 
-  public getLogger (loggerName: string): Logger {
+  public getLogger(loggerName: string): Logger {
     return new Logger(loggerName, this.getLoggingLevel(loggerName));
   }
 
@@ -66,7 +66,7 @@ export class LoggingService extends Service {
    * @return {*}  {LogManager}
    * @memberof LoggingService
    */
-  public configure (options: ILogOptions) {
+  public configure(options: ILogOptions) {
     this.options = Object.assign({}, this.options, options);
     return this;
   }
@@ -78,7 +78,7 @@ export class LoggingService extends Service {
    * @return {*}  {Logger}
    * @memberof LoggingService
    */
-  public getLoggingLevel (module: string): number {
+  public getLoggingLevel(module: string): number {
     let minLevel = 'none';
     let match = '';
 
@@ -107,73 +107,73 @@ export class Logger {
     error: 5,
   };
 
-  constructor (private readonly loggerName: string, private readonly defaultLevel: number = 3) {
+  constructor(private readonly loggerName: string, private readonly defaultLevel: number = 3) {
     this.minLevel = defaultLevel;
   }
 
-  public setLogLevel (level: string) {
+  public setLogLevel(level: string) {
     if (level.toLowerCase() in this.levels) {
       this.minLevel = this.levels[level.toLowerCase()];
     }
   }
 
-  public trace (message: string, objects?: any): void {
-    this.log({ level: 'trace', message, objects });
+  public trace(message: string, objects?: any): void {
+    this.log({level: 'trace', message, objects});
   }
 
-  public debug (message: string, objects?: any): void {
-    this.log({ level: 'debug', message, objects });
+  public debug(message: string, objects?: any): void {
+    this.log({level: 'debug', message, objects});
   }
 
-  public info (message: string, objects?: any): void {
-    this.log({ level: 'info', message, objects });
+  public info(message: string, objects?: any): void {
+    this.log({level: 'info', message, objects});
   }
 
-  public warn (message: string, objects?: any): void {
-    this.log({ level: 'warn', message, objects });
+  public warn(message: string, objects?: any): void {
+    this.log({level: 'warn', message, objects});
   }
 
-  public error (message: string, objects?: any): void {
-    this.log({ level: 'error', message, objects });
+  public error(message: string, objects?: any): void {
+    this.log({level: 'error', message, objects});
   }
 
-  public groupId (traceId: string): void {
+  public groupId(traceId: string): void {
     // Disabled for the moment.
     // console.groupCollapsed(`${traceId}`);
   }
 
-  public groupEndId (): void {
+  public groupEndId(): void {
     // Disabled for the moment.
     // console.groupEnd();
   }
 
-  public traceWithId (traceId: string, message: string, objects?: any): void {
-    this.log({ level: 'trace', traceId, message, objects });
+  public traceWithId(traceId: string, message: string, objects?: any): void {
+    this.log({level: 'trace', traceId, message, objects});
   }
 
-  public debugWithId (traceId: string, message: string, objects?: any): void {
-    this.log({ level: 'debug', traceId, message, objects });
+  public debugWithId(traceId: string, message: string, objects?: any): void {
+    this.log({level: 'debug', traceId, message, objects});
   }
 
-  public infoWithId (traceId: string, message: string, objects?: any): void {
-    this.log({ level: 'info', traceId, message, objects });
+  public infoWithId(traceId: string, message: string, objects?: any): void {
+    this.log({level: 'info', traceId, message, objects});
   }
 
-  public warnWithId (traceId: string, message: string, objects?: any): void {
-    this.log({ level: 'warn', traceId, message, objects });
+  public warnWithId(traceId: string, message: string, objects?: any): void {
+    this.log({level: 'warn', traceId, message, objects});
   }
 
-  public errorWithId (traceId: string, message: string, objects?: any): void {
-    this.log({ level: 'error', traceId, message, objects });
+  public errorWithId(traceId: string, message: string, objects?: any): void {
+    this.log({level: 'error', traceId, message, objects});
   }
 
-  public log (logEntry: ILogEntry): void {
+  public log(logEntry: ILogEntry): void {
     const level = this.levelToInt(logEntry.level);
     if (level < this.minLevel) {
       return;
     }
 
-    // const logTime = `[${DateTime.now().toFormat('yyyyLLddHHmmssSSS') ?? ''}]`;
+    // Const logTime = `[${DateTime.now().toFormat('yyyyLLddHHmmssSSS') ?? ''}]`;
     const logTime = `[${DateTime.now().toFormat('HH:mm:ss.SSS') ?? ''}]`;
     const logModule = logEntry.module === undefined ? `[${this.loggerName}]` : `[${logEntry.module}]`;
     const logTraceId = logEntry.traceId === undefined ? '' : `[${logEntry.traceId ?? ''}]`;
@@ -225,7 +225,7 @@ export class Logger {
    *
    * @param minLevel
    */
-  private levelToInt (minLevel: string): number {
+  private levelToInt(minLevel: string): number {
     if (minLevel.toLowerCase() in this.levels) {
       return this.levels[minLevel.toLowerCase()];
     }

@@ -109,7 +109,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       this.logger.setLogLevel(this.codeblockConfiguration.logLevel);
     }
 
-    this.logger.infoWithId(this.renderId, `Query Render generated for class ${this.container.className} -> ${this.codeblockConfiguration.queryDataSource ?? ''}`);
+    this.logger.debugWithId(this.renderId, `Query Render generated for class ${this.container.className} -> ${this.codeblockConfiguration.queryDataSource ?? ''}`);
 
     // Setup callbacks for when the notes store is updated. We should render again.
     this.registerEvent(this.plugin.app.workspace.on('qatt:notes-store-update', async () => {
@@ -155,7 +155,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   render = async () => {
     this.logger.groupId(this.renderId);
     this.startTime = new Date(Date.now());
-    this.logger.infoWithId(this.renderId, 'Render Start');
+    this.logger.debugWithId(this.renderId, 'Render Start');
 
     this.container.innerHTML = '';
 
@@ -166,7 +166,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       || !this.markdownTableLoaderService?.initialImportCompleted
       || !this.jsonLoaderService?.initialImportCompleted
       || !this.sqlLoaderService?.initialImportCompleted) {
-      this.logger.infoWithId(this.renderId, 'Waiting for all notes to load');
+      this.logger.debugWithId(this.renderId, 'Waiting for all notes to load');
       const content = this.container.createEl('div');
       content.setAttr('data-query-id', this.renderId);
       content.className = 'qatt-loader';
@@ -367,7 +367,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
   private logQueryRenderCompletion() {
     const endTime = new Date(Date.now());
-    this.logger.infoWithId(this.renderId, `Render End: ${endTime.getTime() - this.startTime.getTime()}ms`);
+    this.logger.infoWithId(this.renderId, `Render ended and took ${endTime.getTime() - this.startTime.getTime()}ms`);
     this.logger.groupEndId();
   }
 

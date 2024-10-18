@@ -1,11 +1,13 @@
 
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { useSettings } from '@ophidian/core';
-import { LoggingService } from 'lib/LoggingService';
-import { SettingsTabField, SettingsTabHeading, useSettingsTab } from 'Settings/DynamicSettingsTabBuilder';
-import { BaseLoaderService } from 'Data/BaseLoaderService';
-import { parse } from 'papaparse';
+import {useSettings} from '@ophidian/core';
+import {LoggingService} from 'lib/LoggingService';
+import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
+import {BaseLoaderService} from 'Data/BaseLoaderService';
+import {parse} from 'papaparse';
 
+/**
+ * Interface representing the settings for loading CSV files.
+ */
 export interface ICsvLoaderSettings {
   csvFiles: string;
   csvLoaderSettingsOpen: boolean;
@@ -35,9 +37,9 @@ export class CsvLoaderService extends BaseLoaderService {
     },
   );
 
-  showSettings () {
+  showSettings() {
     const tab = this.settingsTab;
-    const { settings } = this;
+    const {settings} = this;
 
     const onToggle = async (value: boolean) => {
       await settings.update(settings => {
@@ -45,7 +47,7 @@ export class CsvLoaderService extends BaseLoaderService {
       });
     };
 
-    const settingsSection = tab.addHeading(new SettingsTabHeading({ open: this.csvLoaderSettingsOpen, text: 'CSV Loader Settings', level: 'h2', class: 'settings-heading' }), onToggle);
+    const settingsSection = tab.addHeading(new SettingsTabHeading({open: this.csvLoaderSettingsOpen, text: 'CSV Loader Settings', level: 'h2', class: 'settings-heading'}), onToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {
@@ -64,6 +66,13 @@ export class CsvLoaderService extends BaseLoaderService {
     );
   }
 
+  /**
+   * Asynchronously processes CSV content and returns the parsed data.
+   *
+   * @param content - The CSV content to be parsed.
+   * @param tableName - The name of the table where the data will be imported.
+   * @returns A promise that resolves to the parsed data.
+   */
   public importCallback = async (content: string, tableName: string) => {
     const tr = parse(content, {
       header: true,

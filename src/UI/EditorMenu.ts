@@ -1,29 +1,24 @@
 import {type Editor, type Menu, stringifyYaml} from 'obsidian';
+import alaSqlFunctions from 'UI/alaSqlFunctions.json';
+import communityQueries from 'UI/communityQueries.json';
+import handlebarsHelpers from 'UI/handlebarsHelpers.json';
 
+/**
+ * Creates an editor menu with various submenus and items.
+ *
+ * @param menu - The menu object to which items and submenus will be added.
+ * @param editor - The editor instance where actions will be performed.
+ *
+ * The menu will contain the following sections:
+ * - Handlebars Helpers: A submenu with items for each Handlebars helper.
+ * - SQL Functions: A submenu with items for each SQL function.
+ * - Example Queries: A submenu with items for each community query.
+ *
+ * Each submenu item will insert a corresponding declaration at the cursor position in the editor when clicked.
+ *
+ * To add more items update the YAML files in this folder.
+ */
 export function createEditorMenu(menu: Menu, editor: Editor): void {
-  const handlebarsHelpers: Record<string, string> = {
-    'Capitalize the first letter of the string': '{{capitalize \'replace with property\'}}',
-    'Start markdown code block with optional type': '{{codeBlockHeader \'text\'}}',
-    'End markdown code block': '{{codeBlockFooter}}',
-  };
-
-  const alaSqlFunctions: Record<string, string> = {
-    'Reverse characters in a string': 'REVERSE ( basename )',
-    'Join array with optional separator': 'JoinArray ( dataArray [ , separator ] )',
-  };
-
-  const communityQueries: Record<string, string> = {
-    'Get 5 most recently changed notes': `
-\`\`\`qatt
-query: |
-  SELECT TOP 5 * FROM obsidian_notes ORDER BY modified DESC
-template: |
-  {{#each result}}
-  [[{{basename}}]] - Last Updated: {{formatDate modified}}
-  {{/each}}
-\`\`\``,
-  };
-
   menu.addSeparator();
 
   menu.addItem(qattItem => {
@@ -32,11 +27,11 @@ template: |
 
     const qattSubmenu = qattItem.setSubmenu();
 
-    for (const [description, declaration] of Object.entries(handlebarsHelpers)) {
+    for (const example of handlebarsHelpers) {
       qattSubmenu.addItem(item => {
-        item.setTitle(description);
+        item.setTitle(String(example.description));
         item.onClick(() => {
-          insetAtCursor(editor, declaration);
+          insetAtCursor(editor, String(example.declaration));
         });
       });
     }
@@ -48,11 +43,11 @@ template: |
 
     const qattSubmenu = qattItem.setSubmenu();
 
-    for (const [description, declaration] of Object.entries(alaSqlFunctions)) {
+    for (const example of alaSqlFunctions) {
       qattSubmenu.addItem(item => {
-        item.setTitle(description);
+        item.setTitle(String(example.description));
         item.onClick(() => {
-          insetAtCursor(editor, declaration);
+          insetAtCursor(editor, String(example.declaration));
         });
       });
     }
@@ -64,11 +59,11 @@ template: |
 
     const qattSubmenu = qattItem.setSubmenu();
 
-    for (const [description, declaration] of Object.entries(communityQueries)) {
+    for (const example of communityQueries) {
       qattSubmenu.addItem(item => {
-        item.setTitle(description);
+        item.setTitle(String(example.description));
         item.onClick(() => {
-          insetAtCursor(editor, declaration);
+          insetAtCursor(editor, String(example.declaration));
         });
       });
     }

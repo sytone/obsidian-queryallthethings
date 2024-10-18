@@ -1,35 +1,30 @@
 /* eslint-disable unicorn/filename-case */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import { CommandHandler } from 'handlers/CommandHandler';
-import { confirmObjectPath, promptWithSuggestions } from 'Internal';
-import { CsvLoaderService } from 'Data/CsvLoaderService';
-import { DataTables } from 'Data/DataTables';
-import { DataviewService } from 'Integrations/DataviewService';
-import { HandlebarsRenderer } from 'Render/HandlebarsRenderer';
-import { JsonLoaderService } from 'Data/JsonLoaderService';
-import { LoggingService } from 'lib/LoggingService';
-import { MarkdownTableLoaderService } from 'Data/MarkdownTableLoaderService';
-import { NotesCacheService } from 'NotesCacheService';
-import { QueryFactory } from 'Query/QueryFactory';
-import { QueryRendererV2Service } from 'QueryRendererV2Service';
-import { ReleaseNotes } from 'ReleaseNotes';
-import { RenderFactory } from 'Render/RenderFactory';
-import { SettingsTabField, SettingsTabHeading, useSettingsTab } from 'Settings/DynamicSettingsTabBuilder';
-import { SqlLoaderService } from 'Data/SqlLoaderService';
-import { type CachedMetadata, Notice, Plugin, type TFile } from 'obsidian';
-import { type IQueryAllTheThingsPlugin } from 'Interfaces/IQueryAllTheThingsPlugin';
-import { type SettingsManager } from 'Settings/SettingsManager';
-import { UpdateModal } from 'lib/UpdateModal';
-import { use, useSettings } from '@ophidian/core';
-import { EventHandler } from 'handlers/EventHandler';
-import { WindowFunctionsService } from 'lib/WindowFunctionsService';
-import { MetricsService } from 'lib/MetricsService';
-import { createEditorMenu } from 'UI/EditorMenu';
-
-
-export class Note {
-  constructor (public markdownFile: TFile, public metadata: CachedMetadata | undefined) { }
-}
+import {CommandHandler} from 'handlers/CommandHandler';
+import {confirmObjectPath, promptWithSuggestions} from 'Internal';
+import {CsvLoaderService} from 'Data/CsvLoaderService';
+import {DataTables} from 'Data/DataTables';
+import {DataviewService} from 'Integrations/DataviewService';
+import {HandlebarsRenderer} from 'Render/HandlebarsRenderer';
+import {JsonLoaderService} from 'Data/JsonLoaderService';
+import {LoggingService} from 'lib/LoggingService';
+import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
+import {NotesCacheService} from 'NotesCacheService';
+import {QueryFactory} from 'Query/QueryFactory';
+import {QueryRendererV2Service} from 'QueryRendererV2Service';
+import {ReleaseNotes} from 'ReleaseNotes';
+import {RenderFactory} from 'Render/RenderFactory';
+import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
+import {SqlLoaderService} from 'Data/SqlLoaderService';
+import {type CachedMetadata, Notice, Plugin, type TFile} from 'obsidian';
+import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
+import {type SettingsManager} from 'Settings/SettingsManager';
+import {UpdateModal} from 'lib/UpdateModal';
+import {use, useSettings} from '@ophidian/core';
+import {EventHandler} from 'handlers/EventHandler';
+import {WindowFunctionsService} from 'lib/WindowFunctionsService';
+import {MetricsService} from 'lib/MetricsService';
+import {createEditorMenu} from 'UI/EditorMenu';
 
 export interface IGeneralSettings {
   onStartSqlQueries: string;
@@ -72,7 +67,6 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   public markdownTableLoaderService: MarkdownTableLoaderService | undefined;
   public jsonLoaderService: JsonLoaderService | undefined;
   public sqlLoaderService: SqlLoaderService | undefined;
-
 
   settingsTab = useSettingsTab(this);
 
@@ -129,11 +123,10 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       void this.announceUpdate();
     },
   );
-  //#region Plugin Settings UI
+  // #region Plugin Settings UI
   /* -------------------------------------------------------------------------- */
   /*                            Plugin wide settings                            */
   /* -------------------------------------------------------------------------- */
-
 
   onStartSqlQueries: string;
   announceUpdates: boolean;
@@ -146,9 +139,9 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
 
   // Settings are rendered in the settings via this. Need to
   // refactor this to use the SettingsTab approach I had.
-  showSettings () {
+  showSettings() {
     const tab = this.settingsTab;
-    const { settings } = this;
+    const {settings} = this;
     this.logger.info('Settings Updated', settings);
 
     tab.initializeTab();
@@ -176,7 +169,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
       });
     };
 
-    tab.addHeading(new SettingsTabHeading({ open: this.mainHeadingOpen, text: `Query All The Things (v${this.manifest.version})`, level: 'h1', noticeHtml: settingMainBlockText }), onToggle);
+    tab.addHeading(new SettingsTabHeading({open: this.mainHeadingOpen, text: `Query All The Things (v${this.manifest.version})`, level: 'h1', noticeHtml: settingMainBlockText}), onToggle);
 
     const onGeneralHeadingToggle = async (value: boolean) => {
       await settings.update(settings => {
@@ -184,7 +177,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
       });
     };
 
-    const generalSettingsSection = tab.addHeading(new SettingsTabHeading({ open: this.generalHeadingOpen, text: 'General Settings', level: 'h2', class: 'settings-heading' }), onGeneralHeadingToggle);
+    const generalSettingsSection = tab.addHeading(new SettingsTabHeading({open: this.generalHeadingOpen, text: 'General Settings', level: 'h2', class: 'settings-heading'}), onGeneralHeadingToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {
@@ -258,7 +251,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
       generalSettingsSection,
     );
   }
-  //#endregion
+  // #endregion
 
   /**
    * Initializes the plugin when the application loads.
@@ -266,7 +259,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
    * It also adds ribbon icons for manual table refresh, view refresh, and logging metrics.
    * @returns {Promise<void>} A promise that resolves once the plugin is loaded.
    */
-  async onload () {
+  async onload() {
     this.metrics.startMeasurement('plugin onload');
 
     this.logger.info(`loading plugin "${this.manifest.name}" v${this.manifest.version}`);
@@ -288,7 +281,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
 
       // Wait until layout ready has been fired before we start the cache loading.
       // This is to ensure that all notes are loaded.
-      let checkCoreSetupInterval = setInterval(async () => {
+      const checkCoreSetupInterval = setInterval(async () => {
         if (this.layoutReady) {
           clearInterval(checkCoreSetupInterval);
           this.logger.info('Layout is ready, starting core setup.');
@@ -296,7 +289,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
         }
       }, 500);
 
-      let checkInterval = setInterval(async () => {
+      const checkInterval = setInterval(async () => {
         if (this.layoutReady && this.coreSystemInitialized) {
           clearInterval(checkInterval);
           this.logger.info('Layout is ready, starting cache loading.');
@@ -307,7 +300,6 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
           await this.notesCacheService.layoutReady();
 
           await this.notesCacheService.cacheAllNotes(this.app);
-
         }
       }, 500);
     }));
@@ -342,7 +334,6 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
       }
 
       this.logger.info(`onLayoutReady completed for workspace: ${this.app.vault.getName()}`);
-
     });
 
     // Allow user to refresh the tables manually.
@@ -365,7 +356,10 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
 
     this.registerEvent(this.app.workspace.on('qatt:force-cache-reload', async () => {
       this.logger.info('qatt:force-cache-reload event detected.');
-      await this.notesCacheService.cacheAllNotes(this.app);
+
+      if (this.notesCacheService) {
+        await this.notesCacheService.cacheAllNotes(this.app);
+      }
     }));
 
     if (this.enableEditorRightClickMenu) {
@@ -378,61 +372,10 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
 
     this.metrics.endMeasurement('plugin onload');
     this.metrics.pluginLoadTime = this.metrics.getMeasurement('plugin onload');
-
   }
 
-
-
-  private initializeSqlLoaderService () {
-    this.metrics.startMeasurement('SqlLoaderService Use');
-    this.sqlLoaderService = this.use(SqlLoaderService);
-    this.metrics.endMeasurement('SqlLoaderService Use');
-  }
-
-  onunload () {
+  onunload() {
     this.logger.info(`unloading plugin "${this.manifest.name}" v${this.manifest.version}`);
-  }
-
-  /**
-   * Initializes the core services.
-   * This method performs the following tasks:
-   * 1. Refreshes the tables internally used.
-   * 2. Runs any on start SQL queries once the tables are setup.
-   * 3. Pulls in the CVS, Markdown, or JSON data.
-   * 4. Uses the CsvLoaderService, MarkdownTableLoaderService, JsonLoaderService, and QueryRendererV2Service.
-   *
-   * @returns {Promise<void>} A promise that resolves once the core services are initialized.
-   */
-  private async initializeCoreServices () {
-
-    // Refresh the tables internally used.
-    await this.dataTables.refreshTables('called by initializeCoreServices');
-
-    // Run any on start SQL queries once the tables are setup.
-    if (this.onStartSqlQueries) {
-      this.logger.info('Running on start SQL queries', this.onStartSqlQueries);
-      const onStartResult = await this.dataTables.runAdhocQuery(this.onStartSqlQueries);
-      this.logger.info('On start SQL queries result', onStartResult);
-    }
-
-    /* ------------------------- Pull in the CVS, Markdown or JSON data ------------------------- */
-    this.metrics.startMeasurement('CsvLoaderService Use');
-    this.csvLoaderService = this.use(CsvLoaderService);
-    this.metrics.endMeasurement('CsvLoaderService Use');
-
-    this.metrics.startMeasurement('MarkdownTableLoaderService Use');
-    this.markdownTableLoaderService = this.use(MarkdownTableLoaderService);
-    this.metrics.endMeasurement('MarkdownTableLoaderService Use');
-
-    this.metrics.startMeasurement('JsonLoaderService Use');
-    this.jsonLoaderService = this.use(JsonLoaderService);
-    this.metrics.endMeasurement('JsonLoaderService Use');
-
-    this.metrics.startMeasurement('QueryRendererV2Service Use');
-    this.queryRendererService = this.use(QueryRendererV2Service);
-    this.metrics.endMeasurement('QueryRendererV2Service Use');
-
-    this.coreSystemInitialized = true;
   }
 
   /**
@@ -441,7 +384,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
    * @return {*}
    * @memberof QueryAllTheThingsPlugin
    */
-  public async announceUpdate () {
+  public async announceUpdate() {
     const currentVersion = this.manifest.version;
     const knownVersion = this.version;
     this.logger.info(`Current version: ${currentVersion}, Known version: ${knownVersion}`);
@@ -475,5 +418,52 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
     } else {
       this.logger.info('Update announcements disabled.');
     }
+  }
+
+  private initializeSqlLoaderService() {
+    this.metrics.startMeasurement('SqlLoaderService Use');
+    this.sqlLoaderService = this.use(SqlLoaderService);
+    this.metrics.endMeasurement('SqlLoaderService Use');
+  }
+
+  /**
+   * Initializes the core services.
+   * This method performs the following tasks:
+   * 1. Refreshes the tables internally used.
+   * 2. Runs any on start SQL queries once the tables are setup.
+   * 3. Pulls in the CVS, Markdown, or JSON data.
+   * 4. Uses the CsvLoaderService, MarkdownTableLoaderService, JsonLoaderService, and QueryRendererV2Service.
+   *
+   * @returns {Promise<void>} A promise that resolves once the core services are initialized.
+   */
+  private async initializeCoreServices() {
+    // Refresh the tables internally used.
+    await this.dataTables.refreshTables('called by initializeCoreServices');
+
+    // Run any on start SQL queries once the tables are setup.
+    if (this.onStartSqlQueries) {
+      this.logger.info('Running on start SQL queries', this.onStartSqlQueries);
+      const onStartResult = await this.dataTables.runAdhocQuery(this.onStartSqlQueries);
+      this.logger.info('On start SQL queries result', onStartResult);
+    }
+
+    /* ------------------------- Pull in the CVS, Markdown or JSON data ------------------------- */
+    this.metrics.startMeasurement('CsvLoaderService Use');
+    this.csvLoaderService = this.use(CsvLoaderService);
+    this.metrics.endMeasurement('CsvLoaderService Use');
+
+    this.metrics.startMeasurement('MarkdownTableLoaderService Use');
+    this.markdownTableLoaderService = this.use(MarkdownTableLoaderService);
+    this.metrics.endMeasurement('MarkdownTableLoaderService Use');
+
+    this.metrics.startMeasurement('JsonLoaderService Use');
+    this.jsonLoaderService = this.use(JsonLoaderService);
+    this.metrics.endMeasurement('JsonLoaderService Use');
+
+    this.metrics.startMeasurement('QueryRendererV2Service Use');
+    this.queryRendererService = this.use(QueryRendererV2Service);
+    this.metrics.endMeasurement('QueryRendererV2Service Use');
+
+    this.coreSystemInitialized = true;
   }
 }

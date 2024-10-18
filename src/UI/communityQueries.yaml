@@ -1,0 +1,69 @@
+- description: "Get 5 most recently changed notes"
+  declaration: |
+    ```qatt
+    query: |
+      SELECT TOP 5 * FROM obsidian_notes ORDER BY modified DESC
+    template: |
+      {{#each result}}
+      [[{{basename}}]] - Last Updated: {{formatDate modified}}
+      {{/each}}
+    ```
+  author: "Sytone"
+- description: "Active tasks grouped by day"
+  declaration: |
+    ```qatt
+    postRenderFormat: html
+    query: |
+      SELECT
+        IIF(moment(dueDate, 'YYYY-MM-DD', true).isValid(), moment(dueDate)->format("MMMM Do, YYYY"), 'No Due Date') AS Month,
+        page,
+        text,
+        status,
+        line,
+        tags,
+        doneDate,
+        priority
+      FROM obsidian_tasks
+      WHERE status != 'x'
+        and text LIKE '%📜%'
+        and moment(dueDate, 'YYYY-MM-DD', true).isValid()
+      ORDER BY dueDate asc, priority desc
+    template: |
+      {{#group result by="Month"}}
+      <h4>{{ value }}</h4>
+          <ul class='contains-task-list'>
+          {{#each items}}
+          <li class='task-list-item plugin-tasks-list-item'> {{ taskCheckbox this }} {{#if (isHighPriority priority)}}<strong>{{/if}} {{#micromark inline="true"}} {{text}} [[{{page}}|📝]] {{/micromark}} {{#if (isHighPriority priority)}}</strong>{{/if}}</li>
+          {{/each}}
+          </ul>
+      {{/group}}
+    ```
+  author: "Sytone"
+- description: "Using updatePropertyFromList"
+  declaration: |
+    ```qatt
+    query: |
+      SELECT
+        frontmatter->[project-name] AS project,
+        frontmatter->status AS status,
+        frontmatter->priority AS priority,
+        frontmatter->area AS area,
+        path,
+        updatePropertyFromList(frontmatter->status, path, @['Active','Done','Todo','In Progress','Waiting','Archive'], 'status') AS updateStatus,
+        updatePropertyFromList(frontmatter->area, path, @['Health', 'Family', 'Fun', 'Social', 'Career', 'Financial', 'Learning'], 'area') AS updateArea,
+        updatePropertyFromList(frontmatter->priority, path, @[1, 2, 3], 'priority') AS updatePriority
+      FROM obsidian_notes
+      WHERE frontmatter->notetype = 'project'
+        AND path NOT LIKE '%9 DataStores/Templates%'
+        AND frontmatter->status <> 'Archive'
+        AND frontmatter->status <> 'Done'
+        AND frontmatter->status <> 'Discarded'
+      ORDER BY status
+    template: |
+      | Project | Status | Priority | Area |
+      | ------- | ------ | -------- | ---- |
+      {{#each result}}
+        | [[{{project}}]] | {{{updateStatus}}}  | {{{updatePriority}}} | {{{updateArea}}} |
+      {{/each}}
+    ```
+  author: "Sytone"

@@ -31,7 +31,7 @@ query: |
     tags,
     doneDate,
     priority
-  FROM obsidian_markdown_tasks
+  FROM obsidian_tasks
   WHERE status != 'x'
     and text LIKE '%📜%'
     and moment(dueDate, 'YYYY-MM-DD', true).isValid()

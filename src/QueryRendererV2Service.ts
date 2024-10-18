@@ -219,7 +219,7 @@ export class QueryRendererV2Service extends Service {
 
   async onload() {
     this.plugin.registerMarkdownCodeBlockProcessor('qatt', async (source: string, element: HTMLElement, context: MarkdownPostProcessorContext) => {
-      this.logger.info(`lastCreation ${this.lastCreation.toISO() ?? ''} registring block on ${context.sourcePath}`);
+      this.logger.info(`lastCreation ${this.lastCreation.toISO() ?? ''} registering block on ${context.sourcePath}`);
       this.logger.debug(`Adding QATT Render for ${source} to context ${context.docId}`);
 
       const codeblockConfiguration = new QattCodeBlock(source);
@@ -278,7 +278,7 @@ export class QueryRendererV2Service extends Service {
       }
 
       if (codeblockConfiguration.internalQueryRenderChildVersion === 2) {
-        this.logger.info('Rendered as child of MarkdownPostProcessorContext ');
+        this.logger.debug('Rendered as child of MarkdownPostProcessorContext ');
 
         context.addChild(
           new QueryRenderChildV2(
@@ -293,7 +293,7 @@ export class QueryRendererV2Service extends Service {
       }
 
       if (codeblockConfiguration.internalQueryRenderChildVersion === 3) {
-        this.logger.info('Rendered directly to container');
+        this.logger.debug('Rendered directly to container');
 
         const queryRenderChild = new QueryRenderChildV3(element, codeblockConfiguration, context, this);
         await queryRenderChild.create(source, element, context);

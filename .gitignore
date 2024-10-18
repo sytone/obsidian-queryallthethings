@@ -28,3 +28,6 @@ ts-jest.log
 .jekyll-cache
 docs/.vitepress/cache
 docs/.vitepress/dist
+src/UI/alaSqlFunctions.json
+src/UI/communityQueries.json
+src/UI/handlebarsHelpers.json

@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import _ from 'obsidian';
-import { type DataviewApi } from 'obsidian-dataview';
+import {type DataviewApi} from 'obsidian-dataview';
 
 export interface EventRef {
 
@@ -48,16 +48,16 @@ declare module 'obsidian' {
   interface Workspace {
     /** Sent to rendered dataview components to tell them to possibly refresh */
     on (name:
-      'qatt:refresh-codeblocks' |
-      'dataview:refresh-views' |
-      'qatt:notes-store-update' |
-      'qatt:dataview-store-update' |
-      'qatt:all-notes-loaded' |
-      'qatt:force-cache-reload' |
-      'qatt:data-refreshtables-completed' |
-      'qatt:data-local-database-setup-completed' |
-      'qatt:main-settings-first-load-completed' |
-      'qatt:main-settings-reload-completed', callback: () => void, ctx?: any): EventRef;
+    'qatt:refresh-codeblocks' |
+    'dataview:refresh-views' |
+    'qatt:notes-store-update' |
+    'qatt:dataview-store-update' |
+    'qatt:all-notes-loaded' |
+    'qatt:force-cache-reload' |
+    'qatt:data-refreshtables-completed' |
+    'qatt:data-local-database-setup-completed' |
+    'qatt:main-settings-first-load-completed' |
+    'qatt:main-settings-reload-completed', callback: () => void, ctx?: any): EventRef;
   }
 }
 

@@ -1,8 +1,8 @@
 
-import { useSettings } from '@ophidian/core';
-import { LoggingService } from 'lib/LoggingService';
-import { SettingsTabField, SettingsTabHeading, useSettingsTab } from 'Settings/DynamicSettingsTabBuilder';
-import { BaseLoaderService } from 'Data/BaseLoaderService';
+import {useSettings} from '@ophidian/core';
+import {LoggingService} from 'lib/LoggingService';
+import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
+import {BaseLoaderService} from 'Data/BaseLoaderService';
 
 export interface IMarkdownTableLoaderSettings {
   markdownTableFiles: string;
@@ -32,9 +32,9 @@ export class MarkdownTableLoaderService extends BaseLoaderService {
     },
   );
 
-  showSettings () {
+  showSettings() {
     const tab = this.settingsTab;
-    const { settings } = this;
+    const {settings} = this;
 
     const onToggle = async (value: boolean) => {
       await settings.update(settings => {
@@ -42,7 +42,7 @@ export class MarkdownTableLoaderService extends BaseLoaderService {
       });
     };
 
-    const settingsSection = tab.addHeading(new SettingsTabHeading({ open: this.markdownLoaderSettingsOpen, text: 'Markdown Table Loader Settings', level: 'h2', class: 'settings-heading' }), onToggle);
+    const settingsSection = tab.addHeading(new SettingsTabHeading({open: this.markdownLoaderSettingsOpen, text: 'Markdown Table Loader Settings', level: 'h2', class: 'settings-heading'}), onToggle);
 
     const onChange = async (value: string) => {
       await settings.update(settings => {
@@ -61,7 +61,15 @@ export class MarkdownTableLoaderService extends BaseLoaderService {
     );
   }
 
-  public getFirstLineNumberWithContent (content: string): number {
+  /**
+   * Retrieves the line number of the first line in the provided content that contains non-whitespace characters
+   * and starts with a pipe ('|') character.
+   *
+   * @param content - The string content to be analyzed, typically representing the contents of a markdown file.
+   * @returns The zero-based line number of the first line with content that starts with a pipe ('|') character.
+   *          If no such line is found, returns the total number of lines in the content.
+   */
+  public getFirstLineNumberWithContent(content: string): number {
     const lines = content.split('\n');
     let lineNumber = 0;
     for (const line of lines) {
@@ -78,7 +86,7 @@ export class MarkdownTableLoaderService extends BaseLoaderService {
   public importCallback = async (content: string, tableName: string) => {
     // Get the first row with content and the pipe.
     const headerLine = this.getFirstLineNumberWithContent(content);
-    const header = content.split('\n')[headerLine].split('|').filter(Boolean);
+    const header = content.split('\n')[headerLine].split('|').filter(Boolean).map(cell => cell.trim());
     const data = [];
     this.logger.info(`getFirstLineNumberWithContent ${headerLine}`, header);
 
@@ -92,10 +100,10 @@ export class MarkdownTableLoaderService extends BaseLoaderService {
         break;
       }
 
-      const tableColumns = line.split('|').filter(Boolean);
+      const tableColumns = line.split('|').filter(Boolean).map(cell => cell.trim());
 
       if (tableColumns.length !== header.length) {
-        this.logger.error(`Table ${tableName} has a row with ${tableColumns.length} columns, but the header has ${header.length} columns.`);
+        this.logger.error(`Table ${tableName} has a row with ${tableColumns.length} columns, but the header has ${header.length} columns.`, tableColumns);
         continue;
       }
 

@@ -1,0 +1,7 @@
+- description: "Reverse characters in a string"
+  declaration: "REVERSE ( basename )"
+  author: "Sytone"
+- description: "Join array with optional separator"
+  declaration: "JoinArray ( dataArray [ , separator ] )"
+  author: "Sytone"
+

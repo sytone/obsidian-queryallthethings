@@ -1,0 +1,7 @@
+- description: 'Capitalize the first letter of the string'
+  declaration: "{{capitalize 'replace with property'}}"
+- description: 'Start markdown code block with optional type'
+  declaration: "{{codeBlockHeader 'text'}}"
+- description: 'End markdown code block'
+  declaration: "{{codeBlockFooter}}"
+

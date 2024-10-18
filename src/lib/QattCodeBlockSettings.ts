@@ -1,5 +1,5 @@
 import {type QattCodeBlock} from 'QattCodeBlock';
-import {type App, type Plugin, Modal, Setting, type MarkdownPostProcessorContext, stringifycodeblockConfiguration, TFile, TFolder, stringifyYaml} from 'obsidian';
+import {type App, type Plugin, Modal, Setting, type MarkdownPostProcessorContext, TFile, stringifyYaml} from 'obsidian';
 
 export class QattCodeBlockSettings extends Modal {
   plugin: Plugin;
