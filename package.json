@@ -11,7 +11,7 @@
     "lint": "xo --fix",
     "lint:markdown": "markdownlint-cli2-config \".config/.markdownlint-cli2.jsonc\" \"**/*.md\" \"#node_modules\" \"#CHANGELOG.md\" \"#docs/CHANGELOG.md\"",
     "test": "glob -c \"node --import tsx --test --test-reporter spec\" \"./tests/**/*.test.ts\" \"./src/**/*.test.ts\"",
-    "test:docs": "$env:OBSIDIAN_TEST_VAULT='./docs'; start obsidian://open?vault=docs; pnpm build:dev",
+    "test:docs": "$env:OBSIDIAN_TEST_VAULT=(Resolve-Path './docs'); start obsidian://open?vault=docs; pnpm build:dev",
     "prerelease": "xo --fix && mdinject --root=./src --docs-root=./docs --wrap && mocha --ci",
     "release": "standard-version",
     "release:dry": "standard-version --dry-run",

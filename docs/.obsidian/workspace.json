@@ -13,10 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "verfication/tables.md",
+                "file": "examples-tutorials/csv-loader.md",
                 "mode": "source",
                 "source": false
-              }
+              },
+              "icon": "lucide-file",
+              "title": "csv-loader"
             }
           }
         ]
@@ -39,7 +41,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical"
-              }
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
             }
           },
           {
@@ -54,7 +58,9 @@
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical"
-              }
+              },
+              "icon": "lucide-search",
+              "title": "Search"
             }
           },
           {
@@ -62,14 +68,16 @@
             "type": "leaf",
             "state": {
               "type": "bookmarks",
-              "state": {}
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
             }
           }
         ]
       }
     ],
     "direction": "horizontal",
-    "width": 200
+    "width": 468.5
   },
   "right": {
     "id": "a814a0fd662569a7",
@@ -85,7 +93,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "verfication/tables.md",
+                "file": "examples-tutorials/csv-loader.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -93,7 +101,9 @@
                 "searchQuery": "",
                 "backlinkCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for csv-loader"
             }
           },
           {
@@ -102,10 +112,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "verfication/tables.md",
+                "file": "examples-tutorials/csv-loader.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
-              }
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from csv-loader"
             }
           },
           {
@@ -116,7 +128,9 @@
               "state": {
                 "sortOrder": "frequency",
                 "useHierarchy": true
-              }
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
             }
           },
           {
@@ -125,8 +139,10 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "verfication/tables.md"
-              }
+                "file": "examples-tutorials/csv-loader.md"
+              },
+              "icon": "lucide-list",
+              "title": "Outline of csv-loader"
             }
           },
           {
@@ -138,7 +154,9 @@
                 "sortOrder": "frequency",
                 "showSearch": false,
                 "searchQuery": ""
-              }
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
             }
           }
         ]
@@ -150,21 +168,26 @@
   },
   "left-ribbon": {
     "hiddenItems": {
-      "cmdr:Shell commands: Execute: Build QATT Documentation with snippets": false,
-      "cmdr:Shell commands: Execute: Install Project Packages": false,
-      "cmdr:Shell commands: Execute: Build and install plugin": false,
-      "obsidian-5e-statblocks:Open Creature Pane": false,
       "switcher:Open quick switcher": false,
       "command-palette:Open command palette": false,
       "qatt:Refresh QATT Tables": false,
       "qatt:Refresh Views": false,
-      "qatt:Log Metrics": false
+      "qatt:Log Metrics": false,
+      "obsidian-5e-statblocks:Open Creature pane": false,
+      "obsidian-shellcommands:Shell commands: Custom variables": false,
+      "cmdr:Shell commands: Execute: Build QATT Documentation with snippets": false,
+      "cmdr:Shell commands: Execute: Install Project Packages": false,
+      "cmdr:Shell commands: Execute: Build and install plugin": false
     }
   },
   "active": "60c58a9e7d5033ee",
   "lastOpenFiles": [
-    "verfication/simple-queries.md",
     "verfication/tables.md",
+    "examples-tutorials/csv-loader.md",
+    "examples-tutorials/example.csv",
+    "examples-tutorials/listing-recently-updated-files.md",
+    "examples-tutorials/generated-top-ten-notes.md",
+    "verfication/simple-queries.md",
     "verfication/handlebars.md",
     "verfication/readme.md",
     "templates/index.md",
@@ -186,10 +209,6 @@
     "data-tables/dataview-lists.md",
     "contributing/index.md",
     "contributing/documentation.md",
-    "contributing/development.md",
-    "examples-tutorials/replace-target-path-example.md",
-    "examples-tutorials/listing-recently-updated-files.md",
-    "examples-tutorials/listing-recently-updated-files-live.md",
     "_site/templates/hb-helpers/taskcheckboxwithappend.html",
     "_site/examples-tutorials/handlebars/taskcheckboxwithappend.html",
     "_site/templates/hb-helpers/taskcheckbox.html",
@@ -198,7 +217,6 @@
     "_site/examples-tutorials/handlebars/htmltasklist.html",
     "_site/templates/hb-helpers/flexibletaskcheckbox.html",
     "_site/examples-tutorials/handlebars/flexibletaskcheckbox.html",
-    "_site/templates/hb-helpers/codeblockheader.html",
     "_site/assets/images/small-image.jpg",
     "_site/assets/images/large-image.jpg"
   ]
