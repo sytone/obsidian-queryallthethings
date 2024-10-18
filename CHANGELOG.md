@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.2.1](https://github.com/sytone/obsidian-queryallthethings/compare/1.2.0...1.2.1) (2024-10-18)
+
+
+### Features
+
+* update examples approach to allow collaboration and also fix await issue for MD table import ([fea8d6e](https://github.com/sytone/obsidian-queryallthethings/commits/fea8d6ee9f99f441e65cde9d516a1938d4ec7a20))
+
+
+### Internal
+
+* make the release notes automatically ([41cec67](https://github.com/sytone/obsidian-queryallthethings/commits/41cec674ec11c2fdf971d7c8ea3a5f67a81718b7))
+* try alternative creation approach ([8c95085](https://github.com/sytone/obsidian-queryallthethings/commits/8c95085bd7ea73bbee9b800cebfc21f4239f8e7d))
+
+
+### Documentation
+
+* add csv example ([398f9b8](https://github.com/sytone/obsidian-queryallthethings/commits/398f9b87fb5e2482c44163f1110aaed7330515e4))
+
 ## [1.2.0](https://github.com/sytone/obsidian-queryallthethings/compare/1.1.3...1.2.0) (2024-10-02)
 
 
