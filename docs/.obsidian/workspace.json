@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "examples-tutorials/csv-loader.md",
-                "mode": "source",
+                "file": "first-query.md",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "csv-loader"
+              "title": "first-query"
             }
           }
         ]
@@ -182,8 +182,15 @@
   },
   "active": "60c58a9e7d5033ee",
   "lastOpenFiles": [
-    "verfication/tables.md",
+    "index.md",
+    "installation.md",
+    "markdown-examples.md",
+    "output-generation.md",
+    "api-examples.md",
+    "about.md",
+    "examples-tutorials/csv-loader-web.md",
     "examples-tutorials/csv-loader.md",
+    "verfication/tables.md",
     "examples-tutorials/example.csv",
     "examples-tutorials/listing-recently-updated-files.md",
     "examples-tutorials/generated-top-ten-notes.md",
@@ -194,12 +201,8 @@
     "templates/hb-helpers/taskcheckboxwithappend.md",
     "settings.md",
     "verfication",
-    "output-generation.md",
-    "installation.md",
-    "index.md",
     "first-query.md",
     "codeblock.md",
-    "about.md",
     "data-tables/qatt-referencecalendar.md",
     "data-tables/obsidian-markdown-tasks.md",
     "data-tables/obsidian-markdown-lists.md",
@@ -207,8 +210,6 @@
     "data-tables/dataview-tasks.md",
     "data-tables/dataview-pages.md",
     "data-tables/dataview-lists.md",
-    "contributing/index.md",
-    "contributing/documentation.md",
     "_site/templates/hb-helpers/taskcheckboxwithappend.html",
     "_site/examples-tutorials/handlebars/taskcheckboxwithappend.html",
     "_site/templates/hb-helpers/taskcheckbox.html",

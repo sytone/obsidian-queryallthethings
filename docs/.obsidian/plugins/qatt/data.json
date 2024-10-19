@@ -18,7 +18,7 @@
   "jsonLoaderSettingsOpen": false,
   "markdownTableFiles": "",
   "markdownLoaderSettingsOpen": false,
-  "csvFiles": "examples-tutorials/example.csv",
+  "csvFiles": "examples-tutorials/example.csv\nWEB|webcsvexample|https://raw.githubusercontent.com/sytone/obsidian-queryallthethings/refs/heads/main/docs/examples-tutorials/gamedata.csv",
   "csvLoaderSettingsOpen": true,
   "onStartSqlQueries": "CREATE TABLE my_lookup(name,birthday);\nINSERT INTO my_lookup VALUES (\"fred\", 2000-02-03);",
   "announceUpdates": false,
