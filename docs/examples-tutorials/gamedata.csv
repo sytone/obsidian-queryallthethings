@@ -1,0 +1,101 @@
+player_id,username,level,score,last_login,power_ups,inventory,guild,is_online,currency
+1,twhiteman0,74,40630,4/28/2021,2,shield,Rogues,true,Baht
+2,rgallichiccio1,42,99133,8/8/2021,9,sword,Rogues,false,Peso
+3,rlanders2,29,18621,1/13/2021,1,potion,Clerics,true,Peso
+4,bkarle3,63,10783,1/8/2021,8,armor,Warriors,true,Euro
+5,ndary4,17,15397,8/7/2021,5,armor,Wizards,true,Peso
+6,blovitt5,46,1138,6/19/2021,2,potion,Clerics,false,Ruble
+7,fsykora6,92,71654,5/18/2021,1,potion,Wizards,false,Yuan Renminbi
+8,swinspear7,39,97521,8/21/2021,6,shield,Warriors,false,Pound
+9,flepage8,21,40265,5/8/2021,10,armor,Rogues,true,Zloty
+10,kmcconnachie9,21,58969,1/27/2021,7,potion,Warriors,false,Euro
+11,mneilsona,23,16051,1/11/2021,1,shield,Warriors,true,Rupiah
+12,lcouldwellb,73,17395,3/7/2021,8,armor,Warriors,false,Krona
+13,tmattiazzoc,12,38465,8/18/2021,5,shield,Warriors,true,Ruble
+14,ghaskelld,16,61687,6/9/2021,8,sword,Rogues,true,Dinar
+15,nlindenboime,39,2430,12/30/2021,6,potion,Wizards,true,Yuan Renminbi
+16,abowermanf,50,11622,5/18/2021,4,shield,Warriors,true,Dinar
+17,gmorewoodg,86,10304,2/22/2021,1,potion,Clerics,false,Zloty
+18,sgodilingtonh,45,87206,5/16/2021,6,shield,Rogues,true,Real
+19,gaguirrezabali,4,67595,9/1/2021,0,armor,Warriors,false,Euro
+20,nthextonj,95,22847,12/19/2021,9,potion,Clerics,true,Rupiah
+21,aargok,22,8795,12/25/2021,3,potion,Rogues,true,Euro
+22,rstollmanl,52,95859,6/26/2021,4,potion,Clerics,true,Zloty
+23,wspirm,61,56880,7/18/2021,9,armor,Clerics,true,Peso
+24,mrolln,68,58374,4/14/2021,5,potion,Clerics,false,Rupiah
+25,ragiolfingero,69,8688,5/28/2021,4,potion,Clerics,true,Yuan Renminbi
+26,pcartmailp,59,96078,2/10/2021,7,sword,Warriors,false,Yuan Renminbi
+27,msandsq,63,83702,7/18/2021,0,armor,Rogues,false,Ruble
+28,gbridglandr,29,89407,9/15/2021,10,sword,Clerics,true,Leone
+29,kyushachkovs,64,21812,3/11/2021,7,armor,Wizards,true,Yuan Renminbi
+30,cbrawleyt,1,43759,7/20/2021,8,shield,Clerics,true,Euro
+31,reasunu,12,26872,1/5/2021,8,shield,Clerics,false,Baht
+32,igravenallv,96,25077,2/28/2021,5,armor,Warriors,false,Yen
+33,lwassungw,25,34886,2/22/2021,9,armor,Wizards,false,Dirham
+34,jblaydonx,28,54822,9/30/2021,6,shield,Wizards,false,Yuan Renminbi
+35,mmartiny,88,30727,7/6/2021,5,shield,Clerics,true,Rupee
+36,vreddyhoffz,63,39747,10/12/2021,1,shield,Warriors,true,Hryvnia
+37,loscallan10,95,26728,9/21/2021,5,shield,Warriors,true,Dollar
+38,rgateshill11,36,20118,11/4/2021,6,shield,Rogues,false,Rupiah
+39,llightbourn12,82,97184,9/2/2021,1,shield,Clerics,false,Peso
+40,fweekley13,26,95341,9/11/2021,0,potion,Wizards,true,Lek
+41,fgoering14,64,38199,11/28/2021,9,armor,Wizards,false,Pound
+42,pyeoman15,72,10747,5/4/2021,0,armor,Clerics,true,Dollar
+43,wlademann16,66,70027,7/9/2021,0,armor,Rogues,true,Franc
+44,sitzhaiek17,78,85289,12/10/2021,0,shield,Rogues,true,Yuan Renminbi
+45,kjohansson18,88,29631,5/31/2021,0,shield,Clerics,false,Ruble
+46,bcheesley19,10,55480,8/9/2021,7,armor,Warriors,true,Rupiah
+47,iknox1a,54,10719,8/16/2021,3,sword,Wizards,true,Yuan Renminbi
+48,mdobsons1b,48,56990,4/17/2021,0,potion,Warriors,false,Tugrik
+49,tpotbury1c,57,6316,8/5/2021,1,armor,Warriors,true,Ruble
+50,mpalle1d,10,34916,7/22/2021,1,shield,Clerics,false,Peso
+51,rmathelin1e,59,31158,10/11/2021,8,shield,Clerics,false,Euro
+52,agores1f,7,80617,7/25/2021,8,potion,Warriors,true,Peso
+53,kartharg1g,24,70017,9/16/2021,7,potion,Warriors,true,Rial
+54,lphateplace1h,57,6846,8/8/2021,4,sword,Rogues,false,Tenge
+55,mglascott1i,38,67447,9/2/2021,10,shield,Clerics,false,Yuan Renminbi
+56,lraycroft1j,71,18972,10/23/2021,0,potion,Clerics,false,Euro
+57,lcosans1k,73,6128,9/29/2021,8,shield,Wizards,true,Dollar
+58,dwhitmarsh1l,34,81836,3/24/2021,6,shield,Rogues,false,Rupiah
+59,hattreed1m,1,28505,3/23/2021,9,sword,Wizards,false,Dollar
+60,spoolton1n,26,97711,1/11/2021,8,sword,Rogues,true,Peso
+61,khirth1o,68,57586,5/4/2021,5,armor,Clerics,false,Peso
+62,awodeland1p,17,2491,10/2/2021,10,shield,Rogues,true,Yuan Renminbi
+63,mpeto1q,100,41891,12/8/2021,1,potion,Warriors,false,Yuan Renminbi
+64,blittrick1r,59,62829,6/27/2021,5,potion,Warriors,true,Euro
+65,rocannan1s,34,61836,1/24/2021,1,potion,Rogues,true,Ruble
+66,lcarroll1t,51,48322,6/1/2021,3,potion,Wizards,true,Baht
+67,vtait1u,76,47613,4/3/2021,6,potion,Warriors,false,Yuan Renminbi
+68,aoleary1v,96,83874,11/10/2021,10,shield,Clerics,false,Euro
+69,jbrabin1w,46,76107,4/17/2021,8,shield,Rogues,false,Yuan Renminbi
+70,rbonifas1x,71,27462,3/26/2021,7,armor,Clerics,false,Dollar
+71,datkins1y,100,23561,11/25/2021,9,sword,Rogues,true,Won
+72,ftemblett1z,96,54876,11/11/2021,3,armor,Wizards,true,Euro
+73,maskin20,63,84939,7/12/2021,3,potion,Rogues,true,Yuan Renminbi
+74,mheaslip21,73,30721,6/23/2021,4,armor,Wizards,false,Yen
+75,mjacobi22,36,25281,12/29/2021,0,sword,Rogues,true,Franc
+76,acatlette23,81,41634,10/19/2021,8,sword,Wizards,false,Rupiah
+77,shamill24,58,20056,11/25/2021,8,sword,Rogues,false,Rial
+78,ebetz25,69,56462,6/6/2021,0,potion,Warriors,false,Peso
+79,elampart26,5,93498,6/26/2021,1,potion,Rogues,false,Yuan Renminbi
+80,cdomegan27,31,78127,1/1/2021,4,potion,Wizards,false,Peso
+81,chayley28,69,16409,6/19/2021,9,armor,Clerics,true,Rial
+82,kilbert29,86,30702,1/7/2021,0,sword,Warriors,false,Peso
+83,dkelwaybamber2a,58,8486,9/4/2021,9,potion,Clerics,false,Ruble
+84,skopps2b,41,31325,6/21/2021,6,sword,Warriors,true,Yuan Renminbi
+85,vpoulett2c,82,60610,11/24/2021,0,shield,Wizards,false,Rupiah
+86,hkeppe2d,81,94452,3/29/2021,1,sword,Clerics,false,Real
+87,lsine2e,70,80446,5/1/2021,4,sword,Wizards,true,Yuan Renminbi
+88,jpawden2f,32,60652,10/14/2021,9,sword,Rogues,false,Kina
+89,ddimond2g,70,14991,12/24/2021,6,shield,Wizards,true,Baht
+90,cworsall2h,62,48359,7/17/2021,0,shield,Rogues,false,Yuan Renminbi
+91,dmudge2i,27,58797,9/17/2021,10,armor,Rogues,false,Hryvnia
+92,elenthall2j,51,28736,9/12/2021,5,sword,Warriors,true,Real
+93,smiranda2k,79,1810,3/29/2021,1,potion,Wizards,false,Kuna
+94,bgleasane2l,59,3701,1/21/2021,4,shield,Warriors,false,Krona
+95,ahesse2m,8,14110,7/21/2021,2,armor,Rogues,false,Zloty
+96,mvarnals2n,83,72462,5/17/2021,9,sword,Clerics,true,Shilling
+97,fmacmurray2o,79,10009,7/22/2021,8,potion,Warriors,true,Yuan Renminbi
+98,nferrotti2p,75,47263,1/20/2021,8,shield,Warriors,false,Real
+99,lfrances2q,16,44969,5/25/2021,6,potion,Warriors,false,Euro
+100,dwhyborne2r,72,41311,11/11/2021,10,armor,Rogues,true,Zloty
