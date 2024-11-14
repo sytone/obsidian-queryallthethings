@@ -2,7 +2,7 @@
   "id": "qatt",
   "name": "Query all the things",
   "version": "1.2.1",
-  "minAppVersion": "1.2.8",
+  "minAppVersion": "1.7.2",
   "description": "Execute SQL base queries against your data in Obsidian and render it how you want using templates.",
   "author": "Sytone",
   "authorUrl": "https://github.com/sytone",

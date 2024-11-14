@@ -140,7 +140,7 @@ importers:
         version: 17.1.0(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint@8.57.0))(eslint-plugin-n@16.6.2(eslint@8.57.0))(eslint-plugin-promise@6.6.0(eslint@8.57.0))(eslint@8.57.0)
       eslint-plugin-import:
         specifier: ^2.29.1
-        version: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint-import-resolver-webpack@0.13.8)(eslint@8.57.0)
+        version: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint-import-resolver-webpack@0.13.8(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint@8.57.0))(webpack@5.94.0(esbuild@0.18.5)))(eslint@8.57.0)
       eslint-plugin-n:
         specifier: ^16.6.2
         version: 16.6.2(eslint@8.57.0)
@@ -157,8 +157,8 @@ importers:
         specifier: ^15.1.0
         version: 15.1.0
       obsidian:
-        specifier: 1.2.8
-        version: 1.2.8(@codemirror/state@6.4.1)(@codemirror/view@6.32.0)
+        specifier: 1.7.2
+        version: 1.7.2(@codemirror/state@6.4.1)(@codemirror/view@6.32.0)
       prettier:
         specifier: 2.8.8
         version: 2.8.8
@@ -355,9 +355,9 @@ packages:
     resolution: {integrity: sha512-zQ1ijeeCXVEh+aNL0RlmkPkG8HUiDcU2pzQQFjtbntgAczRASFzj4H+6+bV+dy1ntKR14I/DypeuRG1uma98iQ==}
     engines: {node: '>=6.9.0'}
 
-  '@codemirror/language@git+https://git@github.com:lishid/cm-language.git#2644bfc27afda707a7e1f3aedaf3ca7120f63cd9':
-    resolution: {commit: 2644bfc27afda707a7e1f3aedaf3ca7120f63cd9, repo: git@github.com:lishid/cm-language.git, type: git}
-    version: 6.10.1
+  '@codemirror/language@https://codeload.github.com/lishid/cm-language/tar.gz/be84c19d93fa87ac4e43c1a5874b1d228b5b2a89':
+    resolution: {tarball: https://codeload.github.com/lishid/cm-language/tar.gz/be84c19d93fa87ac4e43c1a5874b1d228b5b2a89}
+    version: 6.10.3
 
   '@codemirror/state@6.4.1':
     resolution: {integrity: sha512-QkEyUiLhsJoZkbumGZlswmAhA7CBU02Wrz7zvH4SrcifbsqwlXShVXg65f3v/ts57W3dqyamEriMhij1Z3Zz4A==}
@@ -3679,8 +3679,14 @@ packages:
       '@codemirror/state': ^6.0.0
       '@codemirror/view': ^6.0.0
 
-  obsidian@git+https://git@github.com:obsidianmd/obsidian-api.git#23947b58d372ea02225324308e31d36b4aa95869:
-    resolution: {commit: 23947b58d372ea02225324308e31d36b4aa95869, repo: git@github.com:obsidianmd/obsidian-api.git, type: git}
+  obsidian@1.7.2:
+    resolution: {integrity: sha512-k9hN9brdknJC+afKr5FQzDRuEFGDKbDjfCazJwpgibwCAoZNYHYV8p/s3mM8I6AsnKrPKNXf8xGuMZ4enWelZQ==}
+    peerDependencies:
+      '@codemirror/state': ^6.0.0
+      '@codemirror/view': ^6.0.0
+
+  obsidian@https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/23947b58d372ea02225324308e31d36b4aa95869:
+    resolution: {tarball: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/23947b58d372ea02225324308e31d36b4aa95869}
     version: 1.7.2
     peerDependencies:
       '@codemirror/state': ^6.0.0
@@ -5031,7 +5037,7 @@ snapshots:
       '@babel/helper-validator-identifier': 7.24.7
       to-fast-properties: 2.0.0
 
-  '@codemirror/language@git+https://git@github.com:lishid/cm-language.git#2644bfc27afda707a7e1f3aedaf3ca7120f63cd9':
+  '@codemirror/language@https://codeload.github.com/lishid/cm-language/tar.gz/be84c19d93fa87ac4e43c1a5874b1d228b5b2a89':
     dependencies:
       '@codemirror/state': 6.4.1
       '@codemirror/view': 6.32.0
@@ -6994,7 +7000,7 @@ snapshots:
   eslint-config-standard@17.1.0(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint@8.57.0))(eslint-plugin-n@16.6.2(eslint@8.57.0))(eslint-plugin-promise@6.6.0(eslint@8.57.0))(eslint@8.57.0):
     dependencies:
       eslint: 8.57.0
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint-import-resolver-webpack@0.13.8)(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint-import-resolver-webpack@0.13.8(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint@8.57.0))(webpack@5.94.0(esbuild@0.18.5)))(eslint@8.57.0)
       eslint-plugin-n: 16.6.2(eslint@8.57.0)
       eslint-plugin-promise: 6.6.0(eslint@8.57.0)
 
@@ -7022,12 +7028,12 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-webpack@0.13.8(eslint-plugin-import@2.29.1)(webpack@5.94.0(esbuild@0.18.5)):
+  eslint-import-resolver-webpack@0.13.8(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint@8.57.0))(webpack@5.94.0(esbuild@0.18.5)):
     dependencies:
       array.prototype.find: 2.2.3
       debug: 3.2.7
       enhanced-resolve: 0.9.1
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint-import-resolver-webpack@0.13.8)(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint-import-resolver-webpack@0.13.8(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint@8.57.0))(webpack@5.94.0(esbuild@0.18.5)))(eslint@8.57.0)
       find-root: 1.1.0
       hasown: 2.0.2
       interpret: 1.4.0
@@ -7040,14 +7046,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.8.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-webpack@0.13.8(eslint-plugin-import@2.29.1)(webpack@5.94.0(esbuild@0.18.5)))(eslint@8.57.0):
+  eslint-module-utils@2.8.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-webpack@0.13.8(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint@8.57.0))(webpack@5.94.0(esbuild@0.18.5)))(eslint@8.57.0):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       '@typescript-eslint/parser': 5.62.0(eslint@8.57.0)(typescript@5.1.3)
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
-      eslint-import-resolver-webpack: 0.13.8(eslint-plugin-import@2.29.1)(webpack@5.94.0(esbuild@0.18.5))
+      eslint-import-resolver-webpack: 0.13.8(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint@8.57.0))(webpack@5.94.0(esbuild@0.18.5))
     transitivePeerDependencies:
       - supports-color
 
@@ -7082,7 +7088,7 @@ snapshots:
       eslint: 8.57.0
       ignore: 5.3.2
 
-  eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint-import-resolver-webpack@0.13.8)(eslint@8.57.0):
+  eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint-import-resolver-webpack@0.13.8(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint@8.57.0))(webpack@5.94.0(esbuild@0.18.5)))(eslint@8.57.0):
     dependencies:
       array-includes: 3.1.8
       array.prototype.findlastindex: 1.2.5
@@ -7092,7 +7098,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.0
       eslint-import-resolver-node: 0.3.9
-      eslint-module-utils: 2.8.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-webpack@0.13.8(eslint-plugin-import@2.29.1)(webpack@5.94.0(esbuild@0.18.5)))(eslint@8.57.0)
+      eslint-module-utils: 2.8.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint-import-resolver-node@0.3.9)(eslint-import-resolver-webpack@0.13.8(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint@8.57.0))(webpack@5.94.0(esbuild@0.18.5)))(eslint@8.57.0)
       hasown: 2.0.2
       is-core-module: 2.15.1
       is-glob: 4.0.3
@@ -8636,7 +8642,7 @@ snapshots:
 
   obsidian-daily-notes-interface@0.8.4(@codemirror/state@6.4.1)(@codemirror/view@6.32.0):
     dependencies:
-      obsidian: git+https://git@github.com:obsidianmd/obsidian-api.git#23947b58d372ea02225324308e31d36b4aa95869(@codemirror/state@6.4.1)(@codemirror/view@6.32.0)
+      obsidian: https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/23947b58d372ea02225324308e31d36b4aa95869(@codemirror/state@6.4.1)(@codemirror/view@6.32.0)
       tslib: 2.1.0
     transitivePeerDependencies:
       - '@codemirror/state'
@@ -8644,7 +8650,7 @@ snapshots:
 
   obsidian-dataview@0.5.56:
     dependencies:
-      '@codemirror/language': git+https://git@github.com:lishid/cm-language.git#2644bfc27afda707a7e1f3aedaf3ca7120f63cd9
+      '@codemirror/language': https://codeload.github.com/lishid/cm-language/tar.gz/be84c19d93fa87ac4e43c1a5874b1d228b5b2a89
       '@codemirror/state': 6.4.1
       '@codemirror/view': 6.32.0
       emoji-regex: 10.3.0
@@ -8662,7 +8668,14 @@ snapshots:
       '@types/codemirror': 0.0.108
       moment: 2.29.4
 
-  obsidian@git+https://git@github.com:obsidianmd/obsidian-api.git#23947b58d372ea02225324308e31d36b4aa95869(@codemirror/state@6.4.1)(@codemirror/view@6.32.0):
+  obsidian@1.7.2(@codemirror/state@6.4.1)(@codemirror/view@6.32.0):
+    dependencies:
+      '@codemirror/state': 6.4.1
+      '@codemirror/view': 6.32.0
+      '@types/codemirror': 5.60.8
+      moment: 2.29.4
+
+  obsidian@https://codeload.github.com/obsidianmd/obsidian-api/tar.gz/23947b58d372ea02225324308e31d36b4aa95869(@codemirror/state@6.4.1)(@codemirror/view@6.32.0):
     dependencies:
       '@codemirror/state': 6.4.1
       '@codemirror/view': 6.32.0
@@ -9755,10 +9768,10 @@ snapshots:
       eslint-config-prettier: 8.10.0(eslint@8.57.0)
       eslint-config-xo: 0.43.1(eslint@8.57.0)
       eslint-formatter-pretty: 5.0.0
-      eslint-import-resolver-webpack: 0.13.8(eslint-plugin-import@2.29.1)(webpack@5.94.0(esbuild@0.18.5))
+      eslint-import-resolver-webpack: 0.13.8(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint@8.57.0))(webpack@5.94.0(esbuild@0.18.5))
       eslint-plugin-ava: 14.0.0(eslint@8.57.0)
       eslint-plugin-eslint-comments: 3.2.0(eslint@8.57.0)
-      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint-import-resolver-webpack@0.13.8)(eslint@8.57.0)
+      eslint-plugin-import: 2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint-import-resolver-webpack@0.13.8(eslint-plugin-import@2.29.1(@typescript-eslint/parser@5.62.0(eslint@8.57.0)(typescript@5.1.3))(eslint@8.57.0))(webpack@5.94.0(esbuild@0.18.5)))(eslint@8.57.0)
       eslint-plugin-n: 15.7.0(eslint@8.57.0)
       eslint-plugin-no-use-extend-native: 0.5.0
       eslint-plugin-prettier: 4.2.1(eslint-config-prettier@8.10.0(eslint@8.57.0))(eslint@8.57.0)(prettier@2.8.8)

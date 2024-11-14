@@ -1,6 +1,6 @@
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {type MarkdownPostProcessorContext, Plugin, TFile} from 'obsidian';
+import {type MarkdownPostProcessorContext, normalizePath, Plugin, TFile} from 'obsidian';
 import {type QattCodeBlock} from 'QattCodeBlock';
 import {type IRenderer} from 'Render/IRenderer';
 import {RenderFactory} from 'Render/RenderFactory';
@@ -321,8 +321,8 @@ export class QueryRenderChildV3 {
    * @returns The TFile object for the file located at the specified target path, or undefined if the file is not found.
    */
   private getTargetFile(targetPath: string): TFile | undefined {
-    targetPath = targetPath.replace(/\\/g, '/');
-    return this.plugin.app.vault.getFiles().find(file => file.path === targetPath);
+    targetPath = normalizePath(targetPath);
+    return this.plugin.app.vault.getFileByPath(targetPath) ?? undefined;
   }
 
   /**
