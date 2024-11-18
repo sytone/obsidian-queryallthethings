@@ -184,27 +184,29 @@ export class AlaSqlQuery extends Service implements IQuery {
   public async query(): Promise<any> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias, unicorn/no-this-assignment
     const currentQuery = this;
+
+    const sourcePath = currentQuery.sourcePath;
     this.logger.groupId(this._queryId);
     this.logger.debugWithId(this._queryId, `Running query on:${this.sourcePath}`);
 
     // Return the full path the query is running on.
     alasql.fn.notePathWithFileExtension = function () {
-      return currentQuery.sourcePath;
+      return sourcePath;
     };
 
     // Return the full path the query is running on.
     alasql.fn.notePathWithoutFileExtension = function () {
-      return currentQuery.sourcePath.split('.')[0];
+      return sourcePath.split('.')[0];
     };
 
     // Return the path to the current page the query is running on.
     alasql.fn.notePath = function () {
-      return currentQuery.sourcePath.split('/').slice(0, -1).join('/');
+      return sourcePath.split('/').slice(0, -1).join('/');
     };
 
     // Return the filename for the current page the query is running on.
     alasql.fn.noteFileName = function () {
-      return currentQuery.sourcePath.split('/').slice(-1)[0].split('.')[0];
+      return sourcePath.split('/').slice(-1)[0].split('.')[0];
     };
 
     /*
@@ -248,6 +250,7 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
       const fileCache = currentQuery.plugin.app.metadataCache.getFileCache(currentQuery.codeBlockFile);
       if (fileCache?.frontmatter !== undefined) {
         const frontmatter: FrontMatterCache = fileCache.frontmatter;
+
         // CurrentQuery.logger.infoWithId(this._queryId, `Getting frontmatter for :${field}`,frontmatter[field]);
         return frontmatter[field] as string;
       }
@@ -256,9 +259,11 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
     };
 
     // eslint-disable-next-line max-params
-    alasql.from.pageProperty = function (field: string, options: any, cb: any, idx: any, query: any) {
+    alasql.from.PAGEPROPERTY = function (field: string, options: any, cb: any, idx: any, query: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       let result = currentQuery.frontmatter[field];
+      console.log(result);
+      console.log(Array.isArray(result));
 
       //	Res = new alasql.Recordset({data:res,columns:{columnid:'_'}});
       if (cb) {
