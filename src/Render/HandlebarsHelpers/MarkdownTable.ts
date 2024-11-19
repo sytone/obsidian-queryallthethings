@@ -9,14 +9,28 @@ title: markdownTable
 
 The `markdownTable`\-helper will generate a markdown table based off the provided results.
 
+There is a option to specify the columns, this allows you to change the heding and set alignment. To set these you need to create a JSON blob and add it to the handlebars helper under `columns`. If you do this it will use the order in the JSON file to replace the headings and set alignment, so if you have 5 columns being returned then you need to have 5 JSON objects in the JSON array and they will be applied in the same order the query returns the columns. Avoid using the wildcard to return columns in this case. 
+
+In the example below the query is `SELECT TOP 5 basename, modified FROM obsidian_notes ORDER BY modified DESC`. This mean we have two columns returned in the order of basename and then modified. To change the titles in the table to be *nicer* you can create a JON array with two objects, as alignment is optional you can skip adding this. The required field in the object is `name`. So `{ "name": "This is the better Title" }` is valid for a column replacement without an alignment, in this case it will be left aligned. 
+
+Alignment options are `left`, `right` and `center`, so if you want to change the alignment of a column add the `align` field to the JSON object after `name`. So using the example above to makeit center aligned you would use `{ "name": "This is the better Title", "align": "center" }`.
+
+Example
+
 ```handlebars
-  {{markdownTable result}}
+{{markdownTable result columns='[{"name": "<VALUE>" [, "align": "left|center|right"] },{"name": "<VALUE>" [, "align": "left|center|right"] }, ...]'}}
 ```
 
 will result in:
 
 ````markdown
-```
+| Note Name | Modified | 
+| --- | ---: | 
+| Note 1 | 1732050853318 | 
+| Note 2 | 1732049773183 | 
+| Note 3 | 1732044078501 | 
+| Note 4 | 1732043909292 | 
+| Note 5 | 1732043884688 |
 ````
 
 // << docs-handlebars-helper-markdowntable
