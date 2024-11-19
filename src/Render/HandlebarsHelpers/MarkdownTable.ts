@@ -15,10 +15,14 @@ In the example below the query is `SELECT TOP 5 basename, modified FROM obsidian
 
 Alignment options are `left`, `right` and `center`, so if you want to change the alignment of a column add the `align` field to the JSON object after `name`. So using the example above to makeit center aligned you would use `{ "name": "This is the better Title", "align": "center" }`.
 
-Example
-
 ```handlebars
 {{markdownTable result columns='[{"name": "<VALUE>" [, "align": "left|center|right"] },{"name": "<VALUE>" [, "align": "left|center|right"] }, ...]'}}
+```
+
+## Example
+
+```handlebars
+{{markdownTable result columns='[{"name": "Note Name"},{"name": "Modified", "align": "right" }]'}}
 ```
 
 will result in:
