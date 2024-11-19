@@ -262,8 +262,6 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
     alasql.from.PAGEPROPERTY = function (field: string, options: any, cb: any, idx: any, query: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       let result = currentQuery.frontmatter[field];
-      console.log(result);
-      console.log(Array.isArray(result));
 
       //	Res = new alasql.Recordset({data:res,columns:{columnid:'_'}});
       if (cb) {
