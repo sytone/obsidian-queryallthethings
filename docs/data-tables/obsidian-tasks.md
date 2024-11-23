@@ -30,3 +30,4 @@ Table Name: `obsidian_tasks`
 | doDate         | string   | When to do the task ['💨', 'do::']                                 |
 | priority       | number   | Priority of task based on indicator ['⏫🔼🔽', 'priority::']         |
 | cleanTask      | string   | The task string with all metadata removed.                        |
+| blockLink      | string   | manually specified block Link for the task                        |
