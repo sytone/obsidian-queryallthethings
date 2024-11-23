@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import {describe, test} from 'node:test';
 import assert from 'node:assert';
-import {ListItem} from 'ListItem';
-import {Note} from 'Note';
 import {parseDataViewProperty, parseTask} from 'Parse/Parsers';
 import {TaskItem} from 'TaskItem';
+import {ListItem} from 'ListItem';
 
 describe('parse functions', () => {
   test('task parses tags correctly', () => {
@@ -110,6 +109,12 @@ describe('parse functions', () => {
 
     parsedTask = parseTask('- [ ] this is a task 📅 2022-03-05');
     assert.strictEqual(parsedTask.priority, undefined);
+    assert.strictEqual(parsedTask.cleanTask, 'this is a task');
+  });
+
+  test('task parses block link correctly', () => {
+    const parsedTask = parseTask('- [ ] this is a task 📅 2022-03-05 [priority:: high] ^123ASD-asd');
+    assert.strictEqual(parsedTask.blockLink, '123ASD-asd');
     assert.strictEqual(parsedTask.cleanTask, 'this is a task');
   });
 

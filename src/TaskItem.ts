@@ -61,6 +61,7 @@ export class TaskItem {
   public doDate: string;
   public priority: number;
   public cleanTask: string;
+  public blockLink: string;
   public listItem: ListItem;
 
   private _parsedTask: any;
@@ -78,6 +79,7 @@ export class TaskItem {
     this.doDate = this._parsedTask.doDate;
     this.priority = this._parsedTask.priority;
     this.cleanTask = this._parsedTask.cleanTask;
+    this.blockLink = this._parsedTask.blockLink;
 
     this.page = listItem.path;
     this.path = listItem.path;
