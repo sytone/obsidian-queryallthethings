@@ -36,6 +36,7 @@ Table Name: `obsidian_tasks`
 | doDate         | string   | When to do the task ['💨', 'do::']                                 |
 | priority       | number   | Priority of task based on indicator ['⏫🔼🔽', 'priority::']         |
 | cleanTask      | string   | The task string with all metadata removed.                        |
+| blockLink      | string   | Manually specified block Link for the task                        |
 
 // << docs-tables-obsidian-tasks
 */
@@ -61,6 +62,7 @@ export class TaskItem {
   public doDate: string;
   public priority: number;
   public cleanTask: string;
+  public blockLink: string;
   public listItem: ListItem;
 
   private _parsedTask: any;
@@ -78,6 +80,7 @@ export class TaskItem {
     this.doDate = this._parsedTask.doDate;
     this.priority = this._parsedTask.priority;
     this.cleanTask = this._parsedTask.cleanTask;
+    this.blockLink = this._parsedTask.blockLink;
 
     this.page = listItem.path;
     this.path = listItem.path;

@@ -21,10 +21,13 @@ export const parseTask = (taskString: string) => {
   let doDate: string | undefined;
   let priority;
   let cleanTask = taskString;
+  let blockLink: string | undefined;
 
   for (let index = 0; index < tokens.length; index++) {
     parseTags(tokens, index, tags, tagsNormalized);
-
+    // Check to see is the token is a block link and if it is then set the block link property. The
+    // block link is in the form of a '^' character followed by only Latin letters, numbers, and dashes.
+    blockLink = parseBlockLink(tokens, index);
     dueDate = dueDate ?? parseDate(tokens, index, dueDatePrefixes);
     doneDate = doneDate ?? parseDate(tokens, index, doneDatePrefixes);
     startDate = startDate ?? parseDate(tokens, index, startDatePrefixes);
@@ -77,9 +80,13 @@ export const parseTask = (taskString: string) => {
     }
   }
 
+  if (blockLink) {
+    cleanTask = cleanTask.replace(`^${blockLink}`, '');
+  }
+
   cleanTask = cleanTask.trim().slice(6);
 
-  return {tags, tagsNormalized, dueDate, doneDate, startDate, createDate, scheduledDate, doDate, priority, cleanTask};
+  return {tags, tagsNormalized, dueDate, doneDate, startDate, createDate, scheduledDate, doDate, priority, cleanTask, blockLink};
 };
 
 const regex = /[[|(](.+?):: (.+?)[\]|)]/g;
@@ -199,4 +206,12 @@ function parseTags(tokens: string[], index: number, tags: string[], tagsNormaliz
       tagsNormalized.push(tagMatch[0].toLowerCase());
     }
   }
+}
+
+function parseBlockLink(tokens: string[], index: number) {
+  if (tokens[index].startsWith('^')) {
+    return tokens[index].slice(1);
+  }
+
+  return undefined;
 }
