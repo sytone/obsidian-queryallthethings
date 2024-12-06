@@ -493,7 +493,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     let postRenderer: IPostRenderer;
     switch (postRenderFormat) {
       case 'markdown': {
-        postRenderer = new ObsidianPostRenderer();
+        postRenderer = new ObsidianPostRenderer(this.plugin.app);
         break;
       }
 
