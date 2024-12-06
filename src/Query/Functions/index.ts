@@ -7,3 +7,4 @@ export * from 'Query/Functions/ParseWikiLinks';
 export * from 'Query/Functions/Reverse';
 export * from 'Query/Functions/Stringify';
 export * from 'Query/Functions/UpdatePropertyFromList';
+export * from 'Query/Functions/UpdatePropertyFromPrompt';

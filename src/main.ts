@@ -1,7 +1,7 @@
 /* eslint-disable unicorn/filename-case */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {CommandHandler} from 'handlers/CommandHandler';
-import {confirmObjectPath, promptWithSuggestions} from 'Internal';
+import {confirmObjectPath, promptForInput, promptWithSuggestions} from 'Internal';
 import {CsvLoaderService} from 'Data/CsvLoaderService';
 import {DataTables} from 'Data/DataTables';
 import {DataviewService} from 'Integrations/DataviewService';
@@ -273,6 +273,7 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
 
     // Make custom functions available to the window object.
     confirmObjectPath('_qatt.ui.promptWithSuggestions', promptWithSuggestions);
+    confirmObjectPath('_qatt.ui.promptForInput', promptForInput);
 
     // Once all the base db and tables are created refresh the inbuilt tables. Also dataview if enabled.
     // Will fire qatt:data-local-database-setup-completed when completed.

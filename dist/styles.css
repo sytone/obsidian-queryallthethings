@@ -4,7 +4,57 @@
 
 }
 
+/**------------------------------------------------------------------------
+ **                            PromptModal
+ *------------------------------------------------------------------------**/
 
+.qatt-modal-prompt-div {
+  display: flex;
+}
+
+.qatt-modal-prompt-form {
+  display: flex;
+  flex-grow: 1;
+}
+
+.qatt-modal-prompt-input {
+  flex-grow: 1;
+}
+
+.qatt-modal-button-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+textarea.qatt-modal-prompt-input {
+  height: 10rem;
+}
+
+textarea.qatt-modal-prompt-input:focus {
+  border-color: var(--interactive-accent);
+}
+
+a.qatt-link {
+  text-decoration-style: dotted;
+}
+
+a.qatt-link:link {
+  text-decoration-style: dotted;
+}
+
+a.qatt-link:visited {
+  text-decoration-style: dotted;
+}
+
+a.qatt-link:hover {
+  text-decoration-style: dotted;
+}
+
+a.qatt-link:active {
+  text-decoration-style: dotted;
+}
 
 /*
 From: https://github.com/vineethtrv/css-loader

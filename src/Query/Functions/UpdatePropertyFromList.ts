@@ -27,7 +27,10 @@ export function registerFunctionUpdatePropertyFromList(): void {
   alasql.fn.updatePropertyFromList = function (currentValue: string, path: string, options: string[], propertyName: string) {
     const suggesterOptions = `['${options.join('\', \'')}']`;
 
-    let html = '<a  ';
+    // Escape single quotes from path.
+    path = path.replace(/'/g, '\\\'');
+
+    let html = '<a class="qatt-link" ';
     html += 'onclick="';
     html += 'const fun = async() => { ';
     html += 'let newValue = (await ';
