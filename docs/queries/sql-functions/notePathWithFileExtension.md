@@ -5,7 +5,7 @@ title: notePathWithFileExtension()
 ---
 # {{ $frontmatter.title }}
 
-The `notePathWithFileExtension()` function will return the current page name, so if the file path in your vault is `folder/folder/my cool filename.md` this function will return `folder/folder/my cool filename.md`.
+The `notePathWithFileExtension()` function will return the current page including path and extension, so if the file path in your vault is `folder/folder/my cool filename.md` this function will return `folder/folder/my cool filename.md`.
 
 Here are all the page functions to extract information from the current page the query is running on.
 
