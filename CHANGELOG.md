@@ -2,6 +2,39 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/sytone/obsidian-queryallthethings/compare/1.2.1...1.3.0) (2025-06-10)
+
+
+### Features
+
+* add markdown table helper and update Obsidian library reference ([b9d2cc1](https://github.com/sytone/obsidian-queryallthethings/commits/b9d2cc1eabdba1eda990db35aeb65f9174133670))
+* enable page property to be queried. ([099228d](https://github.com/sytone/obsidian-queryallthethings/commits/099228d5abe8073f02ab1c80353404299a7883b3))
+* Extract block link from task as column to query ([#35](https://github.com/sytone/obsidian-queryallthethings/issues/35)) ([fd98967](https://github.com/sytone/obsidian-queryallthethings/commits/fd98967ad111c554862646c0b561ec51f87732d8)), closes [#34](https://github.com/sytone/obsidian-queryallthethings/issues/34)
+* **query:** added RAND as a SQL function ([1dde0d5](https://github.com/sytone/obsidian-queryallthethings/commits/1dde0d561f4333867be3d6f4f10c61ec173a712a))
+* **render:** added ability to prompt for input using sql helper to generate link ([1d298c5](https://github.com/sytone/obsidian-queryallthethings/commits/1d298c5d3ab605ff270280da5acad3ca1636c605))
+
+
+### Documentation
+
+* add csv loaded from web example ([cbb8de1](https://github.com/sytone/obsidian-queryallthethings/commits/cbb8de12ecc219ca85f881d7dd4e4d1c2aa9a518))
+* fix spelling ([fa29a00](https://github.com/sytone/obsidian-queryallthethings/commits/fa29a009d204eef5f8b68bdd29d8245b22b93739))
+* update markdowntable helper documentation ([a4b5e22](https://github.com/sytone/obsidian-queryallthethings/commits/a4b5e22092c44c541cac789d3f8ba61a62a3bac2))
+
+
+### Bug Fixes and Changes
+
+* pass app to post renderer ([154d9bb](https://github.com/sytone/obsidian-queryallthethings/commits/154d9bbd86ce30a7a5dae15e1d28021c88dbb9fb))
+* **query:** added block link to the insert and update to avoid duplicate entries ([32aebb1](https://github.com/sytone/obsidian-queryallthethings/commits/32aebb101b0f78a91d01ecb6681394cf7cfea558))
+* remove extra logging ([3f34c55](https://github.com/sytone/obsidian-queryallthethings/commits/3f34c55ee702358cb52c6942ddb65ba2cdf13c2d))
+* update post render to use MarkdownPreviewView.render ([cb30671](https://github.com/sytone/obsidian-queryallthethings/commits/cb3067145ac67ed1480cc8972ff87781c771e71b))
+
+
+### Internal
+
+* add example web based csv file ([1c1e796](https://github.com/sytone/obsidian-queryallthethings/commits/1c1e796a4968fe63454bd19ec0aa7ccd8d329dd2))
+* **deps:** bump the npm_and_yarn group with 3 updates ([#31](https://github.com/sytone/obsidian-queryallthethings/issues/31)) ([e832483](https://github.com/sytone/obsidian-queryallthethings/commits/e832483c55cfad3b93c88c6c5201bcd42117b8af))
+* remove xo extension recommendation ([0593bf1](https://github.com/sytone/obsidian-queryallthethings/commits/0593bf197a61e6cfb96d0ae593f083f2a6deb7f2))
+
 ### [1.2.1](https://github.com/sytone/obsidian-queryallthethings/compare/1.2.0...1.2.1) (2024-10-18)
 
 
