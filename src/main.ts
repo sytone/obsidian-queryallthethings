@@ -36,6 +36,7 @@ export interface IGeneralSettings {
   disableDataviewMissingNotification: boolean;
   disableCustomJsMissingNotification: boolean;
   enableEditorRightClickMenu: boolean;
+  debugMode: boolean;
 }
 
 /**
@@ -82,6 +83,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       disableDataviewMissingNotification: false,
       disableCustomJsMissingNotification: false,
       enableEditorRightClickMenu: true,
+      debugMode: false,
     } as IGeneralSettings,
     async (settings: IGeneralSettings) => {
       // This will run every time the settings are updated.
@@ -93,6 +95,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.generalHeadingOpen = settings.generalHeadingOpen;
       this.internalLoggingConsoleLogLimit = settings.internalLoggingConsoleLogLimit;
       this.enableEditorRightClickMenu = settings.enableEditorRightClickMenu;
+      this.debugMode = settings.debugMode;
       this.commandHandler.setup(settings.internalLoggingConsoleLogLimit);
     },
     async (settings: IGeneralSettings) => {
@@ -105,6 +108,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       this.generalHeadingOpen = settings.generalHeadingOpen;
       this.internalLoggingConsoleLogLimit = settings.internalLoggingConsoleLogLimit;
       this.enableEditorRightClickMenu = settings.enableEditorRightClickMenu;
+      this.debugMode = settings.debugMode;
       this.commandHandler.setup(settings.internalLoggingConsoleLogLimit);
 
       // This is the start of all the events that need to be run to get the system into the correct state. The
@@ -136,6 +140,7 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
   internalLoggingConsoleLogLimit: number;
   enableEditorRightClickMenu = true;
   enableAlaSqlIndexedDbUse: boolean;
+  debugMode: boolean;
 
   // Settings are rendered in the settings via this. Need to
   // refactor this to use the SettingsTab approach I had.
@@ -246,6 +251,20 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
       async (value: boolean) => {
         await settings.update(settings => {
           settings.disableCustomJsMissingNotification = value;
+        });
+      },
+      generalSettingsSection,
+    );
+
+    tab.addToggle(
+      new SettingsTabField({
+        name: 'Enable Debug Mode',
+        description: 'Shows detailed debug information in query codeblocks including execution status, timing, and error details. This helps troubleshoot queries that are not working.',
+        value: settings.current?.debugMode,
+      }),
+      async (value: boolean) => {
+        await settings.update(settings => {
+          settings.debugMode = value;
         });
       },
       generalSettingsSection,

@@ -50,7 +50,6 @@ export class AlaSqlQuery extends Service implements IQuery {
     }
 
     alasql.fn.objectFromMap = function (value) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       return Object.fromEntries(value);
     };
 
@@ -296,7 +295,7 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
 
           this.logger.debugWithId(this._queryId, 'Data Tables:', dataTables);
           this.logger.debugWithId(this._queryId, 'Executing Query:', {originalQuery: this.codeblockConfiguration.query, parsedQuery});
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, no-await-in-loop
+          // eslint-disable-next-line no-await-in-loop
           queryResult = await alasql.promise(parsedQuery, dataTables);
           resultArray.push(queryResult);
         }

@@ -159,6 +159,42 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
     this.container.innerHTML = '';
 
+    // Check if debug mode is enabled from the plugin settings
+    const debugMode = (this.plugin as any).debugMode || this.codeblockConfiguration.logLevel === 'debug';
+
+    // Helper function to add debug info to the container
+    const addDebugInfo = (status: string, details?: string, error?: any) => {
+      if (debugMode) {
+        const debugElement = this.container.createEl('div');
+        debugElement.className = 'qatt-debug-info';
+        debugElement.style.cssText = 'background: #f0f0f0; border-left: 4px solid #007bff; padding: 10px; margin: 5px 0; font-family: monospace; font-size: 12px;';
+
+        const statusElement = debugElement.createEl('div');
+        statusElement.style.cssText = 'font-weight: bold; color: #007bff;';
+        statusElement.textContent = `Status: ${status}`;
+
+        if (details) {
+          const detailsElement = debugElement.createEl('div');
+          detailsElement.style.cssText = 'margin-top: 5px;';
+          detailsElement.textContent = details;
+        }
+
+        if (error) {
+          const errorElement = debugElement.createEl('div');
+          errorElement.style.cssText = 'margin-top: 5px; color: #d32f2f;';
+          errorElement.textContent = `Error: ${error instanceof Error ? error.message : JSON.stringify(error)}`;
+          console.error('[QATT Debug]', error);
+        }
+
+        const timeElement = debugElement.createEl('div');
+        timeElement.style.cssText = 'margin-top: 5px; font-size: 10px; color: #666;';
+        const elapsed = Date.now() - this.startTime.getTime();
+        timeElement.textContent = `Time: ${elapsed}ms | Render ID: ${this.renderId}`;
+      }
+    };
+
+    addDebugInfo('Initializing', 'Starting query execution...');
+
     // If the cache has not been loaded then just put a placeholder message, when
     // the all loaded event is triggered we will render the content.
     if (!this.notesCacheService.allNotesLoaded
@@ -167,6 +203,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       || !this.jsonLoaderService?.initialImportCompleted
       || !this.sqlLoaderService?.initialImportCompleted) {
       this.logger.debugWithId(this.renderId, 'Waiting for all notes to load');
+      addDebugInfo('Waiting', `Waiting for data to load. Notes loaded: ${String(this.notesCacheService.allNotesLoaded)}, CSV: ${String(this.csvLoaderService?.initialImportCompleted)}, Markdown Tables: ${String(this.markdownTableLoaderService?.initialImportCompleted)}, JSON: ${String(this.jsonLoaderService?.initialImportCompleted)}, SQL: ${String(this.sqlLoaderService?.initialImportCompleted)}`);
       const content = this.container.createEl('div');
       content.setAttr('data-query-id', this.renderId);
       content.className = 'qatt-loader';
@@ -196,6 +233,8 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     // --------------------------------------------------
     // Run query and get results to be rendered
     try {
+      addDebugInfo('Executing Query', `Query engine: ${this.codeblockConfiguration.queryEngine ?? 'alasql'}`);
+
       // Pull the frontmatter from the cache as the one passed in may not
       // actually have any content. No idea why and do not have time to
       // debug, assuming it is some race condition.
@@ -210,12 +249,18 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
       // For a error state, return the query engine error to the user in the codeblock replacement.
       if (queryEngine.error) {
+        addDebugInfo('Query Error', undefined, queryEngine.error);
         content.setText(`QATT query error: ${queryEngine.error}`);
         this.logQueryRenderCompletion();
         return;
       }
+
+      const resultCount = Array.isArray(this.queryResults) ? this.queryResults.length : 'N/A';
+      addDebugInfo('Query Complete', `Retrieved ${resultCount} result(s)`);
     } catch (error) {
       this.logger.error('Unknown Query Failure', error);
+      addDebugInfo('Query Exception', undefined, error);
+      content.setText(`QATT query exception: ${error instanceof Error ? error.message : JSON.stringify(error)}`);
       this.logQueryRenderCompletion();
       return;
     }
@@ -226,10 +271,15 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     // Get the engine to render the results using the specified render engine.
     const renderEngine: IRenderer = await this.renderFactory.getRenderer(this.codeblockConfiguration);
     try {
+      addDebugInfo('Rendering Template', `Render engine: ${this.codeblockConfiguration.renderEngine ?? 'handlebars'}`);
+
       // Render Engine Execution
       this.renderResults = await renderEngine?.renderTemplate(this.codeblockConfiguration, this.queryResults) ?? 'Unknown error or exception has occurred.';
       this.logger.debugWithId(this.renderId, 'Render Results:', this.renderResults);
+
+      addDebugInfo('Render Complete', `Generated ${this.renderResults.length} characters of output`);
     } catch (error) {
+      addDebugInfo('Render Error', undefined, error);
       content.setText(`QATT render error: ${JSON.stringify(error)}`);
       this.logQueryRenderCompletion();
       return;
@@ -354,10 +404,13 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
       content.append(docFrag);
 
+      addDebugInfo('Complete', `Query executed and rendered successfully. Post-render format: ${postRenderFormat}`);
+
       // Replace the content of the container with the new content.
       // this.container.firstChild?.replaceWith(content);
     } catch (error) {
       this.logger.error('Unknown Render Failure', error);
+      addDebugInfo('Post-Render Error', undefined, error);
       this.logQueryRenderCompletion();
       return;
     }

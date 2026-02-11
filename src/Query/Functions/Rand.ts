@@ -1,4 +1,4 @@
-import alasql from "alasql";
+import alasql from 'alasql';
 
 /*
 // >> id='alasql-function-rand' options='file=queries/sql-functions/rand.md'

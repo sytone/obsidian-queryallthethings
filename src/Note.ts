@@ -10,8 +10,8 @@ import {
   type BlockCache,
   type FileStats,
 } from 'obsidian';
-import { ListItem } from 'ListItem';
-import { TaskItem } from 'TaskItem';
+import {ListItem} from 'ListItem';
+import {TaskItem} from 'TaskItem';
 
 /*
 Update the table below when new columns are added so documentation is updated.
@@ -128,7 +128,7 @@ Loc {
 */
 
 export class Note {
-  public static async createNewNote (markdownFile: TFile,
+  public static async createNewNote(markdownFile: TFile,
     metadata: CachedMetadata | undefined,
     content: string,
   ): Promise<Note> {
@@ -184,7 +184,7 @@ export class Note {
               }
 
               return closest;
-            }, { heading: '', position: { start: { line: 0, col: 0, offset: 0 }, end: { line: 0, col: 0, offset: 0 } } }).heading ?? '',
+            }, {heading: '', position: {start: {line: 0, col: 0, offset: 0}, end: {line: 0, col: 0, offset: 0}}}).heading ?? '',
           markdownFile.basename,
         ));
       n.tasks = n.listItems.filter(li => li.isTask).map(li => {

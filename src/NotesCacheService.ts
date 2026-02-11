@@ -1,13 +1,13 @@
-import { Service, useSettings } from '@ophidian/core';
-import type { ListItem } from 'ListItem';
-import { Note } from 'Note';
-import { SettingsTabField, SettingsTabHeading, useSettingsTab } from 'Settings/DynamicSettingsTabBuilder';
-import { type TaskItem } from 'TaskItem';
+import {Service, useSettings} from '@ophidian/core';
+import type {ListItem} from 'ListItem';
+import {Note} from 'Note';
+import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
+import {type TaskItem} from 'TaskItem';
 import alasql from 'alasql';
-import { InternalConfigurationService } from 'lib/InternalConfigurationService';
-import { LoggingService } from 'lib/LoggingService';
-import { MetricsService } from 'lib/MetricsService';
-import { DateTime } from 'luxon';
+import {InternalConfigurationService} from 'lib/InternalConfigurationService';
+import {LoggingService} from 'lib/LoggingService';
+import {MetricsService} from 'lib/MetricsService';
+import {DateTime} from 'luxon';
 import {
   Notice,
   Plugin,
@@ -94,22 +94,22 @@ export class NotesCacheService extends Service {
   public tagsNoteMap = new Map<string, string>();
   public ignoredFiles: Record<string, DateTime> = {};
 
-  private get obsidianNotesTableName () {
+  private get obsidianNotesTableName() {
     return 'obsidian_notes';
   }
 
-  private get obsidianListsTableName () {
+  private get obsidianListsTableName() {
     return 'obsidian_lists';
   }
 
-  private get obsidianTasksTableName () {
+  private get obsidianTasksTableName() {
     return 'obsidian_tasks';
   }
 
   /**
    * Creates an instance of the NotesCacheService class.
    */
-  constructor () {
+  constructor() {
     super();
     this.lastUpdate = DateTime.now();
     this.metrics.addMetric('NotesCacheService.create Event Count', 0, 'count');
@@ -127,9 +127,9 @@ export class NotesCacheService extends Service {
    *
    * @returns void
    */
-  showSettings () {
+  showSettings() {
     const tab = this.settingsTab;
-    const { settings } = this;
+    const {settings} = this;
 
     const onToggle = async (value: boolean) => {
       await settings.update(settings => {
@@ -137,7 +137,7 @@ export class NotesCacheService extends Service {
       });
     };
 
-    const settingsSection = tab.addHeading(new SettingsTabHeading({ open: this.notesCacheSettingsOpen, text: 'Notes Cache Settings', level: 'h2', class: 'settings-heading' }), onToggle);
+    const settingsSection = tab.addHeading(new SettingsTabHeading({open: this.notesCacheSettingsOpen, text: 'Notes Cache Settings', level: 'h2', class: 'settings-heading'}), onToggle);
 
     const toggleInlineFieldParsing = tab.addToggle(
       new SettingsTabField({
@@ -182,7 +182,7 @@ export class NotesCacheService extends Service {
     );
   }
 
-  async layoutReady () {
+  async layoutReady() {
     this.logger.info('Layout ready, registering for vault events');
 
     this.registerEvent(
@@ -295,7 +295,7 @@ export class NotesCacheService extends Service {
    * This method registers event listeners for various file-related events such as create, delete, rename, and metadataCache changes.
    * When these events occur, the corresponding callback functions are executed to update the notes cache and trigger a workspace update.
    */
-  async onload () {
+  async onload() {
     this.logger.info(`NotesCacheService Last Update: ${this.lastUpdate.toISO() ?? ''}`);
   }
 
@@ -304,8 +304,8 @@ export class NotesCacheService extends Service {
    * @param path - The path of the file to ignore events for.
    * @param period - The duration, in milliseconds, for which to ignore file events.
    */
-  public async ignoreFileEventsForPeriod (path: string, period: number) {
-    this.ignoredFiles[path] = DateTime.now().plus({ milliseconds: period });
+  public async ignoreFileEventsForPeriod(path: string, period: number) {
+    this.ignoredFiles[path] = DateTime.now().plus({milliseconds: period});
   }
 
   /**
@@ -313,7 +313,7 @@ export class NotesCacheService extends Service {
    *
    * @param app - The Obsidian app instance.
    */
-  async cacheAllNotes (app: App): Promise<void> {
+  async cacheAllNotes(app: App): Promise<void> {
     this.metrics.startMeasurement('NotesCacheService.cacheAllNotes');
     this.logger.debug('Caching all notes');
 
@@ -362,15 +362,15 @@ export class NotesCacheService extends Service {
     this.allNotesLoaded = true;
     const cachingEndTime = performance.now();
     const executionDuration = (cachingEndTime - cachingStartTime) / 1000;
-    indexingNotice = new Notice(`Indexing notes for Query All The Things took ${executionDuration.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })}s`, 5000);
+    indexingNotice = new Notice(`Indexing notes for Query All The Things took ${executionDuration.toLocaleString(undefined, {maximumFractionDigits: 2, minimumFractionDigits: 2})}s`, 5000);
 
     if (!this.disableContinualIndexNotifications) {
       indexingNotice.hide();
     }
 
-    const notesTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianNotesTableName}`)); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-    const listsTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianListsTableName}`)); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
-    const tasksTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianTasksTableName}`)); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+    const notesTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianNotesTableName}`));
+    const listsTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianListsTableName}`));
+    const tasksTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianTasksTableName}`));
 
     this.metrics.addMetric('NotesCacheService Notes Count', notesTable[0].cached as number, 'count');
     this.metrics.addMetric('NotesCacheService Lists Count', listsTable[0].cached as number, 'count');
@@ -386,7 +386,7 @@ export class NotesCacheService extends Service {
    * Retrieves all notes from the cache.
    * @returns A promise that resolves to an array of Note objects.
    */
-  async getNotes (): Promise<Note[]> {
+  async getNotes(): Promise<Note[]> {
     return Array.from(this.notesMap.values());
   }
 
@@ -394,7 +394,7 @@ export class NotesCacheService extends Service {
    * Retrieves all the lists from the cache.
    * @returns A promise that resolves to an array of ListItem objects.
    */
-  async getLists (): Promise<ListItem[]> {
+  async getLists(): Promise<ListItem[]> {
     return Array.from(this.listItemsMap.values());
   }
 
@@ -402,7 +402,7 @@ export class NotesCacheService extends Service {
    * Retrieves all the tasks from the cache.
    * @returns A promise that resolves to an array of TaskItem objects.
    */
-  async getTasks (): Promise<TaskItem[]> {
+  async getTasks(): Promise<TaskItem[]> {
     return Array.from(this.taskItemMap.values());
   }
 
@@ -411,7 +411,7 @@ export class NotesCacheService extends Service {
    * @param path - The path of the note.
    * @returns The index of the note in the cache, or -1 if not found.
    */
-  async getNoteIndex (path: string): Promise<number> {
+  async getNoteIndex(path: string): Promise<number> {
     return this.notes.findIndex(n => n.path === path);
   }
 
@@ -419,7 +419,7 @@ export class NotesCacheService extends Service {
    * Deletes a note from the cache and optionally from the database.
    * @param path - The path of the note to delete.
    */
-  async deleteNote (path: string) {
+  async deleteNote(path: string) {
     this.notesMap.delete(path);
     this.deleteListItemsForPath(path);
     this.deleteTasksForPath(path);
@@ -439,7 +439,7 @@ export class NotesCacheService extends Service {
    * @param path - The path of the note to be replaced.
    * @param note - The new note object to replace the existing note.
    */
-  async replaceNote (path: string, note: Note) {
+  async replaceNote(path: string, note: Note) {
     this.notesMap.set(path, note);
     await this.updateNotesTable(note, path);
 
@@ -470,7 +470,7 @@ export class NotesCacheService extends Service {
    * @param note - The note object to be added.
    * @returns A Promise that resolves when the note is added to the cache.
    */
-  async addNote (path: string, note: Note, updateTable = true) {
+  async addNote(path: string, note: Note, updateTable = true) {
     this.metrics.startMeasurement('addNote');
 
     this.notesMap.set(path, note);
@@ -502,7 +502,7 @@ export class NotesCacheService extends Service {
    * @param path - The path of the file.
    * @returns A Promise that resolves to a Note object if the file exists, otherwise undefined.
    */
-  async createNoteFromPath (path: string): Promise<Note | undefined> {
+  async createNoteFromPath(path: string): Promise<Note | undefined> {
     const f = this.plugin.app.vault
       .getMarkdownFiles()
       .find(f => f.path === path);
@@ -520,7 +520,7 @@ export class NotesCacheService extends Service {
    * @param file The file to create the note from.
    * @returns A promise that resolves to the created note, or undefined if the file is not cached.
    */
-  async createNoteFromFile (file: TFile): Promise<Note | undefined> {
+  async createNoteFromFile(file: TFile): Promise<Note | undefined> {
     return this.createNoteFromFileAndCache(
       file,
       this.plugin.app.metadataCache.getFileCache(file) ?? undefined,
@@ -534,7 +534,7 @@ export class NotesCacheService extends Service {
    * @param cache - The cached metadata for the note, if available.
    * @returns A promise that resolves to the created note, or undefined if the note couldn't be created.
    */
-  async createNoteFromFileAndCache (file: TFile, cache: CachedMetadata | undefined): Promise<Note | undefined> {
+  async createNoteFromFileAndCache(file: TFile, cache: CachedMetadata | undefined): Promise<Note | undefined> {
     // This will slow down the process of caching all notes. It is needed
     // for the creation of list items.
     const notesContent = await this.plugin.app.vault.cachedRead(file);
@@ -553,7 +553,7 @@ export class NotesCacheService extends Service {
    * @param li - The list item.
    * @param task - The task item.
    */
-  private async upsertTasks (updateTable: boolean, path: string, task: TaskItem) {
+  private async upsertTasks(updateTable: boolean, path: string, task: TaskItem) {
     if (updateTable && this.enableAlaSqlTablePopulation) {
       await this.upsertTable(this.obsidianTasksTableName, path, task.modified, task.line, async () => {
         await this.updateTasksTable(task, path);
@@ -570,7 +570,7 @@ export class NotesCacheService extends Service {
    * @param path - The path of the list.
    * @param li - The list item to upsert.
    */
-  private async upsertLists (updateTable: boolean, path: string, li: ListItem) {
+  private async upsertLists(updateTable: boolean, path: string, li: ListItem) {
     if (updateTable && this.enableAlaSqlTablePopulation) {
       await this.upsertTable(this.obsidianListsTableName, path, li.modified, li.line, async () => {
         await this.updateListsTable(li, path);
@@ -587,7 +587,7 @@ export class NotesCacheService extends Service {
    * @param path - The path of the note.
    * @param note - The note to be upserted.
    */
-  private async upsertNote (updateTable: boolean, path: string, note: Note) {
+  private async upsertNote(updateTable: boolean, path: string, note: Note) {
     if (updateTable && this.enableAlaSqlTablePopulation) {
       await this.upsertTable(this.obsidianNotesTableName, path, note.modified, undefined, async () => {
         await this.updateNotesTable(note, path);
@@ -607,11 +607,11 @@ export class NotesCacheService extends Service {
    * @param insertFn - The function to execute when the query does not return any matching rows.
    */
   // eslint-disable-next-line max-params
-  private async upsertTable (tableName: string, path: string, modified: number, line: number | undefined, updateFn: () => Promise<void>, insertFn: () => Promise<void>) {
+  private async upsertTable(tableName: string, path: string, modified: number, line: number | undefined, updateFn: () => Promise<void>, insertFn: () => Promise<void>) {
     const query = line ? `SELECT path, modified FROM ${tableName} WHERE path = ? AND line = ?` : `SELECT path, modified FROM ${tableName} WHERE path = ?`;
     const parameters = line ? [path, line] : [path];
 
-    const result = await alasql.promise(query, parameters); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+    const result = await alasql.promise(query, parameters);
 
     if (result.length > 0 && result[0].modified < modified) {
       await updateFn();
@@ -626,7 +626,7 @@ export class NotesCacheService extends Service {
    * Deletes list items for a given path.
    * @param path - The path to delete list items for.
    */
-  private deleteListItemsForPath (path: string) {
+  private deleteListItemsForPath(path: string) {
     for (const key of this.listItemsMap.keys()) {
       if (key.startsWith(`${path}:`)) {
         this.listItemsMap.delete(key);
@@ -638,7 +638,7 @@ export class NotesCacheService extends Service {
    * Deletes all tasks associated with the specified path.
    * @param path - The path for which tasks should be deleted.
    */
-  private deleteTasksForPath (path: string) {
+  private deleteTasksForPath(path: string) {
     for (const key of this.taskItemMap.keys()) {
       if (key.startsWith(`${path}:`)) {
         this.taskItemMap.delete(key);
@@ -651,7 +651,7 @@ export class NotesCacheService extends Service {
    * @param file - The file path to check.
    * @returns True if the file should be ignored, false otherwise.
    */
-  private checkIfFileShouldBeIgnored (file: string) {
+  private checkIfFileShouldBeIgnored(file: string) {
     return this.ignoredFiles[file] && this.ignoredFiles[file] > DateTime.now();
   }
 
@@ -661,7 +661,7 @@ export class NotesCacheService extends Service {
    * @param note - The note object containing the updated data.
    * @param path - The path of the note to be updated.
    */
-  private async updateNotesTable (note: Note, path: string) {
+  private async updateNotesTable(note: Note, path: string) {
     if (this.enableAlaSqlTablePopulation) {
       await alasql.promise(`UPDATE ${this.obsidianNotesTableName} SET content = ?, internalPath = ?, name = ?, parentFolder = ?, basename = ?, extension = ?, created = ?, modified = ?, size = ?, links = ?, embeds = ?, tags = ?, headings = ?, sections = ?, listItems = ?, frontmatter = ?, blocks = ?, stat = ? WHERE path = ? AND modified < ?`, [
         note.content,
@@ -694,7 +694,7 @@ export class NotesCacheService extends Service {
    * @param note - The note object to be inserted.
    * @param path - The path of the note.
    */
-  private async insertNotesTable (note: Note, path: string) {
+  private async insertNotesTable(note: Note, path: string) {
     if (this.enableAlaSqlTablePopulation) {
       await alasql.promise(`INSERT INTO ${this.obsidianNotesTableName} VALUES ?`, [{
         content: note.content,
@@ -727,7 +727,7 @@ export class NotesCacheService extends Service {
    * @param li - The ListItem object containing the updated values.
    * @param path - The path of the note.
    */
-  private async updateListsTable (li: ListItem, path: string) {
+  private async updateListsTable(li: ListItem, path: string) {
     if (this.enableAlaSqlTablePopulation) {
       await alasql.promise(`UPDATE ${this.obsidianListsTableName} SET parent = ?, task = ?, content = ?, line = ?, [column] = ?, isTopLevel = ?, path = ?, modified = ?, text = ?, checked = ?, status = ?, heading = ?, isTask = ? WHERE path = ? AND line = ? AND modified < ?`, [
         li.parent,
@@ -755,7 +755,7 @@ export class NotesCacheService extends Service {
    *
    * @param li - The list item to insert.
    */
-  private async insertListsTable (li: ListItem) {
+  private async insertListsTable(li: ListItem) {
     if (this.enableAlaSqlTablePopulation) {
       await alasql.promise(`INSERT INTO ${this.obsidianListsTableName} VALUES ?`, [{
         parent: li.parent,
@@ -782,7 +782,7 @@ export class NotesCacheService extends Service {
    * @param path - The path of the task item.
    * @param li - The list item associated with the task item.
    */
-  private async updateTasksTable (task: TaskItem, path: string) {
+  private async updateTasksTable(task: TaskItem, path: string) {
     if (this.enableAlaSqlTablePopulation) {
       await alasql.promise(`UPDATE ${this.obsidianTasksTableName} SET path = ?, modified = ?, task = ?, status = ?, content = ?, text = ?, line = ?, tags = ?, tagsNormalized = ?, dueDate = ?, doneDate = ?, startDate = ?, createDate = ?, scheduledDate = ?, doDate = ?, priority = ?, cleanTask = ?, heading = ?, blockLink = ? WHERE path = ? AND line = ? AND modified < ?`, [
         task.path,
@@ -816,7 +816,7 @@ export class NotesCacheService extends Service {
    *
    * @param task - The task item to be inserted.
    */
-  private async insertTasksTable (task: TaskItem) {
+  private async insertTasksTable(task: TaskItem) {
     if (this.enableAlaSqlTablePopulation) {
       await alasql.promise(`INSERT INTO ${this.obsidianTasksTableName} VALUES ?`, [{
         path: task.path,
