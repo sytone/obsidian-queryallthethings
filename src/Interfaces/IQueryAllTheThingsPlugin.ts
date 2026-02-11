@@ -5,6 +5,7 @@ export interface IQueryAllTheThingsPlugin extends Plugin {
 
   app: App;
   settingsManager: SettingsManager | undefined;
+  debugMode: boolean;
 
   saveData(data: any): Promise<void>;
   onload(): any;

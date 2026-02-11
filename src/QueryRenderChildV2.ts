@@ -22,6 +22,7 @@ import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
 import {JsonLoaderService} from 'Data/JsonLoaderService';
 import {SqlLoaderService} from 'Data/SqlLoaderService';
 import pDebounce from 'p-debounce';
+import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
 
 /**
  * All the rendering logic is handled here. It uses ths configuration to
@@ -37,7 +38,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   public context: MarkdownPostProcessorContext;
   public service: QueryRendererV2Service;
 
-  plugin: Plugin;
+  plugin: IQueryAllTheThingsPlugin;
   logger: Logger;
   queryFactory: QueryFactory;
   renderFactory: RenderFactory;
@@ -81,7 +82,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     // If I use 'use' at the top of this class then it throws
     // an error that there is no context available. This class
     // cannot extend Service.
-    this.plugin = service.use(Plugin);
+    this.plugin = service.use(Plugin) as IQueryAllTheThingsPlugin;
     this.logger = service.use(LoggingService).getLogger('Qatt.QueryRenderChildV2');
     this.queryFactory = service.use(QueryFactory);
     this.renderFactory = service.use(RenderFactory);
@@ -160,34 +161,29 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     this.container.innerHTML = '';
 
     // Check if debug mode is enabled from the plugin settings
-    const debugMode = (this.plugin as any).debugMode || this.codeblockConfiguration.logLevel === 'debug';
+    const debugMode = this.plugin.debugMode || this.codeblockConfiguration.logLevel === 'debug';
 
     // Helper function to add debug info to the container
     const addDebugInfo = (status: string, details?: string, error?: any) => {
       if (debugMode) {
         const debugElement = this.container.createEl('div');
         debugElement.className = 'qatt-debug-info';
-        debugElement.style.cssText = 'background: #f0f0f0; border-left: 4px solid #007bff; padding: 10px; margin: 5px 0; font-family: monospace; font-size: 12px;';
-
+        
         const statusElement = debugElement.createEl('div');
-        statusElement.style.cssText = 'font-weight: bold; color: #007bff;';
         statusElement.textContent = `Status: ${status}`;
-
+        
         if (details) {
           const detailsElement = debugElement.createEl('div');
-          detailsElement.style.cssText = 'margin-top: 5px;';
           detailsElement.textContent = details;
         }
-
+        
         if (error) {
           const errorElement = debugElement.createEl('div');
-          errorElement.style.cssText = 'margin-top: 5px; color: #d32f2f;';
           errorElement.textContent = `Error: ${error instanceof Error ? error.message : JSON.stringify(error)}`;
           console.error('[QATT Debug]', error);
         }
 
         const timeElement = debugElement.createEl('div');
-        timeElement.style.cssText = 'margin-top: 5px; font-size: 10px; color: #666;';
         const elapsed = Date.now() - this.startTime.getTime();
         timeElement.textContent = `Time: ${elapsed}ms | Render ID: ${this.renderId}`;
       }
@@ -250,7 +246,10 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       // For a error state, return the query engine error to the user in the codeblock replacement.
       if (queryEngine.error) {
         addDebugInfo('Query Error', undefined, queryEngine.error);
-        content.setText(`QATT query error: ${queryEngine.error}`);
+        const errorMessage = debugMode 
+          ? `QATT query error: ${queryEngine.error}`
+          : `QATT query error: ${queryEngine.error}\n\n💡 Tip: Enable Debug Mode in QATT settings to see detailed execution information.`;
+        content.setText(errorMessage);
         this.logQueryRenderCompletion();
         return;
       }
@@ -260,7 +259,10 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     } catch (error) {
       this.logger.error('Unknown Query Failure', error);
       addDebugInfo('Query Exception', undefined, error);
-      content.setText(`QATT query exception: ${error instanceof Error ? error.message : JSON.stringify(error)}`);
+      const errorMessage = debugMode
+        ? `QATT query exception: ${error instanceof Error ? error.message : JSON.stringify(error)}`
+        : `QATT query exception: ${error instanceof Error ? error.message : JSON.stringify(error)}\n\n💡 Tip: Enable Debug Mode in QATT settings or add 'logLevel: debug' to your query to see detailed execution information.`;
+      content.setText(errorMessage);
       this.logQueryRenderCompletion();
       return;
     }
@@ -280,7 +282,10 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       addDebugInfo('Render Complete', `Generated ${this.renderResults.length} characters of output`);
     } catch (error) {
       addDebugInfo('Render Error', undefined, error);
-      content.setText(`QATT render error: ${JSON.stringify(error)}`);
+      const errorMessage = debugMode
+        ? `QATT render error: ${JSON.stringify(error)}`
+        : `QATT render error: ${error instanceof Error ? error.message : JSON.stringify(error)}\n\n💡 Tip: Enable Debug Mode in QATT settings to see detailed execution information.`;
+      content.setText(errorMessage);
       this.logQueryRenderCompletion();
       return;
     }
@@ -411,6 +416,10 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     } catch (error) {
       this.logger.error('Unknown Render Failure', error);
       addDebugInfo('Post-Render Error', undefined, error);
+      const errorMessage = debugMode
+        ? `QATT post-render error: ${error instanceof Error ? error.message : JSON.stringify(error)}`
+        : `QATT post-render error: ${error instanceof Error ? error.message : JSON.stringify(error)}\n\n💡 Tip: Enable Debug Mode in QATT settings to see detailed execution information.`;
+      content.setText(errorMessage);
       this.logQueryRenderCompletion();
       return;
     }
