@@ -31,3 +31,4 @@ docs/.vitepress/dist
 src/UI/alaSqlFunctions.json
 src/UI/communityQueries.json
 src/UI/handlebarsHelpers.json
+package-lock.json
