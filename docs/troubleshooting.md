@@ -76,7 +76,11 @@ template: |
    - Or test the query manually in the console
 
 **Common Causes:**
-- Wrong table name - The correct table name is `obsidian_notes`. Common mistakes include using `obsidian_markdown_notes` (which is a legacy table that may not be populated) or `notes` (which doesn't exist). Always refer to the documentation for the correct table names.
+- Wrong table name: 
+  - The correct table name is `obsidian_notes`
+  - Common mistakes include using `obsidian_markdown_notes` (a legacy table that may not be populated) 
+  - Or using `notes` (which doesn't exist)
+  - Always refer to the documentation for the correct table names
 - Missing data - the notes cache may not be loaded yet
 - Incorrect WHERE conditions
 

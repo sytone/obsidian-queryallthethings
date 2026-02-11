@@ -164,7 +164,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     const debugMode = this.plugin.debugMode || this.codeblockConfiguration.logLevel === 'debug';
 
     // Helper function to add debug info to the container
-    const addDebugInfo = (status: string, details?: string, error?: any) => {
+    const addDebugInfo = (status: string, details?: string, error?: unknown) => {
       if (debugMode) {
         const debugElement = this.container.createEl('div');
         debugElement.className = 'qatt-debug-info';
@@ -199,7 +199,16 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       || !this.jsonLoaderService?.initialImportCompleted
       || !this.sqlLoaderService?.initialImportCompleted) {
       this.logger.debugWithId(this.renderId, 'Waiting for all notes to load');
-      addDebugInfo('Waiting', `Waiting for data to load. Notes loaded: ${String(this.notesCacheService.allNotesLoaded)}, CSV: ${String(this.csvLoaderService?.initialImportCompleted)}, Markdown Tables: ${String(this.markdownTableLoaderService?.initialImportCompleted)}, JSON: ${String(this.jsonLoaderService?.initialImportCompleted)}, SQL: ${String(this.sqlLoaderService?.initialImportCompleted)}`);
+      
+      const statusItems = [
+        `Notes loaded: ${String(this.notesCacheService.allNotesLoaded)}`,
+        `CSV: ${String(this.csvLoaderService?.initialImportCompleted)}`,
+        `Markdown Tables: ${String(this.markdownTableLoaderService?.initialImportCompleted)}`,
+        `JSON: ${String(this.jsonLoaderService?.initialImportCompleted)}`,
+        `SQL: ${String(this.sqlLoaderService?.initialImportCompleted)}`,
+      ];
+      addDebugInfo('Waiting', `Waiting for data to load. ${statusItems.join(', ')}`);
+      
       const content = this.container.createEl('div');
       content.setAttr('data-query-id', this.renderId);
       content.className = 'qatt-loader';
