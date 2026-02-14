@@ -17,6 +17,7 @@ describe('toInt', () => {
   it('parses strings with leading zeros', () => {
     assert.strictEqual(toInt('007'), 7);
     assert.strictEqual(toInt('0123'), 123);
+    assert.strictEqual(toInt('000'), 0);
   });
 
   it('handles negative numbers', () => {

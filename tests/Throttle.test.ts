@@ -153,7 +153,7 @@ describe('asyncThrottle', () => {
     assert.strictEqual(result, 10);
   });
 
-  it('debounces multiple calls and returns last result', async () => {
+  it('throttles multiple calls and returns last result', async () => {
     let callCount = 0;
     const fn = async (value: number) => {
       callCount++;

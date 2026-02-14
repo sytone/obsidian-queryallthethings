@@ -224,5 +224,8 @@ describe('parseTask - enhanced edge cases', () => {
     // Block link should be at the end
     assert.strictEqual(result.blockLink, 'block123');
     assert.ok(result.cleanTask.includes('Complex Task'));
+    // Verify markdown formatting is preserved
+    assert.ok(result.cleanTask.includes('**bold**'));
+    assert.ok(result.cleanTask.includes('_italic_'));
   });
 });
