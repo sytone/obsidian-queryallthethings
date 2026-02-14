@@ -366,6 +366,22 @@ export interface IQattCodeBlock {
    * @memberof IQattCodeBlock
    */
   internalQueryRenderChildVersion: number;
+
+  /**
+   * Validation errors found during parsing. This is used internally and not meant to be set by users.
+   *
+   * @type {string[]}
+   * @memberof IQattCodeBlock
+   */
+  validationErrors?: string[];
+
+  /**
+   * Validation warnings found during parsing. This is used internally and not meant to be set by users.
+   *
+   * @type {string[]}
+   * @memberof IQattCodeBlock
+   */
+  validationWarnings?: string[];
 }
 
 /**
@@ -395,6 +411,16 @@ export class QattCodeBlock implements IQattCodeBlock {
   internalQueryRenderChildVersion: number;
 
   /**
+   * Validation errors found during parsing
+   */
+  public validationErrors: string[] = [];
+
+  /**
+   * Validation warnings found during parsing
+   */
+  public validationWarnings: string[] = [];
+
+  /**
    * Creates an instance of QattCodeBlock.
    * @param {string} codeBlockContent
    * @memberof QattCodeBlock
@@ -403,8 +429,16 @@ export class QattCodeBlock implements IQattCodeBlock {
     public codeBlockContent?: string,
     public defaultInternalQueryRenderChildVersion?: number,
   ) {
-    const parsedCodeBlock = parseYaml(codeBlockContent ?? '');
+    let parsedCodeBlock: any;
     this.originalCodeBlockContent = codeBlockContent;
+
+    // Validate YAML syntax
+    try {
+      parsedCodeBlock = parseYaml(codeBlockContent ?? '');
+    } catch (error) {
+      this.validationErrors.push(`Invalid YAML syntax: ${error instanceof Error ? error.message : String(error)}`);
+      parsedCodeBlock = {};
+    }
 
     this.customJSForSql = parsedCodeBlock.customJSForSql;
     this.customJSForHandlebars = parsedCodeBlock.customJSForHandlebars;
@@ -436,6 +470,83 @@ export class QattCodeBlock implements IQattCodeBlock {
     this.queryDataSource = this.getParsedQuerySource(this.query ?? 'qatt');
 
     this.internalQueryRenderChildVersion = parsedCodeBlock.internalQueryRenderChildVersion === undefined ? (defaultInternalQueryRenderChildVersion ?? 2) : Number(parsedCodeBlock.internalQueryRenderChildVersion);
+
+    // Validate configuration
+    this.validateConfiguration();
+  }
+
+  /**
+   * Validates the codeblock configuration and populates validation errors/warnings
+   *
+   * @private
+   * @memberof QattCodeBlock
+   */
+  private validateConfiguration(): void {
+    // Check if query or queryFile is provided
+    if (!this.query && !this.queryFile) {
+      this.validationErrors.push('Missing query: You must provide either "query" or "queryFile" in your codeblock configuration.');
+    }
+
+    // Check if both query and queryFile are provided
+    if (this.query && this.queryFile) {
+      this.validationWarnings.push('Both "query" and "queryFile" are provided. The "query" field will be used and "queryFile" will be ignored.');
+    }
+
+    // Check if template or templateFile is provided
+    if (!this.template && !this.templateFile) {
+      this.validationErrors.push('Missing template: You must provide either "template" or "templateFile" in your codeblock configuration.');
+    }
+
+    // Check if both template and templateFile are provided
+    if (this.template && this.templateFile) {
+      this.validationWarnings.push('Both "template" and "templateFile" are provided. The "template" field will be used and "templateFile" will be ignored.');
+    }
+
+    // Check for common table name mistakes
+    if (this.query) {
+      this.validateTableNames(this.query);
+    }
+
+    // Validate queryEngine value
+    if (this.queryEngine && this.queryEngine !== 'alasql') {
+      this.validationWarnings.push(`Unknown query engine "${this.queryEngine}". Only "alasql" is currently supported. Defaulting to "alasql".`);
+    }
+
+    // Validate renderEngine value
+    if (this.renderEngine && !['handlebars', 'text'].includes(this.renderEngine)) {
+      this.validationWarnings.push(`Unknown render engine "${this.renderEngine}". Only "handlebars" and "text" are supported. Defaulting to "handlebars".`);
+    }
+
+    // Validate postRenderFormat value
+    if (this.postRenderFormat && !['markdown', 'micromark', 'html', 'raw'].includes(this.postRenderFormat)) {
+      this.validationWarnings.push(`Unknown post render format "${this.postRenderFormat}". Supported values are: "markdown", "micromark", "html", "raw". Defaulting to configured default.`);
+    }
+  }
+
+  /**
+   * Validates table names in the query and adds warnings for common mistakes
+   *
+   * @private
+   * @param {string} query
+   * @memberof QattCodeBlock
+   */
+  private validateTableNames(query: string): void {
+    const tableNameMapping: Record<string, string> = {
+      notes: 'obsidian_notes',
+      tasks: 'obsidian_tasks',
+      lists: 'obsidian_lists',
+      files: 'obsidian_markdown_files',
+      obsidian_markdown_notes: 'obsidian_notes (Note: obsidian_markdown_notes is a legacy table)',
+      obsidian_markdown_tasks: 'obsidian_tasks (Note: obsidian_markdown_tasks is a legacy table)',
+      obsidian_markdown_lists: 'obsidian_lists (Note: obsidian_markdown_lists is a legacy table)',
+    };
+
+    for (const [incorrectName, correctName] of Object.entries(tableNameMapping)) {
+      const regex = new RegExp(`\\b${incorrectName}\\b`, 'i');
+      if (regex.test(query)) {
+        this.validationWarnings.push(`Potentially incorrect table name "${incorrectName}" detected. Did you mean "${correctName}"?`);
+      }
+    }
   }
 
   /**

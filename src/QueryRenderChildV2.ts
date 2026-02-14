@@ -168,15 +168,15 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       if (debugMode) {
         const debugElement = this.container.createEl('div');
         debugElement.className = 'qatt-debug-info';
-        
+
         const statusElement = debugElement.createEl('div');
         statusElement.textContent = `Status: ${status}`;
-        
+
         if (details) {
           const detailsElement = debugElement.createEl('div');
           detailsElement.textContent = details;
         }
-        
+
         if (error) {
           const errorElement = debugElement.createEl('div');
           errorElement.textContent = `Error: ${error instanceof Error ? error.message : JSON.stringify(error)}`;
@@ -191,6 +191,75 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
     addDebugInfo('Initializing', 'Starting query execution...');
 
+    // Check for validation errors in the codeblock configuration
+    if (this.codeblockConfiguration.validationErrors && this.codeblockConfiguration.validationErrors.length > 0) {
+      const content = this.container.createEl('div');
+      content.setAttr('data-query-id', this.renderId);
+      content.className = 'qatt-validation-error';
+
+      const errorTitle = content.createEl('div');
+      errorTitle.style.cssText = 'font-weight: bold; color: var(--text-error); margin-bottom: 10px;';
+      errorTitle.textContent = '❌ Configuration Error';
+
+      const errorList = content.createEl('ul');
+      errorList.style.cssText = 'margin: 10px 0; padding-left: 20px;';
+
+      for (const error of this.codeblockConfiguration.validationErrors) {
+        const errorItem = errorList.createEl('li');
+        errorItem.style.cssText = 'color: var(--text-error); margin: 5px 0;';
+        errorItem.textContent = error;
+      }
+
+      const helpText = content.createEl('div');
+      helpText.style.cssText = 'margin-top: 10px; font-size: 0.9em; color: var(--text-muted);';
+      helpText.textContent = '💡 Tip: Check the troubleshooting documentation for common configuration issues.';
+
+      this.logQueryRenderCompletion();
+      return;
+    }
+
+    // Display validation warnings in debug mode
+    if (debugMode && this.codeblockConfiguration.validationWarnings && this.codeblockConfiguration.validationWarnings.length > 0) {
+      const warningElement = this.container.createEl('div');
+      warningElement.className = 'qatt-validation-warning';
+      warningElement.style.cssText = 'background: var(--background-secondary); border-left: 4px solid var(--text-warning); padding: 10px; margin: 5px 0; border-radius: 4px;';
+
+      const warningTitle = warningElement.createEl('div');
+      warningTitle.style.cssText = 'font-weight: bold; color: var(--text-warning); margin-bottom: 5px;';
+      warningTitle.textContent = '⚠️ Configuration Warnings';
+
+      const warningList = warningElement.createEl('ul');
+      warningList.style.cssText = 'margin: 5px 0; padding-left: 20px;';
+
+      for (const warning of this.codeblockConfiguration.validationWarnings) {
+        const warningItem = warningList.createEl('li');
+        warningItem.style.cssText = 'color: var(--text-warning); margin: 3px 0; font-size: 0.9em;';
+        warningItem.textContent = warning;
+      }
+    }
+
+    // Check if dataview tables are used but Dataview plugin is not installed
+    if (this.codeblockConfiguration.queryDataSource === 'dataview' && !this.plugin.app.plugins.enabledPlugins.has('dataview')) {
+      const content = this.container.createEl('div');
+      content.setAttr('data-query-id', this.renderId);
+      content.className = 'qatt-validation-error';
+
+      const errorTitle = content.createEl('div');
+      errorTitle.style.cssText = 'font-weight: bold; color: var(--text-error); margin-bottom: 10px;';
+      errorTitle.textContent = '❌ Dataview Plugin Required';
+
+      const errorText = content.createEl('div');
+      errorText.style.cssText = 'margin: 10px 0;';
+      errorText.textContent = 'Your query uses Dataview tables (dataview_pages, dataview_tasks, or dataview_lists), but the Dataview plugin is not installed or enabled.';
+
+      const solutionText = content.createEl('div');
+      solutionText.style.cssText = 'margin: 10px 0;';
+      solutionText.textContent = '💡 Solution: Install and enable the Dataview plugin from Obsidian\'s Community Plugins, or update your query to use QATT tables instead (e.g., obsidian_notes, obsidian_tasks, obsidian_lists).';
+
+      this.logQueryRenderCompletion();
+      return;
+    }
+
     // If the cache has not been loaded then just put a placeholder message, when
     // the all loaded event is triggered we will render the content.
     if (!this.notesCacheService.allNotesLoaded
@@ -199,7 +268,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       || !this.jsonLoaderService?.initialImportCompleted
       || !this.sqlLoaderService?.initialImportCompleted) {
       this.logger.debugWithId(this.renderId, 'Waiting for all notes to load');
-      
+
       const statusItems = [
         `Notes loaded: ${String(this.notesCacheService.allNotesLoaded)}`,
         `CSV: ${String(this.csvLoaderService?.initialImportCompleted)}`,
@@ -208,7 +277,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
         `SQL: ${String(this.sqlLoaderService?.initialImportCompleted)}`,
       ];
       addDebugInfo('Waiting', `Waiting for data to load. ${statusItems.join(', ')}`);
-      
+
       const content = this.container.createEl('div');
       content.setAttr('data-query-id', this.renderId);
       content.className = 'qatt-loader';
@@ -255,7 +324,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       // For a error state, return the query engine error to the user in the codeblock replacement.
       if (queryEngine.error) {
         addDebugInfo('Query Error', undefined, queryEngine.error);
-        const errorMessage = debugMode 
+        const errorMessage = debugMode
           ? `QATT query error: ${queryEngine.error}`
           : `QATT query error: ${queryEngine.error}\n\n💡 Tip: Enable Debug Mode in QATT settings to see detailed execution information.`;
         content.setText(errorMessage);

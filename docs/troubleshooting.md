@@ -45,6 +45,18 @@ Query executed and rendered successfully. Post-render format: markdown
 Time: 120ms | Render ID: :path/to/file.md
 ```
 
+### Validation Warnings in Debug Mode
+
+When Debug Mode is enabled, you'll also see warnings about potential configuration issues:
+
+```
+⚠️ Configuration Warnings
+• Potentially incorrect table name "notes" detected. Did you mean "obsidian_notes"?
+• Unknown post render format "custom". Supported values are: "markdown", "micromark", "html", "raw".
+```
+
+These warnings help you catch common mistakes before they cause problems.
+
 ## Per-Query Debug Mode
 
 You can also enable debug mode for individual queries by adding `logLevel: debug` to your codeblock:
@@ -63,6 +75,32 @@ template: |
 
 ## Common Issues
 
+### Configuration Errors
+
+**Symptoms:** Red error message appears in the codeblock immediately
+
+**What It Means:** QATT has detected a problem with your codeblock configuration before attempting to run the query.
+
+**Common Configuration Errors:**
+- **Invalid YAML syntax**: Check for proper indentation and formatting
+- **Missing query or template**: You must provide either `query` or `queryFile`, and either `template` or `templateFile`
+- **Dataview plugin required**: Your query uses Dataview tables but the Dataview plugin is not installed
+
+**Example Error:**
+```
+❌ Configuration Error
+• Missing query: You must provide either "query" or "queryFile" in your codeblock configuration.
+• Missing template: You must provide either "template" or "templateFile" in your codeblock configuration.
+
+💡 Tip: Check the troubleshooting documentation for common configuration issues.
+```
+
+**How to Fix:**
+1. Read the error message carefully - it tells you exactly what's wrong
+2. Check your YAML syntax (indentation matters!)
+3. Ensure you have both a query and a template defined
+4. Install required plugins if mentioned in the error
+
 ### Query Returns No Results
 
 **Symptoms:** The query executes but shows an empty result
@@ -80,7 +118,7 @@ template: |
   - The correct table name is `obsidian_notes`
   - Common mistakes include using `obsidian_markdown_notes` (a legacy table that may not be populated) 
   - Or using `notes` (which doesn't exist)
-  - Always refer to the documentation for the correct table names
+  - QATT now warns you about incorrect table names when Debug Mode is enabled
 - Missing data - the notes cache may not be loaded yet
 - Incorrect WHERE conditions
 
