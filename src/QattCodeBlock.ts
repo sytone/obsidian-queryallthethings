@@ -436,7 +436,8 @@ export class QattCodeBlock implements IQattCodeBlock {
     try {
       parsedCodeBlock = parseYaml(codeBlockContent ?? '');
     } catch (error) {
-      this.validationErrors.push(`Invalid YAML syntax: ${error instanceof Error ? error.message : String(error)}`);
+      const errorMsg = error instanceof Error ? error.message : String(error);
+      this.validationErrors.push(`Invalid YAML syntax: ${errorMsg}. Common issues: check indentation (use spaces not tabs), ensure colons have spaces after them, and quote strings with special characters.`);
       parsedCodeBlock = {};
     }
 
@@ -542,7 +543,9 @@ export class QattCodeBlock implements IQattCodeBlock {
     };
 
     for (const [incorrectName, correctName] of Object.entries(tableNameMapping)) {
-      const regex = new RegExp(`\\b${incorrectName}\\b`, 'i');
+      // Escape special regex characters in the table name
+      const escapedName = incorrectName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`\\b${escapedName}\\b`, 'i');
       if (regex.test(query)) {
         this.validationWarnings.push(`Potentially incorrect table name "${incorrectName}" detected. Did you mean "${correctName}"?`);
       }
