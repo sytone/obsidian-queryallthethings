@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import {Service} from '@ophidian/core';
 import {Plugin} from 'obsidian';
 import {DateTime} from 'luxon';

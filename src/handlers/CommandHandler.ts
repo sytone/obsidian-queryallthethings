@@ -52,7 +52,7 @@ export class CommandHandler extends Service {
         name: 'Will push all the internal events to the console for debugging.',
         callback: async () => {
           const limit = internalLoggingConsoleLogLimit;
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
           const result = await alasql.promise(`SELECT TOP ${limit} * FROM qatt.Events ORDER BY date desc`);
           this.logger.info('Internal Events', result);
         },
@@ -75,7 +75,7 @@ export class CommandHandler extends Service {
         id: 'dump-tables-to-editor',
         name: 'Dump the in memory tables known by Alasql to the editor',
         async editorCallback(editor: Editor) {
-          const results = await alasql.promise('SHOW TABLES'); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+          const results = await alasql.promise('SHOW TABLES');
           let table = '';
 
           const keys = Object.keys(results[0] || {});
@@ -121,7 +121,7 @@ export class CommandHandler extends Service {
         id: 'dump-reference-calendar-to-editor',
         name: 'Will push all the internal qatt.ReferenceCalendar table to the editor for debugging.',
         async editorCallback(editor: Editor) {
-          const results = await alasql.promise('SELECT TOP 10 * FROM qatt.ReferenceCalendar'); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+          const results = await alasql.promise('SELECT TOP 10 * FROM qatt.ReferenceCalendar');
           let table = '';
 
           const keys = Object.keys(results[0] || {});

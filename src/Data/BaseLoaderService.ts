@@ -219,7 +219,7 @@ export class BaseLoaderService extends Service {
     // Drop the parsed array directly into the table data as it is faster than loading via SQL calls.
     alasql.tables[tableName].data = parsedArray;
 
-    const rowsQuery = await alasql.promise(`SELECT COUNT(*) AS ImportedRows FROM  ${tableName}`); // eslint-disable-line @typescript-eslint/no-unsafe-assignment
+    const rowsQuery = await alasql.promise(`SELECT COUNT(*) AS ImportedRows FROM  ${tableName}`);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const importedRowCount: number = rowsQuery[0].ImportedRows;
     const endTime = new Date(Date.now());

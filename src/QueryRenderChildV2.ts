@@ -22,6 +22,7 @@ import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
 import {JsonLoaderService} from 'Data/JsonLoaderService';
 import {SqlLoaderService} from 'Data/SqlLoaderService';
 import pDebounce from 'p-debounce';
+import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
 
 /**
  * All the rendering logic is handled here. It uses ths configuration to
@@ -37,7 +38,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
   public context: MarkdownPostProcessorContext;
   public service: QueryRendererV2Service;
 
-  plugin: Plugin;
+  plugin: IQueryAllTheThingsPlugin;
   logger: Logger;
   queryFactory: QueryFactory;
   renderFactory: RenderFactory;
@@ -81,7 +82,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     // If I use 'use' at the top of this class then it throws
     // an error that there is no context available. This class
     // cannot extend Service.
-    this.plugin = service.use(Plugin);
+    this.plugin = service.use(Plugin) as IQueryAllTheThingsPlugin;
     this.logger = service.use(LoggingService).getLogger('Qatt.QueryRenderChildV2');
     this.queryFactory = service.use(QueryFactory);
     this.renderFactory = service.use(RenderFactory);
@@ -159,6 +160,106 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
     this.container.innerHTML = '';
 
+    // Check if debug mode is enabled from the plugin settings
+    const debugMode = this.plugin.debugMode || this.codeblockConfiguration.logLevel === 'debug';
+
+    // Helper function to add debug info to the container
+    const addDebugInfo = (status: string, details?: string, error?: unknown) => {
+      if (debugMode) {
+        const debugElement = this.container.createEl('div');
+        debugElement.className = 'qatt-debug-info';
+
+        const statusElement = debugElement.createEl('div');
+        statusElement.textContent = `Status: ${status}`;
+
+        if (details) {
+          const detailsElement = debugElement.createEl('div');
+          detailsElement.textContent = details;
+        }
+
+        if (error) {
+          const errorElement = debugElement.createEl('div');
+          errorElement.textContent = `Error: ${error instanceof Error ? error.message : JSON.stringify(error)}`;
+          console.error('[QATT Debug]', error);
+        }
+
+        const timeElement = debugElement.createEl('div');
+        const elapsed = Date.now() - this.startTime.getTime();
+        timeElement.textContent = `Time: ${elapsed}ms | Render ID: ${this.renderId}`;
+      }
+    };
+
+    addDebugInfo('Initializing', 'Starting query execution...');
+
+    // Check for validation errors in the codeblock configuration
+    if (this.codeblockConfiguration.validationErrors && this.codeblockConfiguration.validationErrors.length > 0) {
+      const content = this.container.createEl('div');
+      content.setAttr('data-query-id', this.renderId);
+      content.className = 'qatt-validation-error';
+
+      const errorTitle = content.createEl('div');
+      errorTitle.style.cssText = 'font-weight: bold; color: var(--text-error); margin-bottom: 10px;';
+      errorTitle.textContent = '❌ Configuration Error';
+
+      const errorList = content.createEl('ul');
+      errorList.style.cssText = 'margin: 10px 0; padding-left: 20px;';
+
+      for (const error of this.codeblockConfiguration.validationErrors) {
+        const errorItem = errorList.createEl('li');
+        errorItem.style.cssText = 'color: var(--text-error); margin: 5px 0;';
+        errorItem.textContent = error;
+      }
+
+      const helpText = content.createEl('div');
+      helpText.style.cssText = 'margin-top: 10px; font-size: 0.9em; color: var(--text-muted);';
+      helpText.textContent = '💡 Tip: Check the troubleshooting documentation for common configuration issues.';
+
+      this.logQueryRenderCompletion();
+      return;
+    }
+
+    // Display validation warnings in debug mode
+    if (debugMode && this.codeblockConfiguration.validationWarnings && this.codeblockConfiguration.validationWarnings.length > 0) {
+      const warningElement = this.container.createEl('div');
+      warningElement.className = 'qatt-validation-warning';
+      warningElement.style.cssText = 'background: var(--background-secondary); border-left: 4px solid var(--text-warning); padding: 10px; margin: 5px 0; border-radius: 4px;';
+
+      const warningTitle = warningElement.createEl('div');
+      warningTitle.style.cssText = 'font-weight: bold; color: var(--text-warning); margin-bottom: 5px;';
+      warningTitle.textContent = '⚠️ Configuration Warnings';
+
+      const warningList = warningElement.createEl('ul');
+      warningList.style.cssText = 'margin: 5px 0; padding-left: 20px;';
+
+      for (const warning of this.codeblockConfiguration.validationWarnings) {
+        const warningItem = warningList.createEl('li');
+        warningItem.style.cssText = 'color: var(--text-warning); margin: 3px 0; font-size: 0.9em;';
+        warningItem.textContent = warning;
+      }
+    }
+
+    // Check if dataview tables are used but Dataview plugin is not installed
+    if (this.codeblockConfiguration.queryDataSource === 'dataview' && !this.plugin.app.plugins.enabledPlugins.has('dataview')) {
+      const content = this.container.createEl('div');
+      content.setAttr('data-query-id', this.renderId);
+      content.className = 'qatt-validation-error';
+
+      const errorTitle = content.createEl('div');
+      errorTitle.style.cssText = 'font-weight: bold; color: var(--text-error); margin-bottom: 10px;';
+      errorTitle.textContent = '❌ Dataview Plugin Required';
+
+      const errorText = content.createEl('div');
+      errorText.style.cssText = 'margin: 10px 0;';
+      errorText.textContent = 'Your query uses Dataview tables (dataview_pages, dataview_tasks, or dataview_lists), but the Dataview plugin is not installed or enabled.';
+
+      const solutionText = content.createEl('div');
+      solutionText.style.cssText = 'margin: 10px 0;';
+      solutionText.textContent = "💡 Solution: Install and enable the Dataview plugin from Obsidian's Community Plugins, or update your query to use QATT tables instead (e.g., obsidian_notes, obsidian_tasks, obsidian_lists).";
+
+      this.logQueryRenderCompletion();
+      return;
+    }
+
     // If the cache has not been loaded then just put a placeholder message, when
     // the all loaded event is triggered we will render the content.
     if (!this.notesCacheService.allNotesLoaded
@@ -167,6 +268,16 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
       || !this.jsonLoaderService?.initialImportCompleted
       || !this.sqlLoaderService?.initialImportCompleted) {
       this.logger.debugWithId(this.renderId, 'Waiting for all notes to load');
+
+      const statusItems = [
+        `Notes loaded: ${String(this.notesCacheService.allNotesLoaded)}`,
+        `CSV: ${String(this.csvLoaderService?.initialImportCompleted)}`,
+        `Markdown Tables: ${String(this.markdownTableLoaderService?.initialImportCompleted)}`,
+        `JSON: ${String(this.jsonLoaderService?.initialImportCompleted)}`,
+        `SQL: ${String(this.sqlLoaderService?.initialImportCompleted)}`,
+      ];
+      addDebugInfo('Waiting', `Waiting for data to load. ${statusItems.join(', ')}`);
+
       const content = this.container.createEl('div');
       content.setAttr('data-query-id', this.renderId);
       content.className = 'qatt-loader';
@@ -196,6 +307,8 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     // --------------------------------------------------
     // Run query and get results to be rendered
     try {
+      addDebugInfo('Executing Query', `Query engine: ${this.codeblockConfiguration.queryEngine ?? 'alasql'}`);
+
       // Pull the frontmatter from the cache as the one passed in may not
       // actually have any content. No idea why and do not have time to
       // debug, assuming it is some race condition.
@@ -210,12 +323,24 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
       // For a error state, return the query engine error to the user in the codeblock replacement.
       if (queryEngine.error) {
-        content.setText(`QATT query error: ${queryEngine.error}`);
+        addDebugInfo('Query Error', undefined, queryEngine.error);
+        const errorMessage = debugMode
+          ? `QATT query error: ${queryEngine.error}`
+          : `QATT query error: ${queryEngine.error}\n\n💡 Tip: Enable Debug Mode in QATT settings to see detailed execution information.`;
+        content.setText(errorMessage);
         this.logQueryRenderCompletion();
         return;
       }
+
+      const resultCount = Array.isArray(this.queryResults) ? this.queryResults.length : 'N/A';
+      addDebugInfo('Query Complete', `Retrieved ${resultCount} result(s)`);
     } catch (error) {
       this.logger.error('Unknown Query Failure', error);
+      addDebugInfo('Query Exception', undefined, error);
+      const errorMessage = debugMode
+        ? `QATT query exception: ${error instanceof Error ? error.message : JSON.stringify(error)}`
+        : `QATT query exception: ${error instanceof Error ? error.message : JSON.stringify(error)}\n\n💡 Tip: Enable Debug Mode in QATT settings or add 'logLevel: debug' to your query to see detailed execution information.`;
+      content.setText(errorMessage);
       this.logQueryRenderCompletion();
       return;
     }
@@ -226,11 +351,19 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
     // Get the engine to render the results using the specified render engine.
     const renderEngine: IRenderer = await this.renderFactory.getRenderer(this.codeblockConfiguration);
     try {
+      addDebugInfo('Rendering Template', `Render engine: ${this.codeblockConfiguration.renderEngine ?? 'handlebars'}`);
+
       // Render Engine Execution
       this.renderResults = await renderEngine?.renderTemplate(this.codeblockConfiguration, this.queryResults) ?? 'Unknown error or exception has occurred.';
       this.logger.debugWithId(this.renderId, 'Render Results:', this.renderResults);
+
+      addDebugInfo('Render Complete', `Generated ${this.renderResults.length} characters of output`);
     } catch (error) {
-      content.setText(`QATT render error: ${JSON.stringify(error)}`);
+      addDebugInfo('Render Error', undefined, error);
+      const errorMessage = debugMode
+        ? `QATT render error: ${JSON.stringify(error)}`
+        : `QATT render error: ${error instanceof Error ? error.message : JSON.stringify(error)}\n\n💡 Tip: Enable Debug Mode in QATT settings to see detailed execution information.`;
+      content.setText(errorMessage);
       this.logQueryRenderCompletion();
       return;
     }
@@ -354,10 +487,17 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
       content.append(docFrag);
 
+      addDebugInfo('Complete', `Query executed and rendered successfully. Post-render format: ${postRenderFormat}`);
+
       // Replace the content of the container with the new content.
       // this.container.firstChild?.replaceWith(content);
     } catch (error) {
       this.logger.error('Unknown Render Failure', error);
+      addDebugInfo('Post-Render Error', undefined, error);
+      const errorMessage = debugMode
+        ? `QATT post-render error: ${error instanceof Error ? error.message : JSON.stringify(error)}`
+        : `QATT post-render error: ${error instanceof Error ? error.message : JSON.stringify(error)}\n\n💡 Tip: Enable Debug Mode in QATT settings to see detailed execution information.`;
+      content.setText(errorMessage);
       this.logQueryRenderCompletion();
       return;
     }

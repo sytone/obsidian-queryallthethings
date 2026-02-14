@@ -158,3 +158,36 @@ From: https://github.com/vineethtrv/css-loader
   border-top: 0px;
   border-bottom: 1px solid var(--background-modifier-border);
 }
+
+/**------------------------------------------------------------------------
+ **                            DEBUG INFO
+ *------------------------------------------------------------------------**/
+.qatt-debug-info {
+  background: var(--background-secondary);
+  border-left: 4px solid var(--interactive-accent);
+  padding: 10px;
+  margin: 5px 0;
+  font-family: var(--font-monospace);
+  font-size: 12px;
+  border-radius: 4px;
+}
+
+.qatt-debug-info > div:first-child {
+  font-weight: bold;
+  color: var(--interactive-accent);
+}
+
+.qatt-debug-info > div:nth-child(2) {
+  margin-top: 5px;
+}
+
+.qatt-debug-info > div:nth-child(3) {
+  margin-top: 5px;
+  color: var(--text-error);
+}
+
+.qatt-debug-info > div:last-child {
+  margin-top: 5px;
+  font-size: 10px;
+  color: var(--text-muted);
+}

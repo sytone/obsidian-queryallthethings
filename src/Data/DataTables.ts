@@ -1,13 +1,13 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import alasql from 'alasql';
-import { AlaSqlQuery } from 'Query/AlaSqlQuery';
-import { DateTime } from 'luxon';
-import { parseTask } from 'Parse/Parsers';
-import { Plugin } from 'obsidian';
-import { Service } from '@ophidian/core';
-import { LoggingService } from 'lib/LoggingService';
-import { DataviewService } from 'Integrations/DataviewService';
-import { MetricsService } from 'lib/MetricsService';
+import {AlaSqlQuery} from 'Query/AlaSqlQuery';
+import {DateTime} from 'luxon';
+import {parseTask} from 'Parse/Parsers';
+import {Plugin} from 'obsidian';
+import {Service} from '@ophidian/core';
+import {LoggingService} from 'lib/LoggingService';
+import {DataviewService} from 'Integrations/DataviewService';
+import {MetricsService} from 'lib/MetricsService';
 
 export class DataTables extends Service {
   plugin = this.use(Plugin);
@@ -18,13 +18,12 @@ export class DataTables extends Service {
   public setupLocalDatabasesCompleted = false;
   public refreshTablesCompleted = false;
 
-  public async runAdhocQuery (query: string): Promise<any> {
+  public async runAdhocQuery(query: string): Promise<any> {
     const result = await alasql.promise(query);
-    return result; // eslint-disable-line @typescript-eslint/no-unsafe-return
+    return result;
   }
 
-  public async setupLocalDatabase () {
-
+  public async setupLocalDatabase() {
     // Setup ALASQL and all custom functions.
     this.metrics.startMeasurement('AlaSqlQuery.initialize');
     AlaSqlQuery.initialize();
@@ -54,10 +53,9 @@ export class DataTables extends Service {
     this.logger.info('Current database:', alasql.useid);
     this.setupLocalDatabasesCompleted = true;
     this.plugin.app.workspace.trigger('qatt:data-local-database-setup-completed');
-
   }
 
-  public async refreshTables (reason: string): Promise<void> {
+  public async refreshTables(reason: string): Promise<void> {
     this.metrics.startMeasurement('DataTables.refreshTables');
 
     if (this.dvService.dataViewEnabled) {
@@ -87,10 +85,10 @@ export class DataTables extends Service {
    * @param {string} reason
    * @memberof DataTables
    */
-  public async refreshCalendarTable (reason: string): Promise<void> {
+  public async refreshCalendarTable(reason: string): Promise<void> {
     this.metrics.startMeasurement('DataTables.refreshCalendarTable');
 
-    await alasql.promise('SELECT * INTO qatt.Events FROM ?', [[{ date: DateTime.now(), event: `Lists Table refreshed: ${reason}` }]]);
+    await alasql.promise('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Lists Table refreshed: ${reason}`}]]);
 
     await alasql.promise('DROP TABLE IF EXISTS qatt.ReferenceCalendar');
     await alasql.promise('CREATE TABLE IF NOT EXISTS qatt.ReferenceCalendar');
@@ -141,7 +139,7 @@ export class DataTables extends Service {
     const nowIso = DateTime.now().toISODate();
 
     for (let i = 1; i <= (daysInPreviousYear + daysInCurrentYear + daysInNextYear); i++) {
-      const date = DateTime.local(DateTime.now().year - 1, 1, 1).plus({ days: i - 1 });
+      const date = DateTime.local(DateTime.now().year - 1, 1, 1).plus({days: i - 1});
       // eslint-disable-next-line no-await-in-loop
       await alasql.promise('INSERT INTO qatt.ReferenceCalendar VALUES ?', [{
         date: date.toISODate(),
@@ -169,10 +167,10 @@ export class DataTables extends Service {
     this.metrics.endMeasurement('DataTables.refreshCalendarTable');
   }
 
-  public async refreshTasksTableFromDataview (reason: string): void {
+  public async refreshTasksTableFromDataview(reason: string): void {
     this.metrics.startMeasurement('DataTables.refreshTasksTableFromDataview');
 
-    await alasql.promise('SELECT * INTO qatt.Events FROM ?', [[{ date: DateTime.now(), event: `Tasks Table refreshed: ${reason}` }]]);
+    await alasql.promise('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Tasks Table refreshed: ${reason}`}]]);
     const dataviewTasksTable = await alasql.promise('SHOW TABLES FROM alasql LIKE "dataview_tasks"');
     if (dataviewTasksTable.length > 0) {
       this.logger.info('Dropping the dataview_tasks table to repopulate.');
@@ -232,10 +230,10 @@ export class DataTables extends Service {
     this.metrics.endMeasurement('DataTables.refreshTasksTableFromDataview');
   }
 
-  public async refreshListsTableFromDataview (reason: string): void {
+  public async refreshListsTableFromDataview(reason: string): void {
     this.metrics.startMeasurement('DataTables.refreshListsTableFromDataview');
 
-    await alasql.promise('SELECT * INTO qatt.Events FROM ?', [[{ date: DateTime.now(), event: `Lists Table refreshed: ${reason}` }]]);
+    await alasql.promise('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Lists Table refreshed: ${reason}`}]]);
 
     const dataviewListsTable = await alasql.promise('SHOW TABLES FROM alasql LIKE "dataview_lists"');
 
@@ -302,7 +300,7 @@ export class DataTables extends Service {
   }
 
   // Parse a path to return the filename without an extension.
-  private parsePathFilenameNoExt (path: string): string {
+  private parsePathFilenameNoExt(path: string): string {
     const parts = path.split('/');
     const filename = parts[parts.length - 1];
     return filename.split('.')[0];
