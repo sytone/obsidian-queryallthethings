@@ -17,6 +17,15 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Validate Tag Format 🔍
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          if ! [[ "$TAG" =~ ^b[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ Error: Tag '$TAG' does not match beta version format (bX.Y.Z)"
+            exit 1
+          fi
+          echo "✅ Tag '$TAG' is valid beta version"
+
       - name: Checkout 🛎️
         uses: actions/checkout@v3
         with:
