@@ -355,8 +355,8 @@ packages:
     resolution: {integrity: sha512-zQ1ijeeCXVEh+aNL0RlmkPkG8HUiDcU2pzQQFjtbntgAczRASFzj4H+6+bV+dy1ntKR14I/DypeuRG1uma98iQ==}
     engines: {node: '>=6.9.0'}
 
-  '@codemirror/language@git+https://git@github.com:lishid/cm-language.git#be84c19d93fa87ac4e43c1a5874b1d228b5b2a89':
-    resolution: {commit: be84c19d93fa87ac4e43c1a5874b1d228b5b2a89, repo: git@github.com:lishid/cm-language.git, type: git}
+  '@codemirror/language@git+https://github.com/lishid/cm-language.git#be84c19d93fa87ac4e43c1a5874b1d228b5b2a89':
+    resolution: {commit: be84c19d93fa87ac4e43c1a5874b1d228b5b2a89, repo: https://github.com/lishid/cm-language.git, type: git}
     version: 6.10.3
 
   '@codemirror/state@6.4.1':
@@ -3685,8 +3685,8 @@ packages:
       '@codemirror/state': ^6.0.0
       '@codemirror/view': ^6.0.0
 
-  obsidian@git+https://git@github.com:obsidianmd/obsidian-api.git#23947b58d372ea02225324308e31d36b4aa95869:
-    resolution: {commit: 23947b58d372ea02225324308e31d36b4aa95869, repo: git@github.com:obsidianmd/obsidian-api.git, type: git}
+  obsidian@git+https://github.com/obsidianmd/obsidian-api.git#23947b58d372ea02225324308e31d36b4aa95869:
+    resolution: {commit: 23947b58d372ea02225324308e31d36b4aa95869, repo: https://github.com/obsidianmd/obsidian-api.git, type: git}
     version: 1.7.2
     peerDependencies:
       '@codemirror/state': ^6.0.0
@@ -5032,7 +5032,7 @@ snapshots:
       '@babel/helper-validator-identifier': 7.24.7
       to-fast-properties: 2.0.0
 
-  '@codemirror/language@git+https://git@github.com:lishid/cm-language.git#be84c19d93fa87ac4e43c1a5874b1d228b5b2a89':
+  '@codemirror/language@git+https://github.com/lishid/cm-language.git#be84c19d93fa87ac4e43c1a5874b1d228b5b2a89':
     dependencies:
       '@codemirror/state': 6.4.1
       '@codemirror/view': 6.32.0
@@ -8637,7 +8637,7 @@ snapshots:
 
   obsidian-daily-notes-interface@0.8.4(@codemirror/state@6.4.1)(@codemirror/view@6.32.0):
     dependencies:
-      obsidian: git+https://git@github.com:obsidianmd/obsidian-api.git#23947b58d372ea02225324308e31d36b4aa95869(@codemirror/state@6.4.1)(@codemirror/view@6.32.0)
+      obsidian: git+https://github.com/obsidianmd/obsidian-api.git#23947b58d372ea02225324308e31d36b4aa95869(@codemirror/state@6.4.1)(@codemirror/view@6.32.0)
       tslib: 2.1.0
     transitivePeerDependencies:
       - '@codemirror/state'
@@ -8645,7 +8645,7 @@ snapshots:
 
   obsidian-dataview@0.5.56:
     dependencies:
-      '@codemirror/language': git+https://git@github.com:lishid/cm-language.git#be84c19d93fa87ac4e43c1a5874b1d228b5b2a89
+      '@codemirror/language': git+https://github.com/lishid/cm-language.git#be84c19d93fa87ac4e43c1a5874b1d228b5b2a89
       '@codemirror/state': 6.4.1
       '@codemirror/view': 6.32.0
       emoji-regex: 10.3.0
@@ -8670,7 +8670,7 @@ snapshots:
       '@types/codemirror': 5.60.8
       moment: 2.29.4
 
-  obsidian@git+https://git@github.com:obsidianmd/obsidian-api.git#23947b58d372ea02225324308e31d36b4aa95869(@codemirror/state@6.4.1)(@codemirror/view@6.32.0):
+  obsidian@git+https://github.com/obsidianmd/obsidian-api.git#23947b58d372ea02225324308e31d36b4aa95869(@codemirror/state@6.4.1)(@codemirror/view@6.32.0):
     dependencies:
       '@codemirror/state': 6.4.1
       '@codemirror/view': 6.32.0
