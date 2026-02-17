@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import {describe, test} from 'node:test';
 import assert from 'node:assert';
-import {parseTask} from '../src/Parse/Parsers';
+import {parseTask} from '../src/Parse/Parsers.js';
 
 describe('parseTask - enhanced edge cases', () => {
   test('handles empty task string', () => {

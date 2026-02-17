@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import {describe, it} from 'node:test';
 import assert from 'node:assert';
-import {debounce} from '../src/lib/Debounce';
+import {debounce} from '../src/lib/Debounce.js';
 
 describe('debounce', () => {
   it('delays function execution', async () => {
@@ -15,7 +15,9 @@ describe('debounce', () => {
 
     assert.strictEqual(callCount, 0);
 
-    await new Promise(resolve => setTimeout(resolve, 60));
+    await new Promise(resolve => {
+      setTimeout(resolve, 60);
+    });
     assert.strictEqual(callCount, 1);
   });
 
@@ -30,7 +32,9 @@ describe('debounce', () => {
     debouncedFn();
     debouncedFn();
 
-    await new Promise(resolve => setTimeout(resolve, 60));
+    await new Promise(resolve => {
+      setTimeout(resolve, 60);
+    });
     assert.strictEqual(callCount, 1);
   });
 
@@ -52,7 +56,9 @@ describe('debounce', () => {
 
   it('handles async functions', async () => {
     const fn = async (value: number) => {
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise(resolve => {
+        setTimeout(resolve, 10);
+      });
       return value * 2;
     };
 
@@ -70,14 +76,20 @@ describe('debounce', () => {
     const debouncedFn = debounce(fn, 100);
 
     debouncedFn();
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => {
+      setTimeout(resolve, 50);
+    });
     debouncedFn();
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => {
+      setTimeout(resolve, 50);
+    });
     debouncedFn();
 
     assert.strictEqual(callCount, 0);
 
-    await new Promise(resolve => setTimeout(resolve, 110));
+    await new Promise(resolve => {
+      setTimeout(resolve, 110);
+    });
     assert.strictEqual(callCount, 1);
   });
 
@@ -106,7 +118,9 @@ describe('debounce', () => {
 
     assert.strictEqual(callCount, 1);
 
-    await new Promise(resolve => setTimeout(resolve, 60));
+    await new Promise(resolve => {
+      setTimeout(resolve, 60);
+    });
     await debouncedFn();
     assert.strictEqual(callCount, 2);
   });
@@ -121,7 +135,9 @@ describe('debounce', () => {
     const debouncedFn = debounce(fn, 50, {callback});
     await debouncedFn(5);
 
-    await new Promise(resolve => setTimeout(resolve, 60));
+    await new Promise(resolve => {
+      setTimeout(resolve, 60);
+    });
     assert.strictEqual(callbackResult, 10);
   });
 
@@ -134,15 +150,23 @@ describe('debounce', () => {
     const debouncedFn = debounce(fn, 100, {maxWait: 150});
 
     debouncedFn();
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => {
+      setTimeout(resolve, 50);
+    });
     debouncedFn();
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => {
+      setTimeout(resolve, 50);
+    });
     debouncedFn();
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => {
+      setTimeout(resolve, 50);
+    });
     debouncedFn();
 
     // MaxWait should trigger after 150ms even with continuous calls
-    await new Promise(resolve => setTimeout(resolve, 60));
+    await new Promise(resolve => {
+      setTimeout(resolve, 60);
+    });
     assert.strictEqual(callCount, 1);
   });
 
@@ -161,7 +185,9 @@ describe('debounce', () => {
       // Expected to be rejected
     });
 
-    await new Promise(resolve => setTimeout(resolve, 60));
+    await new Promise(resolve => {
+      setTimeout(resolve, 60);
+    });
     assert.strictEqual(callCount, 0);
   });
 
@@ -175,8 +201,8 @@ describe('debounce', () => {
     debouncedFn.cancel('Cancelled');
 
     // Properly handle the rejections
-    let error1: any;
-    let error2: any;
+    let error1: unknown;
+    let error2: unknown;
     try {
       await promise1;
     } catch (error) {
@@ -215,7 +241,9 @@ describe('debounce', () => {
     await debouncedFn();
 
     // With 0 wait, should call on next tick
-    await new Promise(resolve => setTimeout(resolve, 5));
+    await new Promise(resolve => {
+      setTimeout(resolve, 5);
+    });
     assert.strictEqual(callCount, 1);
   });
 
@@ -248,7 +276,9 @@ describe('debounce', () => {
       debouncedFn(i);
     }
 
-    await new Promise(resolve => setTimeout(resolve, 60));
+    await new Promise(resolve => {
+      setTimeout(resolve, 60);
+    });
 
     // Should only have called once with the last value
     assert.strictEqual(calls.length, 1);

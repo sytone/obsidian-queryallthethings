@@ -43,7 +43,6 @@ export class NotesCacheService extends Service {
   disableContinualIndexNotifications = false;
   public allNotesLoaded = false;
   public cachingNotes = false;
-  notesDb: any;
 
   settingsTab = useSettingsTab(this);
   settings = useSettings(
@@ -368,13 +367,13 @@ export class NotesCacheService extends Service {
       indexingNotice.hide();
     }
 
-    const notesTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianNotesTableName}`));
-    const listsTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianListsTableName}`));
-    const tasksTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianTasksTableName}`));
+    const notesTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianNotesTableName}`)) as unknown[];
+    const listsTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianListsTableName}`)) as unknown[];
+    const tasksTable = (await alasql.promise(`SELECT COUNT(path) AS cached FROM ${this.obsidianTasksTableName}`)) as unknown[];
 
-    this.metrics.addMetric('NotesCacheService Notes Count', notesTable[0].cached as number, 'count');
-    this.metrics.addMetric('NotesCacheService Lists Count', listsTable[0].cached as number, 'count');
-    this.metrics.addMetric('NotesCacheService Tasks Count', tasksTable[0].cached as number, 'count');
+    this.metrics.addMetric('NotesCacheService Notes Count', (notesTable[0] as {cached: number}).cached, 'count');
+    this.metrics.addMetric('NotesCacheService Lists Count', (listsTable[0] as {cached: number}).cached, 'count');
+    this.metrics.addMetric('NotesCacheService Tasks Count', (tasksTable[0] as {cached: number}).cached, 'count');
 
     this.plugin.app.workspace.trigger('qatt:all-notes-loaded');
     this.metrics.endMeasurement('NotesCacheService.cacheAllNotes');
@@ -611,9 +610,9 @@ export class NotesCacheService extends Service {
     const query = line ? `SELECT path, modified FROM ${tableName} WHERE path = ? AND line = ?` : `SELECT path, modified FROM ${tableName} WHERE path = ?`;
     const parameters = line ? [path, line] : [path];
 
-    const result = await alasql.promise(query, parameters);
+    const result = await alasql.promise(query, parameters) as unknown[];
 
-    if (result.length > 0 && result[0].modified < modified) {
+    if (result.length > 0 && (result[0] as {modified: number}).modified < modified) {
       await updateFn();
     }
 

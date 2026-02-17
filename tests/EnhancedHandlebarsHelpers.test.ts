@@ -2,12 +2,12 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert';
 import Handlebars from 'handlebars';
-import {capitalize} from '../src/Render/HandlebarsHelpers/Capitalize';
-import {lowercase} from '../src/Render/HandlebarsHelpers/Lowercase';
-import {uppercase} from '../src/Render/HandlebarsHelpers/Uppercase';
-import {trim} from '../src/Render/HandlebarsHelpers/Trim';
-import {stringify} from '../src/Render/HandlebarsHelpers/Stringify';
-import {eq, ne, gt, ge, lt, le} from '../src/Render/HandlebarsHelpers/RelationalOperators';
+import {capitalize} from '../src/Render/HandlebarsHelpers/Capitalize.js';
+import {lowercase} from '../src/Render/HandlebarsHelpers/Lowercase.js';
+import {uppercase} from '../src/Render/HandlebarsHelpers/Uppercase.js';
+import {trim} from '../src/Render/HandlebarsHelpers/Trim.js';
+import {stringify} from '../src/Render/HandlebarsHelpers/Stringify.js';
+import {eq, ne, gt, ge, lt, le} from '../src/Render/HandlebarsHelpers/RelationalOperators.js';
 
 describe('capitalize - enhanced', () => {
   it('capitalizes first letter of simple string', () => {
@@ -153,7 +153,7 @@ describe('trim', () => {
   });
 
   it('handles non-string values by converting to string', () => {
-    assert.strictEqual(trim('123' as any), '123');
+    assert.strictEqual(trim('123'), '123');
   });
 });
 
@@ -218,6 +218,7 @@ describe('stringify - enhanced', () => {
 
   it('handles cyclical objects', () => {
     const object: any = {name: 'test'};
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     object.self = object;
 
     const result = stringify(object);

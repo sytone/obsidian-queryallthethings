@@ -13,6 +13,7 @@ import * as alasqlFunctions from 'Query/Functions';
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   interface Window {
+
     customJS?: any;
   }
 }
@@ -50,6 +51,7 @@ export class AlaSqlQuery extends Service implements IQuery {
     }
 
     alasql.fn.objectFromMap = function (value) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       return Object.fromEntries(value);
     };
 
@@ -63,7 +65,7 @@ export class AlaSqlQuery extends Service implements IQuery {
 
   public codeblockConfiguration: QattCodeBlock;
   private sourcePath: string;
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents -- frontmatter from Obsidian can be any shape
   private frontmatter: any | undefined;
 
   private _name: string;
@@ -81,14 +83,14 @@ export class AlaSqlQuery extends Service implements IQuery {
   public async setupQuery(
     codeblockConfiguration: QattCodeBlock,
     sourcePath: string,
-    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+    // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents -- frontmatter from Obsidian can be any shape
     frontmatter: any | undefined,
     renderId: string,
   ): Promise<void> {
     this._name = 'QuerySql';
     this.codeblockConfiguration = codeblockConfiguration;
     this.sourcePath = sourcePath;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- frontmatter from Obsidian can be any shape
     this.frontmatter = frontmatter;
     this.codeBlockFile = this.plugin.app.vault.getAbstractFileByPath(this.sourcePath) as TFile;
 
@@ -117,7 +119,7 @@ export class AlaSqlQuery extends Service implements IQuery {
       for (const element of codeblockConfiguration.customJSForSql) {
         const className = element.split(' ')[0];
         const functionName = element.split(' ')[1];
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- customJS is untyped external plugin API
         alasql.fn[functionName] = window.customJS[className][functionName];
       }
     }
@@ -180,7 +182,7 @@ export class AlaSqlQuery extends Service implements IQuery {
    * @return {*}  {*}
    * @memberof QuerySql
    */
-  public async query(): Promise<any> {
+  public async query(): Promise<unknown> {
     // eslint-disable-next-line @typescript-eslint/no-this-alias, unicorn/no-this-assignment
     const currentQuery = this;
 
@@ -257,18 +259,18 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
       return '';
     };
 
-    // eslint-disable-next-line max-params
-    alasql.from.PAGEPROPERTY = function (field: string, options: any, cb: any, idx: any, query: any) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+    // eslint-disable-next-line max-params -- alasql callback signature
+    alasql.from.PAGEPROPERTY = function (field: string, options: unknown, cb: unknown, idx: unknown, query: unknown) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- frontmatter from Obsidian can be any shape
       let result = currentQuery.frontmatter[field];
 
       //	Res = new alasql.Recordset({data:res,columns:{columnid:'_'}});
       if (cb) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- alasql callback is untyped external API
         result = cb(result, idx, query);
       }
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return -- result shape depends on frontmatter
       return result;
     };
 
@@ -279,11 +281,11 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
 
     // Needs integration with customJS, will be added in later revision.
     for (const element of this._customJsClasses) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment -- customJS is untyped external plugin API
       alasql.fn[element[1]] = window.customJS[element[0]][element[1]];
     }
 
-    let queryResult: any;
+    let queryResult: unknown;
     const resultArray = [];
 
     try {
@@ -296,7 +298,7 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
           this.logger.debugWithId(this._queryId, 'Data Tables:', dataTables);
           this.logger.debugWithId(this._queryId, 'Executing Query:', {originalQuery: this.codeblockConfiguration.query, parsedQuery});
           // eslint-disable-next-line no-await-in-loop
-          queryResult = await alasql.promise(parsedQuery, dataTables);
+          queryResult = await alasql.promise(parsedQuery, dataTables) as unknown;
           resultArray.push(queryResult);
         }
       }
@@ -310,10 +312,9 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
       queryResult = resultArray;
     }
 
-    this.logger.debugWithId(this._queryId, `queryResult: ${queryResult.length as number}`, queryResult);
+    this.logger.debugWithId(this._queryId, `queryResult: ${(queryResult as unknown[]).length}`, queryResult);
     this.logger.groupEndId();
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return queryResult;
   }
 
@@ -323,7 +324,7 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
    * @param query - The query string.
    * @returns A promise that resolves to an array containing the final query and an array of data tables.
    */
-  private async getDataTables(query: string): Promise<[string, any[]]> {
+  private async getDataTables(query: string): Promise<[string, unknown[]]> {
     let finalQuery = query;
     let tableCount = 0;
     const dataArrays = [];
@@ -372,11 +373,9 @@ Open these pages in an Obsidian vault and view 'Examples\using-pageproperty-simp
    * @memberof QuerySql
    */
   // eslint-disable-next-line @typescript-eslint/member-ordering
-  public async applyQuery(): Promise<any> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const queryResult: any = await this.query();
+  public async applyQuery(): Promise<unknown> {
+    const queryResult = await this.query();
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return queryResult;
   }
 }

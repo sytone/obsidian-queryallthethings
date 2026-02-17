@@ -2,9 +2,9 @@
 import {describe, it} from 'node:test';
 import assert from 'node:assert';
 import Handlebars, {type HelperOptions} from 'handlebars';
-import {toInt} from '../src/Render/HandlebarsHelpers/ToInt';
-import {pad} from '../src/Render/HandlebarsHelpers/Pad';
-import {formatDate} from '../src/Render/HandlebarsHelpers/FormatDate';
+import {toInt} from '../src/Render/HandlebarsHelpers/ToInt.js';
+import {pad} from '../src/Render/HandlebarsHelpers/Pad.js';
+import {formatDate} from '../src/Render/HandlebarsHelpers/FormatDate.js';
 
 describe('toInt', () => {
   it('parses valid integer strings', () => {
@@ -60,66 +60,66 @@ describe('toInt', () => {
 
 describe('pad', () => {
   it('pads with default space character', () => {
-    const options = {
+    const options: HelperOptions = {
       fn: () => '',
       inverse: () => '',
       hash: {},
-    } as HelperOptions;
+    };
 
     const result = pad(3, options);
     assert.strictEqual(result.toString(), '   ');
   });
 
   it('pads with custom character', () => {
-    const options = {
+    const options: HelperOptions = {
       fn: () => '',
       inverse: () => '',
       hash: {padWith: '-'},
-    } as HelperOptions;
+    };
 
     const result = pad(5, options);
     assert.strictEqual(result.toString(), '-----');
   });
 
   it('pads with zero count', () => {
-    const options = {
+    const options: HelperOptions = {
       fn: () => '',
       inverse: () => '',
       hash: {},
-    } as HelperOptions;
+    };
 
     const result = pad(0, options);
     assert.strictEqual(result.toString(), '');
   });
 
   it('pads with multiple character string', () => {
-    const options = {
+    const options: HelperOptions = {
       fn: () => '',
       inverse: () => '',
       hash: {padWith: 'ab'},
-    } as HelperOptions;
+    };
 
     const result = pad(3, options);
     assert.strictEqual(result.toString(), 'ababab');
   });
 
   it('pads with emoji', () => {
-    const options = {
+    const options: HelperOptions = {
       fn: () => '',
       inverse: () => '',
       hash: {padWith: '🎉'},
-    } as HelperOptions;
+    };
 
     const result = pad(3, options);
     assert.strictEqual(result.toString(), '🎉🎉🎉');
   });
 
   it('handles negative count gracefully', () => {
-    const options = {
+    const options: HelperOptions = {
       fn: () => '',
       inverse: () => '',
       hash: {},
-    } as HelperOptions;
+    };
 
     // String.repeat with negative throws RangeError
     assert.throws(() => {

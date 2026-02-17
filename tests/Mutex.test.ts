@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import {describe, it} from 'node:test';
 import assert from 'node:assert';
-import {Mutex} from '../src/lib/Mutex';
+import {Mutex} from '../src/lib/Mutex.js';
 
 describe('Mutex', () => {
   it('allows single operation to acquire lock', async () => {
@@ -55,7 +55,9 @@ describe('Mutex', () => {
 
     const result = await mutex.runExclusive(async () => {
       order.push(1);
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise(resolve => {
+        setTimeout(resolve, 10);
+      });
       order.push(2);
       return 'result';
     });
@@ -70,14 +72,18 @@ describe('Mutex', () => {
 
     const promise1 = mutex.runExclusive(async () => {
       order.push(1);
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => {
+        setTimeout(resolve, 50);
+      });
       order.push(2);
       return 'first';
     });
 
     const promise2 = mutex.runExclusive(async () => {
       order.push(3);
-      await new Promise(resolve => setTimeout(resolve, 50));
+      await new Promise(resolve => {
+        setTimeout(resolve, 50);
+      });
       order.push(4);
       return 'second';
     });
@@ -139,7 +145,9 @@ describe('Mutex', () => {
     const increment = async () => {
       await mutex.runExclusive(async () => {
         const temporary = counter;
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise(resolve => {
+          setTimeout(resolve, 10);
+        });
         counter = temporary + 1;
       });
     };
@@ -197,7 +205,9 @@ describe('Mutex', () => {
     const acquireAndRelease = async (id: number) => {
       const release = await mutex.acquire();
       acquisitions.push(id);
-      await new Promise(resolve => setTimeout(resolve, 5));
+      await new Promise(resolve => {
+        setTimeout(resolve, 5);
+      });
       release();
     };
 
@@ -212,7 +222,7 @@ describe('Mutex', () => {
     // All acquisitions should complete
     assert.strictEqual(acquisitions.length, 5);
     // Each ID should appear exactly once
-    assert.deepStrictEqual([...new Set(acquisitions)].sort(), [1, 2, 3, 4, 5]);
+    assert.deepStrictEqual([...new Set(acquisitions)].sort((a, b) => a - b), [1, 2, 3, 4, 5]);
   });
 
   it('handles empty queue correctly', async () => {
