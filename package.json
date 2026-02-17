@@ -98,6 +98,9 @@
   },
   "xo": {
     "space": true,
+    "ignores": [
+      "ophidian.config.mjs"
+    ],
     "rules": {
       "@typescript-eslint/naming-convention": [
         "error",

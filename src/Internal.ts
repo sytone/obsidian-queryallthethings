@@ -92,6 +92,7 @@ export async function promptForInput<T>(
     return await promise;
   } catch (error) {
     if (throw_on_cancel) {
+      // eslint-disable-next-line @typescript-eslint/no-throw-literal
       throw error;
     }
 

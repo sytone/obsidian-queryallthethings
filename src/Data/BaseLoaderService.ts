@@ -9,9 +9,9 @@ import alasql from 'alasql';
  * @callback GetDataArrayFromFileCallback
  * @param {string} content - The content of the file to be processed.
  * @param {string} tableName - The name of the table associated with the data.
- * @returns {Promise<any[]>} A promise that resolves to an array of data extracted from the file.
+ * @returns {Promise<unknown[]>} A promise that resolves to an array of data extracted from the file.
  */
-type GetDataArrayFromFileCallback = (content: string, tableName: string) => Promise<any[]>;
+type GetDataArrayFromFileCallback = (content: string, tableName: string) => Promise<unknown[]>;
 
 /**
  * The `BaseLoaderService` class extends the `Service` class and provides functionality
@@ -217,11 +217,12 @@ export class BaseLoaderService extends Service {
     await alasql.promise(`CREATE TABLE IF NOT EXISTS ${tableName}`);
 
     // Drop the parsed array directly into the table data as it is faster than loading via SQL calls.
+
     alasql.tables[tableName].data = parsedArray;
 
-    const rowsQuery = await alasql.promise(`SELECT COUNT(*) AS ImportedRows FROM  ${tableName}`);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-    const importedRowCount: number = rowsQuery[0].ImportedRows;
+    const rowsQuery = await alasql.promise(`SELECT COUNT(*) AS ImportedRows FROM  ${tableName}`) as unknown[];
+
+    const importedRowCount = (rowsQuery[0] as {ImportedRows: number}).ImportedRows;
     const endTime = new Date(Date.now());
     this.logger.info(`Imported ${importedRowCount} rows to ${tableName} in ${endTime.getTime() - startTime.getTime()}ms`);
     this.plugin.app.workspace.trigger('qatt:refresh-codeblocks');

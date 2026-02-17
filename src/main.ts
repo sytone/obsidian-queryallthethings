@@ -115,12 +115,14 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       // event qatt:data-local-database-setup-completed is fired when completed.
       await this.dataTables.setupLocalDatabase();
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       if (!app.plugins.enabledPlugins.has('dataview') && !settings.disableDataviewMissingNotification) {
-        const dvNotInstalledNotice = new Notice('Dataview plugin is not installed. Dataview backed tables will be empty.');
+        void new Notice('Dataview plugin is not installed. Dataview backed tables will be empty.');
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       if (!app.plugins.enabledPlugins.has('customjs') && !settings.disableCustomJsMissingNotification) {
-        const dvNotInstalledNotice = new Notice('CustomJS plugin is not installed. Referencing custom scripts in your query blocks will not work.');
+        void new Notice('CustomJS plugin is not installed. Referencing custom scripts in your query blocks will not work.');
       }
 
       // It has an internal check to see if enabled.

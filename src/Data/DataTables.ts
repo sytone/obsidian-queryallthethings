@@ -18,8 +18,8 @@ export class DataTables extends Service {
   public setupLocalDatabasesCompleted = false;
   public refreshTablesCompleted = false;
 
-  public async runAdhocQuery(query: string): Promise<any> {
-    const result = await alasql.promise(query);
+  public async runAdhocQuery(query: string): Promise<unknown> {
+    const result = await alasql.promise(query) as unknown;
     return result;
   }
 
@@ -65,8 +65,8 @@ export class DataTables extends Service {
 
     // UPDATE qatt.ReferenceCalendar SET date = '2000-01-01' WHERE isToday;
     this.metrics.startMeasurement('qatt.ReferenceCalendar Refresh Check');
-    const referenceCalendarTodayDate = await alasql.promise('SELECT date FROM qatt.ReferenceCalendar WHERE isToday');
-    if (referenceCalendarTodayDate.length === 0 || referenceCalendarTodayDate[0].date !== DateTime.now().toISODate()) {
+    const referenceCalendarTodayDate = await alasql.promise('SELECT date FROM qatt.ReferenceCalendar WHERE isToday') as unknown[];
+    if (referenceCalendarTodayDate.length === 0 || (referenceCalendarTodayDate[0] as {date: string}).date !== DateTime.now().toISODate()) {
       await this.refreshCalendarTable(reason);
     }
 
@@ -171,7 +171,7 @@ export class DataTables extends Service {
     this.metrics.startMeasurement('DataTables.refreshTasksTableFromDataview');
 
     await alasql.promise('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Tasks Table refreshed: ${reason}`}]]);
-    const dataviewTasksTable = await alasql.promise('SHOW TABLES FROM alasql LIKE "dataview_tasks"');
+    const dataviewTasksTable = await alasql.promise('SHOW TABLES FROM alasql LIKE "dataview_tasks"') as unknown[];
     if (dataviewTasksTable.length > 0) {
       this.logger.info('Dropping the dataview_tasks table to repopulate.');
       await alasql.promise('DROP TABLE dataview_tasks ');
@@ -235,7 +235,7 @@ export class DataTables extends Service {
 
     await alasql.promise('SELECT * INTO qatt.Events FROM ?', [[{date: DateTime.now(), event: `Lists Table refreshed: ${reason}`}]]);
 
-    const dataviewListsTable = await alasql.promise('SHOW TABLES FROM alasql LIKE "dataview_lists"');
+    const dataviewListsTable = await alasql.promise('SHOW TABLES FROM alasql LIKE "dataview_lists"') as unknown[];
 
     // Temporary tables based on current state to make some queries faster.
     if (dataviewListsTable.length > 0) {

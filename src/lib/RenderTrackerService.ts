@@ -27,14 +27,14 @@ export class RenderTrackerService extends Service {
         id,
         page,
         id,
-      ]);
+      ]) as unknown;
       console.log('setReplacementTime UPDATE', result);
     } else {
       const result = await alasql.promise('INSERT INTO qatt.RenderTracker VALUES ?', [{
         time,
         page,
         id,
-      }]);
+      }]) as unknown;
       console.log('setReplacementTime INSERT', result);
     }
   }
@@ -81,10 +81,10 @@ export class RenderTrackerService extends Service {
     console.log('getReplacementTime', [page, id]);
     console.log('getReplacementTime', `SELECT TOP 1 time FROM qatt.RenderTracker WHERE page = '${page}' AND id = '${id}'`);
 
-    const timeForPageAndId = await alasql.promise(`SELECT TOP 1 time FROM qatt.RenderTracker WHERE page = '${page}' AND id = '${id}'`);
+    const timeForPageAndId = await alasql.promise(`SELECT TOP 1 time FROM qatt.RenderTracker WHERE page = '${page}' AND id = '${id}'`) as unknown[];
     console.log('getReplacementTime timeForPageAndId', timeForPageAndId);
     if (timeForPageAndId.length > 0) {
-      return timeForPageAndId[0].time as DateTime;
+      return (timeForPageAndId[0] as {time: DateTime}).time;
     }
 
     return undefined;
