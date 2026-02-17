@@ -436,8 +436,8 @@ export class QattCodeBlock implements IQattCodeBlock {
     try {
       parsedCodeBlock = parseYaml(codeBlockContent ?? '');
     } catch (error) {
-      const errorMsg = error instanceof Error ? error.message : String(error);
-      this.validationErrors.push(`Invalid YAML syntax: ${errorMsg}. Common issues: check indentation (use spaces not tabs), ensure colons have spaces after them, and quote strings with special characters.`);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      this.validationErrors.push(`Invalid YAML syntax: ${errorMessage}. Common issues: check indentation (use spaces not tabs), ensure colons have spaces after them, and quote strings with special characters.`);
       parsedCodeBlock = {};
     }
 

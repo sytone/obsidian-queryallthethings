@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import {describe, it} from 'node:test';
 import assert from 'node:assert';
+import Handlebars from 'handlebars';
 import {capitalize} from '../src/Render/HandlebarsHelpers/Capitalize';
 import {lowercase} from '../src/Render/HandlebarsHelpers/Lowercase';
 import {uppercase} from '../src/Render/HandlebarsHelpers/Uppercase';
 import {trim} from '../src/Render/HandlebarsHelpers/Trim';
 import {stringify} from '../src/Render/HandlebarsHelpers/Stringify';
 import {eq, ne, gt, ge, lt, le} from '../src/Render/HandlebarsHelpers/RelationalOperators';
-import Handlebars from 'handlebars';
 
 describe('capitalize - enhanced', () => {
   it('capitalizes first letter of simple string', () => {
@@ -159,16 +159,16 @@ describe('trim', () => {
 
 describe('stringify - enhanced', () => {
   it('stringifies objects with proper indentation', () => {
-    const obj = {name: 'Alice', age: 30};
-    const result = stringify(obj);
+    const object = {name: 'Alice', age: 30};
+    const result = stringify(object);
 
     assert.ok(result.toString().includes('"name": "Alice"'));
     assert.ok(result.toString().includes('"age": 30'));
   });
 
   it('stringifies arrays', () => {
-    const arr = [1, 2, 3];
-    const result = stringify(arr);
+    const array = [1, 2, 3];
+    const result = stringify(array);
 
     assert.ok(result.toString().includes('1'));
     assert.ok(result.toString().includes('2'));
@@ -176,7 +176,7 @@ describe('stringify - enhanced', () => {
   });
 
   it('stringifies nested objects', () => {
-    const obj = {
+    const object = {
       person: {
         name: 'Bob',
         address: {
@@ -184,7 +184,7 @@ describe('stringify - enhanced', () => {
         },
       },
     };
-    const result = stringify(obj);
+    const result = stringify(object);
 
     assert.ok(result.toString().includes('"name": "Bob"'));
     assert.ok(result.toString().includes('"city": "NYC"'));
@@ -217,10 +217,10 @@ describe('stringify - enhanced', () => {
   });
 
   it('handles cyclical objects', () => {
-    const obj: any = {name: 'test'};
-    obj.self = obj;
+    const object: any = {name: 'test'};
+    object.self = object;
 
-    const result = stringify(obj);
+    const result = stringify(object);
     assert.ok(result.toString().includes('[Cyclical]'));
   });
 });

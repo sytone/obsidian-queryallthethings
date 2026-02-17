@@ -79,15 +79,15 @@ describe('throttle', () => {
   });
 
   it('preserves this context', async () => {
-    const obj = {
+    const object = {
       value: 42,
       method: throttle(function (this: {value: number}) {
         return this.value;
       }, 50),
     };
 
-    obj.method();
-    assert.strictEqual(obj.value, 42);
+    object.method();
+    assert.strictEqual(object.value, 42);
   });
 
   it('cancel prevents scheduled call', async () => {

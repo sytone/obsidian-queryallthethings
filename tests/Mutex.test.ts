@@ -138,9 +138,9 @@ describe('Mutex', () => {
 
     const increment = async () => {
       await mutex.runExclusive(async () => {
-        const temp = counter;
+        const temporary = counter;
         await new Promise(resolve => setTimeout(resolve, 10));
-        counter = temp + 1;
+        counter = temporary + 1;
       });
     };
 

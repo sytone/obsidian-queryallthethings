@@ -254,7 +254,7 @@ export class QueryRenderChildV2 extends MarkdownRenderChild {
 
       const solutionText = content.createEl('div');
       solutionText.style.cssText = 'margin: 10px 0;';
-      solutionText.textContent = "💡 Solution: Install and enable the Dataview plugin from Obsidian's Community Plugins, or update your query to use QATT tables instead (e.g., obsidian_notes, obsidian_tasks, obsidian_lists).";
+      solutionText.textContent = '💡 Solution: Install and enable the Dataview plugin from Obsidian\'s Community Plugins, or update your query to use QATT tables instead (e.g., obsidian_notes, obsidian_tasks, obsidian_lists).';
 
       this.logQueryRenderCompletion();
       return;

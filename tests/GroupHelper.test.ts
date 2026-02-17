@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import {describe, it} from 'node:test';
 import assert from 'node:assert';
-import {group} from '../src/Render/HandlebarsHelpers/Group';
 import Handlebars, {type HelperOptions} from 'handlebars';
+import {group} from '../src/Render/HandlebarsHelpers/Group';
 
 describe('group helper', () => {
   it('groups items by simple property', () => {
@@ -14,7 +14,7 @@ describe('group helper', () => {
 
     let result = '';
     const options = {
-      fn: (context: any) => {
+      fn(context: any) {
         result += `Team ${context.value as string}: ${context.items.length as string} members;`;
         return '';
       },
@@ -37,7 +37,7 @@ describe('group helper', () => {
 
     let callCount = 0;
     const options = {
-      fn: (context: any) => {
+      fn(context: any) {
         callCount++;
         return '';
       },
@@ -104,7 +104,7 @@ describe('group helper', () => {
 
     const groups: string[] = [];
     const options = {
-      fn: (context: any) => {
+      fn(context: any) {
         groups.push(context.value as string);
         return '';
       },
@@ -126,7 +126,7 @@ describe('group helper', () => {
     ];
 
     const options = {
-      fn: (context: any) => {
+      fn(context: any) {
         assert.strictEqual(context.value, 'active');
         assert.strictEqual(context.items.length, 3);
         return '';
@@ -147,7 +147,7 @@ describe('group helper', () => {
 
     const groups: any[] = [];
     const options = {
-      fn: (context: any) => {
+      fn(context: any) {
         groups.push({value: context.value, count: context.items.length});
         return '';
       },
@@ -174,7 +174,7 @@ describe('group helper', () => {
 
     let groupCount = 0;
     const options = {
-      fn: () => {
+      fn() {
         groupCount++;
         return '';
       },
@@ -196,7 +196,7 @@ describe('group helper', () => {
 
     let groupCount = 0;
     const options = {
-      fn: () => {
+      fn() {
         groupCount++;
         return '';
       },
@@ -248,7 +248,7 @@ describe('group helper', () => {
 
     const groups: any[] = [];
     const options = {
-      fn: (context: any) => {
+      fn(context: any) {
         groups.push({value: context.value, count: context.items.length});
         return '';
       },
@@ -275,7 +275,7 @@ describe('group helper', () => {
 
     const groupedData: any[] = [];
     const options = {
-      fn: (context: any) => {
+      fn(context: any) {
         groupedData.push({
           age: context.value,
           people: context.items.map((item: any) => item.name),
@@ -304,7 +304,7 @@ describe('group helper', () => {
 
     const groups: any[] = [];
     const options = {
-      fn: (context: any) => {
+      fn(context: any) {
         groups.push({value: context.value, count: context.items.length});
         return '';
       },

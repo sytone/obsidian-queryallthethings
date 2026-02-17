@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import {describe, it} from 'node:test';
 import assert from 'node:assert';
+import Handlebars, {type HelperOptions} from 'handlebars';
 import {toInt} from '../src/Render/HandlebarsHelpers/ToInt';
 import {pad} from '../src/Render/HandlebarsHelpers/Pad';
 import {formatDate} from '../src/Render/HandlebarsHelpers/FormatDate';
-import Handlebars, {type HelperOptions} from 'handlebars';
 
 describe('toInt', () => {
   it('parses valid integer strings', () => {
@@ -30,18 +30,18 @@ describe('toInt', () => {
   it('handles invalid strings', () => {
     assert.ok(Number.isNaN(toInt('abc')));
     assert.ok(Number.isNaN(toInt('')));
-    // parseInt('12.5') returns 12, not NaN
+    // ParseInt('12.5') returns 12, not NaN
     assert.strictEqual(toInt('12.5'), 12);
   });
 
   it('parses strings with whitespace', () => {
-    // parseInt behavior with whitespace
+    // ParseInt behavior with whitespace
     assert.strictEqual(toInt('  42  '), 42);
     assert.strictEqual(toInt('\t123\n'), 123);
   });
 
   it('handles partial numeric strings', () => {
-    // parseInt stops at first non-digit
+    // ParseInt stops at first non-digit
     assert.strictEqual(toInt('42abc'), 42);
     assert.strictEqual(toInt('123xyz'), 123);
   });
