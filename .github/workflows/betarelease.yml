@@ -2,8 +2,10 @@ name: Release Obsidian Plugin - Beta
 on:
   push:
     # Sequence of patterns matched against refs/tags
+    # Note: Glob patterns are used for broad matching. Strict format validation
+    # is performed in the "Validate Tag Format" step of the workflow.
     tags:
-      - 'b[0-9]+.[0-9]+.[0-9]+' # Push events to matching any tag format, i.e. 1.0, 20.15.10
+      - 'b*.*.*' # Matches beta version tags (e.g., b1.0.0, b1.3.2, b20.15.10)
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -17,6 +19,15 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Validate Tag Format 🔍
+        run: |
+          TAG="${GITHUB_REF#refs/tags/}"
+          if ! [[ "$TAG" =~ ^b[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "❌ Error: Tag '$TAG' does not match beta version format (bX.Y.Z)"
+            exit 1
+          fi
+          echo "✅ Tag '$TAG' is valid beta version"
+
       - name: Checkout 🛎️
         uses: actions/checkout@v3
         with:
