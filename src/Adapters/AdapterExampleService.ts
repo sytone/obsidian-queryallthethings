@@ -1,5 +1,4 @@
 import type {IObsidianAdapter} from 'Adapters';
-import {Service} from '@ophidian/core';
 
 /**
  * Example service demonstrating the adapter pattern usage.
@@ -12,10 +11,8 @@ import {Service} from '@ophidian/core';
  * const exampleService = new AdapterExampleService(adapters);
  * ```
  */
-export class AdapterExampleService extends Service {
-  constructor(private readonly adapters: IObsidianAdapter) {
-    super();
-  }
+export class AdapterExampleService {
+  constructor(private readonly adapters: IObsidianAdapter) {}
 
   /**
    * Example: Reading all markdown files
