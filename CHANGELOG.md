@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.3.2](https://github.com/sytone/obsidian-queryallthethings/compare/1.3.1...1.3.2) (2026-02-17)
+
+
+### Internal
+
+* **deps-dev:** bump rollup in the npm_and_yarn group ([#33](https://github.com/sytone/obsidian-queryallthethings/issues/33)) ([2565b31](https://github.com/sytone/obsidian-queryallthethings/commits/2565b316fb5f4b573982ffbfca2b1894fb6f163f))
+
+
+### Bug Fixes and Changes
+
+* convert git dependencies from SSH to HTTPS in pnpm-lock.yaml ([#51](https://github.com/sytone/obsidian-queryallthethings/issues/51)) ([a7d4614](https://github.com/sytone/obsidian-queryallthethings/commits/a7d46148e09bfb1ef428eb1b6c4e1f419c4f2d9e))
+
 ### [1.3.1](https://github.com/sytone/obsidian-queryallthethings/compare/1.3.0...1.3.1) (2026-02-17)
 
 ## [1.3.0](https://github.com/sytone/obsidian-queryallthethings/compare/1.2.1...1.3.0) (2025-06-10)
