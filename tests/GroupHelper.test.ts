@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import {describe, it} from 'node:test';
 import assert from 'node:assert';
-import {group} from '../src/Render/HandlebarsHelpers/Group';
 import Handlebars, {type HelperOptions} from 'handlebars';
+import {group} from '../src/Render/HandlebarsHelpers/Group.js';
 
 describe('group helper', () => {
   it('groups items by simple property', () => {
@@ -14,7 +14,7 @@ describe('group helper', () => {
 
     let result = '';
     const options = {
-      fn: (context: any) => {
+      fn(context: any) {
         result += `Team ${context.value as string}: ${context.items.length as string} members;`;
         return '';
       },
@@ -37,7 +37,7 @@ describe('group helper', () => {
 
     let callCount = 0;
     const options = {
-      fn: (context: any) => {
+      fn(context: any) {
         callCount++;
         return '';
       },
@@ -104,7 +104,7 @@ describe('group helper', () => {
 
     const groups: string[] = [];
     const options = {
-      fn: (context: any) => {
+      fn(context: any) {
         groups.push(context.value as string);
         return '';
       },
@@ -126,7 +126,7 @@ describe('group helper', () => {
     ];
 
     const options = {
-      fn: (context: any) => {
+      fn(context: any) {
         assert.strictEqual(context.value, 'active');
         assert.strictEqual(context.items.length, 3);
         return '';
@@ -147,7 +147,9 @@ describe('group helper', () => {
 
     const groups: any[] = [];
     const options = {
-      fn: (context: any) => {
+
+      fn(context: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         groups.push({value: context.value, count: context.items.length});
         return '';
       },
@@ -158,7 +160,11 @@ describe('group helper', () => {
     group(items, options);
 
     assert.strictEqual(groups.length, 2);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const aGroup = groups.find((g: any) => g.value === 'A');
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const undefinedGroup = groups.find((g: any) => g.value === undefined);
 
     assert.strictEqual(aGroup?.count, 2);
@@ -174,7 +180,7 @@ describe('group helper', () => {
 
     let groupCount = 0;
     const options = {
-      fn: () => {
+      fn() {
         groupCount++;
         return '';
       },
@@ -196,7 +202,7 @@ describe('group helper', () => {
 
     let groupCount = 0;
     const options = {
-      fn: () => {
+      fn() {
         groupCount++;
         return '';
       },
@@ -248,7 +254,9 @@ describe('group helper', () => {
 
     const groups: any[] = [];
     const options = {
-      fn: (context: any) => {
+
+      fn(context: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         groups.push({value: context.value, count: context.items.length});
         return '';
       },
@@ -259,7 +267,11 @@ describe('group helper', () => {
     group(items, options);
 
     assert.strictEqual(groups.length, 2);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const priority1 = groups.find((g: any) => g.value === 1);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const priority2 = groups.find((g: any) => g.value === 2);
 
     assert.strictEqual(priority1?.count, 2);
@@ -275,9 +287,13 @@ describe('group helper', () => {
 
     const groupedData: any[] = [];
     const options = {
-      fn: (context: any) => {
+
+      fn(context: any) {
         groupedData.push({
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           age: context.value,
+
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment,@typescript-eslint/no-unsafe-call,@typescript-eslint/no-unsafe-return
           people: context.items.map((item: any) => item.name),
         });
         return '';
@@ -288,7 +304,10 @@ describe('group helper', () => {
 
     group(items, options);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const age30Group = groupedData.find((g: any) => g.age === 30);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const age25Group = groupedData.find((g: any) => g.age === 25);
 
     assert.deepStrictEqual(age30Group?.people, ['Alice', 'Charlie']);
@@ -304,7 +323,9 @@ describe('group helper', () => {
 
     const groups: any[] = [];
     const options = {
-      fn: (context: any) => {
+
+      fn(context: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         groups.push({value: context.value, count: context.items.length});
         return '';
       },
@@ -314,7 +335,10 @@ describe('group helper', () => {
 
     group(items, options);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const emptyGroup = groups.find((g: any) => g.value === '');
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const aGroup = groups.find((g: any) => g.value === 'A');
 
     assert.strictEqual(emptyGroup?.count, 2);

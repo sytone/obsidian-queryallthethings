@@ -40,6 +40,7 @@ export class SettingsTab extends PluginSettingTab {
   public async saveSettings(update = false): Promise<void> {
     log('debug', `Saving settings with update: ${update ? 'true' : 'false'}`);
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     await this.plugin.saveSettings();
 
     if (update) {
@@ -70,6 +71,7 @@ export class SettingsTab extends PluginSettingTab {
       detailsContainer.addEventListener('toggle', () => {
         headingOpened[heading.text] = detailsContainer.open;
         this.settingsManager.updateSettings({headingOpened});
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-call
         this.plugin.saveSettings();
       });
 
@@ -117,6 +119,7 @@ export class SettingsTab extends PluginSettingTab {
                   .setValue(settings.generalSettings[setting.settingName] as boolean)
                   .onChange(async value => {
                     this.settingsManager.setValue(setting.settingName, value);
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                     await this.plugin.saveSettings();
                   });
               });
@@ -139,6 +142,7 @@ export class SettingsTab extends PluginSettingTab {
 
                 const onChange = async (value: string) => {
                   this.settingsManager.setValue(setting.settingName, value);
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                   await this.plugin.saveSettings();
                 };
 
@@ -165,6 +169,7 @@ export class SettingsTab extends PluginSettingTab {
 
                 const onChange = async (value: string) => {
                   this.settingsManager.setValue(setting.settingName, value);
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                   await this.plugin.saveSettings();
                 };
 
@@ -200,6 +205,7 @@ export class SettingsTab extends PluginSettingTab {
 
                 const onChange = async (value: string) => {
                   this.settingsManager.setValue(setting.settingName, value);
+                  // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                   await this.plugin.saveSettings();
                 };
 

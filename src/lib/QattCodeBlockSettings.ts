@@ -7,6 +7,7 @@ export class QattCodeBlockSettings extends Modal {
   codeblockConfiguration: QattCodeBlock;
   ctx: MarkdownPostProcessorContext;
   el: HTMLElement;
+  // eslint-disable-next-line max-params
   constructor(app: App, plugin: Plugin, codeblockConfiguration: QattCodeBlock, context: MarkdownPostProcessorContext, element: HTMLElement) {
     super(app);
     this.plugin = plugin;

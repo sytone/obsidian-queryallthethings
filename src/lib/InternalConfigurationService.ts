@@ -15,18 +15,19 @@ export class InternalConfigurationService extends Service {
   metrics = this.use(MetricsService);
 
   private readonly minDate = DateTime.fromSeconds(0);
+  // Table name is hardcoded and not from user input - safe from SQL injection
   private get internalConfigurationTable() {
     return 'qatt.Configuration';
   }
 
   public async getValue(key: string): Promise<string | undefined> {
     console.log('getValue', key);
-    console.log('getValue', `SELECT TOP 1 configvalue FROM ${this.internalConfigurationTable} WHERE configkey = '${key}' ORDER BY time DESC`);
+    console.log('getValue', `SELECT TOP 1 configvalue FROM ${this.internalConfigurationTable} WHERE configkey = ? ORDER BY time DESC`);
 
-    const selectValue = await alasql.promise(`SELECT TOP 1 configvalue FROM ${this.internalConfigurationTable} WHERE configkey = '${key} ORDER BY time DESC'`);
+    const selectValue = await alasql.promise(`SELECT TOP 1 configvalue FROM ${this.internalConfigurationTable} WHERE configkey = ? ORDER BY time DESC`, [key]) as unknown[];
     console.log('getValue selectValue', selectValue);
     if (selectValue.length > 0) {
-      return selectValue[0].configvalue as string;
+      return (selectValue[0] as {configvalue: string}).configvalue;
     }
 
     return undefined;
@@ -41,14 +42,14 @@ export class InternalConfigurationService extends Service {
         setTime,
         value,
         key,
-      ]);
+      ]) as unknown;
       console.log('setValue UPDATE', result);
     } else {
       const result = await alasql.promise(`INSERT INTO ${this.internalConfigurationTable} VALUES ?`, [{
         setTime,
         key,
         value,
-      }]);
+      }]) as unknown;
       console.log('setValue INSERT', result);
     }
   }
@@ -58,11 +59,10 @@ export class InternalConfigurationService extends Service {
    * @returns A string containing the plugin metrics.
    */
   public async getConfigurationValues(): Promise<string> {
-    const allValues = await alasql.promise(`SELECT * FROM ${this.internalConfigurationTable} ORDER BY time DESC'`);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    const currentValues = allValues
-      .map(([time, configkey, configvalue]) => `${configkey}: ${configvalue} - ${time}`)
-      .join('\n') as string;
+    const allValues = await alasql.promise(`SELECT * FROM ${this.internalConfigurationTable} ORDER BY time DESC`) as Array<[unknown, string, string]>;
+    const currentValues = (allValues
+      .map(([time, configkey, configvalue]) => `${configkey}: ${configvalue} - ${String(time)}`)
+      .join('\n'));
 
     return `${currentValues}`;
   }

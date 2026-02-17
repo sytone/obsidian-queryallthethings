@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import {describe, it} from 'node:test';
 import assert from 'node:assert';
-import {throttle, asyncThrottle} from '../src/lib/Throttle';
+import {throttle, asyncThrottle} from '../src/lib/Throttle.js';
 
 describe('throttle', () => {
   it('calls function immediately on first invocation', async () => {
@@ -39,7 +39,9 @@ describe('throttle', () => {
     const throttledFn = throttle(fn, 50);
     throttledFn();
 
-    await new Promise(resolve => setTimeout(resolve, 60));
+    await new Promise(resolve => {
+      setTimeout(resolve, 60);
+    });
     throttledFn();
 
     assert.strictEqual(callCount, 2);
@@ -56,7 +58,9 @@ describe('throttle', () => {
     throttledFn();
     throttledFn();
 
-    await new Promise(resolve => setTimeout(resolve, 60));
+    await new Promise(resolve => {
+      setTimeout(resolve, 60);
+    });
 
     // Should have been called twice: once immediately, once trailing
     assert.strictEqual(callCount, 2);
@@ -74,20 +78,22 @@ describe('throttle', () => {
 
     assert.strictEqual(lastArg, 'first');
 
-    await new Promise(resolve => setTimeout(resolve, 60));
+    await new Promise(resolve => {
+      setTimeout(resolve, 60);
+    });
     assert.strictEqual(lastArg, 'second');
   });
 
   it('preserves this context', async () => {
-    const obj = {
+    const object = {
       value: 42,
       method: throttle(function (this: {value: number}) {
         return this.value;
       }, 50),
     };
 
-    obj.method();
-    assert.strictEqual(obj.value, 42);
+    object.method();
+    assert.strictEqual(object.value, 42);
   });
 
   it('cancel prevents scheduled call', async () => {
@@ -101,7 +107,9 @@ describe('throttle', () => {
     throttledFn();
     throttledFn.cancel();
 
-    await new Promise(resolve => setTimeout(resolve, 60));
+    await new Promise(resolve => {
+      setTimeout(resolve, 60);
+    });
 
     // Should only have been called once (immediately), trailing call cancelled
     assert.strictEqual(callCount, 1);
@@ -135,7 +143,9 @@ describe('throttle', () => {
     // First call should be immediate
     assert.strictEqual(calls[0], 0);
 
-    await new Promise(resolve => setTimeout(resolve, 60));
+    await new Promise(resolve => {
+      setTimeout(resolve, 60);
+    });
 
     // Should have trailing call with last value
     assert.strictEqual(calls[calls.length - 1], 9);
@@ -209,9 +219,13 @@ describe('asyncThrottle', () => {
     const throttledFn = asyncThrottle(fn, 100);
 
     throttledFn();
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => {
+      setTimeout(resolve, 50);
+    });
     throttledFn();
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => {
+      setTimeout(resolve, 50);
+    });
     const result = await throttledFn();
 
     // Should only have called once after final timeout
@@ -232,7 +246,9 @@ describe('asyncThrottle', () => {
       throttledFn(i);
     }
 
-    await new Promise(resolve => setTimeout(resolve, 60));
+    await new Promise(resolve => {
+      setTimeout(resolve, 60);
+    });
 
     // Should only have called once with last value
     assert.strictEqual(calls.length, 1);

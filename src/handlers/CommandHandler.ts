@@ -53,7 +53,7 @@ export class CommandHandler extends Service {
         callback: async () => {
           const limit = internalLoggingConsoleLogLimit;
 
-          const result = await alasql.promise(`SELECT TOP ${limit} * FROM qatt.Events ORDER BY date desc`);
+          const result = await alasql.promise(`SELECT TOP ${limit} * FROM qatt.Events ORDER BY date desc`) as unknown[];
           this.logger.info('Internal Events', result);
         },
       },
@@ -75,10 +75,10 @@ export class CommandHandler extends Service {
         id: 'dump-tables-to-editor',
         name: 'Dump the in memory tables known by Alasql to the editor',
         async editorCallback(editor: Editor) {
-          const results = await alasql.promise('SHOW TABLES');
+          const results = await alasql.promise('SHOW TABLES') as unknown[];
           let table = '';
 
-          const keys = Object.keys(results[0] || {});
+          const keys = Object.keys((results[0] as Record<string, unknown>) || {});
           const width = keys.length;
           table += '| ';
           for (let h = 0; h < width; h++) {
@@ -96,7 +96,7 @@ export class CommandHandler extends Service {
           for (const row of results) {
             table += '| ';
             for (let i = 0; i < width; i++) {
-              table += row[keys[i]] + ' | ';
+              table += String((row as Record<string, unknown>)[keys[i]]) + ' | ';
             }
 
             table += '\n';
@@ -121,10 +121,10 @@ export class CommandHandler extends Service {
         id: 'dump-reference-calendar-to-editor',
         name: 'Will push all the internal qatt.ReferenceCalendar table to the editor for debugging.',
         async editorCallback(editor: Editor) {
-          const results = await alasql.promise('SELECT TOP 10 * FROM qatt.ReferenceCalendar');
+          const results = await alasql.promise('SELECT TOP 10 * FROM qatt.ReferenceCalendar') as unknown[];
           let table = '';
 
-          const keys = Object.keys(results[0] || {});
+          const keys = Object.keys((results[0] as Record<string, unknown>) || {});
           const width = keys.length;
           table += '| ';
           for (let h = 0; h < width; h++) {
@@ -142,7 +142,7 @@ export class CommandHandler extends Service {
           for (const row of results) {
             table += '| ';
             for (let i = 0; i < width; i++) {
-              table += row[keys[i]] + ' | ';
+              table += String((row as Record<string, unknown>)[keys[i]]) + ' | ';
             }
 
             table += '\n';

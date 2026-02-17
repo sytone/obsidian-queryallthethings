@@ -11,7 +11,7 @@ The `arrayfrom` function allows the user to map a item to an array, for example 
 // << alasql-function-arrayfrom
 */
 export function registerFunctionArrayFrom(): void {
-  alasql.fn.arrayFrom = function (value) {
+  alasql.fn.arrayFrom = function (value: Iterable<unknown>) {
     return Array.from(value);
   };
 }
