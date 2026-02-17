@@ -15,6 +15,7 @@ export class InternalConfigurationService extends Service {
   metrics = this.use(MetricsService);
 
   private readonly minDate = DateTime.fromSeconds(0);
+  // Table name is hardcoded and not from user input - safe from SQL injection
   private get internalConfigurationTable() {
     return 'qatt.Configuration';
   }
