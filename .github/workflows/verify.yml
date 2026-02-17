@@ -29,7 +29,7 @@ jobs:
       - name: Run TypeScript compiler ESLint
         run: pnpm run lint
 
-      - name: Run mocha
+      - name: Run tests
         run: pnpm run test
 
       - name: Archive verified build
