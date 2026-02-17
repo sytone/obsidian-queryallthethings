@@ -2,6 +2,11 @@ name: Auto Patch Release on PR Merge
 
 # This workflow automatically creates a patch release when a PR is merged to main.
 # 
+# Requirements:
+# - The GITHUB_TOKEN must have permission to push to main branch
+# - If branch protection is enabled on main, ensure the workflow has permission to bypass it,
+#   or configure branch protection to allow actions to push
+# 
 # Process:
 # 1. Triggers when a PR is merged (not just closed) to the main branch
 # 2. Runs `pnpm run release:patch` which uses standard-version to:
