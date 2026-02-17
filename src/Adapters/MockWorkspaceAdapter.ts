@@ -5,13 +5,14 @@ import type {IWorkspaceAdapter} from './IWorkspaceAdapter';
  * Provides event simulation without Obsidian dependency.
  */
 export class MockWorkspaceAdapter implements IWorkspaceAdapter {
-  private events: Map<string, Array<(...args: any[]) => void>> = new Map();
-  private layoutReadyCallbacks: Array<() => void> = [];
+  private readonly events = new Map<string, Array<(...args: any[]) => void>>();
+  private readonly layoutReadyCallbacks: Array<() => void> = [];
   private layoutReadyCalled = false;
 
   trigger(name: string, ...data: any[]): void {
     const callbacks = this.events.get(name) ?? [];
     for (const callback of callbacks) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       callback(...data);
     }
   }

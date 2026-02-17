@@ -4,11 +4,11 @@ import {Service} from '@ophidian/core';
 /**
  * Example service demonstrating the adapter pattern usage.
  * This service shows how to properly use adapters instead of direct Obsidian API calls.
- * 
+ *
  * @example
  * ```typescript
  * // In main.ts or service initialization
- * const adapters = ObsidianAdapterFactory.createAdapters(this.app, this);
+ * const adapters = createObsidianAdapters(this.app, this);
  * const exampleService = new AdapterExampleService(adapters);
  * ```
  */
@@ -100,7 +100,9 @@ export class AdapterExampleService extends Service {
 
     for (const file of files) {
       const metadata = this.adapters.metadataCache.getFileCache(file);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
       if (metadata?.frontmatter?.tags?.includes(tag)) {
+        // eslint-disable-next-line no-await-in-loop
         const content = await this.adapters.vault.cachedRead(file);
         results.push({
           path: file.path,

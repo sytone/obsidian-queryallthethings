@@ -6,11 +6,11 @@ import type {IPluginAdapter} from './IPluginAdapter';
  * Provides plugin lifecycle simulation without Obsidian dependency.
  */
 export class MockPluginAdapter implements IPluginAdapter {
-  private events: EventRef[] = [];
-  private processors: Array<{language: string; handler: any; sortOrder?: number}> = [];
-  private commands: Command[] = [];
-  private ribbonIcons: Array<{icon: string; title: string; callback: any}> = [];
-  private enabledPlugins = new Set<string>(['dataview', 'customjs']);
+  private readonly events: EventRef[] = [];
+  private readonly processors: Array<{language: string; handler: any; sortOrder?: number}> = [];
+  private readonly commands: Command[] = [];
+  private readonly ribbonIcons: Array<{icon: string; title: string; callback: any}> = [];
+  private readonly enabledPlugins = new Set<string>(['dataview', 'customjs']);
 
   registerEvent(eventRef: EventRef): void {
     this.events.push(eventRef);
@@ -19,10 +19,11 @@ export class MockPluginAdapter implements IPluginAdapter {
   registerMarkdownCodeBlockProcessor(
     language: string,
     handler: (source: string, element: HTMLElement, ctx: MarkdownPostProcessorContext) => Promise<any> | void,
-    sortOrder?: number
+    sortOrder?: number,
   ): MarkdownPostProcessor {
     this.processors.push({language, handler, sortOrder});
-    return {} as MarkdownPostProcessor;
+    const mockProcessor = {} as const;
+    return mockProcessor as MarkdownPostProcessor;
   }
 
   addCommand(command: Command): Command {

@@ -6,11 +6,11 @@ import type {IVaultAdapter} from './IVaultAdapter';
  * Provides an in-memory file system simulation.
  */
 export class MockVaultAdapter implements IVaultAdapter {
-  private files: Map<string, {file: TFile; content: string}> = new Map();
-  private createCallbacks: Array<(file: TAbstractFile) => void> = [];
-  private deleteCallbacks: Array<(file: TAbstractFile) => void> = [];
-  private modifyCallbacks: Array<(file: TAbstractFile) => void> = [];
-  private renameCallbacks: Array<(file: TAbstractFile, oldPath: string) => void> = [];
+  private readonly files = new Map<string, {file: TFile; content: string}>();
+  private readonly createCallbacks: Array<(file: TAbstractFile) => void> = [];
+  private readonly deleteCallbacks: Array<(file: TAbstractFile) => void> = [];
+  private readonly modifyCallbacks: Array<(file: TAbstractFile) => void> = [];
+  private readonly renameCallbacks: Array<(file: TAbstractFile, oldPath: string) => void> = [];
 
   /**
    * Adds a mock file to the vault for testing.
@@ -26,16 +26,17 @@ export class MockVaultAdapter implements IVaultAdapter {
         mtime: Date.now(),
         size: content.length,
       },
-    } as TFile;
+    };
 
-    this.files.set(path, {file: mockFile, content});
-    return mockFile;
+    this.files.set(path, {file: mockFile as TFile, content});
+    return mockFile as TFile;
   }
 
   getMarkdownFiles(): TFile[] {
     return Array.from(this.files.values()).map(f => f.file);
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   getAbstractFileByPath(path: string): TAbstractFile | null {
     return this.files.get(path)?.file ?? null;
   }

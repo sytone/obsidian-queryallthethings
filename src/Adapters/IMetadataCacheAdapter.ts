@@ -8,6 +8,7 @@ export interface IMetadataCacheAdapter {
   /**
    * Gets the cached metadata for a file.
    */
+  // eslint-disable-next-line @typescript-eslint/ban-types
   getFileCache(file: TFile): CachedMetadata | null;
 
   /**

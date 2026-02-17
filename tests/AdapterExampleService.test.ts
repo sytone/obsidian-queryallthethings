@@ -1,8 +1,10 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {describe, it} from 'node:test';
 import assert from 'node:assert';
-import {AdapterExampleService} from '../src/Adapters/AdapterExampleService';
-import {MockVaultAdapter, MockWorkspaceAdapter, MockMetadataCacheAdapter, MockPluginAdapter} from '../src/Adapters';
+import {AdapterExampleService} from '../src/Adapters/AdapterExampleService.js';
+import {MockVaultAdapter, MockWorkspaceAdapter, MockMetadataCacheAdapter, MockPluginAdapter} from '../src/Adapters/index.js';
 
 describe('AdapterExampleService', () => {
   function createService() {
@@ -45,7 +47,7 @@ describe('AdapterExampleService', () => {
 
     await assert.rejects(
       async () => service.readFileContent('nonexistent.md'),
-      {message: 'File not found: nonexistent.md'}
+      {message: 'File not found: nonexistent.md'},
     );
   });
 

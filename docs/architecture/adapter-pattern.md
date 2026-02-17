@@ -96,7 +96,7 @@ Testing implementations that simulate Obsidian behavior:
 - **Event Simulation**: Provides methods to trigger events for testing
 - **Inspection Methods**: Additional methods for test assertions
 
-### 4. Adapter Factory (`src/Adapters/ObsidianAdapterFactory.ts`)
+### 4. Adapter Factory (`src/Adapters/createObsidianAdapters.ts`)
 
 Centralized creation of adapter sets:
 

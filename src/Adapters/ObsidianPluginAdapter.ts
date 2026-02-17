@@ -8,7 +8,7 @@ import type {IPluginAdapter} from './IPluginAdapter';
 export class ObsidianPluginAdapter implements IPluginAdapter {
   constructor(
     private readonly app: App,
-    private readonly plugin: Plugin
+    private readonly plugin: Plugin,
   ) {}
 
   registerEvent(eventRef: EventRef): void {
@@ -18,7 +18,7 @@ export class ObsidianPluginAdapter implements IPluginAdapter {
   registerMarkdownCodeBlockProcessor(
     language: string,
     handler: (source: string, element: HTMLElement, ctx: MarkdownPostProcessorContext) => Promise<any> | void,
-    sortOrder?: number
+    sortOrder?: number,
   ): MarkdownPostProcessor {
     return this.plugin.registerMarkdownCodeBlockProcessor(language, handler, sortOrder);
   }

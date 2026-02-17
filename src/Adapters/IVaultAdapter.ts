@@ -1,4 +1,4 @@
-import type {TFile, TAbstractFile, CachedMetadata} from 'obsidian';
+import type {TFile, TAbstractFile} from 'obsidian';
 
 /**
  * Interface for abstracting Obsidian vault operations.
@@ -13,6 +13,7 @@ export interface IVaultAdapter {
   /**
    * Gets a file by its path.
    */
+  // eslint-disable-next-line @typescript-eslint/ban-types
   getAbstractFileByPath(path: string): TAbstractFile | null;
 
   /**

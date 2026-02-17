@@ -9,6 +9,7 @@ export class ObsidianWorkspaceAdapter implements IWorkspaceAdapter {
   constructor(private readonly app: App) {}
 
   trigger(name: string, ...data: any[]): void {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     this.app.workspace.trigger(name, ...data);
   }
 

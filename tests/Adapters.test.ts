@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {describe, it} from 'node:test';
 import assert from 'node:assert';
-import {MockVaultAdapter, MockWorkspaceAdapter, MockMetadataCacheAdapter, MockPluginAdapter} from '../src/Adapters';
+import {MockVaultAdapter, MockWorkspaceAdapter, MockMetadataCacheAdapter, MockPluginAdapter} from '../src/Adapters/index.js';
 
 describe('Mock Adapters', () => {
   it('MockVaultAdapter should create and read files', async () => {
@@ -68,7 +70,8 @@ describe('Mock Adapters', () => {
     const command = {
       id: 'test-command',
       name: 'Test Command',
-      callback: () => {},
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      callback() {},
     };
 
     adapter.addCommand(command);

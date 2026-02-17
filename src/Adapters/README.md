@@ -31,7 +31,7 @@ These implementations wrap the actual Obsidian API:
 - **`ObsidianWorkspaceAdapter`**: Production implementation using `app.workspace`
 - **`ObsidianMetadataCacheAdapter`**: Production implementation using `app.metadataCache`
 - **`ObsidianPluginAdapter`**: Production implementation using plugin methods
-- **`ObsidianAdapterFactory`**: Factory to create all adapters with Obsidian app instance
+- **`createObsidianAdapters`**: Factory to create all adapters with Obsidian app instance
 
 #### Mock Implementations
 
@@ -49,11 +49,11 @@ These implementations provide in-memory simulation for testing:
 In the main plugin, create adapters using the factory:
 
 ```typescript
-import {ObsidianAdapterFactory} from 'Adapters';
+import {createObsidianAdapters} from 'Adapters';
 
 class MyPlugin extends Plugin {
   async onload() {
-    const adapters = ObsidianAdapterFactory.createAdapters(this.app, this);
+    const adapters = createObsidianAdapters.createAdapters(this.app, this);
     
     // Pass adapters to services that need them
     this.myService = new MyService(adapters);

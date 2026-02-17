@@ -8,6 +8,7 @@ import type {IMetadataCacheAdapter} from './IMetadataCacheAdapter';
 export class ObsidianMetadataCacheAdapter implements IMetadataCacheAdapter {
   constructor(private readonly app: App) {}
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   getFileCache(file: TFile): CachedMetadata | null {
     return this.app.metadataCache.getFileCache(file);
   }

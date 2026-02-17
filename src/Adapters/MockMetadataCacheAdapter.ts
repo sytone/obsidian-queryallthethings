@@ -6,9 +6,9 @@ import type {IMetadataCacheAdapter} from './IMetadataCacheAdapter';
  * Provides metadata cache simulation without Obsidian dependency.
  */
 export class MockMetadataCacheAdapter implements IMetadataCacheAdapter {
-  private cache: Map<string, CachedMetadata> = new Map();
-  private changeCallbacks: Array<(file: TFile, data: string, cache: CachedMetadata) => void> = [];
-  private events: Map<string, Array<(...args: any[]) => void>> = new Map();
+  private readonly cache = new Map<string, CachedMetadata>();
+  private readonly changeCallbacks: Array<(file: TFile, data: string, cache: CachedMetadata) => void> = [];
+  private readonly events = new Map<string, Array<(...args: any[]) => void>>();
 
   /**
    * Adds mock metadata for a file path.
@@ -17,6 +17,7 @@ export class MockMetadataCacheAdapter implements IMetadataCacheAdapter {
     this.cache.set(path, metadata);
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   getFileCache(file: TFile): CachedMetadata | null {
     return this.cache.get(file.path) ?? null;
   }
@@ -47,6 +48,7 @@ export class MockMetadataCacheAdapter implements IMetadataCacheAdapter {
   triggerEvent(name: string, ...args: any[]): void {
     const callbacks = this.events.get(name) ?? [];
     for (const callback of callbacks) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       callback(...args);
     }
   }

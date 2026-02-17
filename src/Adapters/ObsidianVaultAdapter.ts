@@ -1,4 +1,4 @@
-import type {App, TFile, TAbstractFile, EventRef} from 'obsidian';
+import type {App, TFile, TAbstractFile} from 'obsidian';
 import type {IVaultAdapter} from './IVaultAdapter';
 
 /**
@@ -12,6 +12,7 @@ export class ObsidianVaultAdapter implements IVaultAdapter {
     return this.app.vault.getMarkdownFiles();
   }
 
+  // eslint-disable-next-line @typescript-eslint/ban-types
   getAbstractFileByPath(path: string): TAbstractFile | null {
     return this.app.vault.getAbstractFileByPath(path);
   }

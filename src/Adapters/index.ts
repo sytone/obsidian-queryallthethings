@@ -1,19 +1,19 @@
 // Interfaces
-export {type IVaultAdapter} from './IVaultAdapter';
-export {type IWorkspaceAdapter} from './IWorkspaceAdapter';
-export {type IMetadataCacheAdapter} from './IMetadataCacheAdapter';
-export {type IPluginAdapter} from './IPluginAdapter';
-export {type IObsidianAdapter} from './IObsidianAdapter';
+export {type IVaultAdapter} from './IVaultAdapter.js';
+export {type IWorkspaceAdapter} from './IWorkspaceAdapter.js';
+export {type IMetadataCacheAdapter} from './IMetadataCacheAdapter.js';
+export {type IPluginAdapter} from './IPluginAdapter.js';
+export {type IObsidianAdapter} from './IObsidianAdapter.js';
 
 // Obsidian Implementations
-export {ObsidianVaultAdapter} from './ObsidianVaultAdapter';
-export {ObsidianWorkspaceAdapter} from './ObsidianWorkspaceAdapter';
-export {ObsidianMetadataCacheAdapter} from './ObsidianMetadataCacheAdapter';
-export {ObsidianPluginAdapter} from './ObsidianPluginAdapter';
-export {ObsidianAdapterFactory} from './ObsidianAdapterFactory';
+export {ObsidianVaultAdapter} from './ObsidianVaultAdapter.js';
+export {ObsidianWorkspaceAdapter} from './ObsidianWorkspaceAdapter.js';
+export {ObsidianMetadataCacheAdapter} from './ObsidianMetadataCacheAdapter.js';
+export {ObsidianPluginAdapter} from './ObsidianPluginAdapter.js';
+export {createObsidianAdapters} from './ObsidianAdapterFactory.js';
 
 // Mock Implementations for Testing
-export {MockVaultAdapter} from './MockVaultAdapter';
-export {MockWorkspaceAdapter} from './MockWorkspaceAdapter';
-export {MockMetadataCacheAdapter} from './MockMetadataCacheAdapter';
-export {MockPluginAdapter} from './MockPluginAdapter';
+export {MockVaultAdapter} from './MockVaultAdapter.js';
+export {MockWorkspaceAdapter} from './MockWorkspaceAdapter.js';
+export {MockMetadataCacheAdapter} from './MockMetadataCacheAdapter.js';
+export {MockPluginAdapter} from './MockPluginAdapter.js';
