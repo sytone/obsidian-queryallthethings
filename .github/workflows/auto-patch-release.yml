@@ -1,0 +1,82 @@
+name: Auto Patch Release on PR Merge
+
+# This workflow automatically creates a patch release when a PR is merged to main.
+# 
+# Requirements:
+# - The GITHUB_TOKEN must have permission to push to main branch
+# - If branch protection is enabled on main, ensure the workflow has permission to bypass it,
+#   or configure branch protection to allow actions to push
+# 
+# Process:
+# 1. Triggers when a PR is merged (not just closed) to the main branch
+# 2. Runs `pnpm run release:patch` which uses standard-version to:
+#    - Bump the patch version in package.json, manifest.json, and versions.json
+#    - Update CHANGELOG.md with changes since last release
+#    - Create a git commit with the version changes
+#    - Create a git tag with the new version number
+# 3. Pushes the commit and tag to the main branch
+# 4. The new tag triggers the existing release.yml workflow which:
+#    - Builds the plugin
+#    - Creates a DRAFT GitHub release that can be tested before publishing
+#
+# This allows maintainers to test each release in Obsidian before promoting it to users.
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  create-patch-release:
+    # Only run if the PR was merged (not just closed)
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v3
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure Git 🔧
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Use Node.js ⚙️
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+
+      - name: Setup PNPM ⚙️
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+
+      - name: Install Dependencies 📦
+        run: pnpm install
+
+      - name: Run Patch Release 🏷️
+        run: pnpm run release:patch
+
+      - name: Get New Version 🔢
+        id: version
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "New version: $VERSION"
+
+      - name: Push Changes and Tag 🚀
+        run: |
+          git push origin main
+          git push origin --tags
+
+      - name: Release Summary 📝
+        run: |
+          echo "✅ Created patch release version ${{ steps.version.outputs.version }}"
+          echo "📦 Version files updated and committed"
+          echo "🏷️ Tag pushed to trigger draft release workflow"

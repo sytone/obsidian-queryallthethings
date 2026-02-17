@@ -59,5 +59,26 @@ New-Item -ItemType Junction -Target ".\dist" -Path "C:\obsidian\brainstore\.obsi
 ```
 ## Releasing
 
-In main run `pnpm run release:minor:dry` to see what the changes look like, if happy then run `pnpm run release:minor` followed by `git push --follow-tags origin main`. This will push the changes up and the build system will generate a draft release. You can then go to github and update the release as needed and move it out of draft.
+### Automatic Patch Releases (Recommended)
+
+When a pull request is merged to the `main` branch, a GitHub Actions workflow automatically:
+1. Runs `pnpm run release:patch` to bump the patch version
+2. Updates `package.json`, `manifest.json`, `versions.json`, and `CHANGELOG.md`
+3. Creates a git commit and tag with the new version
+4. Pushes the changes and tag to the repository
+5. Triggers the release workflow to create a **draft** GitHub release
+
+This draft release can be tested in Obsidian before being published to users.
+
+**Note:** If branch protection is enabled on the `main` branch, ensure the workflow has permission to push or configure branch protection to allow GitHub Actions to push.
+
+### Manual Releases
+
+For minor or major releases, you can still create releases manually:
+
+1. Run `pnpm run release:minor:dry` (or `release:major:dry`) to preview the changes
+2. If satisfied, run `pnpm run release:minor` (or `release:major`)
+3. Push with `git push --follow-tags origin main`
+
+This will trigger the release workflow to create a draft release on GitHub, which you can then review and publish.
 
