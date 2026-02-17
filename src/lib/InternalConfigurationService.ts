@@ -21,9 +21,9 @@ export class InternalConfigurationService extends Service {
 
   public async getValue(key: string): Promise<string | undefined> {
     console.log('getValue', key);
-    console.log('getValue', `SELECT TOP 1 configvalue FROM ${this.internalConfigurationTable} WHERE configkey = '${key}' ORDER BY time DESC`);
+    console.log('getValue', `SELECT TOP 1 configvalue FROM ${this.internalConfigurationTable} WHERE configkey = ? ORDER BY time DESC`);
 
-    const selectValue = await alasql.promise(`SELECT TOP 1 configvalue FROM ${this.internalConfigurationTable} WHERE configkey = '${key}' ORDER BY time DESC`) as unknown[];
+    const selectValue = await alasql.promise(`SELECT TOP 1 configvalue FROM ${this.internalConfigurationTable} WHERE configkey = ? ORDER BY time DESC`, [key]) as unknown[];
     console.log('getValue selectValue', selectValue);
     if (selectValue.length > 0) {
       return (selectValue[0] as {configvalue: string}).configvalue;
