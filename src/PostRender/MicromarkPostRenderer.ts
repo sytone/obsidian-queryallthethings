@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 import {micromark} from 'micromark';
-import {gfm, gfmHtml} from 'micromark-extension-gfm';
-import {html as wikiHtml, syntax as wiki} from 'micromark-extension-wiki-link';
+import {gfm, gfmHtml} from 'micromark-extension-gfm.ts';
+import {html as wikiHtml, syntax as wiki} from 'micromark-extension-wiki-link.ts';
 import {fromMarkdown} from 'mdast-util-from-markdown';
 import {toString} from 'mdast-util-to-string';
 import * as wikiLink from 'mdast-util-wiki-link';
-import {type IPostRenderer} from 'PostRender/IPostRenderer';
+import {type IPostRenderer} from 'PostRender/IPostRenderer.ts';
 import {type Component} from 'obsidian';
 
 export class MicromarkPostRenderer implements IPostRenderer {

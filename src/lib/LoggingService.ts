@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint indent: [2, 2, {"SwitchCase": 1}] */
 import {DateTime} from 'luxon';
-import {type ILogOptions} from 'Interfaces/Settings';
+import {type ILogOptions} from 'Interfaces/Settings.ts';
 import {Service} from '@ophidian/core';
 import {Plugin} from 'obsidian';
 

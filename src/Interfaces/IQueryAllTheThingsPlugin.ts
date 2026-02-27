@@ -1,5 +1,5 @@
 import {type App, type Command, type EventRef, type MarkdownPostProcessor, type MarkdownPostProcessorContext, type Plugin} from 'obsidian';
-import {type SettingsManager} from 'Settings/SettingsManager';
+import {type SettingsManager} from 'Settings/SettingsManager.ts';
 
 export interface IQueryAllTheThingsPlugin extends Plugin {
 

@@ -1,5 +1,5 @@
 import {Service} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
+import {LoggingService} from 'lib/LoggingService.ts';
 import {Plugin} from 'obsidian';
 
 export interface IRelease {

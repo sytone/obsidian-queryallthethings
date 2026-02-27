@@ -1,5 +1,5 @@
-import {logging} from 'lib/Logging';
-import featuresJson from './featureConfiguration.json';
+import {logging} from 'lib/Logging.ts';
+import featuresJson from './featureConfiguration.json' with { type: 'json' };
 
 export type FeatureFlag = Record<string, boolean>;
 

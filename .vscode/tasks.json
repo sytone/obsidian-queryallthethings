@@ -4,20 +4,51 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "echo",
+      "label": "deno: dev",
       "type": "shell",
-      "command": "echo Hello"
-    },
-    {
-      "type": "npm",
-      "script": "build:dev",
+      "command": "deno",
+      "args": ["task", "dev"],
       "group": {
         "kind": "build",
         "isDefault": true
       },
       "problemMatcher": [],
-      "label": "npm: build:dev",
-      "detail": "node ophidian.config.mjs dev"
+      "detail": "Build plugin in development mode with watch",
+      "isBackground": true
+    },
+    {
+      "label": "deno: build",
+      "type": "shell",
+      "command": "deno",
+      "args": ["task", "build"],
+      "group": "build",
+      "problemMatcher": [],
+      "detail": "Build plugin for production"
+    },
+    {
+      "label": "deno: test",
+      "type": "shell",
+      "command": "deno",
+      "args": ["task", "test"],
+      "group": "test",
+      "problemMatcher": [],
+      "detail": "Run tests"
+    },
+    {
+      "label": "deno: lint",
+      "type": "shell",
+      "command": "deno",
+      "args": ["task", "lint"],
+      "problemMatcher": [],
+      "detail": "Lint source files"
+    },
+    {
+      "label": "deno: fmt",
+      "type": "shell",
+      "command": "deno",
+      "args": ["task", "fmt"],
+      "problemMatcher": [],
+      "detail": "Format source files"
     }
   ]
 }

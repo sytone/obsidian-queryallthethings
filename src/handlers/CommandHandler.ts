@@ -1,10 +1,10 @@
 
 import alasql from 'alasql';
-import {LoggingService} from 'lib/LoggingService';
+import {LoggingService} from 'lib/LoggingService.ts';
 import {Service} from '@ophidian/core';
 import {type Editor, type MarkdownView, Plugin} from 'obsidian';
-import {WindowFunctionsService} from 'lib/WindowFunctionsService';
-import {MetricsService} from 'lib/MetricsService';
+import {WindowFunctionsService} from 'lib/WindowFunctionsService.ts';
+import {MetricsService} from 'lib/MetricsService.ts';
 
 export class CommandHandler extends Service {
   plugin = this.use(Plugin);

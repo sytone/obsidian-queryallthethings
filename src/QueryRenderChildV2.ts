@@ -2,26 +2,26 @@
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {type MarkdownPostProcessorContext, MarkdownRenderChild, Plugin, TFile, normalizePath} from 'obsidian';
-import {type QattCodeBlock} from 'QattCodeBlock';
-import {type IRenderer} from 'Render/IRenderer';
-import {RenderFactory} from 'Render/RenderFactory';
-import {QueryFactory} from 'Query/QueryFactory';
-import {type IQuery} from 'Query/IQuery';
-import {LoggingService, type Logger} from 'lib/LoggingService';
-import {MicromarkPostRenderer} from 'PostRender/MicromarkPostRenderer';
-import {ObsidianPostRenderer} from 'PostRender/ObsidianPostRenderer';
-import {type IPostRenderer} from 'PostRender/IPostRenderer';
-import {HtmlPostRenderer} from 'PostRender/HtmlPostRenderer';
-import {RawPostRenderer} from 'PostRender/RawPostRenderer';
-import {type QueryRendererV2Service} from 'QueryRendererV2Service';
-import {NotesCacheService} from 'NotesCacheService';
-import {RenderTrackerService} from 'lib/RenderTrackerService';
+import {type QattCodeBlock} from 'QattCodeBlock.ts';
+import {type IRenderer} from 'Render/IRenderer.ts';
+import {RenderFactory} from 'Render/RenderFactory.ts';
+import {QueryFactory} from 'Query/QueryFactory.ts';
+import {type IQuery} from 'Query/IQuery.ts';
+import {LoggingService, type Logger} from 'lib/LoggingService.ts';
+import {MicromarkPostRenderer} from 'PostRender/MicromarkPostRenderer.ts';
+import {ObsidianPostRenderer} from 'PostRender/ObsidianPostRenderer.ts';
+import {type IPostRenderer} from 'PostRender/IPostRenderer.ts';
+import {HtmlPostRenderer} from 'PostRender/HtmlPostRenderer.ts';
+import {RawPostRenderer} from 'PostRender/RawPostRenderer.ts';
+import {type QueryRendererV2Service} from 'QueryRendererV2Service.ts';
+import {NotesCacheService} from 'NotesCacheService.ts';
+import {RenderTrackerService} from 'lib/RenderTrackerService.ts';
 import {DateTime} from 'luxon';
-import {CsvLoaderService} from 'Data/CsvLoaderService';
-import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
-import {JsonLoaderService} from 'Data/JsonLoaderService';
-import {SqlLoaderService} from 'Data/SqlLoaderService';
-import pDebounce from 'p-debounce';
+import {CsvLoaderService} from 'Data/CsvLoaderService.ts';
+import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService.ts';
+import {JsonLoaderService} from 'Data/JsonLoaderService.ts';
+import {SqlLoaderService} from 'Data/SqlLoaderService.ts';
+import pDebounce from 'p-debounce.ts';
 
 /**
  * All the rendering logic is handled here. It uses ths configuration to

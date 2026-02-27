@@ -1,0 +1,42 @@
+name: Deno Build and Test
+
+on:
+  push:
+    branches: [main, deno]
+  pull_request:
+    branches: [main, deno]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Verify formatting
+        run: deno fmt --check
+
+      - name: Run linter
+        run: deno lint
+
+      - name: Run tests
+        run: deno task test
+
+      - name: Build plugin
+        run: deno task build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-build
+          path: |
+            dist/main.js
+            dist/manifest.json
+            dist/styles.css
+          if-no-files-found: warn

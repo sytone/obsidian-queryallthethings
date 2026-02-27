@@ -1,5 +1,5 @@
 import alasql from 'alasql';
-import {LoggingService, type Logger} from 'lib/LoggingService';
+import {LoggingService, type Logger} from 'lib/LoggingService.ts';
 import {Service} from '@ophidian/core';
 import {type CachedMetadata, Notice, Plugin, type TFile} from 'obsidian';
 

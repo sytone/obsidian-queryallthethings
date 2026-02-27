@@ -14,7 +14,7 @@ import {DateTime} from 'luxon';
  * Also thanks to https://learnshareit.com/how-to-solve-the-requested-module-does-not-provide-an-export-named-in-javascript/
  * this now works in jest testing with ESM modules.
  */
-import {type ILogOptions} from 'Interfaces/Settings';
+import {type ILogOptions} from 'Interfaces/Settings.ts';
 import {EventEmitter2} from 'eventemitter2';
 
 /**

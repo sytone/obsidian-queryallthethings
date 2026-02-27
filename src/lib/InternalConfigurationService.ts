@@ -3,8 +3,8 @@ import {Service} from '@ophidian/core';
 import {Plugin} from 'obsidian';
 import {DateTime} from 'luxon';
 import alasql from 'alasql';
-import {LoggingService} from 'lib/LoggingService';
-import {MetricsService} from 'lib/MetricsService';
+import {LoggingService} from 'lib/LoggingService.ts';
+import {MetricsService} from 'lib/MetricsService.ts';
 
 /**
  * Service for tracking and measuring metrics related to plugin performance.

@@ -1,6 +1,6 @@
 
 import {SettingsService, type Useful, getContext, onLoad, use} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
+import {LoggingService} from 'lib/LoggingService.ts';
 import {Plugin, PluginSettingTab, Component, Setting, debounce} from 'obsidian';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention

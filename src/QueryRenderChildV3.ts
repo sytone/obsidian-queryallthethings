@@ -1,18 +1,18 @@
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import {type MarkdownPostProcessorContext, normalizePath, Plugin, TFile} from 'obsidian';
-import {type QattCodeBlock} from 'QattCodeBlock';
-import {type IRenderer} from 'Render/IRenderer';
-import {RenderFactory} from 'Render/RenderFactory';
-import {QueryFactory} from 'Query/QueryFactory';
-import {type IQuery} from 'Query/IQuery';
-import {LoggingService, type Logger} from 'lib/LoggingService';
-import {MicromarkPostRenderer} from 'PostRender/MicromarkPostRenderer';
-import {ObsidianPostRenderer} from 'PostRender/ObsidianPostRenderer';
-import {type IPostRenderer} from 'PostRender/IPostRenderer';
-import {HtmlPostRenderer} from 'PostRender/HtmlPostRenderer';
-import {RawPostRenderer} from 'PostRender/RawPostRenderer';
-import {type QueryRendererV2Service} from 'QueryRendererV2Service';
+import {type QattCodeBlock} from 'QattCodeBlock.ts';
+import {type IRenderer} from 'Render/IRenderer.ts';
+import {RenderFactory} from 'Render/RenderFactory.ts';
+import {QueryFactory} from 'Query/QueryFactory.ts';
+import {type IQuery} from 'Query/IQuery.ts';
+import {LoggingService, type Logger} from 'lib/LoggingService.ts';
+import {MicromarkPostRenderer} from 'PostRender/MicromarkPostRenderer.ts';
+import {ObsidianPostRenderer} from 'PostRender/ObsidianPostRenderer.ts';
+import {type IPostRenderer} from 'PostRender/IPostRenderer.ts';
+import {HtmlPostRenderer} from 'PostRender/HtmlPostRenderer.ts';
+import {RawPostRenderer} from 'PostRender/RawPostRenderer.ts';
+import {type QueryRendererV2Service} from 'QueryRendererV2Service.ts';
 
 /**
  * All the rendering logic is handled here. It uses ths configuration to

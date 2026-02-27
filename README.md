@@ -58,3 +58,43 @@ template: |
 ````
 
 ---
+
+## Development
+
+This plugin is now built using [Deno](https://deno.com/) instead of Node.js. See [MIGRATION_TO_DENO.md](MIGRATION_TO_DENO.md) for details on the migration.
+
+### Prerequisites
+
+- Install [Deno](https://deno.com/) (v1.40 or later)
+- Install the [Deno VSCode extension](https://marketplace.visualstudio.com/items?itemName=denoland.vscode-deno)
+
+### Quick Start
+
+```bash
+# Development mode with watch
+deno task dev
+
+# Production build
+deno task build
+
+# Run tests
+deno task test
+
+# Lint and format
+deno task lint
+deno task fmt
+```
+
+### Building for Your Vault
+
+Set the environment variable `OBSIDIAN_TEST_VAULT` to your test vault path, then run:
+
+```powershell
+# PowerShell
+$env:OBSIDIAN_TEST_VAULT = "C:\path\to\your\vault"
+deno task dev
+```
+
+The plugin will be built directly to your vault's `.obsidian/plugins/qatt/` directory.
+
+---

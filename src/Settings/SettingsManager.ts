@@ -1,8 +1,8 @@
 import {EventEmitter2} from 'eventemitter2';
-import {type ISettingsManager} from 'Interfaces/ISettingsManager';
-import {type ISettings} from 'Interfaces/Settings';
-import {logging} from 'lib/Logging';
-import {Feature, type FeatureFlag} from 'Settings/Feature';
+import {type ISettingsManager} from 'Interfaces/ISettingsManager.ts';
+import {type ISettings} from 'Interfaces/Settings.ts';
+import {logging} from 'lib/Logging.ts';
+import {Feature, type FeatureFlag} from 'Settings/Feature.ts';
 
 // Default data block that is stored in the data file.
 const defaultSettings: ISettings = {

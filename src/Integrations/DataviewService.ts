@@ -1,8 +1,8 @@
 
 import {Plugin} from 'obsidian';
 import {Service} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
-import {getAPI, isPluginEnabled, type PageMetadata} from 'obsidian-dataview';
+import {LoggingService} from 'lib/LoggingService.ts';
+import {getAPI, isPluginEnabled, type PageMetadata} from 'obsidian-dataview.ts';
 
 /**
  * This service handles the integration with the Dataview plugin.

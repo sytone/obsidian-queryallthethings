@@ -1,10 +1,10 @@
 /* eslint indent: [2, 2, {"SwitchCase": 1}] */
-import {type IQattCodeBlock} from 'QattCodeBlock';
-import {type IRenderer} from 'Render/IRenderer';
-import {HandlebarsRenderer} from 'Render/HandlebarsRenderer';
-import {TextRenderer} from 'Render/TextRenderer';
+import {type IQattCodeBlock} from 'QattCodeBlock.ts';
+import {type IRenderer} from 'Render/IRenderer.ts';
+import {HandlebarsRenderer} from 'Render/HandlebarsRenderer.ts';
+import {TextRenderer} from 'Render/TextRenderer.ts';
 import {Service} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
+import {LoggingService} from 'lib/LoggingService.ts';
 
 export class RenderFactory extends Service {
   logger = this.use(LoggingService).getLogger('Qatt.RenderFactory');

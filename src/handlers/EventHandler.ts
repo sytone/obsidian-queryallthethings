@@ -1,5 +1,5 @@
 import {type EventRef, debounce, Plugin} from 'obsidian';
-import {LoggingService, type Logger} from 'lib/LoggingService';
+import {LoggingService, type Logger} from 'lib/LoggingService.ts';
 import {Service} from '@ophidian/core';
 
 export class EventHandler extends Service {

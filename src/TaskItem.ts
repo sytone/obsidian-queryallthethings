@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {type ListItem} from 'ListItem';
-import {parseDataViewProperty, parseTask} from 'Parse/Parsers';
+import {type ListItem} from 'ListItem.ts';
+import {parseDataViewProperty, parseTask} from 'Parse/Parsers.ts';
 
 /*
 // >> id='docs-tables-obsidian-tasks' options='file=data-tables/obsidian-tasks.md'

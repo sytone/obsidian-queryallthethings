@@ -2,10 +2,10 @@
 import {Service} from '@ophidian/core';
 import {Plugin, type TFile} from 'obsidian';
 import Handlebars from 'handlebars';
-import {LoggingService} from 'lib/LoggingService';
-import {type QattCodeBlock} from 'QattCodeBlock';
-import {type IRenderer} from 'Render/IRenderer';
-import * as handlebarsHelpers from 'Render/HandlebarsHelpers';
+import {LoggingService} from 'lib/LoggingService.ts';
+import {type QattCodeBlock} from 'QattCodeBlock.ts';
+import {type IRenderer} from 'Render/IRenderer.ts';
+import * as handlebarsHelpers from 'Render/HandlebarsHelpers.ts';
 
 export class HandlebarsRenderer extends Service implements IRenderer {
   defaultTemplate = '{{stringify result}}';

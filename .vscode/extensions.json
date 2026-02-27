@@ -1,6 +1,6 @@
 {
   "recommendations": [
-    "dbaeumer.vscode-eslint",
+    "denoland.vscode-deno",
     "davidanson.vscode-markdownlint",
     "editorconfig.editorconfig",
     "pkief.material-icon-theme",
@@ -16,8 +16,6 @@
     "stackbreak.comment-divider",
     "yzhang.markdown-all-in-one",
     "github.vscode-github-actions",
-    "vivaxy.vscode-conventional-commits",
-    "hbenl.vscode-test-explorer",
-    "orta.vscode-jest"
+    "vivaxy.vscode-conventional-commits"
   ]
 }

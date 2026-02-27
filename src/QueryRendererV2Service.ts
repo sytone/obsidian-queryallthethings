@@ -1,14 +1,14 @@
 
 import {type MarkdownPostProcessorContext, Plugin} from 'obsidian';
-import {QattCodeBlock} from 'QattCodeBlock';
+import {QattCodeBlock} from 'QattCodeBlock.ts';
 import {Service, useSettings} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
+import {LoggingService} from 'lib/LoggingService.ts';
 import {DateTime} from 'luxon';
-import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
-import {NotesCacheService} from 'NotesCacheService';
-import {QueryRenderChildV2} from 'QueryRenderChildV2';
-import {QueryRenderChildV3} from 'QueryRenderChildV3';
-import {QattCodeBlockSettings} from 'lib/QattCodeBlockSettings';
+import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder.ts';
+import {NotesCacheService} from 'NotesCacheService.ts';
+import {QueryRenderChildV2} from 'QueryRenderChildV2.ts';
+import {QueryRenderChildV3} from 'QueryRenderChildV3.ts';
+import {QattCodeBlockSettings} from 'lib/QattCodeBlockSettings.ts';
 
 export interface IRenderingSettings {
   postRenderFormat: string;

@@ -1,12 +1,12 @@
 import { Service, useSettings } from '@ophidian/core';
-import type { ListItem } from 'ListItem';
-import { Note } from 'Note';
-import { SettingsTabField, SettingsTabHeading, useSettingsTab } from 'Settings/DynamicSettingsTabBuilder';
-import { type TaskItem } from 'TaskItem';
+import type { ListItem } from 'ListItem.ts';
+import { Note } from 'Note.ts';
+import { SettingsTabField, SettingsTabHeading, useSettingsTab } from 'Settings/DynamicSettingsTabBuilder.ts';
+import { type TaskItem } from 'TaskItem.ts';
 import alasql from 'alasql';
-import { InternalConfigurationService } from 'lib/InternalConfigurationService';
-import { LoggingService } from 'lib/LoggingService';
-import { MetricsService } from 'lib/MetricsService';
+import { InternalConfigurationService } from 'lib/InternalConfigurationService.ts';
+import { LoggingService } from 'lib/LoggingService.ts';
+import { MetricsService } from 'lib/MetricsService.ts';
 import { DateTime } from 'luxon';
 import {
   Notice,
@@ -17,7 +17,6 @@ import {
 } from 'obsidian';
 
 export interface INotesCacheServiceSettings {
-  enableDataViewInlineFieldParsingForTasks: boolean;
   notesCacheSettingsOpen: boolean;
   enableAlaSqlTablePopulation: boolean;
   disableContinualIndexNotifications: boolean;
@@ -49,21 +48,18 @@ export class NotesCacheService extends Service {
   settings = useSettings(
     this,
     {
-      enableDataViewInlineFieldParsingForTasks: false,
       notesCacheSettingsOpen: false,
       enableAlaSqlTablePopulation: true,
       disableContinualIndexNotifications: false,
     } as INotesCacheServiceSettings,
     async (settings: INotesCacheServiceSettings) => {
       this.logger.info('NotesCacheService Updated Settings');
-      this.enableDataViewInlineFieldParsingForTasks = settings.enableDataViewInlineFieldParsingForTasks;
       this.notesCacheSettingsOpen = settings.notesCacheSettingsOpen;
       this.enableAlaSqlTablePopulation = settings.enableAlaSqlTablePopulation;
       this.disableContinualIndexNotifications = settings.disableContinualIndexNotifications;
     },
     async (settings: INotesCacheServiceSettings) => {
       this.logger.info('NotesCacheService Initialize Settings');
-      this.enableDataViewInlineFieldParsingForTasks = settings.enableDataViewInlineFieldParsingForTasks;
       this.notesCacheSettingsOpen = settings.notesCacheSettingsOpen;
       this.enableAlaSqlTablePopulation = settings.enableAlaSqlTablePopulation;
       this.disableContinualIndexNotifications = settings.disableContinualIndexNotifications;
@@ -74,17 +70,6 @@ export class NotesCacheService extends Service {
       // this.metrics.endMeasurement('cacheAllNotes from settings');
     },
   );
-
-  /**
-   * Enable parsing of DataView Inline properties for tasks.
-   *
-   * If enable this will add any DataView Inline properties to the
-   * obsidian_markdown_tasks table as a column.
-   *
-   * @type {boolean}
-   * @memberof NotesCacheService
-   */
-  enableDataViewInlineFieldParsingForTasks: boolean;
 
   public notes: Note[] = [];
   public notesMap = new Map<string, Note>();
@@ -139,19 +124,7 @@ export class NotesCacheService extends Service {
 
     const settingsSection = tab.addHeading(new SettingsTabHeading({ open: this.notesCacheSettingsOpen, text: 'Notes Cache Settings', level: 'h2', class: 'settings-heading' }), onToggle);
 
-    const toggleInlineFieldParsing = tab.addToggle(
-      new SettingsTabField({
-        name: 'Enable DataView Inline Field Parsing for Tasks (obsidian_markdown_tasks table)',
-        description: 'This enabled processing of any DataView Inline properties added to a task. The name of the property is added to the obsidian_markdown_tasks table as a column. Restart Obsidian to re-cache all files.',
-        value: this.enableDataViewInlineFieldParsingForTasks,
-      }),
-      async (value: boolean) => {
-        await settings.update(settings => {
-          settings.enableDataViewInlineFieldParsingForTasks = value;
-        });
-      },
-      settingsSection,
-    );
+
 
     const toggleAlaSqlTablePopulation = tab.addToggle(
       new SettingsTabField({

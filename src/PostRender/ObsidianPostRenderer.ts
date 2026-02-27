@@ -1,4 +1,4 @@
-import {type IPostRenderer} from 'PostRender/IPostRenderer';
+import {type IPostRenderer} from 'PostRender/IPostRenderer.ts';
 import {type App, MarkdownPreviewView, type Component} from 'obsidian';
 
 export class ObsidianPostRenderer implements IPostRenderer {

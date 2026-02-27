@@ -1,10 +1,10 @@
 
 import {type Plugin, PluginSettingTab, Setting, debounce} from 'obsidian';
-import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
-import {type ISettingsManager} from 'Interfaces/ISettingsManager';
-import {log} from 'lib/Logging';
-import {Feature} from 'Settings/Feature';
-import settingsJson from 'Settings/settingsConfiguration.json';
+import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin.ts';
+import {type ISettingsManager} from 'Interfaces/ISettingsManager.ts';
+import {log} from 'lib/Logging.ts';
+import {Feature} from 'Settings/Feature.ts';
+import settingsJson from 'Settings/settingsConfiguration.json' with { type: 'json' };
 
 export class SettingsTab extends PluginSettingTab {
   // If the UI needs a more complex setting you can create a

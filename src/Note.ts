@@ -10,8 +10,8 @@ import {
   type BlockCache,
   type FileStats,
 } from 'obsidian';
-import { ListItem } from 'ListItem';
-import { TaskItem } from 'TaskItem';
+import { ListItem } from 'ListItem.ts';
+import { TaskItem } from 'TaskItem.ts';
 
 /*
 Update the table below when new columns are added so documentation is updated.

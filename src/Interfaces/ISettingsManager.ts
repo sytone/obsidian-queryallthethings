@@ -1,5 +1,5 @@
-import {type FeatureFlag} from 'Settings/Feature';
-import {type ISettings} from 'Interfaces/Settings';
+import {type FeatureFlag} from 'Settings/Feature.ts';
+import {type ISettings} from 'Interfaces/Settings.ts';
 
 export interface ISettingsManager {
   settings: ISettings;

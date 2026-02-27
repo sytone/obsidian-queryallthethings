@@ -1,4 +1,4 @@
-import {type TaskItem} from 'TaskItem';
+import {type TaskItem} from 'TaskItem.ts';
 
 const dueDatePrefixes = ['📅', '[due::', '(due::'];
 const doneDatePrefixes = ['✅', '[completion::', '(completion::'];

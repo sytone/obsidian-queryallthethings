@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 /* eslint-disable @typescript-eslint/no-empty-interface */
 import _ from 'obsidian';
-import {type DataviewApi} from 'obsidian-dataview';
+import {type DataviewApi} from 'obsidian-dataview.ts';
 
 export interface EventRef {
 

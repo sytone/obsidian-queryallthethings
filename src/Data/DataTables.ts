@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import alasql from 'alasql';
-import { AlaSqlQuery } from 'Query/AlaSqlQuery';
+import { AlaSqlQuery } from 'Query/AlaSqlQuery.ts';
 import { DateTime } from 'luxon';
-import { parseTask } from 'Parse/Parsers';
+import { parseTask } from 'Parse/Parsers.ts';
 import { Plugin } from 'obsidian';
 import { Service } from '@ophidian/core';
-import { LoggingService } from 'lib/LoggingService';
-import { DataviewService } from 'Integrations/DataviewService';
-import { MetricsService } from 'lib/MetricsService';
+import { LoggingService } from 'lib/LoggingService.ts';
+import { MetricsService } from 'lib/MetricsService.ts';
 
 export class DataTables extends Service {
   plugin = this.use(Plugin);

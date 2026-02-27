@@ -1,4 +1,4 @@
-import {type IPostRenderer} from 'PostRender/IPostRenderer';
+import {type IPostRenderer} from 'PostRender/IPostRenderer.ts';
 import {type Component} from 'obsidian';
 
 export class HtmlPostRenderer implements IPostRenderer {

@@ -1,9 +1,9 @@
 
 import {useSettings} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
-import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
-import {BaseLoaderService} from 'Data/BaseLoaderService';
-import {DataTables} from 'Data/DataTables';
+import {LoggingService} from 'lib/LoggingService.ts';
+import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder.ts';
+import {BaseLoaderService} from 'Data/BaseLoaderService.ts';
+import {DataTables} from 'Data/DataTables.ts';
 
 export interface ISqlLoaderSettings {
   sqlFiles: string;

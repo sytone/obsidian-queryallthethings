@@ -1,4 +1,4 @@
-import {type IRelease, type ReleaseNotes} from 'ReleaseNotes';
+import {type IRelease, type ReleaseNotes} from 'ReleaseNotes.ts';
 import {Component, MarkdownRenderer, Modal} from 'obsidian';
 
 function addExtraHashToHeadings(

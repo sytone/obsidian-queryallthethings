@@ -1,6 +1,6 @@
 import {Notice, Plugin, type TFile} from 'obsidian';
 import {Service} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
+import {LoggingService} from 'lib/LoggingService.ts';
 import alasql from 'alasql';
 
 /**

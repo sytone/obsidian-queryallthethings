@@ -1,4 +1,4 @@
-import {type QattCodeBlock} from 'QattCodeBlock';
+import {type QattCodeBlock} from 'QattCodeBlock.ts';
 
 export interface IQuery {
   name: string | undefined;

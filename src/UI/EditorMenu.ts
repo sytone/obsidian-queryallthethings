@@ -1,7 +1,7 @@
 import {type Editor, type Menu, stringifyYaml} from 'obsidian';
-import alaSqlFunctions from 'UI/alaSqlFunctions.json';
-import communityQueries from 'UI/communityQueries.json';
-import handlebarsHelpers from 'UI/handlebarsHelpers.json';
+import alaSqlFunctions from 'UI/alaSqlFunctions.json' with { type: 'json' };
+import communityQueries from 'UI/communityQueries.json' with { type: 'json' };
+import handlebarsHelpers from 'UI/handlebarsHelpers.json' with { type: 'json' };
 
 /**
  * Creates an editor menu with various submenus and items.

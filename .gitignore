@@ -1,9 +1,13 @@
-# npm
+# npm (legacy - keeping for backward compatibility)
 node_modules
+
+# deno
+.deno/
 
 # build
 *.js.map
 .log
+dist/
 
 # obsidian
 /dist/main.js

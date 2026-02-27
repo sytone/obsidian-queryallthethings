@@ -1,7 +1,7 @@
 import {Service} from '@ophidian/core';
-import {type QattCodeBlock} from 'QattCodeBlock';
-import {type IRenderer} from 'Render/IRenderer';
-import {LoggingService} from 'lib/LoggingService';
+import {type QattCodeBlock} from 'QattCodeBlock.ts';
+import {type IRenderer} from 'Render/IRenderer.ts';
+import {LoggingService} from 'lib/LoggingService.ts';
 
 export class TextRenderer extends Service implements IRenderer {
   defaultTemplate = '';

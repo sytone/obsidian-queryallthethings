@@ -1,14 +1,14 @@
 
 import alasql from 'alasql';
 import {type FrontMatterCache, Plugin, type TFile} from 'obsidian';
-import {type QattCodeBlock} from 'QattCodeBlock';
-import {type IQuery} from 'Query/IQuery';
+import {type QattCodeBlock} from 'QattCodeBlock.ts';
+import {type IQuery} from 'Query/IQuery.ts';
 import {Service} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
-import {NotesCacheService} from 'NotesCacheService';
-import {DataviewService} from 'Integrations/DataviewService';
-import {confirmObjectPath} from 'Internal';
-import * as alasqlFunctions from 'Query/Functions';
+import {LoggingService} from 'lib/LoggingService.ts';
+import {NotesCacheService} from 'NotesCacheService.ts';
+import {DataviewService} from 'Integrations/DataviewService.ts';
+import {confirmObjectPath} from 'Internal.ts';
+import * as alasqlFunctions from 'Query/Functions.ts';
 
 declare global {
   // eslint-disable-next-line @typescript-eslint/naming-convention

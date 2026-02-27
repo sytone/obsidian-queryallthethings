@@ -1,5 +1,5 @@
-import {PromptModal, type PromptModalError} from 'lib/PromptModal';
-import {SuggesterModal, type SuggesterModalError} from 'lib/SuggesterModal';
+import {PromptModal, type PromptModalError} from 'lib/PromptModal.ts';
+import {SuggesterModal, type SuggesterModalError} from 'lib/SuggesterModal.ts';
 
 // This is used across the plugin to make sure that the object path exists.
 export function confirmObjectPath(path: string, leaf?: any): void {

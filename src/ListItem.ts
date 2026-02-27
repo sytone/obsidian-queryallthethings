@@ -1,4 +1,4 @@
-import {type Note} from 'Note';
+import {type Note} from 'Note.ts';
 
 /*
 // >> id='docs-tables-obsidian-lists' options='file=data-tables/obsidian-lists.md'

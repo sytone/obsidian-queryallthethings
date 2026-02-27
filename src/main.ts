@@ -1,30 +1,29 @@
 /* eslint-disable unicorn/filename-case */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import {CommandHandler} from 'handlers/CommandHandler';
-import {confirmObjectPath, promptForInput, promptWithSuggestions} from 'Internal';
-import {CsvLoaderService} from 'Data/CsvLoaderService';
-import {DataTables} from 'Data/DataTables';
-import {DataviewService} from 'Integrations/DataviewService';
-import {HandlebarsRenderer} from 'Render/HandlebarsRenderer';
-import {JsonLoaderService} from 'Data/JsonLoaderService';
-import {LoggingService} from 'lib/LoggingService';
-import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService';
-import {NotesCacheService} from 'NotesCacheService';
-import {QueryFactory} from 'Query/QueryFactory';
-import {QueryRendererV2Service} from 'QueryRendererV2Service';
-import {ReleaseNotes} from 'ReleaseNotes';
-import {RenderFactory} from 'Render/RenderFactory';
-import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder';
-import {SqlLoaderService} from 'Data/SqlLoaderService';
+import {CommandHandler} from 'handlers/CommandHandler.ts';
+import {confirmObjectPath, promptForInput, promptWithSuggestions} from 'Internal.ts';
+import {CsvLoaderService} from 'Data/CsvLoaderService.ts';
+import {DataTables} from 'Data/DataTables.ts';
+import {HandlebarsRenderer} from 'Render/HandlebarsRenderer.ts';
+import {JsonLoaderService} from 'Data/JsonLoaderService.ts';
+import {LoggingService} from 'lib/LoggingService.ts';
+import {MarkdownTableLoaderService} from 'Data/MarkdownTableLoaderService.ts';
+import {NotesCacheService} from 'NotesCacheService.ts';
+import {QueryFactory} from 'Query/QueryFactory.ts';
+import {QueryRendererV2Service} from 'QueryRendererV2Service.ts';
+import {ReleaseNotes} from 'ReleaseNotes.ts';
+import {RenderFactory} from 'Render/RenderFactory.ts';
+import {SettingsTabField, SettingsTabHeading, useSettingsTab} from 'Settings/DynamicSettingsTabBuilder.ts';
+import {SqlLoaderService} from 'Data/SqlLoaderService.ts';
 import {type CachedMetadata, Notice, Plugin, type TFile} from 'obsidian';
-import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin';
-import {type SettingsManager} from 'Settings/SettingsManager';
-import {UpdateModal} from 'lib/UpdateModal';
+import {type IQueryAllTheThingsPlugin} from 'Interfaces/IQueryAllTheThingsPlugin.ts';
+import {type SettingsManager} from 'Settings/SettingsManager.ts';
+import {UpdateModal} from 'lib/UpdateModal.ts';
 import {use, useSettings} from '@ophidian/core';
-import {EventHandler} from 'handlers/EventHandler';
-import {WindowFunctionsService} from 'lib/WindowFunctionsService';
-import {MetricsService} from 'lib/MetricsService';
-import {createEditorMenu} from 'UI/EditorMenu';
+import {EventHandler} from 'handlers/EventHandler.ts';
+import {WindowFunctionsService} from 'lib/WindowFunctionsService.ts';
+import {MetricsService} from 'lib/MetricsService.ts';
+import {createEditorMenu} from 'UI/EditorMenu.ts';
 
 export interface IGeneralSettings {
   onStartSqlQueries: string;
@@ -33,7 +32,6 @@ export interface IGeneralSettings {
   mainHeadingOpen: boolean;
   generalHeadingOpen: boolean;
   internalLoggingConsoleLogLimit: number;
-  disableDataviewMissingNotification: boolean;
   disableCustomJsMissingNotification: boolean;
   enableEditorRightClickMenu: boolean;
 }
@@ -79,7 +77,6 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       mainHeadingOpen: true,
       generalHeadingOpen: false,
       internalLoggingConsoleLogLimit: 10,
-      disableDataviewMissingNotification: false,
       disableCustomJsMissingNotification: false,
       enableEditorRightClickMenu: true,
     } as IGeneralSettings,
@@ -110,10 +107,6 @@ export default class QueryAllTheThingsPlugin extends Plugin implements IQueryAll
       // This is the start of all the events that need to be run to get the system into the correct state. The
       // event qatt:data-local-database-setup-completed is fired when completed.
       await this.dataTables.setupLocalDatabase();
-
-      if (!app.plugins.enabledPlugins.has('dataview') && !settings.disableDataviewMissingNotification) {
-        const dvNotInstalledNotice = new Notice('Dataview plugin is not installed. Dataview backed tables will be empty.');
-      }
 
       if (!app.plugins.enabledPlugins.has('customjs') && !settings.disableCustomJsMissingNotification) {
         const dvNotInstalledNotice = new Notice('CustomJS plugin is not installed. Referencing custom scripts in your query blocks will not work.');
@@ -225,20 +218,6 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
 
     tab.addToggle(
       new SettingsTabField({
-        name: 'Disable Dataview Missing Notification',
-        description: 'Disables the Dataview plugin missing notification.',
-        value: settings.current?.disableDataviewMissingNotification,
-      }),
-      async (value: boolean) => {
-        await settings.update(settings => {
-          settings.disableDataviewMissingNotification = value;
-        });
-      },
-      generalSettingsSection,
-    );
-
-    tab.addToggle(
-      new SettingsTabField({
         name: 'Disable CustomJS Missing Notification',
         description: 'Disables the CustomJS plugin missing notification.',
         value: settings.current?.disableCustomJsMissingNotification,
@@ -269,7 +248,6 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
     this.use(QueryFactory).load();
     this.use(RenderFactory).load();
     this.use(HandlebarsRenderer).load();
-    this.use(DataviewService).load();
 
     // Make custom functions available to the window object.
     confirmObjectPath('_qatt.ui.promptWithSuggestions', promptWithSuggestions);
@@ -318,21 +296,6 @@ Some settings are experimental, these are indicated by a 🧪 at the start of th
       this.logger.info(`onLayoutReady fired for workspace: ${this.app.vault.getName()}`);
 
       this.layoutReady = true;
-
-      /* ------------------------- DataView based support ------------------------- */
-      const dvService = this.use(DataviewService);
-      if (dvService.dataViewEnabled) {
-        // Refresh tables when dataview index is ready.
-        this.registerEvent(this.app.metadataCache.on('dataview:index-ready', async () => {
-          this.logger.info('dataview:index-ready event detected.');
-          await this.dataTables.refreshTables('dataview:index-ready event detected');
-        }));
-
-        this.registerEvent(this.app.workspace.on('dataview:refresh-views', async () => {
-          this.logger.info('dataview:refresh-views event detected.');
-          await this.dataTables.refreshTables('dataview:refresh-views event detected');
-        }));
-      }
 
       this.logger.info(`onLayoutReady completed for workspace: ${this.app.vault.getName()}`);
     });

@@ -1,4 +1,4 @@
-import {type FeatureFlag} from 'Settings/Feature';
+import {type FeatureFlag} from 'Settings/Feature.ts';
 
 type SettingsMap = Record<string, string | boolean | number>;
 

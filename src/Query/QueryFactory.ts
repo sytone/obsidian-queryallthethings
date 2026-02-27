@@ -1,9 +1,9 @@
 /* eslint indent: [2, 2, {"SwitchCase": 1}] */
-import {type QattCodeBlock} from 'QattCodeBlock';
-import {AlaSqlQuery} from 'Query/AlaSqlQuery';
-import {type IQuery} from 'Query/IQuery';
+import {type QattCodeBlock} from 'QattCodeBlock.ts';
+import {AlaSqlQuery} from 'Query/AlaSqlQuery.ts';
+import {type IQuery} from 'Query/IQuery.ts';
 import {Service} from '@ophidian/core';
-import {LoggingService} from 'lib/LoggingService';
+import {LoggingService} from 'lib/LoggingService.ts';
 
 export class QueryFactory extends Service {
   logger = this.use(LoggingService).getLogger('Qatt.QueryFactory');
